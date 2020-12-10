@@ -8,7 +8,9 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY tsconfig*.json ./
+COPY hardhat.config.ts ./
 COPY ./typechain ./typechain
+COPY ./artifacts ./artifacts
 COPY ./src ./src
 RUN npm ci --quiet && npm run build
 

@@ -1,0 +1,29 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IFlashCOINMinter",
+  "sourceName": "contracts/core/tokens/Coin.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "countMint",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "countRepay",
+          "type": "uint256"
+        }
+      ],
+      "name": "executeOnFlashMint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
