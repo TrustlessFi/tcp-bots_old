@@ -1,0 +1,57 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockEthAggregator",
+  "sourceName": "contracts/mocks/MockEthAggregator.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "latestRoundData",
+      "outputs": [
+        {
+          "internalType": "uint80",
+          "name": "roundId",
+          "type": "uint80"
+        },
+        {
+          "internalType": "int256",
+          "name": "answer",
+          "type": "int256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "updatedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint80",
+          "name": "answeredInRound",
+          "type": "uint80"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610122806100206000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063313ce567146037578063feaf968c146056575b600080fd5b603d60a6565b604051808260ff16815260200191505060405180910390f35b605c60af565b604051808669ffffffffffffffffffff1681526020018581526020018481526020018381526020018269ffffffffffffffffffff1681526020019550505050505060405180910390f35b60006008905090565b6000806000806000680300000000000018ed9450640dc9808ac193506107084203925061038442039150680300000000000018ed9050909192939456fea264697066735822122007df0ca17a245a460cf42392e84cf353d512024e0bd134a025683ef0b06b6c4964736f6c63430007040033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060325760003560e01c8063313ce567146037578063feaf968c146056575b600080fd5b603d60a6565b604051808260ff16815260200191505060405180910390f35b605c60af565b604051808669ffffffffffffffffffff1681526020018581526020018481526020018381526020018269ffffffffffffffffffff1681526020019550505050505060405180910390f35b60006008905090565b6000806000806000680300000000000018ed9450640dc9808ac193506107084203925061038442039150680300000000000018ed9050909192939456fea264697066735822122007df0ca17a245a460cf42392e84cf353d512024e0bd134a025683ef0b06b6c4964736f6c63430007040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
