@@ -7,9 +7,9 @@ import { BigNumber } from 'ethers';
 
 let timer: NodeJS.Timer | null = null;
 
-function sleep(ms: number) {
+function sleep(s: number) {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms);
+    setTimeout(resolve, Math.floor(s * 1000));
   });
 }
 
@@ -28,7 +28,7 @@ async function main() {
     } else {
       console.log("should Not start auctions");
     }
-    await sleep(100);
+    await sleep(1);
   }
 }
 
