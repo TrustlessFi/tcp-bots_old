@@ -12,7 +12,7 @@ COPY hardhat.config.ts ./
 COPY ./typechain ./typechain
 COPY ./artifacts ./artifacts
 COPY ./src ./src
-RUN npm ci --quiet && npm run build
+RUN npm ci --quiet
 
 # TODO replace with yarn: https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn
 
@@ -34,4 +34,4 @@ RUN npm ci --quiet --only=production
 # TODO replace with yarn: https://stackoverflow.com/questions/58482655/what-is-the-closest-to-npm-ci-in-yarn
 
 ## We just need the build to execute the command
-COPY --from=builder /usr/src/app/dist ./dist
+# COPY --from=builder /usr/src/app/dist ./dist
