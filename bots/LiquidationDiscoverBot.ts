@@ -2,23 +2,46 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { ManagedBot, runReturn, defaultRunReturn } from "./ManagedBot";
-import { getBlockTime, hours, getCoinGeckoPriceInUSD } from "./library";
-import { BigNumber } from "ethers";
+import { getBlockTime, hours, getCoinGeckoPriceInUSD, bigint } from "./library";
+import { BigNumber, BigNumberish } from "ethers";
 import { UniswapV2Pair } from "../typechain/UniswapV2Pair";
 
+
+/*
+ *               START: Is there a valid price from Prices now?
+ *                    /                              \
+ *                  yes                              no
+ *                  /                                 \
+ *            Are there liquidations            Are there liquidations
+ *             at that price?                 at that the external price of the collateral? (coingecko)
+ *               /             \               /              |
+ *             yes             no            no               |
+ *             /                \           /                 |
+ *           Are there          Wait 1 hour                  yes
+ *      rewards to be claimed                                 |
+ *          for this price?                                   |
+ *         /               \                                  |
+ *       yes               no -----------------------> Can a new price be completed now?
+ *       /                                                  /            \
+ *     liquidate, then return to START                    no            yes
+ *                                                        /              \
+ *                                                  return to START      Complete a price, return to START
+ *                                                 after time to next
+ *                                           possible price pull has elapsed
+ */
 export class LiquidationDiscoverBot extends ManagedBot {
   name = "🤑 Discover Liquidate";
 
   async runImpl(): Promise<runReturn> {
     let wethPair = this.protocol!.pairs.coinweth;
-    let rbtcPair = this.protocol!.pairs.coinbtc;
+    let btcPair = this.protocol!.pairs.coinbtc;
 
     let [ethPrice, btcPrice] = await getCoinGeckoPriceInUSD(['eth', 'btc']);
 
     let protocolFmt = (price: number): BigInt => BigInt(Math.floor(price)) * BigInt(1e18);
 
     let runReturn1 = await this.genRunForCollateralType(0, wethPair, protocolFmt(ethPrice));
-    let runReturn2 = await this.genRunForCollateralType(1, rbtcPair, protocolFmt(btcPrice));
+    let runReturn2 = await this.genRunForCollateralType(1, btcPair, protocolFmt(btcPrice));
     return {
       sleepSeconds: Math.min(runReturn1.sleepSeconds, runReturn2.sleepSeconds),
       nothingToDo: runReturn1.nothingToDo && runReturn2.nothingToDo,
@@ -26,13 +49,10 @@ export class LiquidationDiscoverBot extends ManagedBot {
   }
 
   async genRunForCollateralType(collateral: number, pair: UniswapV2Pair, coinGeckoPrice: BigInt): Promise<runReturn> {
-    let runReturn = defaultRunReturn;
-    runReturn.nothingToDo = false;
-
-    let liquidations = this.protocol!.liquidations!;
+    let liquidations = this.protocol!.liquidations;
     let prices = this.protocol!.prices;
+    let market = this.protocol!.market;
 
-    let priceTwapTime = await liquidations.twapTime();
     let priceInfo: {
       price: BigNumber;
       priceTime: BigNumber;
@@ -40,111 +60,96 @@ export class LiquidationDiscoverBot extends ManagedBot {
     } = await prices.viewPrice(pair.address, false);
 
     let blockTime = await getBlockTime();
+    let minTwapTime = await prices.collateralPairMinTwapTime();
     let maxTwapTime = await liquidations.maxTwapTime();
     let maxPriceAge = await liquidations.maxPriceAge();
+    let rewardLimit = (await liquidations.rewardsLimit());
+    let collatReq = await market.collateralizationRequirement(collateral);
 
-    price = coinGeckoPrice;
     if (!priceInfo.price.isZero()
       && priceInfo.twapTime.lt(maxTwapTime)
       && BigNumber.from(blockTime).sub(priceInfo.priceTime).lt(maxPriceAge)) {
-      price =
+      // This means that the price module has a valid price, so immediately liquidate if there are
+      // undercollateralized positions according to that price.
 
+      // If there are no more rewards for this price time
+      if (rewardLimit.priceTime.eq(priceInfo.priceTime) && rewardLimit.remaining.isZero()) {
+        let positions = await this.genUndercollatPositionsAroundPrice(collateral, bigint(collatReq), bigint(priceInfo.price))
+        if (positions.length > 0) // either complete a twap and then liquidate, or calculate the time to complete a twap and then wait until then.
+          console.log("need to do things.");
+
+      } else {
+        let count = await this.liquidateGivenReadyPrice(collateral, bigint(priceInfo.price), bigint(collatReq));
+        return { sleepSeconds: 1, nothingToDo: count == 0 };
+      }
+
+
+
+
+    } else {
+      let undercollatPositions = await this.genUndercollatPositionsAroundPrice(collateral, bigint(collatReq), coinGeckoPrice.valueOf());
+      let countUndercollatPositions = undercollatPositions.length;
+      if (countUndercollatPositions != 0) {
+        this.report("Found " + countUndercollatPositions + " undercollateralized positions, with no valid price.")
+        // now we must decide to either pull a price now or wait to pull a price.
+        let minPriceCompletionTime = priceInfo.priceTime.add(minTwapTime).toNumber()
+        let maxPriceCompletionTime = priceInfo.priceTime.add(maxTwapTime).toNumber()
+        if (minPriceCompletionTime < blockTime && blockTime < maxPriceCompletionTime) {
+          await prices.connect(this.wallet).updatePrice(pair.address);
+        }
+      }
     }
-
-
-
-
-
-    let price = status.price;
-    let collatReq = await liquidations.collateralizationRequirement(collateral);
-
-    if (price != 0n) {
-      await this.liquidateGivenReadyPrice(collateral, price, collatReq);
-      runReturn.sleepSeconds = hours(1);
-      return runReturn;
-    }
-
-    price = this.bi(await prices.getInstantaneousPrice(pair.address));
-
-    let undercollatAccountAddresses: Array<string> = await this.genUndercollatPositionsAroundPrice(
-      collateral,
-      collatReq,
-      price,
-    );
-
-    if (undercollatAccountAddresses.length == 0) {
-      runReturn.sleepSeconds = hours(1);
-      return runReturn;
-    }
-
-    let priceTime: bigint = this.bi(status.time);
-    let currentTime = BigInt(await blockTime());
-
-    if (currentTime - priceTime > (priceTwapTime * 3n) / 2n) {
-      // price is NOT initialized
-      // there are undercollateralized positions but no price initialized, so begin the twap
-      await liquidations.connect(this.wallet).updatePrice(collateral);
-      runReturn.sleepSeconds = Number(priceTwapTime);
-      return runReturn;
-    }
-
-    if (currentTime > priceTime + priceTwapTime) {
-      // there are undercollateralized positions and an initialized price that is ready to be finalized.
-      // finalize the price and liquidate.
-      // could also recheck which positions are undercollateralized given the final price.
-      await liquidations.updatePrice(collateral);
-      return await this.genRunForCollateralType(collateral, pair);
-    }
-    // telse the price is initialized and there are undercollateralized positions, but we need to wait
-    // to finalize the price.
-    runReturn.nothingToDo = true;
-    runReturn.sleepSeconds = Number((priceTime + priceTwapTime) - currentTime);
-    return runReturn;
   }
 
-  async liquidateGivenReadyPrice(collateral: number, price: bigint, collatReq: bigint): Promise<void> {
-    let undercollatAccountAddresses: Array<string> = await this.genUndercollatPositionsAroundPrice(
+  async liquidateGivenReadyPrice(collateral: number, price: bigint, collatReq: bigint): Promise<number> {
+    let undercollatPositions: Array<BigNumber> = await this.genUndercollatPositionsAroundPrice(
       collateral,
       collatReq,
       price,
     );
-    if (undercollatAccountAddresses.length == 0) return;
+    let countUndercollatPositions = undercollatPositions.length;
+    if (countUndercollatPositions == 0) return 0;
+
+    this.report("Found " + countUndercollatPositions + " undercollateralized positions. Discovering.")
+
+    await this.protocol!.market.connect(this.wallet).accrueInterest();
 
     let liquidations = this.protocol!.liquidations;
-    await liquidations.connect(this.wallet).discoverUndercollateralizedAccounts(undercollatAccountAddresses, collateral);
+    await liquidations.connect(this.wallet).discoverUndercollateralizedPositions(collateral, undercollatPositions);
+    return countUndercollatPositions;
   }
 
   async genUndercollatPositionsAroundPrice(
     collateral: number,
     collatReq: bigint,
     estimatedPrice: bigint,
-  ): Promise<Array<string>> {
+  ): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
     let market = this.protocol!.market;
+
+    let collatCutoff: bigint = this._mul(collatReq, estimatedPrice);
 
     let priceMin = (estimatedPrice * 60n) / 100n;
     let priceMax = (estimatedPrice * 160n) / 100n;
 
-    let collatCutoff: bigint = this._mul(collatReq, estimatedPrice);
     let minBandIndex: bigint = await this.collatBandGivenPrice(priceMin, collatReq);
     let maxBandIndex: bigint = await this.collatBandGivenPrice(priceMax, collatReq);
 
-    let addresses: Array<string> = [];
+    let positions: Array<BigNumber> = [];
     for (let i = minBandIndex; i <= maxBandIndex; i++) {
-      let newAddresses = await accounting.accountsForBandIndex(collateral, i);
-      addresses.push.apply(addresses, newAddresses);
+      let newPositions = await accounting.positionsForBand(collateral, i.toString());
+      positions.push.apply(positions, newPositions);
     }
 
-    await market.connect(this.wallet).accrueInterest();
-    let collateralizations: Array<BigNumber> = await market.accountsCollateralization(addresses, collateral);
+    let collateralizations: Array<BigNumber> = await this.protocol!.accounting.positionsCollateralization(positions);
 
-    let undercollatAccountAddresses: Array<string> = [];
+    let undercollatPositions: Array<BigNumber> = [];
     for (let i = 0; i < collateralizations.length; i++) {
-      if (this.bi(collateralizations[i]) < collatCutoff) {
-        undercollatAccountAddresses.push(addresses[i]);
+      if (bigint(collateralizations[i]) < collatCutoff) {
+        undercollatPositions.push(positions[i]);
       }
     }
-    return undercollatAccountAddresses;
+    return undercollatPositions;
   }
 
   async collatBandGivenPrice(

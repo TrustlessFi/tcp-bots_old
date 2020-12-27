@@ -1,8 +1,11 @@
 import hre from 'hardhat';
 const e = hre.ethers;
 const provider = e.provider;
+import { BigNumber } from "ethers";
 
 export const StoMS = (seconds: number) => seconds * 1000;
+
+export const bigint = (x: BigNumber): bigint => BigInt(x.toString()).valueOf();
 
 export const formatTime = (seconds: number) => (new Date(seconds * 1000)).toISOString().substr(11, 8);
 

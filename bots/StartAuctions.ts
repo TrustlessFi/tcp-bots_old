@@ -1,21 +1,16 @@
-
-import { BigNumber } from 'ethers';
 import { ManagedBot, runReturn } from "./ManagedBot";
+import { bigint } from "./library";
 
 export class AuctionsStartBot extends ManagedBot {
   name = "🎩 StartAuctions";
 
   async runImpl(): Promise<runReturn> {
-    await this.attachProtocol();
-
     let auctions = this.protocol!.auctions;
     let nothingToDo = true
     let result = await auctions.shouldStartAuctions();
 
-    let zero = BigNumber.from(0);
-
-    if(result.surplusAmount > zero || result.deficitAmount > zero) {
-      this.report("Starting auctions. 🔥");
+    if(bigint(result.surplusAmount) > 0n || bigint(result.deficitAmount) > 0n) {
+      this.report('Starting auctions. 🔥');
       await auctions.checkReservesAndStartAuctions();
       nothingToDo = false;
     }
