@@ -6,6 +6,11 @@
     {
       "inputs": [
         {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        },
+        {
           "internalType": "uint256",
           "name": "count",
           "type": "uint256"
@@ -17,13 +22,43 @@
         }
       ],
       "name": "adjustDebt",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [],
       "name": "debt",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        }
+      ],
+      "name": "debtByCollateral",
       "outputs": [
         {
           "internalType": "uint256",
@@ -61,12 +96,17 @@
       "inputs": [
         {
           "internalType": "uint64",
-          "name": "id",
+          "name": "positionID",
           "type": "uint64"
         }
       ],
       "name": "getBasicPositionInfo",
       "outputs": [
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        },
         {
           "internalType": "uint256",
           "name": "debtCount",
@@ -82,7 +122,13 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        }
+      ],
       "name": "getLiquidationAccount",
       "outputs": [
         {
@@ -166,7 +212,7 @@
       "inputs": [
         {
           "internalType": "uint64",
-          "name": "id",
+          "name": "positionID",
           "type": "uint64"
         }
       ],
@@ -218,6 +264,11 @@
               "internalType": "uint32",
               "name": "collateralizationBand",
               "type": "uint32"
+            },
+            {
+              "internalType": "enum IAccounting.Collateral",
+              "name": "collateralType",
+              "type": "uint8"
             }
           ],
           "internalType": "struct IAccounting.DebtPosition",
@@ -236,7 +287,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "debt",
+              "name": "ethDebt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "btcDebt",
               "type": "uint256"
             },
             {
@@ -265,6 +321,29 @@
     },
     {
       "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "positionID",
+          "type": "uint64"
+        },
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        }
+      ],
+      "name": "registerPosition",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        },
         {
           "internalType": "address",
           "name": "account",
@@ -301,6 +380,11 @@
     },
     {
       "inputs": [
+        {
+          "internalType": "enum IAccounting.Collateral",
+          "name": "collateral",
+          "type": "uint8"
+        },
         {
           "components": [
             {
@@ -432,6 +516,11 @@
               "internalType": "uint32",
               "name": "collateralizationBand",
               "type": "uint32"
+            },
+            {
+              "internalType": "enum IAccounting.Collateral",
+              "name": "collateralType",
+              "type": "uint8"
             }
           ],
           "internalType": "struct IAccounting.DebtPosition",
@@ -450,7 +539,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "debt",
+              "name": "ethDebt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "btcDebt",
               "type": "uint256"
             },
             {
