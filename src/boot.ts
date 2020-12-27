@@ -17,7 +17,7 @@ async function main() {
   while(true) {
     console.log("starting loop");
     let AuctionsContract = await e.getContractFactory('Auctions');
-    let auctions = AuctionsContract.attach('0x76E49eff4ee5Fa7a5D71F5266BCDDB40eEAf8c4e') as Auctions;
+    let auctions = AuctionsContract.attach('0x28f5D55Df47d1505DfdBfE803aE1F3391E21Ad1b') as Auctions;
     let shouldStartAuctions = await auctions.shouldStartAuctions();
 
     let zero = BigNumber.from(0);
