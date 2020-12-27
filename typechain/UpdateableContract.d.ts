@@ -13,32 +13,31 @@ import {
 import {
   Contract,
   ContractTransaction,
-  Overrides,
   CallOverrides,
 } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface ActionValidatorInterface extends ethers.utils.Interface {
+interface UpdateableContractInterface extends ethers.utils.Interface {
   functions: {
-    "validateAction(string)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "validateAction",
-    values: [string]
+    functionFragment: "validUpdate",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "validateAction",
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class ActionValidator extends Contract {
+export class UpdateableContract extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -49,62 +48,59 @@ export class ActionValidator extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: ActionValidatorInterface;
+  interface: UpdateableContractInterface;
 
   functions: {
-    validateAction(
-      signature: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    "validateAction(string)"(
-      signature: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  validateAction(
-    signature: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  "validateAction(string)"(
-    signature: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    validateAction(signature: string, overrides?: CallOverrides): Promise<void>;
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    "validateAction(string)"(
-      signature: string,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
-    validateAction(
-      signature: string,
-      overrides?: Overrides
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "validateAction(string)"(
-      signature: string,
-      overrides?: Overrides
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    validateAction(
-      signature: string,
-      overrides?: Overrides
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "validateAction(string)"(
-      signature: string,
-      overrides?: Overrides
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

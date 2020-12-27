@@ -83,19 +83,12 @@ export class IUniswapV1Exchange extends Contract {
   interface: IUniswapV1ExchangeInterface;
 
   functions: {
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     ethToTokenSwapInput(
       arg0: BigNumberish,
@@ -243,10 +236,7 @@ export class IUniswapV1Exchange extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<[BigNumber, BigNumber]>;
 
     "removeLiquidity(uint256,uint256,uint256,uint256)"(
       arg0: BigNumberish,
@@ -254,10 +244,7 @@ export class IUniswapV1Exchange extends Contract {
       arg2: BigNumberish,
       arg3: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<[BigNumber, BigNumber]>;
 
     tokenToEthSwapInput(
       arg0: BigNumberish,

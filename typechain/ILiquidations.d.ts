@@ -22,18 +22,18 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface ILiquidationsInterface extends ethers.utils.Interface {
   functions: {
-    "completeSetup()": FunctionFragment;
+    "flashLiquidate(uint8,uint256)": FunctionFragment;
     "stop()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
+    functionFragment: "flashLiquidate",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "completeSetup",
+    functionFragment: "flashLiquidate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -69,27 +69,51 @@ export class ILiquidations extends Contract {
   interface: ILiquidationsInterface;
 
   functions: {
-    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+    flashLiquidate(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "flashLiquidate(uint8,uint256)"(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
-  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+  flashLiquidate(
+    collateral: BigNumberish,
+    baseTokensToRepay: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "flashLiquidate(uint8,uint256)"(
+    collateral: BigNumberish,
+    baseTokensToRepay: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
-    completeSetup(overrides?: CallOverrides): Promise<void>;
+    flashLiquidate(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
+    "flashLiquidate(uint8,uint256)"(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
@@ -118,9 +142,17 @@ export class ILiquidations extends Contract {
   };
 
   estimateGas: {
-    completeSetup(overrides?: Overrides): Promise<BigNumber>;
+    flashLiquidate(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
+    "flashLiquidate(uint8,uint256)"(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     stop(overrides?: Overrides): Promise<BigNumber>;
 
@@ -128,9 +160,17 @@ export class ILiquidations extends Contract {
   };
 
   populateTransaction: {
-    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
+    flashLiquidate(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "flashLiquidate(uint8,uint256)"(
+      collateral: BigNumberish,
+      baseTokensToRepay: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 

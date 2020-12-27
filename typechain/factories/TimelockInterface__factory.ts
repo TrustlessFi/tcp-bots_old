@@ -127,11 +127,6 @@ const _abi = [
         name: "",
         type: "bytes",
       },
-      {
-        internalType: "bytes",
-        name: "returnData",
-        type: "bytes",
-      },
     ],
     payable: true,
     stateMutability: "payable",

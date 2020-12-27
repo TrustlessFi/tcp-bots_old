@@ -178,6 +178,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "btc",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -230,8 +243,14 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "coinWethPair",
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+    ],
+    name: "collateralToPair",
     outputs: [
       {
         internalType: "contract IUniswapV2Pair",
@@ -256,16 +275,21 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "delayedRewards",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract IDelayedRewards",
-        name: "",
+        internalType: "address",
+        name: "to",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
     ],
-    stateMutability: "view",
+    name: "distributeCNP",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -329,7 +353,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getReferencePairs",
+    name: "getCollateralPairs",
     outputs: [
       {
         internalType: "contract IUniswapV2Pair[]",
@@ -342,12 +366,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "isInitialized",
+    name: "getReferencePairs",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "contract IUniswapV2Pair[]",
         name: "",
-        type: "bool",
+        type: "address[]",
       },
     ],
     stateMutability: "view",
@@ -424,13 +448,19 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "pegManager",
+    inputs: [
+      {
+        internalType: "contract IUniswapV2Pair",
+        name: "pair",
+        type: "address",
+      },
+    ],
+    name: "pairToCollateral",
     outputs: [
       {
-        internalType: "contract IPegManager",
+        internalType: "enum IAccounting.Collateral",
         name: "",
-        type: "address",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -455,6 +485,19 @@ const _abi = [
     outputs: [
       {
         internalType: "contract IProtocolLock",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rates",
+    outputs: [
+      {
+        internalType: "contract IRates",
         name: "",
         type: "address",
       },
@@ -556,97 +599,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IAuctions",
-        name: "_auctions",
-        type: "address",
-      },
-    ],
-    name: "setAuctions",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract ILiquidations",
-        name: "_liquidations",
-        type: "address",
-      },
-    ],
-    name: "setLiquidations",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IMarket",
-        name: "_market",
-        type: "address",
-      },
-    ],
-    name: "setMarket",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IPegManager",
-        name: "_pegManager",
-        type: "address",
-      },
-    ],
-    name: "setPegManager",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IPrices",
-        name: "_prices",
-        type: "address",
-      },
-    ],
-    name: "setPrices",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IRewards",
-        name: "_rewards",
-        type: "address",
-      },
-    ],
-    name: "setRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract ISettlement",
-        name: "_settlement",
-        type: "address",
-      },
-    ],
-    name: "setSettlement",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "contract ITokenAllocationCreator",
         name: "_allocationCreator",
         type: "address",
@@ -699,6 +651,58 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "contract IAuctions",
+        name: "_auctions",
+        type: "address",
+      },
+    ],
+    name: "upgradeAuctions",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract ILiquidations",
+        name: "_liquidations",
+        type: "address",
+      },
+    ],
+    name: "upgradeLiquidations",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IMarket",
+        name: "_market",
+        type: "address",
+      },
+    ],
+    name: "upgradeMarket",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IPrices",
+        name: "_prices",
+        type: "address",
+      },
+    ],
+    name: "upgradePrices",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newGovernor",
         type: "address",
@@ -712,13 +716,52 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "string",
-        name: "signature",
-        type: "string",
+        internalType: "contract IRates",
+        name: "_rates",
+        type: "address",
       },
     ],
-    name: "validateAction",
+    name: "upgradeRates",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IRewards",
+        name: "_rewards",
+        type: "address",
+      },
+    ],
+    name: "upgradeRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract ISettlement",
+        name: "_settlement",
+        type: "address",
+      },
+    ],
+    name: "upgradeSettlement",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "votingCNPSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "circulating",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },

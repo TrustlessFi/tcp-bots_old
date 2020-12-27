@@ -24,7 +24,7 @@ interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
     "borrowRewardsPortion()": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "ensureMinimumCollateralLiquidity(uint256)": FunctionFragment;
+    "ensureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
     "ensureMinimumReferenceLiquidity(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
   };
@@ -39,7 +39,7 @@ interface IRewardsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ensureMinimumCollateralLiquidity",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ensureMinimumReferenceLiquidity",
@@ -71,7 +71,7 @@ interface IRewardsInterface extends ethers.utils.Interface {
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
-    "RewardsDistributed(address,address,uint64,uint64,uint256)": EventFragment;
+    "RewardsDistributed(address,uint64,uint256)": EventFragment;
     "ShutdownPairTokensUnlocked(address,address,uint256)": EventFragment;
   };
 
@@ -98,28 +98,22 @@ export class IRewards extends Contract {
   interface: IRewardsInterface;
 
   functions: {
-    borrowRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "borrowRewardsPortion()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     ensureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -148,11 +142,13 @@ export class IRewards extends Contract {
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   ensureMinimumCollateralLiquidity(
+    collateralType: BigNumberish,
     collateralDebt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "ensureMinimumCollateralLiquidity(uint256)"(
+  "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+    collateralType: BigNumberish,
     collateralDebt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -181,11 +177,13 @@ export class IRewards extends Contract {
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
     ensureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -227,10 +225,8 @@ export class IRewards extends Contract {
 
     RewardsDistributed(
       account: string | null,
-      pair: string | null,
       period: BigNumberish | null,
-      periods: null,
-      rewards: null
+      cnpRewards: null
     ): EventFilter;
 
     ShutdownPairTokensUnlocked(
@@ -250,11 +246,13 @@ export class IRewards extends Contract {
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     ensureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -288,11 +286,13 @@ export class IRewards extends Contract {
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     ensureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
       collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;

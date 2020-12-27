@@ -135,66 +135,44 @@ export class IERC721 extends Contract {
     balanceOf(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<{
-      balance: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { balance: BigNumber }>;
 
     "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<{
-      balance: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { balance: BigNumber }>;
 
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      operator: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { operator: string }>;
 
     "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      operator: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { operator: string }>;
 
     isApprovedForAll(
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     ownerOf(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      owner: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { owner: string }>;
 
     "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      owner: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { owner: string }>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -226,16 +204,12 @@ export class IERC721 extends Contract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     transferFrom(
       from: string,

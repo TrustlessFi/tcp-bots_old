@@ -48,19 +48,12 @@ export class IUniswapV1Factory extends Contract {
   interface: IUniswapV1FactoryInterface;
 
   functions: {
-    getExchange(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    getExchange(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     "getExchange(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
   };
 
   getExchange(arg0: string, overrides?: CallOverrides): Promise<string>;

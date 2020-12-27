@@ -212,57 +212,29 @@ export class UniswapV2Pair extends Contract {
   interface: UniswapV2PairInterface;
 
   functions: {
-    DOMAIN_SEPARATOR(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
-    "DOMAIN_SEPARATOR()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "DOMAIN_SEPARATOR()"(overrides?: CallOverrides): Promise<[string]>;
 
-    MINIMUM_LIQUIDITY(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    MINIMUM_LIQUIDITY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "MINIMUM_LIQUIDITY()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "MINIMUM_LIQUIDITY()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    PERMIT_TYPEHASH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "PERMIT_TYPEHASH()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
 
     allowance(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "allowance(address,address)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     approve(
       spender: string,
@@ -276,19 +248,12 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     burn(to: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -297,51 +262,33 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    decimals(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "decimals()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
 
-    factory(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    factory(overrides?: CallOverrides): Promise<[string]>;
 
-    "factory()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "factory()"(overrides?: CallOverrides): Promise<[string]>;
 
     getReserves(
       overrides?: CallOverrides
-    ): Promise<{
-      _reserve0: BigNumber;
-      _reserve1: BigNumber;
-      _blockTimestampLast: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: number;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        _reserve0: BigNumber;
+        _reserve1: BigNumber;
+        _blockTimestampLast: number;
+      }
+    >;
 
     "getReserves()"(
       overrides?: CallOverrides
-    ): Promise<{
-      _reserve0: BigNumber;
-      _reserve1: BigNumber;
-      _blockTimestampLast: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: number;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        _reserve0: BigNumber;
+        _reserve1: BigNumber;
+        _blockTimestampLast: number;
+      }
+    >;
 
     initialize(
       _token0: string,
@@ -355,17 +302,9 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    kLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    kLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "kLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "kLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     mint(to: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -374,31 +313,16 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    name(overrides?: CallOverrides): Promise<[string]>;
 
-    "name()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
 
-    nonces(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    nonces(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "nonces(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     permit(
       owner: string,
@@ -422,29 +346,13 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    price0CumulativeLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    price0CumulativeLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "price0CumulativeLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "price0CumulativeLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    price1CumulativeLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    price1CumulativeLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "price1CumulativeLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "price1CumulativeLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     skim(to: string, overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -469,57 +377,25 @@ export class UniswapV2Pair extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    symbol(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "symbol()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
     sync(overrides?: Overrides): Promise<ContractTransaction>;
 
     "sync()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    token0(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    token0(overrides?: CallOverrides): Promise<[string]>;
 
-    "token0()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "token0()"(overrides?: CallOverrides): Promise<[string]>;
 
-    token1(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    token1(overrides?: CallOverrides): Promise<[string]>;
 
-    "token1()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "token1()"(overrides?: CallOverrides): Promise<[string]>;
 
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
       to: string,
@@ -608,25 +484,23 @@ export class UniswapV2Pair extends Contract {
 
   getReserves(
     overrides?: CallOverrides
-  ): Promise<{
-    _reserve0: BigNumber;
-    _reserve1: BigNumber;
-    _blockTimestampLast: number;
-    0: BigNumber;
-    1: BigNumber;
-    2: number;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      _reserve0: BigNumber;
+      _reserve1: BigNumber;
+      _blockTimestampLast: number;
+    }
+  >;
 
   "getReserves()"(
     overrides?: CallOverrides
-  ): Promise<{
-    _reserve0: BigNumber;
-    _reserve1: BigNumber;
-    _blockTimestampLast: number;
-    0: BigNumber;
-    1: BigNumber;
-    2: number;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      _reserve0: BigNumber;
+      _reserve1: BigNumber;
+      _blockTimestampLast: number;
+    }
+  >;
 
   initialize(
     _token0: string,
@@ -808,22 +682,16 @@ export class UniswapV2Pair extends Contract {
     burn(
       to: string,
       overrides?: CallOverrides
-    ): Promise<{
-      amount0: BigNumber;
-      amount1: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
+    >;
 
     "burn(address)"(
       to: string,
       overrides?: CallOverrides
-    ): Promise<{
-      amount0: BigNumber;
-      amount1: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
+    >;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -835,25 +703,23 @@ export class UniswapV2Pair extends Contract {
 
     getReserves(
       overrides?: CallOverrides
-    ): Promise<{
-      _reserve0: BigNumber;
-      _reserve1: BigNumber;
-      _blockTimestampLast: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: number;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        _reserve0: BigNumber;
+        _reserve1: BigNumber;
+        _blockTimestampLast: number;
+      }
+    >;
 
     "getReserves()"(
       overrides?: CallOverrides
-    ): Promise<{
-      _reserve0: BigNumber;
-      _reserve1: BigNumber;
-      _blockTimestampLast: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: number;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        _reserve0: BigNumber;
+        _reserve1: BigNumber;
+        _blockTimestampLast: number;
+      }
+    >;
 
     initialize(
       _token0: string,

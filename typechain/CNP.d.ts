@@ -24,6 +24,7 @@ interface CNPInterface extends ethers.utils.Interface {
   functions: {
     "DELEGATION_TYPEHASH()": FunctionFragment;
     "DOMAIN_TYPEHASH()": FunctionFragment;
+    "addGovernor(address)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -34,13 +35,13 @@ interface CNPInterface extends ethers.utils.Interface {
     "delegate(address)": FunctionFragment;
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "delegates(address)": FunctionFragment;
+    "distributeTo(address,uint256)": FunctionFragment;
     "getCurrentVotes(address)": FunctionFragment;
     "getPriorVotes(address,uint256)": FunctionFragment;
-    "governor()": FunctionFragment;
+    "governor(address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mintTo(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "newGovernor(address)": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "numCheckpoints(address)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -57,6 +58,7 @@ interface CNPInterface extends ethers.utils.Interface {
     functionFragment: "DOMAIN_TYPEHASH",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "addGovernor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -93,6 +95,10 @@ interface CNPInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "delegates", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "distributeTo",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getCurrentVotes",
     values: [string]
   ): string;
@@ -100,7 +106,7 @@ interface CNPInterface extends ethers.utils.Interface {
     functionFragment: "getPriorVotes",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "governor", values?: undefined): string;
+  encodeFunctionData(functionFragment: "governor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
@@ -110,7 +116,6 @@ interface CNPInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "newGovernor", values: [string]): string;
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(
     functionFragment: "numCheckpoints",
@@ -138,6 +143,10 @@ interface CNPInterface extends ethers.utils.Interface {
     functionFragment: "DOMAIN_TYPEHASH",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "addGovernor",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -158,6 +167,10 @@ interface CNPInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "delegates", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "distributeTo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getCurrentVotes",
     data: BytesLike
   ): Result;
@@ -172,10 +185,6 @@ interface CNPInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "newGovernor",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "numCheckpoints",
@@ -196,14 +205,14 @@ interface CNPInterface extends ethers.utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
-    "NewGovernor(address,address)": EventFragment;
+    "GovernorAdded(address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewGovernor"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GovernorAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -221,45 +230,35 @@ export class CNP extends Contract {
   interface: CNPInterface;
 
   functions: {
-    DELEGATION_TYPEHASH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "DELEGATION_TYPEHASH()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "DELEGATION_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
 
-    DOMAIN_TYPEHASH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
 
-    "DOMAIN_TYPEHASH()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
+
+    addGovernor(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     allowance(
       account: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "allowance(address,address)"(
       account: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     approve(
       spender: string,
@@ -273,19 +272,12 @@ export class CNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     burnFrom(
       account: string,
@@ -303,35 +295,17 @@ export class CNP extends Contract {
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      fromBlock: number;
-      votes: BigNumber;
-      0: number;
-      1: BigNumber;
-    }>;
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
     "checkpoints(address,uint32)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      fromBlock: number;
-      votes: BigNumber;
-      0: number;
-      1: BigNumber;
-    }>;
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
-    decimals(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "decimals()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseAllowance(
       spender: string,
@@ -375,61 +349,53 @@ export class CNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    delegates(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    delegates(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     "delegates(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
+
+    distributeTo(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "distributeTo(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     getCurrentVotes(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "getCurrentVotes(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     getPriorVotes(
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "getPriorVotes(address,uint256)"(
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-    "governor()"(
+    "governor(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[boolean]>;
 
     increaseAllowance(
       spender: string,
@@ -444,90 +410,42 @@ export class CNP extends Contract {
     ): Promise<ContractTransaction>;
 
     mintTo(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "mintTo(address,uint256)"(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    name(overrides?: CallOverrides): Promise<[string]>;
 
-    "name()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
 
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    nonces(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    nonces(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "nonces(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    numCheckpoints(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<[number]>;
 
     "numCheckpoints(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    ): Promise<[number]>;
 
-    symbol(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "symbol()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
       dst: string,
@@ -563,6 +481,16 @@ export class CNP extends Contract {
   DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<string>;
 
   "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
+
+  addGovernor(
+    newGovernor: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "addGovernor(address)"(
+    newGovernor: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   allowance(
     account: string,
@@ -611,23 +539,13 @@ export class CNP extends Contract {
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    fromBlock: number;
-    votes: BigNumber;
-    0: number;
-    1: BigNumber;
-  }>;
+  ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
   "checkpoints(address,uint32)"(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    fromBlock: number;
-    votes: BigNumber;
-    0: number;
-    1: BigNumber;
-  }>;
+  ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -682,6 +600,18 @@ export class CNP extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  distributeTo(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "distributeTo(address,uint256)"(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   getCurrentVotes(
     account: string,
     overrides?: CallOverrides
@@ -704,9 +634,12 @@ export class CNP extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  governor(overrides?: CallOverrides): Promise<string>;
+  governor(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
-  "governor()"(overrides?: CallOverrides): Promise<string>;
+  "governor(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   increaseAllowance(
     spender: string,
@@ -721,13 +654,13 @@ export class CNP extends Contract {
   ): Promise<ContractTransaction>;
 
   mintTo(
-    to: string,
+    dest: string,
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "mintTo(address,uint256)"(
-    to: string,
+    dest: string,
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -735,16 +668,6 @@ export class CNP extends Contract {
   name(overrides?: CallOverrides): Promise<string>;
 
   "name()"(overrides?: CallOverrides): Promise<string>;
-
-  newGovernor(
-    _newGovernor: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "newGovernor(address)"(
-    _newGovernor: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -803,6 +726,13 @@ export class CNP extends Contract {
 
     "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
+    addGovernor(newGovernor: string, overrides?: CallOverrides): Promise<void>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     allowance(
       account: string,
       spender: string,
@@ -850,23 +780,13 @@ export class CNP extends Contract {
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      fromBlock: number;
-      votes: BigNumber;
-      0: number;
-      1: BigNumber;
-    }>;
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
     "checkpoints(address,uint32)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      fromBlock: number;
-      votes: BigNumber;
-      0: number;
-      1: BigNumber;
-    }>;
+    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -918,6 +838,18 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    distributeTo(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "distributeTo(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getCurrentVotes(
       account: string,
       overrides?: CallOverrides
@@ -940,9 +872,12 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    governor(overrides?: CallOverrides): Promise<string>;
+    governor(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
-    "governor()"(overrides?: CallOverrides): Promise<string>;
+    "governor(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     increaseAllowance(
       spender: string,
@@ -957,13 +892,13 @@ export class CNP extends Contract {
     ): Promise<boolean>;
 
     mintTo(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "mintTo(address,uint256)"(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -971,13 +906,6 @@ export class CNP extends Contract {
     name(overrides?: CallOverrides): Promise<string>;
 
     "name()"(overrides?: CallOverrides): Promise<string>;
-
-    newGovernor(_newGovernor: string, overrides?: CallOverrides): Promise<void>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1047,10 +975,7 @@ export class CNP extends Contract {
       newBalance: null
     ): EventFilter;
 
-    NewGovernor(
-      previousGovernor: string | null,
-      newGovernor: string | null
-    ): EventFilter;
+    GovernorAdded(newGovernor: string | null): EventFilter;
 
     Transfer(from: string | null, to: string | null, amount: null): EventFilter;
   };
@@ -1063,6 +988,13 @@ export class CNP extends Contract {
     DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
 
     "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addGovernor(newGovernor: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     allowance(
       account: string,
@@ -1169,6 +1101,18 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    distributeTo(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "distributeTo(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     getCurrentVotes(
       account: string,
       overrides?: CallOverrides
@@ -1191,9 +1135,12 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    governor(overrides?: CallOverrides): Promise<BigNumber>;
+    governor(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "governor(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     increaseAllowance(
       spender: string,
@@ -1208,13 +1155,13 @@ export class CNP extends Contract {
     ): Promise<BigNumber>;
 
     mintTo(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "mintTo(address,uint256)"(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1222,16 +1169,6 @@ export class CNP extends Contract {
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
 
     nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1295,6 +1232,16 @@ export class CNP extends Contract {
 
     "DOMAIN_TYPEHASH()"(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    addGovernor(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     allowance(
@@ -1411,6 +1358,18 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    distributeTo(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "distributeTo(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     getCurrentVotes(
       account: string,
       overrides?: CallOverrides
@@ -1433,9 +1392,15 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    governor(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "governor(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     increaseAllowance(
       spender: string,
@@ -1450,13 +1415,13 @@ export class CNP extends Contract {
     ): Promise<PopulatedTransaction>;
 
     mintTo(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "mintTo(address,uint256)"(
-      to: string,
+      dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1464,16 +1429,6 @@ export class CNP extends Contract {
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
 
     nonces(
       arg0: string,

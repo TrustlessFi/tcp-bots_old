@@ -131,8 +131,19 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "completeSetup",
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+      {
+        internalType: "uint256",
+        name: "baseTokensToRepay",
+        type: "uint256",
+      },
+    ],
+    name: "flashLiquidate",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

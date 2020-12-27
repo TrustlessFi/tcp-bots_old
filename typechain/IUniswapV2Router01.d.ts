@@ -254,17 +254,9 @@ export class IUniswapV2Router01 extends Contract {
   interface: IUniswapV2Router01Interface;
 
   functions: {
-    WETH(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    WETH(overrides?: CallOverrides): Promise<[string]>;
 
-    "WETH()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "WETH()"(overrides?: CallOverrides): Promise<[string]>;
 
     addLiquidity(
       tokenA: string,
@@ -310,113 +302,75 @@ export class IUniswapV2Router01 extends Contract {
       overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    factory(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    factory(overrides?: CallOverrides): Promise<[string]>;
 
-    "factory()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "factory()"(overrides?: CallOverrides): Promise<[string]>;
 
     getAmountIn(
       amountOut: BigNumberish,
       reserveIn: BigNumberish,
       reserveOut: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountIn: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountIn: BigNumber }>;
 
     "getAmountIn(uint256,uint256,uint256)"(
       amountOut: BigNumberish,
       reserveIn: BigNumberish,
       reserveOut: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountIn: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountIn: BigNumber }>;
 
     getAmountOut(
       amountIn: BigNumberish,
       reserveIn: BigNumberish,
       reserveOut: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     "getAmountOut(uint256,uint256,uint256)"(
       amountIn: BigNumberish,
       reserveIn: BigNumberish,
       reserveOut: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     getAmountsIn(
       amountOut: BigNumberish,
       path: string[],
       overrides?: CallOverrides
-    ): Promise<{
-      amounts: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
 
     "getAmountsIn(uint256,address[])"(
       amountOut: BigNumberish,
       path: string[],
       overrides?: CallOverrides
-    ): Promise<{
-      amounts: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
 
     getAmountsOut(
       amountIn: BigNumberish,
       path: string[],
       overrides?: CallOverrides
-    ): Promise<{
-      amounts: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
 
     "getAmountsOut(uint256,address[])"(
       amountIn: BigNumberish,
       path: string[],
       overrides?: CallOverrides
-    ): Promise<{
-      amounts: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { amounts: BigNumber[] }>;
 
     quote(
       amountA: BigNumberish,
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountB: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountB: BigNumber }>;
 
     "quote(uint256,uint256,uint256)"(
       amountA: BigNumberish,
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountB: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountB: BigNumber }>;
 
     removeLiquidity(
       tokenA: string,
@@ -960,14 +914,13 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      liquidity: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        amountA: BigNumber;
+        amountB: BigNumber;
+        liquidity: BigNumber;
+      }
+    >;
 
     "addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)"(
       tokenA: string,
@@ -979,14 +932,13 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      liquidity: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        amountA: BigNumber;
+        amountB: BigNumber;
+        liquidity: BigNumber;
+      }
+    >;
 
     addLiquidityETH(
       token: string,
@@ -996,14 +948,13 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      liquidity: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        amountToken: BigNumber;
+        amountETH: BigNumber;
+        liquidity: BigNumber;
+      }
+    >;
 
     "addLiquidityETH(address,uint256,uint256,uint256,address,uint256)"(
       token: string,
@@ -1013,14 +964,13 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      liquidity: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        amountToken: BigNumber;
+        amountETH: BigNumber;
+        liquidity: BigNumber;
+      }
+    >;
 
     factory(overrides?: CallOverrides): Promise<string>;
 
@@ -1101,12 +1051,9 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
+    >;
 
     "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)"(
       tokenA: string,
@@ -1117,12 +1064,9 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
+    >;
 
     removeLiquidityETH(
       token: string,
@@ -1132,12 +1076,9 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
+    >;
 
     "removeLiquidityETH(address,uint256,uint256,uint256,address,uint256)"(
       token: string,
@@ -1147,12 +1088,9 @@ export class IUniswapV2Router01 extends Contract {
       to: string,
       deadline: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
+    >;
 
     removeLiquidityETHWithPermit(
       token: string,
@@ -1166,12 +1104,9 @@ export class IUniswapV2Router01 extends Contract {
       r: BytesLike,
       s: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
+    >;
 
     "removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)"(
       token: string,
@@ -1185,12 +1120,9 @@ export class IUniswapV2Router01 extends Contract {
       r: BytesLike,
       s: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      amountToken: BigNumber;
-      amountETH: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountToken: BigNumber; amountETH: BigNumber }
+    >;
 
     removeLiquidityWithPermit(
       tokenA: string,
@@ -1205,12 +1137,9 @@ export class IUniswapV2Router01 extends Contract {
       r: BytesLike,
       s: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
+    >;
 
     "removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)"(
       tokenA: string,
@@ -1225,12 +1154,9 @@ export class IUniswapV2Router01 extends Contract {
       r: BytesLike,
       s: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      amountA: BigNumber;
-      amountB: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amountA: BigNumber; amountB: BigNumber }
+    >;
 
     swapETHForExactTokens(
       amountOut: BigNumberish,

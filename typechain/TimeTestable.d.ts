@@ -23,8 +23,8 @@ interface TimeTestableInterface extends ethers.utils.Interface {
   functions: {
     "currentPeriod()": FunctionFragment;
     "currentTime()": FunctionFragment;
+    "firstPeriod()": FunctionFragment;
     "futureTime(uint64)": FunctionFragment;
-    "getFirstPeriod()": FunctionFragment;
     "getPeriodLength()": FunctionFragment;
     "periodLength()": FunctionFragment;
   };
@@ -38,12 +38,12 @@ interface TimeTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "futureTime",
-    values: [BigNumberish]
+    functionFragment: "firstPeriod",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getFirstPeriod",
-    values?: undefined
+    functionFragment: "futureTime",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPeriodLength",
@@ -62,11 +62,11 @@ interface TimeTestableInterface extends ethers.utils.Interface {
     functionFragment: "currentTime",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "futureTime", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getFirstPeriod",
+    functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "futureTime", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPeriodLength",
     data: BytesLike
@@ -95,87 +95,45 @@ export class TimeTestable extends Contract {
   functions: {
     currentPeriod(
       overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
     "currentPeriod()"(
       overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
     currentTime(
       overrides?: CallOverrides
-    ): Promise<{
-      time: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { time: BigNumber }>;
 
     "currentTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      time: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { time: BigNumber }>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     futureTime(
       addition: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      time: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { time: BigNumber }>;
 
     "futureTime(uint64)"(
       addition: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      time: BigNumber;
-      0: BigNumber;
-    }>;
-
-    getFirstPeriod(
-      overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
-
-    "getFirstPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { time: BigNumber }>;
 
     getPeriodLength(
       overrides?: CallOverrides
-    ): Promise<{
-      length: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { length: BigNumber }>;
 
     "getPeriodLength()"(
       overrides?: CallOverrides
-    ): Promise<{
-      length: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { length: BigNumber }>;
 
-    periodLength(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "periodLength()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -186,6 +144,10 @@ export class TimeTestable extends Contract {
 
   "currentTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   futureTime(
     addition: BigNumberish,
     overrides?: CallOverrides
@@ -195,10 +157,6 @@ export class TimeTestable extends Contract {
     addition: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  getFirstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "getFirstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPeriodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -217,6 +175,10 @@ export class TimeTestable extends Contract {
 
     "currentTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     futureTime(
       addition: BigNumberish,
       overrides?: CallOverrides
@@ -226,10 +188,6 @@ export class TimeTestable extends Contract {
       addition: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getFirstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getFirstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPeriodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -251,6 +209,10 @@ export class TimeTestable extends Contract {
 
     "currentTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     futureTime(
       addition: BigNumberish,
       overrides?: CallOverrides
@@ -260,10 +222,6 @@ export class TimeTestable extends Contract {
       addition: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getFirstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getFirstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPeriodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -283,6 +241,10 @@ export class TimeTestable extends Contract {
 
     "currentTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     futureTime(
       addition: BigNumberish,
       overrides?: CallOverrides
@@ -290,12 +252,6 @@ export class TimeTestable extends Contract {
 
     "futureTime(uint64)"(
       addition: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getFirstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getFirstPeriod()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

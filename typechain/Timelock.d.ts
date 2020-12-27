@@ -171,57 +171,25 @@ export class Timelock extends Contract {
   interface: TimelockInterface;
 
   functions: {
-    GRACE_PERIOD(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    GRACE_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "GRACE_PERIOD()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "GRACE_PERIOD()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    MAXIMUM_DELAY(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    MAXIMUM_DELAY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "MAXIMUM_DELAY()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "MAXIMUM_DELAY()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    MINIMUM_DELAY(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    MINIMUM_DELAY(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "MINIMUM_DELAY()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     acceptAdmin(overrides?: Overrides): Promise<ContractTransaction>;
 
     "acceptAdmin()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    admin(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    admin(overrides?: CallOverrides): Promise<[string]>;
 
-    "admin()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "admin()"(overrides?: CallOverrides): Promise<[string]>;
 
     cancelTransaction(
       target: string,
@@ -253,17 +221,9 @@ export class Timelock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    delay(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    delay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "delay()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "delay()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     executeTransaction(
       target: string,
@@ -283,29 +243,13 @@ export class Timelock extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
-    pendingAdmin(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    pendingAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    "pendingAdmin()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "pendingAdmin()"(overrides?: CallOverrides): Promise<[string]>;
 
     queueTransaction(
       target: string,
@@ -328,16 +272,12 @@ export class Timelock extends Contract {
     queuedTransactions(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "queuedTransactions(bytes32)"(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     setDelay(
       delay_: BigNumberish,
@@ -550,12 +490,7 @@ export class Timelock extends Contract {
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      success: boolean;
-      returnData: string;
-      0: boolean;
-      1: string;
-    }>;
+    ): Promise<string>;
 
     "executeTransaction(address,uint256,string,bytes,uint256)"(
       target: string,
@@ -564,12 +499,7 @@ export class Timelock extends Contract {
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      success: boolean;
-      returnData: string;
-      0: boolean;
-      1: string;
-    }>;
+    ): Promise<string>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 

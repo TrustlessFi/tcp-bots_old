@@ -88,129 +88,87 @@ export class CoinSafeMathTestable extends Contract {
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "_div(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     _mul(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "_mul(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     _mulDiv(
       a: BigNumberish,
       b: BigNumberish,
       c: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "_mulDiv(uint256,uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       c: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     add(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "add(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     div(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "div(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     mul(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "mul(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     sub(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
 
     "sub(uint256,uint256)"(
       a: BigNumberish,
       b: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      r: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { r: BigNumber }>;
   };
 
   _div(

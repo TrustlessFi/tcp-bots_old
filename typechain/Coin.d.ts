@@ -29,6 +29,7 @@ interface CoinInterface extends ethers.utils.Interface {
     "burnReserves(uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "deployer()": FunctionFragment;
     "distributeReserves(address,uint256)": FunctionFragment;
     "flashLoanFeeRate()": FunctionFragment;
     "flashMint(uint256)": FunctionFragment;
@@ -38,11 +39,13 @@ interface CoinInterface extends ethers.utils.Interface {
     "mintTo(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "reserves()": FunctionFragment;
-    "setflashLoanFeeRate(uint256)": FunctionFragment;
+    "setFlashLoanFeeRate(uint256)": FunctionFragment;
+    "stopped()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -67,6 +70,7 @@ interface CoinInterface extends ethers.utils.Interface {
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "distributeReserves",
     values: [string, BigNumberish]
@@ -92,9 +96,10 @@ interface CoinInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "reserves", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "setflashLoanFeeRate",
+    functionFragment: "setFlashLoanFeeRate",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -107,6 +112,10 @@ interface CoinInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -122,6 +131,7 @@ interface CoinInterface extends ethers.utils.Interface {
     functionFragment: "decreaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "distributeReserves",
     data: BytesLike
@@ -141,9 +151,10 @@ interface CoinInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "reserves", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setflashLoanFeeRate",
+    functionFragment: "setFlashLoanFeeRate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -152,6 +163,10 @@ interface CoinInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
@@ -190,17 +205,13 @@ export class Coin extends Contract {
       owner: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "allowance(address,address)"(
       owner: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     approve(
       spender: string,
@@ -214,19 +225,12 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     burnFrom(
       account: string,
@@ -250,17 +254,9 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    decimals(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "decimals()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
 
     decreaseAllowance(
       spender: string,
@@ -274,6 +270,10 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
     distributeReserves(
       dest: string,
       count: BigNumberish,
@@ -286,17 +286,9 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    flashLoanFeeRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    flashLoanFeeRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "flashLoanFeeRate()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "flashLoanFeeRate()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     flashMint(
       countTokensToMint: BigNumberish,
@@ -308,17 +300,9 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     increaseAllowance(
       spender: string,
@@ -333,12 +317,12 @@ export class Coin extends Contract {
     ): Promise<ContractTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -354,63 +338,35 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    name(overrides?: CallOverrides): Promise<[string]>;
 
-    "name()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
 
-    reserves(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    reserves(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "reserves()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "reserves()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    setflashLoanFeeRate(
+    setFlashLoanFeeRate(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setflashLoanFeeRate(uint256)"(
+    "setFlashLoanFeeRate(uint256)"(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    symbol(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "symbol()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
+
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
       recipient: string,
@@ -437,6 +393,16 @@ export class Coin extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   allowance(
@@ -508,6 +474,10 @@ export class Coin extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
   distributeReserves(
     dest: string,
     count: BigNumberish,
@@ -550,10 +520,10 @@ export class Coin extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -577,15 +547,19 @@ export class Coin extends Contract {
 
   "reserves()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  setflashLoanFeeRate(
+  setFlashLoanFeeRate(
     rate: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setflashLoanFeeRate(uint256)"(
+  "setFlashLoanFeeRate(uint256)"(
     rate: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -620,6 +594,13 @@ export class Coin extends Contract {
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
     allowance(
@@ -688,6 +669,10 @@ export class Coin extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
     distributeReserves(
       dest: string,
       count: BigNumberish,
@@ -730,10 +715,10 @@ export class Coin extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -757,15 +742,19 @@ export class Coin extends Contract {
 
     "reserves()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setflashLoanFeeRate(
+    setFlashLoanFeeRate(
       rate: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setflashLoanFeeRate(uint256)"(
+    "setFlashLoanFeeRate(uint256)"(
       rate: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -798,6 +787,13 @@ export class Coin extends Contract {
       sender: string,
       recipient: string,
       amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -890,6 +886,10 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     distributeReserves(
       dest: string,
       count: BigNumberish,
@@ -932,10 +932,10 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -959,15 +959,19 @@ export class Coin extends Contract {
 
     "reserves()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setflashLoanFeeRate(
+    setFlashLoanFeeRate(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setflashLoanFeeRate(uint256)"(
+    "setFlashLoanFeeRate(uint256)"(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1001,6 +1005,16 @@ export class Coin extends Contract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -1077,6 +1091,10 @@ export class Coin extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     distributeReserves(
       dest: string,
       count: BigNumberish,
@@ -1122,12 +1140,12 @@ export class Coin extends Contract {
     ): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1151,15 +1169,19 @@ export class Coin extends Contract {
 
     "reserves()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    setflashLoanFeeRate(
+    setFlashLoanFeeRate(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setflashLoanFeeRate(uint256)"(
+    "setFlashLoanFeeRate(uint256)"(
       rate: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1193,6 +1215,16 @@ export class Coin extends Contract {
       recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

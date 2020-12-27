@@ -20,9 +20,10 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface IPegManagerInterface extends ethers.utils.Interface {
+interface IRatesInterface extends ethers.utils.Interface {
   functions: {
-    "interestRate()": FunctionFragment;
+    "completeSetup()": FunctionFragment;
+    "interestRateAbsoluteValue()": FunctionFragment;
     "maxSteps()": FunctionFragment;
     "positiveInterestRate()": FunctionFragment;
     "stepsOff()": FunctionFragment;
@@ -30,7 +31,11 @@ interface IPegManagerInterface extends ethers.utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "interestRate",
+    functionFragment: "completeSetup",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "interestRateAbsoluteValue",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "maxSteps", values?: undefined): string;
@@ -42,7 +47,11 @@ interface IPegManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "interestRate",
+    functionFragment: "completeSetup",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "interestRateAbsoluteValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "maxSteps", data: BytesLike): Result;
@@ -66,7 +75,7 @@ interface IPegManagerInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RateUpdated"): EventFragment;
 }
 
-export class IPegManager extends Contract {
+export class IRates extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,65 +86,43 @@ export class IPegManager extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: IPegManagerInterface;
+  interface: IRatesInterface;
 
   functions: {
-    interestRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "interestRate()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    maxSteps(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxSteps()"(
+    "interestRateAbsoluteValue()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    positiveInterestRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    maxSteps(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "positiveInterestRate()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    "maxSteps()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    stepsOff(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    positiveInterestRate(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "stepsOff()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "positiveInterestRate()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    stepsOff(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "stepsOff()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
-  interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "interestRateAbsoluteValue()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxSteps(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -154,9 +141,15 @@ export class IPegManager extends Contract {
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
-    interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+    completeSetup(overrides?: CallOverrides): Promise<void>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
+
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "interestRateAbsoluteValue()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxSteps(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -191,9 +184,15 @@ export class IPegManager extends Contract {
   };
 
   estimateGas: {
-    interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
+
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "interestRateAbsoluteValue()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxSteps(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -213,9 +212,17 @@ export class IPegManager extends Contract {
   };
 
   populateTransaction: {
-    interestRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    interestRateAbsoluteValue(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "interestRateAbsoluteValue()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     maxSteps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

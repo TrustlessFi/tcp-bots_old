@@ -5,14 +5,11 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IPegManager } from "../IPegManager";
+import type { IRates } from "../IRates";
 
-export class IPegManager__factory {
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): IPegManager {
-    return new Contract(address, _abi, signerOrProvider) as IPegManager;
+export class IRates__factory {
+  static connect(address: string, signerOrProvider: Signer | Provider): IRates {
+    return new Contract(address, _abi, signerOrProvider) as IRates;
   }
 }
 
@@ -107,7 +104,14 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "interestRate",
+    name: "completeSetup",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "interestRateAbsoluteValue",
     outputs: [
       {
         internalType: "uint256",

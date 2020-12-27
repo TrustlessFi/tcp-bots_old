@@ -24,7 +24,7 @@ interface CoinLiquidatorInterface extends ethers.utils.Interface {
   functions: {
     "executeOnFlashLiquidate(uint256,uint256)": FunctionFragment;
     "governor()": FunctionFragment;
-    "liquidate(uint256,uint256)": FunctionFragment;
+    "liquidate(uint8,uint256,uint256)": FunctionFragment;
     "router()": FunctionFragment;
   };
 
@@ -35,7 +35,7 @@ interface CoinLiquidatorInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "liquidate",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "router", values?: undefined): string;
 
@@ -48,7 +48,7 @@ interface CoinLiquidatorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
 
   events: {
-    "Completed(address,address,uint256,uint256,uint256)": EventFragment;
+    "Completed(address,address,uint8,uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Completed"): EventFragment;
@@ -80,41 +80,27 @@ export class CoinLiquidator extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     liquidate(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "liquidate(uint256,uint256)"(
+    "liquidate(uint8,uint256,uint256)"(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    router(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
-    "router()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "router()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   executeOnFlashLiquidate(
@@ -134,12 +120,14 @@ export class CoinLiquidator extends Contract {
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
   liquidate(
+    _collateralType: BigNumberish,
     _minPrice: BigNumberish,
     _debt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "liquidate(uint256,uint256)"(
+  "liquidate(uint8,uint256,uint256)"(
+    _collateralType: BigNumberish,
     _minPrice: BigNumberish,
     _debt: BigNumberish,
     overrides?: Overrides
@@ -167,12 +155,14 @@ export class CoinLiquidator extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
     liquidate(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "liquidate(uint256,uint256)"(
+    "liquidate(uint8,uint256,uint256)"(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: CallOverrides
@@ -187,6 +177,7 @@ export class CoinLiquidator extends Contract {
     Completed(
       liquidations: string | null,
       caller: string | null,
+      collateralType: BigNumberish | null,
       minPrice: null,
       collateralSent: null,
       baseTokensToRepay: null
@@ -211,12 +202,14 @@ export class CoinLiquidator extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     liquidate(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "liquidate(uint256,uint256)"(
+    "liquidate(uint8,uint256,uint256)"(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides
@@ -245,12 +238,14 @@ export class CoinLiquidator extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     liquidate(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "liquidate(uint256,uint256)"(
+    "liquidate(uint8,uint256,uint256)"(
+      _collateralType: BigNumberish,
       _minPrice: BigNumberish,
       _debt: BigNumberish,
       overrides?: Overrides

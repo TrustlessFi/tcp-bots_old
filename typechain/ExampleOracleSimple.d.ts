@@ -106,123 +106,57 @@ export class ExampleOracleSimple extends Contract {
   interface: ExampleOracleSimpleInterface;
 
   functions: {
-    PERIOD(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "PERIOD()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "PERIOD()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    blockTimestampLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    blockTimestampLast(overrides?: CallOverrides): Promise<[number]>;
 
-    "blockTimestampLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "blockTimestampLast()"(overrides?: CallOverrides): Promise<[number]>;
 
     consult(
       token: string,
       amountIn: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     "consult(address,uint256)"(
       token: string,
       amountIn: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     price0Average(
       overrides?: CallOverrides
-    ): Promise<{
-      _x: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { _x: BigNumber }>;
 
     "price0Average()"(
       overrides?: CallOverrides
-    ): Promise<{
-      _x: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { _x: BigNumber }>;
 
-    price0CumulativeLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    price0CumulativeLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "price0CumulativeLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "price0CumulativeLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     price1Average(
       overrides?: CallOverrides
-    ): Promise<{
-      _x: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { _x: BigNumber }>;
 
     "price1Average()"(
       overrides?: CallOverrides
-    ): Promise<{
-      _x: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { _x: BigNumber }>;
 
-    price1CumulativeLast(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    price1CumulativeLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "price1CumulativeLast()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "price1CumulativeLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    token0(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    token0(overrides?: CallOverrides): Promise<[string]>;
 
-    "token0()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "token0()"(overrides?: CallOverrides): Promise<[string]>;
 
-    token1(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    token1(overrides?: CallOverrides): Promise<[string]>;
 
-    "token1()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "token1()"(overrides?: CallOverrides): Promise<[string]>;
 
     update(overrides?: Overrides): Promise<ContractTransaction>;
 

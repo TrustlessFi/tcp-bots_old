@@ -22,54 +22,52 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface AuctionsInterface extends ethers.utils.Interface {
   functions: {
-    "batchSize()": FunctionFragment;
     "bidDeficitAuction(uint64,uint256)": FunctionFragment;
     "bidSurplusAuction(uint64,uint256)": FunctionFragment;
     "checkReservesAndStartAuctions()": FunctionFragment;
-    "cleanerRewardRatio()": FunctionFragment;
     "cnp()": FunctionFragment;
     "coinToBeBought()": FunctionFragment;
     "coinToBeSold()": FunctionFragment;
-    "creatorRewardRatio()": FunctionFragment;
     "deficitAuction(uint64)": FunctionFragment;
+    "deficitAuctionComplete(uint64)": FunctionFragment;
     "deficitAuctionCount()": FunctionFragment;
-    "deficitAuctionLotSize()": FunctionFragment;
-    "deficitAuctionReadyToBeSettled(uint64)": FunctionFragment;
+    "deficitAuctionLive(uint64)": FunctionFragment;
+    "deployer()": FunctionFragment;
     "extensionPerBid()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
-    "lastAuctionCompletionTime()": FunctionFragment;
+    "latestAuctionCompletionTime()": FunctionFragment;
     "maxAuctionDuration()": FunctionFragment;
+    "maxBatchSize()": FunctionFragment;
+    "maxDeficitLotSize()": FunctionFragment;
+    "maxSurplusLotSize()": FunctionFragment;
     "minAuctionDuration()": FunctionFragment;
-    "minAuctionLotSize()": FunctionFragment;
     "minBidDelta()": FunctionFragment;
-    "oldestDeficitAuction()": FunctionFragment;
-    "oldestSurplusAuction()": FunctionFragment;
+    "minLotSize()": FunctionFragment;
     "reservesBufferLowerBound()": FunctionFragment;
     "reservesBufferUpperBound()": FunctionFragment;
-    "setBatchSize(uint64)": FunctionFragment;
-    "setCleanerRewardRatio(uint256)": FunctionFragment;
-    "setCreatorRewardRatio(uint256)": FunctionFragment;
-    "setDeficitAuctionLotSize(uint256)": FunctionFragment;
     "setExtensionPerBid(uint64)": FunctionFragment;
     "setMaxAuctionDuration(uint64)": FunctionFragment;
+    "setMaxBatchSize(uint64)": FunctionFragment;
+    "setMaxDeficitLotSize(uint256)": FunctionFragment;
+    "setMaxSurplusLotSize(uint256)": FunctionFragment;
     "setMinAuctionDuration(uint64)": FunctionFragment;
-    "setMinAuctionLotSize(uint256)": FunctionFragment;
     "setMinBidDelta(uint256)": FunctionFragment;
+    "setMinLotSize(uint256)": FunctionFragment;
     "setReservesBufferLowerBound(uint256)": FunctionFragment;
     "setReservesBufferUpperBound(uint256)": FunctionFragment;
-    "setSurplusAuctionLotSize(uint256)": FunctionFragment;
     "settleDeficitAuction(uint64)": FunctionFragment;
     "settleSurplusAuction(uint64)": FunctionFragment;
     "shouldStartAuctions()": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
     "surplusAuction(uint64)": FunctionFragment;
+    "surplusAuctionComplete(uint64)": FunctionFragment;
     "surplusAuctionCount()": FunctionFragment;
-    "surplusAuctionLotSize()": FunctionFragment;
-    "surplusAuctionReadyToBeSettled(uint64)": FunctionFragment;
+    "surplusAuctionLive(uint64)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "batchSize", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "bidDeficitAuction",
     values: [BigNumberish, BigNumberish]
@@ -82,10 +80,6 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "checkReservesAndStartAuctions",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "cleanerRewardRatio",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "coinToBeBought",
@@ -96,11 +90,11 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "creatorRewardRatio",
-    values?: undefined
+    functionFragment: "deficitAuction",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "deficitAuction",
+    functionFragment: "deficitAuctionComplete",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -108,13 +102,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "deficitAuctionLotSize",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deficitAuctionReadyToBeSettled",
+    functionFragment: "deficitAuctionLive",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "extensionPerBid",
     values?: undefined
@@ -122,7 +113,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "lastAuctionCompletionTime",
+    functionFragment: "latestAuctionCompletionTime",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -130,11 +121,19 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "minAuctionDuration",
+    functionFragment: "maxBatchSize",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "minAuctionLotSize",
+    functionFragment: "maxDeficitLotSize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxSurplusLotSize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "minAuctionDuration",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -142,11 +141,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "oldestDeficitAuction",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "oldestSurplusAuction",
+    functionFragment: "minLotSize",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -158,22 +153,6 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setBatchSize",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCleanerRewardRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCreatorRewardRatio",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDeficitAuctionLotSize",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setExtensionPerBid",
     values: [BigNumberish]
   ): string;
@@ -182,15 +161,27 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxBatchSize",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxDeficitLotSize",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxSurplusLotSize",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMinAuctionDuration",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMinAuctionLotSize",
+    functionFragment: "setMinBidDelta",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMinBidDelta",
+    functionFragment: "setMinLotSize",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -199,10 +190,6 @@ interface AuctionsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setReservesBufferUpperBound",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSurplusAuctionLotSize",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -218,8 +205,13 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "surplusAuction",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "surplusAuctionComplete",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -227,15 +219,14 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "surplusAuctionLotSize",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "surplusAuctionReadyToBeSettled",
+    functionFragment: "surplusAuctionLive",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "batchSize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "bidDeficitAuction",
     data: BytesLike
@@ -248,10 +239,6 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "checkReservesAndStartAuctions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "cleanerRewardRatio",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "coinToBeBought",
@@ -262,11 +249,11 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "creatorRewardRatio",
+    functionFragment: "deficitAuction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deficitAuction",
+    functionFragment: "deficitAuctionComplete",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -274,13 +261,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deficitAuctionLotSize",
+    functionFragment: "deficitAuctionLive",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "deficitAuctionReadyToBeSettled",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "extensionPerBid",
     data: BytesLike
@@ -288,7 +272,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lastAuctionCompletionTime",
+    functionFragment: "latestAuctionCompletionTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -296,47 +280,32 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "minAuctionDuration",
+    functionFragment: "maxBatchSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "minAuctionLotSize",
+    functionFragment: "maxDeficitLotSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxSurplusLotSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "minAuctionDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "minBidDelta",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "oldestDeficitAuction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "oldestSurplusAuction",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "minLotSize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reservesBufferLowerBound",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "reservesBufferUpperBound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBatchSize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCleanerRewardRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCreatorRewardRatio",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDeficitAuctionLotSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -348,15 +317,27 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setMaxBatchSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxDeficitLotSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxSurplusLotSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setMinAuctionDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMinAuctionLotSize",
+    functionFragment: "setMinBidDelta",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMinBidDelta",
+    functionFragment: "setMinLotSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -365,10 +346,6 @@ interface AuctionsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setReservesBufferUpperBound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setSurplusAuctionLotSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -384,8 +361,13 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "surplusAuction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "surplusAuctionComplete",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -393,31 +375,37 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "surplusAuctionLotSize",
+    functionFragment: "surplusAuctionLive",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "surplusAuctionReadyToBeSettled",
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
   events: {
-    "AuctionBid(bool,uint64,address,uint256)": EventFragment;
-    "AuctionSettled(bool,uint64,address,address,address)": EventFragment;
-    "AuctionStarted(bool,uint64,uint256,uint64)": EventFragment;
+    "DeficitAuctionBid(uint64,address,uint256)": EventFragment;
+    "DeficitAuctionSettled(uint64,address)": EventFragment;
+    "DeficitAuctionStarted(uint64,uint256,uint64)": EventFragment;
     "Initialized(address)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "Stopped()": EventFragment;
+    "SurplusAuctionBid(uint64,address,uint256)": EventFragment;
+    "SurplusAuctionSettled(uint64,address)": EventFragment;
+    "SurplusAuctionStarted(uint64,uint256,uint64)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AuctionBid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuctionSettled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuctionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionBid"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionSettled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionBid"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionSettled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionStarted"): EventFragment;
 }
 
 export class Auctions extends Contract {
@@ -434,18 +422,6 @@ export class Auctions extends Contract {
   interface: AuctionsInterface;
 
   functions: {
-    batchSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "batchSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
@@ -478,323 +454,137 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    cleanerRewardRatio(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    cnp(overrides?: CallOverrides): Promise<[string]>;
 
-    "cleanerRewardRatio()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
 
-    cnp(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    coinToBeBought(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "cnp()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "coinToBeBought()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    coinToBeBought(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    coinToBeSold(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "coinToBeBought()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    coinToBeSold(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "coinToBeSold()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    creatorRewardRatio(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "creatorRewardRatio()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "coinToBeSold()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
     "deficitAuction(uint64)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
-    deficitAuctionCount(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "deficitAuctionCount()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    deficitAuctionLotSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "deficitAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    deficitAuctionReadyToBeSettled(
+    deficitAuctionComplete(
       auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      complete: boolean;
-      0: boolean;
-    }>;
+    ): Promise<[boolean] & { complete: boolean }>;
 
-    "deficitAuctionReadyToBeSettled(uint64)"(
+    "deficitAuctionComplete(uint64)"(
       auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      complete: boolean;
-      0: boolean;
-    }>;
+    ): Promise<[boolean] & { complete: boolean }>;
 
-    extensionPerBid(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    deficitAuctionCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "extensionPerBid()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "deficitAuctionCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    governor(
+    deficitAuctionLive(
+      auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[boolean] & { live: boolean }>;
 
-    "governor()"(
+    "deficitAuctionLive(uint64)"(
+      auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[boolean] & { live: boolean }>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    extensionPerBid(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "extensionPerBid()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    lastAuctionCompletionTime(
+    latestAuctionCompletionTime(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    maxAuctionDuration(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxAuctionDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxAuctionDuration()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxAuctionDuration()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minAuctionDuration(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxBatchSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minAuctionDuration()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxBatchSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minAuctionLotSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxDeficitLotSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxDeficitLotSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minBidDelta(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxSurplusLotSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minBidDelta()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxSurplusLotSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    oldestDeficitAuction(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minAuctionDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "oldestDeficitAuction()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "minAuctionDuration()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    oldestSurplusAuction(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minBidDelta(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "oldestSurplusAuction()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "minBidDelta()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    reservesBufferLowerBound(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minLotSize(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "minLotSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    reservesBufferLowerBound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "reservesBufferLowerBound()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    reservesBufferUpperBound(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    reservesBufferUpperBound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "reservesBufferUpperBound()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    setBatchSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setBatchSize(uint64)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setCleanerRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setCleanerRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setCreatorRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setCreatorRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setDeficitAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setDeficitAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    ): Promise<[BigNumber]>;
 
     setExtensionPerBid(
       extension: BigNumberish,
@@ -816,6 +606,36 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setMaxBatchSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMaxBatchSize(uint64)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setMaxDeficitLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMaxDeficitLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setMaxSurplusLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMaxSurplusLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setMinAuctionDuration(
       duration: BigNumberish,
       overrides?: Overrides
@@ -826,16 +646,6 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setMinAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setMinAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     setMinBidDelta(
       delta: BigNumberish,
       overrides?: Overrides
@@ -843,6 +653,16 @@ export class Auctions extends Contract {
 
     "setMinBidDelta(uint256)"(
       delta: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setMinLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMinLotSize(uint256)"(
+      size: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -863,16 +683,6 @@ export class Auctions extends Contract {
 
     "setReservesBufferUpperBound(uint256)"(
       bound: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setSurplusAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setSurplusAuctionLotSize(uint256)"(
-      size: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -898,106 +708,90 @@ export class Auctions extends Contract {
 
     shouldStartAuctions(
       overrides?: CallOverrides
-    ): Promise<{
-      surplusAmount: BigNumber;
-      deficitAmount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        surplusAmount: BigNumber;
+        deficitAmount: BigNumber;
+      }
+    >;
 
     "shouldStartAuctions()"(
       overrides?: CallOverrides
-    ): Promise<{
-      surplusAmount: BigNumber;
-      deficitAmount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        surplusAmount: BigNumber;
+        deficitAmount: BigNumber;
+      }
+    >;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     surplusAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
     "surplusAuction(uint64)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
-    surplusAuctionCount(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "surplusAuctionCount()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    surplusAuctionLotSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "surplusAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    surplusAuctionReadyToBeSettled(
+    surplusAuctionComplete(
       auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      complete: boolean;
-      0: boolean;
-    }>;
+    ): Promise<[boolean] & { complete: boolean }>;
 
-    "surplusAuctionReadyToBeSettled(uint64)"(
+    "surplusAuctionComplete(uint64)"(
       auctionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      complete: boolean;
-      0: boolean;
-    }>;
+    ): Promise<[boolean] & { complete: boolean }>;
+
+    surplusAuctionCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "surplusAuctionCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    surplusAuctionLive(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { live: boolean }>;
+
+    "surplusAuctionLive(uint64)"(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { live: boolean }>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
-
-  batchSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "batchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   bidDeficitAuction(
     auctionID: BigNumberish,
@@ -1031,10 +825,6 @@ export class Auctions extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  cleanerRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "cleanerRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   cnp(overrides?: CallOverrides): Promise<string>;
 
   "cnp()"(overrides?: CallOverrides): Promise<string>;
@@ -1047,63 +837,59 @@ export class Auctions extends Contract {
 
   "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  creatorRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "creatorRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   deficitAuction(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    bid: BigNumber;
-    count: BigNumber;
-    endTime: BigNumber;
-    bidder: string;
-    maxEndTime: BigNumber;
-    creator: string;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: string;
-    4: BigNumber;
-    5: string;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      count: BigNumber;
+      bid: BigNumber;
+      bidder: string;
+      endTime: BigNumber;
+      maxEndTime: BigNumber;
+    }
+  >;
 
   "deficitAuction(uint64)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    bid: BigNumber;
-    count: BigNumber;
-    endTime: BigNumber;
-    bidder: string;
-    maxEndTime: BigNumber;
-    creator: string;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: string;
-    4: BigNumber;
-    5: string;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      count: BigNumber;
+      bid: BigNumber;
+      bidder: string;
+      endTime: BigNumber;
+      maxEndTime: BigNumber;
+    }
+  >;
+
+  deficitAuctionComplete(
+    auctionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "deficitAuctionComplete(uint64)"(
+    auctionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   deficitAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   "deficitAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  deficitAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "deficitAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  deficitAuctionReadyToBeSettled(
+  deficitAuctionLive(
     auctionID: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "deficitAuctionReadyToBeSettled(uint64)"(
+  "deficitAuctionLive(uint64)"(
     auctionID: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
   extensionPerBid(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1113,40 +899,46 @@ export class Auctions extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+  latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "lastAuctionCompletionTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "latestAuctionCompletionTime()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   maxAuctionDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
   "maxAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  maxBatchSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxBatchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxDeficitLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxDeficitLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxSurplusLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxSurplusLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   minAuctionDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "minAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   minBidDelta(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minBidDelta()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  oldestDeficitAuction(overrides?: CallOverrides): Promise<BigNumber>;
+  minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "oldestDeficitAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  oldestSurplusAuction(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "oldestSurplusAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1155,46 +947,6 @@ export class Auctions extends Contract {
   reservesBufferUpperBound(overrides?: CallOverrides): Promise<BigNumber>;
 
   "reservesBufferUpperBound()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  setBatchSize(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setBatchSize(uint64)"(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setCleanerRewardRatio(
-    ratio: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setCleanerRewardRatio(uint256)"(
-    ratio: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setCreatorRewardRatio(
-    ratio: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setCreatorRewardRatio(uint256)"(
-    ratio: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setDeficitAuctionLotSize(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setDeficitAuctionLotSize(uint256)"(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   setExtensionPerBid(
     extension: BigNumberish,
@@ -1216,6 +968,36 @@ export class Auctions extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setMaxBatchSize(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMaxBatchSize(uint64)"(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setMaxDeficitLotSize(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMaxDeficitLotSize(uint256)"(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setMaxSurplusLotSize(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMaxSurplusLotSize(uint256)"(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setMinAuctionDuration(
     duration: BigNumberish,
     overrides?: Overrides
@@ -1226,16 +1008,6 @@ export class Auctions extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setMinAuctionLotSize(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setMinAuctionLotSize(uint256)"(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   setMinBidDelta(
     delta: BigNumberish,
     overrides?: Overrides
@@ -1243,6 +1015,16 @@ export class Auctions extends Contract {
 
   "setMinBidDelta(uint256)"(
     delta: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setMinLotSize(
+    size: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMinLotSize(uint256)"(
+    size: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1263,16 +1045,6 @@ export class Auctions extends Contract {
 
   "setReservesBufferUpperBound(uint256)"(
     bound: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setSurplusAuctionLotSize(
-    size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setSurplusAuctionLotSize(uint256)"(
-    size: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1298,85 +1070,88 @@ export class Auctions extends Contract {
 
   shouldStartAuctions(
     overrides?: CallOverrides
-  ): Promise<{
-    surplusAmount: BigNumber;
-    deficitAmount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      surplusAmount: BigNumber;
+      deficitAmount: BigNumber;
+    }
+  >;
 
   "shouldStartAuctions()"(
     overrides?: CallOverrides
-  ): Promise<{
-    surplusAmount: BigNumber;
-    deficitAmount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber] & {
+      surplusAmount: BigNumber;
+      deficitAmount: BigNumber;
+    }
+  >;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
   surplusAuction(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    bid: BigNumber;
-    count: BigNumber;
-    endTime: BigNumber;
-    bidder: string;
-    maxEndTime: BigNumber;
-    creator: string;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: string;
-    4: BigNumber;
-    5: string;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      count: BigNumber;
+      bid: BigNumber;
+      bidder: string;
+      endTime: BigNumber;
+      maxEndTime: BigNumber;
+    }
+  >;
 
   "surplusAuction(uint64)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    bid: BigNumber;
-    count: BigNumber;
-    endTime: BigNumber;
-    bidder: string;
-    maxEndTime: BigNumber;
-    creator: string;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: string;
-    4: BigNumber;
-    5: string;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      count: BigNumber;
+      bid: BigNumber;
+      bidder: string;
+      endTime: BigNumber;
+      maxEndTime: BigNumber;
+    }
+  >;
+
+  surplusAuctionComplete(
+    auctionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "surplusAuctionComplete(uint64)"(
+    auctionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   surplusAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   "surplusAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  surplusAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "surplusAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  surplusAuctionReadyToBeSettled(
+  surplusAuctionLive(
     auctionID: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "surplusAuctionReadyToBeSettled(uint64)"(
+  "surplusAuctionLive(uint64)"(
     auctionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   callStatic: {
-    batchSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "batchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
@@ -1405,10 +1180,6 @@ export class Auctions extends Contract {
 
     "checkReservesAndStartAuctions()"(overrides?: CallOverrides): Promise<void>;
 
-    cleanerRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "cleanerRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     cnp(overrides?: CallOverrides): Promise<string>;
 
     "cnp()"(overrides?: CallOverrides): Promise<string>;
@@ -1421,63 +1192,59 @@ export class Auctions extends Contract {
 
     "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    creatorRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "creatorRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
     "deficitAuction(uint64)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
+
+    deficitAuctionComplete(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "deficitAuctionComplete(uint64)"(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     deficitAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "deficitAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    deficitAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "deficitAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deficitAuctionReadyToBeSettled(
+    deficitAuctionLive(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "deficitAuctionReadyToBeSettled(uint64)"(
+    "deficitAuctionLive(uint64)"(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
 
     extensionPerBid(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1487,16 +1254,16 @@ export class Auctions extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+    latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1504,25 +1271,29 @@ export class Auctions extends Contract {
 
     "maxAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxBatchSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxBatchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxDeficitLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDeficitLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxSurplusLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxSurplusLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     minAuctionDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minBidDelta(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBidDelta()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    oldestDeficitAuction(overrides?: CallOverrides): Promise<BigNumber>;
+    minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "oldestDeficitAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    oldestSurplusAuction(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "oldestSurplusAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1531,43 +1302,6 @@ export class Auctions extends Contract {
     reservesBufferUpperBound(overrides?: CallOverrides): Promise<BigNumber>;
 
     "reservesBufferUpperBound()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setBatchSize(size: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "setBatchSize(uint64)"(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCleanerRewardRatio(
-      ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setCleanerRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCreatorRewardRatio(
-      ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setCreatorRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setDeficitAuctionLotSize(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setDeficitAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setExtensionPerBid(
       extension: BigNumberish,
@@ -1589,6 +1323,36 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxBatchSize(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMaxBatchSize(uint64)"(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxDeficitLotSize(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMaxDeficitLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxSurplusLotSize(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMaxSurplusLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setMinAuctionDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
@@ -1599,16 +1363,6 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMinAuctionLotSize(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setMinAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setMinBidDelta(
       delta: BigNumberish,
       overrides?: CallOverrides
@@ -1616,6 +1370,13 @@ export class Auctions extends Contract {
 
     "setMinBidDelta(uint256)"(
       delta: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinLotSize(size: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "setMinLotSize(uint256)"(
+      size: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1636,16 +1397,6 @@ export class Auctions extends Contract {
 
     "setReservesBufferUpperBound(uint256)"(
       bound: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSurplusAuctionLotSize(
-      size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setSurplusAuctionLotSize(uint256)"(
-      size: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1671,99 +1422,101 @@ export class Auctions extends Contract {
 
     shouldStartAuctions(
       overrides?: CallOverrides
-    ): Promise<{
-      surplusAmount: BigNumber;
-      deficitAmount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        surplusAmount: BigNumber;
+        deficitAmount: BigNumber;
+      }
+    >;
 
     "shouldStartAuctions()"(
       overrides?: CallOverrides
-    ): Promise<{
-      surplusAmount: BigNumber;
-      deficitAmount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        surplusAmount: BigNumber;
+        deficitAmount: BigNumber;
+      }
+    >;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
     surplusAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
 
     "surplusAuction(uint64)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      bid: BigNumber;
-      count: BigNumber;
-      endTime: BigNumber;
-      bidder: string;
-      maxEndTime: BigNumber;
-      creator: string;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: string;
-      4: BigNumber;
-      5: string;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        count: BigNumber;
+        bid: BigNumber;
+        bidder: string;
+        endTime: BigNumber;
+        maxEndTime: BigNumber;
+      }
+    >;
+
+    surplusAuctionComplete(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "surplusAuctionComplete(uint64)"(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     surplusAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "surplusAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    surplusAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "surplusAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    surplusAuctionReadyToBeSettled(
+    surplusAuctionLive(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "surplusAuctionReadyToBeSettled(uint64)"(
+    "surplusAuctionLive(uint64)"(
       auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
-    AuctionBid(
-      isSurplus: boolean | null,
+    DeficitAuctionBid(
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
     ): EventFilter;
 
-    AuctionSettled(
-      isSurplus: boolean | null,
+    DeficitAuctionSettled(
       auctionID: BigNumberish | null,
-      winner: string | null,
-      creator: null,
-      cleaner: null
+      winner: string | null
     ): EventFilter;
 
-    AuctionStarted(
-      isSurplus: boolean | null,
+    DeficitAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
@@ -1776,13 +1529,26 @@ export class Auctions extends Contract {
     ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
     Stopped(): EventFilter;
+
+    SurplusAuctionBid(
+      auctionID: BigNumberish | null,
+      bidder: string | null,
+      bid: null
+    ): EventFilter;
+
+    SurplusAuctionSettled(
+      auctionID: BigNumberish | null,
+      winner: string | null
+    ): EventFilter;
+
+    SurplusAuctionStarted(
+      auctionID: BigNumberish | null,
+      count: BigNumberish | null,
+      maxEndTime: null
+    ): EventFilter;
   };
 
   estimateGas: {
-    batchSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "batchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
@@ -1813,10 +1579,6 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    cleanerRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "cleanerRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
     "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1829,10 +1591,6 @@ export class Auctions extends Contract {
 
     "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    creatorRewardRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "creatorRewardRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -1843,23 +1601,33 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    deficitAuctionComplete(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "deficitAuctionComplete(uint64)"(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deficitAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "deficitAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    deficitAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "deficitAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    deficitAuctionReadyToBeSettled(
+    deficitAuctionLive(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "deficitAuctionReadyToBeSettled(uint64)"(
+    "deficitAuctionLive(uint64)"(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     extensionPerBid(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1869,16 +1637,16 @@ export class Auctions extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+    latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1886,25 +1654,29 @@ export class Auctions extends Contract {
 
     "maxAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxBatchSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxBatchSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxDeficitLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDeficitLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxSurplusLotSize(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxSurplusLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     minAuctionDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minAuctionDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minBidDelta(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBidDelta()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    oldestDeficitAuction(overrides?: CallOverrides): Promise<BigNumber>;
+    minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "oldestDeficitAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    oldestSurplusAuction(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "oldestSurplusAuction()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1913,43 +1685,6 @@ export class Auctions extends Contract {
     reservesBufferUpperBound(overrides?: CallOverrides): Promise<BigNumber>;
 
     "reservesBufferUpperBound()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setBatchSize(size: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
-
-    "setBatchSize(uint64)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setCleanerRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setCleanerRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setCreatorRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setCreatorRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setDeficitAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setDeficitAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
 
     setExtensionPerBid(
       extension: BigNumberish,
@@ -1971,6 +1706,36 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setMaxBatchSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMaxBatchSize(uint64)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setMaxDeficitLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMaxDeficitLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setMaxSurplusLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMaxSurplusLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setMinAuctionDuration(
       duration: BigNumberish,
       overrides?: Overrides
@@ -1981,16 +1746,6 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMinAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setMinAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     setMinBidDelta(
       delta: BigNumberish,
       overrides?: Overrides
@@ -1998,6 +1753,16 @@ export class Auctions extends Contract {
 
     "setMinBidDelta(uint256)"(
       delta: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setMinLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMinLotSize(uint256)"(
+      size: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2018,16 +1783,6 @@ export class Auctions extends Contract {
 
     "setReservesBufferUpperBound(uint256)"(
       bound: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setSurplusAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setSurplusAuctionLotSize(uint256)"(
-      size: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2059,6 +1814,10 @@ export class Auctions extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     surplusAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -2069,30 +1828,42 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    surplusAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "surplusAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    surplusAuctionLotSize(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "surplusAuctionLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    surplusAuctionReadyToBeSettled(
+    surplusAuctionComplete(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "surplusAuctionReadyToBeSettled(uint64)"(
+    "surplusAuctionComplete(uint64)"(
       auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    surplusAuctionCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "surplusAuctionCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    surplusAuctionLive(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "surplusAuctionLive(uint64)"(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    batchSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "batchSize()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
@@ -2125,14 +1896,6 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    cleanerRewardRatio(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "cleanerRewardRatio()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2147,14 +1910,6 @@ export class Auctions extends Contract {
 
     "coinToBeSold()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    creatorRewardRatio(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "creatorRewardRatio()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -2162,6 +1917,16 @@ export class Auctions extends Contract {
 
     "deficitAuction(uint64)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    deficitAuctionComplete(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "deficitAuctionComplete(uint64)"(
+      auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2173,23 +1938,19 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    deficitAuctionLotSize(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "deficitAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    deficitAuctionReadyToBeSettled(
+    deficitAuctionLive(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "deficitAuctionReadyToBeSettled(uint64)"(
+    "deficitAuctionLive(uint64)"(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     extensionPerBid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2202,20 +1963,20 @@ export class Auctions extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    lastAuctionCompletionTime(
+    latestAuctionCompletionTime(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2227,6 +1988,22 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    maxBatchSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxBatchSize()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    maxDeficitLotSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxDeficitLotSize()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    maxSurplusLotSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxSurplusLotSize()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     minAuctionDuration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2235,31 +2012,13 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minAuctionLotSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "minAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     minBidDelta(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "minBidDelta()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    oldestDeficitAuction(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    minLotSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "oldestDeficitAuction()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    oldestSurplusAuction(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "oldestSurplusAuction()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "minLotSize()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     reservesBufferLowerBound(
       overrides?: CallOverrides
@@ -2275,46 +2034,6 @@ export class Auctions extends Contract {
 
     "reservesBufferUpperBound()"(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setBatchSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setBatchSize(uint64)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setCleanerRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setCleanerRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setCreatorRewardRatio(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setCreatorRewardRatio(uint256)"(
-      ratio: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setDeficitAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setDeficitAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setExtensionPerBid(
@@ -2337,6 +2056,36 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setMaxBatchSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxBatchSize(uint64)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setMaxDeficitLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxDeficitLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setMaxSurplusLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxSurplusLotSize(uint256)"(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setMinAuctionDuration(
       duration: BigNumberish,
       overrides?: Overrides
@@ -2347,16 +2096,6 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setMinAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setMinAuctionLotSize(uint256)"(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     setMinBidDelta(
       delta: BigNumberish,
       overrides?: Overrides
@@ -2364,6 +2103,16 @@ export class Auctions extends Contract {
 
     "setMinBidDelta(uint256)"(
       delta: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setMinLotSize(
+      size: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMinLotSize(uint256)"(
+      size: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2384,16 +2133,6 @@ export class Auctions extends Contract {
 
     "setReservesBufferUpperBound(uint256)"(
       bound: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setSurplusAuctionLotSize(
-      size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setSurplusAuctionLotSize(uint256)"(
-      size: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2429,6 +2168,10 @@ export class Auctions extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     surplusAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -2436,6 +2179,16 @@ export class Auctions extends Contract {
 
     "surplusAuction(uint64)"(
       arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    surplusAuctionComplete(
+      auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "surplusAuctionComplete(uint64)"(
+      auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2447,21 +2200,23 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    surplusAuctionLotSize(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "surplusAuctionLotSize()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    surplusAuctionReadyToBeSettled(
+    surplusAuctionLive(
       auctionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "surplusAuctionReadyToBeSettled(uint64)"(
+    "surplusAuctionLive(uint64)"(
       auctionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -22,18 +22,20 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface ICNPInterface extends ethers.utils.Interface {
   functions: {
+    "addGovernor(address)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
     "delegate(address)": FunctionFragment;
+    "distributeTo(address,uint256)": FunctionFragment;
     "mintTo(address,uint256)": FunctionFragment;
-    "newGovernor(address)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "addGovernor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -49,10 +51,13 @@ interface ICNPInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "delegate", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "distributeTo",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "mintTo",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "newGovernor", values: [string]): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -66,16 +71,20 @@ interface ICNPInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addGovernor",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "delegate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "newGovernor",
+    functionFragment: "distributeTo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -109,21 +118,27 @@ export class ICNP extends Contract {
   interface: ICNPInterface;
 
   functions: {
+    addGovernor(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     allowance(
       owner: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "allowance(address,address)"(
       owner: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     approve(
       spender: string,
@@ -137,19 +152,12 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     burnFrom(
       account: string,
@@ -173,6 +181,18 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    distributeTo(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "distributeTo(address,uint256)"(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     mintTo(
       to: string,
       count: BigNumberish,
@@ -185,27 +205,9 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "newGovernor(address)"(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transfer(
       recipient: string,
@@ -233,6 +235,16 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
+
+  addGovernor(
+    newGovernor: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "addGovernor(address)"(
+    newGovernor: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   allowance(
     owner: string,
@@ -287,6 +299,18 @@ export class ICNP extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  distributeTo(
+    to: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "distributeTo(address,uint256)"(
+    to: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   mintTo(
     to: string,
     count: BigNumberish,
@@ -296,16 +320,6 @@ export class ICNP extends Contract {
   "mintTo(address,uint256)"(
     to: string,
     count: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  newGovernor(
-    _newGovernor: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "newGovernor(address)"(
-    _newGovernor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -340,6 +354,13 @@ export class ICNP extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addGovernor(newGovernor: string, overrides?: CallOverrides): Promise<void>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     allowance(
       owner: string,
       spender: string,
@@ -390,6 +411,18 @@ export class ICNP extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    distributeTo(
+      to: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "distributeTo(address,uint256)"(
+      to: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     mintTo(
       to: string,
       count: BigNumberish,
@@ -399,13 +432,6 @@ export class ICNP extends Contract {
     "mintTo(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    newGovernor(_newGovernor: string, overrides?: CallOverrides): Promise<void>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -451,6 +477,13 @@ export class ICNP extends Contract {
   };
 
   estimateGas: {
+    addGovernor(newGovernor: string, overrides?: Overrides): Promise<BigNumber>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     allowance(
       owner: string,
       spender: string,
@@ -501,6 +534,18 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    distributeTo(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "distributeTo(address,uint256)"(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     mintTo(
       to: string,
       count: BigNumberish,
@@ -510,16 +555,6 @@ export class ICNP extends Contract {
     "mintTo(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -555,6 +590,16 @@ export class ICNP extends Contract {
   };
 
   populateTransaction: {
+    addGovernor(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "addGovernor(address)"(
+      newGovernor: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     allowance(
       owner: string,
       spender: string,
@@ -611,6 +656,18 @@ export class ICNP extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    distributeTo(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "distributeTo(address,uint256)"(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     mintTo(
       to: string,
       count: BigNumberish,
@@ -620,16 +677,6 @@ export class ICNP extends Contract {
     "mintTo(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    newGovernor(
-      _newGovernor: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "newGovernor(address)"(
-      _newGovernor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

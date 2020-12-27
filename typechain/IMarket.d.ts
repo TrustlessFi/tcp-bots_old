@@ -23,12 +23,12 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface IMarketInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
-    "collateralizationRequirement()": FunctionFragment;
-    "periodsBehind()": FunctionFragment;
+    "collateralizationRequirement(uint8)": FunctionFragment;
+    "lastPeriodGlobalInterestAccrued()": FunctionFragment;
     "stop()": FunctionFragment;
     "systemAccrueInterest()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
-    "systemNotifyCollateralPriceUpdated(uint256)": FunctionFragment;
+    "systemNotifyCollateralPriceUpdated(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -37,10 +37,10 @@ interface IMarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "periodsBehind",
+    functionFragment: "lastPeriodGlobalInterestAccrued",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
@@ -54,7 +54,7 @@ interface IMarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "systemNotifyCollateralPriceUpdated",
-    values: [BigNumberish]
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -66,7 +66,7 @@ interface IMarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "periodsBehind",
+    functionFragment: "lastPeriodGlobalInterestAccrued",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -85,14 +85,14 @@ interface IMarketInterface extends ethers.utils.Interface {
 
   events: {
     "Borrow(address,uint64,uint256,uint256)": EventFragment;
-    "InterestAccrued(uint64,uint64,uint256,uint256,uint256)": EventFragment;
+    "InterestAccrued(uint64,uint64,uint256,uint256)": EventFragment;
     "Lend(address,uint256,uint256)": EventFragment;
     "NewPositionCreated(address,uint64)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
-    "ParameterUpdatedMapping(string,uint8,uint256)": EventFragment;
+    "ParameterUpdatedByCollateral(string,uint8,uint256)": EventFragment;
     "Payback(address,uint64,uint256,uint256)": EventFragment;
-    "PositionUpdated(uint256,uint64,uint64,uint256,uint256)": EventFragment;
+    "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
     "Unlend(address,uint256,uint256)": EventFragment;
   };
 
@@ -102,7 +102,9 @@ interface IMarketInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedMapping"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ParameterUpdatedByCollateral"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Payback"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unlend"): EventFragment;
@@ -127,32 +129,22 @@ export class IMarket extends Contract {
     "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     collateralizationRequirement(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      ratio: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { ratio: BigNumber }>;
 
-    "collateralizationRequirement()"(
+    "collateralizationRequirement(uint8)"(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      ratio: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { ratio: BigNumber }>;
 
-    periodsBehind(
+    lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
-    ): Promise<{
-      periods: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
-    "periodsBehind()"(
+    "lastPeriodGlobalInterestAccrued()"(
       overrides?: CallOverrides
-    ): Promise<{
-      periods: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -175,11 +167,13 @@ export class IMarket extends Contract {
     ): Promise<ContractTransaction>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -189,15 +183,23 @@ export class IMarket extends Contract {
 
   "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "collateralizationRequirement()"(
+  collateralizationRequirement(
+    collateral: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
+  "collateralizationRequirement(uint8)"(
+    collateral: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
+  lastPeriodGlobalInterestAccrued(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "lastPeriodGlobalInterestAccrued()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -218,11 +220,13 @@ export class IMarket extends Contract {
   ): Promise<ContractTransaction>;
 
   systemNotifyCollateralPriceUpdated(
+    pair: string,
     price: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "systemNotifyCollateralPriceUpdated(uint256)"(
+  "systemNotifyCollateralPriceUpdated(address,uint256)"(
+    pair: string,
     price: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -232,15 +236,23 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
 
-    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "collateralizationRequirement()"(
+    collateralizationRequirement(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
+    "collateralizationRequirement(uint8)"(
+      collateral: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
@@ -253,57 +265,69 @@ export class IMarket extends Contract {
     systemGetUpdatedPosition(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -320,7 +344,6 @@ export class IMarket extends Contract {
     InterestAccrued(
       period: BigNumberish | null,
       periods: null,
-      oldDebt: null,
       newDebt: null,
       rewardCount: null
     ): EventFilter;
@@ -340,9 +363,9 @@ export class IMarket extends Contract {
 
     ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdatedMapping(
+    ParameterUpdatedByCollateral(
       paramName: string | null,
-      key: null,
+      collateral: BigNumberish | null,
       value: null
     ): EventFilter;
 
@@ -356,9 +379,8 @@ export class IMarket extends Contract {
     PositionUpdated(
       positionID: BigNumberish | null,
       period: BigNumberish | null,
-      periods: null,
       debtAfter: null,
-      govRewards: null
+      cnpRewards: null
     ): EventFilter;
 
     Unlend(
@@ -373,15 +395,23 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
 
-    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "collateralizationRequirement()"(
+    collateralizationRequirement(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
+    "collateralizationRequirement(uint8)"(
+      collateral: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     stop(overrides?: Overrides): Promise<BigNumber>;
 
@@ -402,11 +432,13 @@ export class IMarket extends Contract {
     ): Promise<BigNumber>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -418,16 +450,22 @@ export class IMarket extends Contract {
     "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     collateralizationRequirement(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "collateralizationRequirement()"(
+    "collateralizationRequirement(uint8)"(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "periodsBehind()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
@@ -450,11 +488,13 @@ export class IMarket extends Contract {
     ): Promise<PopulatedTransaction>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;

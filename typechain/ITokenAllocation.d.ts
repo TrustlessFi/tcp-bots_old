@@ -23,6 +23,8 @@ interface ITokenAllocationInterface extends ethers.utils.Interface {
   functions: {
     "accepted()": FunctionFragment;
     "allocationCount()": FunctionFragment;
+    "canAdministerProtocol()": FunctionFragment;
+    "locked()": FunctionFragment;
     "startTime()": FunctionFragment;
   };
 
@@ -31,6 +33,11 @@ interface ITokenAllocationInterface extends ethers.utils.Interface {
     functionFragment: "allocationCount",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "canAdministerProtocol",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "locked", values?: undefined): string;
   encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "accepted", data: BytesLike): Result;
@@ -38,6 +45,11 @@ interface ITokenAllocationInterface extends ethers.utils.Interface {
     functionFragment: "allocationCount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "canAdministerProtocol",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "locked", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
 
   events: {
@@ -47,7 +59,7 @@ interface ITokenAllocationInterface extends ethers.utils.Interface {
     "Initialized()": EventFragment;
     "StakedTokens(address,uint256)": EventFragment;
     "Sweeped(uint256)": EventFragment;
-    "UnstakedTokens(address,uint64)": EventFragment;
+    "UnstakedTokens(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Accepted"): EventFragment;
@@ -75,41 +87,25 @@ export class ITokenAllocation extends Contract {
   interface: ITokenAllocationInterface;
 
   functions: {
-    accepted(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    accepted(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "accepted()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    "accepted()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    allocationCount(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    allocationCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "allocationCount()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "allocationCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    startTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    canAdministerProtocol(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "startTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    locked(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "locked()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "startTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   accepted(overrides?: CallOverrides): Promise<boolean>;
@@ -119,6 +115,14 @@ export class ITokenAllocation extends Contract {
   allocationCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   "allocationCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  canAdministerProtocol(overrides?: CallOverrides): Promise<boolean>;
+
+  "canAdministerProtocol()"(overrides?: CallOverrides): Promise<boolean>;
+
+  locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -132,6 +136,14 @@ export class ITokenAllocation extends Contract {
     allocationCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "allocationCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canAdministerProtocol(overrides?: CallOverrides): Promise<boolean>;
+
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<boolean>;
+
+    locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -154,10 +166,7 @@ export class ITokenAllocation extends Contract {
 
     Sweeped(count: null): EventFilter;
 
-    UnstakedTokens(
-      settlement: string | null,
-      period: BigNumberish | null
-    ): EventFilter;
+    UnstakedTokens(settlement: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -168,6 +177,14 @@ export class ITokenAllocation extends Contract {
     allocationCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "allocationCount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    canAdministerProtocol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -184,6 +201,18 @@ export class ITokenAllocation extends Contract {
     "allocationCount()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    canAdministerProtocol(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "canAdministerProtocol()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    locked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "locked()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

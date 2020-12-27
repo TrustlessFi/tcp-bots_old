@@ -22,24 +22,15 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface CnpInterfaceInterface extends ethers.utils.Interface {
   functions: {
     "getPriorVotes(address,uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "getPriorVotes",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "getPriorVotes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
 
@@ -64,29 +55,13 @@ export class CnpInterface extends Contract {
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "getPriorVotes(address,uint256)"(
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
   };
 
   getPriorVotes(
@@ -101,10 +76,6 @@ export class CnpInterface extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
     getPriorVotes(
       account: string,
@@ -117,10 +88,6 @@ export class CnpInterface extends Contract {
       blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
@@ -137,10 +104,6 @@ export class CnpInterface extends Contract {
       blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -155,9 +118,5 @@ export class CnpInterface extends Contract {
       blockNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

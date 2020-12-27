@@ -22,45 +22,53 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface SettlementInterface extends ethers.utils.Interface {
   functions: {
-    "SETTLEMENT_MIN_PRICE_THRESHOLD()": FunctionFragment;
+    "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()": FunctionFragment;
+    "btcPriceProvider()": FunctionFragment;
     "cnp()": FunctionFragment;
-    "confirmPrice(uint64)": FunctionFragment;
-    "currentPeriod()": FunctionFragment;
-    "ethAggregator()": FunctionFragment;
+    "confirmNoPriceConfidence()": FunctionFragment;
+    "confirmPrices()": FunctionFragment;
+    "deployer()": FunctionFragment;
+    "ethPriceProvider()": FunctionFragment;
     "getCollateralForCoin(uint64,uint256)": FunctionFragment;
-    "getRecentEthChainlinkPrice()": FunctionFragment;
+    "getRecentPrices()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "initializeSettlement()": FunctionFragment;
-    "periodLength()": FunctionFragment;
-    "priceCandidate(uint64)": FunctionFragment;
-    "pricesCandidateVotes(uint64)": FunctionFragment;
-    "setSettlementPriceThreshold(uint256)": FunctionFragment;
-    "settlementDiscoveryStartTime()": FunctionFragment;
-    "settlementPrice()": FunctionFragment;
-    "settlementPriceThreshold()": FunctionFragment;
-    "stakeTokensForSettlementPrice(uint256)": FunctionFragment;
+    "noPriceConfidenceUserVotes(address)": FunctionFragment;
+    "priceConfidence()": FunctionFragment;
+    "priceDiscoveryStartTime()": FunctionFragment;
+    "setBtcPriceProvider(address)": FunctionFragment;
+    "setEthPriceProvider(address)": FunctionFragment;
+    "setNewPriceProviders(address,address)": FunctionFragment;
+    "settlementPrice(uint8)": FunctionFragment;
+    "stakeTokensForNoPriceConfidence(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
-    "unstakeTokensForSettlementPrice(uint64)": FunctionFragment;
-    "userVotes(uint64,address)": FunctionFragment;
+    "stopped()": FunctionFragment;
+    "unstakeTokensForNoPriceConfidence()": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
     "withdrawCollateral(uint64)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "SETTLEMENT_MIN_PRICE_THRESHOLD",
+    functionFragment: "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "btcPriceProvider",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "confirmPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentPeriod",
+    functionFragment: "confirmNoPriceConfidence",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "ethAggregator",
+    functionFragment: "confirmPrices",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ethPriceProvider",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -68,7 +76,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRecentEthChainlinkPrice",
+    functionFragment: "getRecentPrices",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
@@ -78,45 +86,46 @@ interface SettlementInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "periodLength",
+    functionFragment: "noPriceConfidenceUserVotes",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "priceConfidence",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "priceCandidate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pricesCandidateVotes",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setSettlementPriceThreshold",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "settlementDiscoveryStartTime",
+    functionFragment: "priceDiscoveryStartTime",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBtcPriceProvider",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEthPriceProvider",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNewPriceProviders",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "settlementPrice",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "settlementPriceThreshold",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "stakeTokensForSettlementPrice",
+    functionFragment: "stakeTokensForNoPriceConfidence",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "unstakeTokensForSettlementPrice",
-    values: [BigNumberish]
+    functionFragment: "unstakeTokensForNoPriceConfidence",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "userVotes",
-    values: [BigNumberish, string]
+    functionFragment: "validUpdate",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawCollateral",
@@ -124,20 +133,25 @@ interface SettlementInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "SETTLEMENT_MIN_PRICE_THRESHOLD",
+    functionFragment: "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "btcPriceProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "confirmPrice",
+    functionFragment: "confirmNoPriceConfidence",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentPeriod",
+    functionFragment: "confirmPrices",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ethAggregator",
+    functionFragment: "ethPriceProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -145,7 +159,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getRecentEthChainlinkPrice",
+    functionFragment: "getRecentPrices",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
@@ -155,23 +169,27 @@ interface SettlementInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "periodLength",
+    functionFragment: "noPriceConfidenceUserVotes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "priceCandidate",
+    functionFragment: "priceConfidence",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "pricesCandidateVotes",
+    functionFragment: "priceDiscoveryStartTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setSettlementPriceThreshold",
+    functionFragment: "setBtcPriceProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "settlementDiscoveryStartTime",
+    functionFragment: "setEthPriceProvider",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setNewPriceProviders",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -179,19 +197,19 @@ interface SettlementInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "settlementPriceThreshold",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "stakeTokensForSettlementPrice",
+    functionFragment: "stakeTokensForNoPriceConfidence",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "unstakeTokensForSettlementPrice",
+    functionFragment: "unstakeTokensForNoPriceConfidence",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "userVotes", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawCollateral",
     data: BytesLike
@@ -199,29 +217,31 @@ interface SettlementInterface extends ethers.utils.Interface {
 
   events: {
     "Initialized(address)": EventFragment;
+    "NoConfidenceConfirmed(address)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
+    "ParameterUpdatedAddress(string,address)": EventFragment;
     "SettlementCollateralForCoin(uint64,address,uint256,uint256)": EventFragment;
     "SettlementInitialized(uint256)": EventFragment;
-    "SettlementPriceConfirmed(address,uint64,uint256)": EventFragment;
     "SettlementWithdrawCollateral(uint64,address,uint256)": EventFragment;
-    "StakedSettlementTokens(address,uint64,uint256,uint256)": EventFragment;
+    "StakedNoConfidenceTokens(address,uint256)": EventFragment;
     "Stopped()": EventFragment;
-    "UnstakedSettlementTokens(address,uint64,uint256)": EventFragment;
+    "UnstakedNoConfidenceTokens(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NoConfidenceConfirmed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SettlementCollateralForCoin"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SettlementInitialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SettlementPriceConfirmed"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SettlementWithdrawCollateral"
   ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StakedSettlementTokens"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StakedNoConfidenceTokens"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UnstakedSettlementTokens"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnstakedNoConfidenceTokens"): EventFragment;
 }
 
 export class Settlement extends Contract {
@@ -238,65 +258,41 @@ export class Settlement extends Contract {
   interface: SettlementInterface;
 
   functions: {
-    SETTLEMENT_MIN_PRICE_THRESHOLD(
+    SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "SETTLEMENT_MIN_PRICE_THRESHOLD()"(
+    "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    cnp(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    btcPriceProvider(overrides?: CallOverrides): Promise<[string]>;
 
-    "cnp()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "btcPriceProvider()"(overrides?: CallOverrides): Promise<[string]>;
 
-    confirmPrice(
-      period: BigNumberish,
+    cnp(overrides?: CallOverrides): Promise<[string]>;
+
+    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
+
+    confirmNoPriceConfidence(
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "confirmPrice(uint64)"(
-      period: BigNumberish,
+    "confirmNoPriceConfidence()"(
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    currentPeriod(
-      overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
+    confirmPrices(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "currentPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      period: BigNumber;
-      0: BigNumber;
-    }>;
+    "confirmPrices()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    ethAggregator(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "ethAggregator()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    ethPriceProvider(overrides?: CallOverrides): Promise<[string]>;
+
+    "ethPriceProvider()"(overrides?: CallOverrides): Promise<[string]>;
 
     getCollateralForCoin(
       positionID: BigNumberish,
@@ -310,39 +306,29 @@ export class Settlement extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    getRecentEthChainlinkPrice(
+    getRecentPrices(
       overrides?: CallOverrides
-    ): Promise<{
-      ethPrice: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+    >;
 
-    "getRecentEthChainlinkPrice()"(
+    "getRecentPrices()"(
       overrides?: CallOverrides
-    ): Promise<{
-      ethPrice: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+    >;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -352,99 +338,75 @@ export class Settlement extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    periodLength(
+    noPriceConfidenceUserVotes(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "periodLength()"(
+    "noPriceConfidenceUserVotes(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    priceCandidate(
-      arg0: BigNumberish,
+    priceConfidence(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "priceConfidence()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    priceDiscoveryStartTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "priceDiscoveryStartTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "priceCandidate(uint64)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    pricesCandidateVotes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "pricesCandidateVotes(uint64)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    setSettlementPriceThreshold(
-      threshold: BigNumberish,
+    setBtcPriceProvider(
+      provider: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setSettlementPriceThreshold(uint256)"(
-      threshold: BigNumberish,
+    "setBtcPriceProvider(address)"(
+      provider: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    settlementDiscoveryStartTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    setEthPriceProvider(
+      provider: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "settlementDiscoveryStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "setEthPriceProvider(address)"(
+      provider: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setNewPriceProviders(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setNewPriceProviders(address,address)"(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     settlementPrice(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "settlementPrice()"(
+    "settlementPrice(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    settlementPriceThreshold(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "settlementPriceThreshold()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -452,31 +414,27 @@ export class Settlement extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    unstakeTokensForSettlementPrice(
-      period: BigNumberish,
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    unstakeTokensForNoPriceConfidence(
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unstakeTokensForSettlementPrice(uint64)"(
-      period: BigNumberish,
+    "unstakeTokensForNoPriceConfidence()"(
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    userVotes(
-      arg0: BigNumberish,
-      arg1: string,
+    validUpdate(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[boolean]>;
 
-    "userVotes(uint64,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[boolean]>;
 
     withdrawCollateral(
       positionID: BigNumberish,
@@ -489,33 +447,39 @@ export class Settlement extends Contract {
     ): Promise<ContractTransaction>;
   };
 
-  SETTLEMENT_MIN_PRICE_THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "SETTLEMENT_MIN_PRICE_THRESHOLD()"(
+  SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  btcPriceProvider(overrides?: CallOverrides): Promise<string>;
+
+  "btcPriceProvider()"(overrides?: CallOverrides): Promise<string>;
 
   cnp(overrides?: CallOverrides): Promise<string>;
 
   "cnp()"(overrides?: CallOverrides): Promise<string>;
 
-  confirmPrice(
-    period: BigNumberish,
+  confirmNoPriceConfidence(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "confirmNoPriceConfidence()"(
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "confirmPrice(uint64)"(
-    period: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  confirmPrices(overrides?: Overrides): Promise<ContractTransaction>;
 
-  currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+  "confirmPrices()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+  deployer(overrides?: CallOverrides): Promise<string>;
 
-  ethAggregator(overrides?: CallOverrides): Promise<string>;
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
-  "ethAggregator()"(overrides?: CallOverrides): Promise<string>;
+  ethPriceProvider(overrides?: CallOverrides): Promise<string>;
+
+  "ethPriceProvider()"(overrides?: CallOverrides): Promise<string>;
 
   getCollateralForCoin(
     positionID: BigNumberish,
@@ -529,18 +493,26 @@ export class Settlement extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  getRecentEthChainlinkPrice(overrides?: CallOverrides): Promise<BigNumber>;
+  getRecentPrices(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+  >;
 
-  "getRecentEthChainlinkPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "getRecentPrices()"(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+  >;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -548,61 +520,73 @@ export class Settlement extends Contract {
 
   "initializeSettlement()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  periodLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  priceCandidate(
-    arg0: BigNumberish,
+  noPriceConfidenceUserVotes(
+    arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "priceCandidate(uint64)"(
-    arg0: BigNumberish,
+  "noPriceConfidenceUserVotes(address)"(
+    arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  pricesCandidateVotes(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  priceConfidence(overrides?: CallOverrides): Promise<boolean>;
 
-  "pricesCandidateVotes(uint64)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "priceConfidence()"(overrides?: CallOverrides): Promise<boolean>;
 
-  setSettlementPriceThreshold(
-    threshold: BigNumberish,
+  priceDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  setBtcPriceProvider(
+    provider: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setSettlementPriceThreshold(uint256)"(
-    threshold: BigNumberish,
+  "setBtcPriceProvider(address)"(
+    provider: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  settlementDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+  setEthPriceProvider(
+    provider: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "settlementDiscoveryStartTime()"(
+  "setEthPriceProvider(address)"(
+    provider: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setNewPriceProviders(
+    ethProvider: string,
+    btcProvider: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setNewPriceProviders(address,address)"(
+    ethProvider: string,
+    btcProvider: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  settlementPrice(
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
+  "settlementPrice(uint8)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  settlementPriceThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "settlementPriceThreshold()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  stakeTokensForSettlementPrice(
-    count: BigNumberish,
+  stakeTokensForNoPriceConfidence(
+    countCNPToStake: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "stakeTokensForSettlementPrice(uint256)"(
-    count: BigNumberish,
+  "stakeTokensForNoPriceConfidence(uint256)"(
+    countCNPToStake: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -610,27 +594,24 @@ export class Settlement extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  unstakeTokensForSettlementPrice(
-    period: BigNumberish,
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  unstakeTokensForNoPriceConfidence(
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unstakeTokensForSettlementPrice(uint64)"(
-    period: BigNumberish,
+  "unstakeTokensForNoPriceConfidence()"(
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  userVotes(
-    arg0: BigNumberish,
-    arg1: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  "userVotes(uint64,address)"(
-    arg0: BigNumberish,
-    arg1: string,
+  "validUpdate(bytes4)"(
+    action: BytesLike,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
   withdrawCollateral(
     positionID: BigNumberish,
@@ -643,35 +624,37 @@ export class Settlement extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    SETTLEMENT_MIN_PRICE_THRESHOLD(
+    SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "SETTLEMENT_MIN_PRICE_THRESHOLD()"(
+    "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    btcPriceProvider(overrides?: CallOverrides): Promise<string>;
+
+    "btcPriceProvider()"(overrides?: CallOverrides): Promise<string>;
 
     cnp(overrides?: CallOverrides): Promise<string>;
 
     "cnp()"(overrides?: CallOverrides): Promise<string>;
 
-    confirmPrice(
-      period: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    confirmNoPriceConfidence(overrides?: CallOverrides): Promise<void>;
 
-    "confirmPrice(uint64)"(
-      period: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    "confirmNoPriceConfidence()"(overrides?: CallOverrides): Promise<void>;
 
-    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+    confirmPrices(overrides?: CallOverrides): Promise<void>;
 
-    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "confirmPrices()"(overrides?: CallOverrides): Promise<void>;
 
-    ethAggregator(overrides?: CallOverrides): Promise<string>;
+    deployer(overrides?: CallOverrides): Promise<string>;
 
-    "ethAggregator()"(overrides?: CallOverrides): Promise<string>;
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
+    ethPriceProvider(overrides?: CallOverrides): Promise<string>;
+
+    "ethPriceProvider()"(overrides?: CallOverrides): Promise<string>;
 
     getCollateralForCoin(
       positionID: BigNumberish,
@@ -685,20 +668,26 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getRecentEthChainlinkPrice(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getRecentEthChainlinkPrice()"(
+    getRecentPrices(
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+    >;
+
+    "getRecentPrices()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
+    >;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -706,61 +695,73 @@ export class Settlement extends Contract {
 
     "initializeSettlement()"(overrides?: CallOverrides): Promise<void>;
 
-    periodLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    priceCandidate(
-      arg0: BigNumberish,
+    noPriceConfidenceUserVotes(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "priceCandidate(uint64)"(
-      arg0: BigNumberish,
+    "noPriceConfidenceUserVotes(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    pricesCandidateVotes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    priceConfidence(overrides?: CallOverrides): Promise<boolean>;
 
-    "pricesCandidateVotes(uint64)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "priceConfidence()"(overrides?: CallOverrides): Promise<boolean>;
 
-    setSettlementPriceThreshold(
-      threshold: BigNumberish,
+    priceDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setBtcPriceProvider(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setSettlementPriceThreshold(uint256)"(
-      threshold: BigNumberish,
+    "setBtcPriceProvider(address)"(
+      provider: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    settlementDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+    setEthPriceProvider(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "settlementDiscoveryStartTime()"(
+    "setEthPriceProvider(address)"(
+      provider: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNewPriceProviders(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setNewPriceProviders(address,address)"(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    settlementPrice(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
+    "settlementPrice(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    settlementPriceThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "settlementPriceThreshold()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -768,27 +769,22 @@ export class Settlement extends Contract {
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
-    unstakeTokensForSettlementPrice(
-      period: BigNumberish,
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    unstakeTokensForNoPriceConfidence(overrides?: CallOverrides): Promise<void>;
+
+    "unstakeTokensForNoPriceConfidence()"(
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "unstakeTokensForSettlementPrice(uint64)"(
-      period: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    userVotes(
-      arg0: BigNumberish,
-      arg1: string,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "userVotes(uint64,address)"(
-      arg0: BigNumberish,
-      arg1: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
     withdrawCollateral(
       positionID: BigNumberish,
@@ -804,7 +800,14 @@ export class Settlement extends Contract {
   filters: {
     Initialized(governor: string | null): EventFilter;
 
+    NoConfidenceConfirmed(account: string | null): EventFilter;
+
     ParameterUpdated(paramName: string | null, value: null): EventFilter;
+
+    ParameterUpdatedAddress(
+      paramName: string | null,
+      _address: string | null
+    ): EventFilter;
 
     SettlementCollateralForCoin(
       positionID: BigNumberish | null,
@@ -815,64 +818,54 @@ export class Settlement extends Contract {
 
     SettlementInitialized(settlementDiscoveryStartTime: null): EventFilter;
 
-    SettlementPriceConfirmed(
-      account: string | null,
-      period: BigNumberish | null,
-      price: null
-    ): EventFilter;
-
     SettlementWithdrawCollateral(
       positionID: BigNumberish | null,
       owner: string | null,
       collateralToWithdraw: null
     ): EventFilter;
 
-    StakedSettlementTokens(
-      account: string | null,
-      period: BigNumberish | null,
-      price: null,
-      count: null
-    ): EventFilter;
+    StakedNoConfidenceTokens(account: string | null, count: null): EventFilter;
 
     Stopped(): EventFilter;
 
-    UnstakedSettlementTokens(
+    UnstakedNoConfidenceTokens(
       account: string | null,
-      period: BigNumberish | null,
       count: null
     ): EventFilter;
   };
 
   estimateGas: {
-    SETTLEMENT_MIN_PRICE_THRESHOLD(
+    SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "SETTLEMENT_MIN_PRICE_THRESHOLD()"(
+    "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    btcPriceProvider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "btcPriceProvider()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
     "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    confirmPrice(
-      period: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    confirmNoPriceConfidence(overrides?: Overrides): Promise<BigNumber>;
 
-    "confirmPrice(uint64)"(
-      period: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    "confirmNoPriceConfidence()"(overrides?: Overrides): Promise<BigNumber>;
 
-    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+    confirmPrices(overrides?: Overrides): Promise<BigNumber>;
 
-    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "confirmPrices()"(overrides?: Overrides): Promise<BigNumber>;
 
-    ethAggregator(overrides?: CallOverrides): Promise<BigNumber>;
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "ethAggregator()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ethPriceProvider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ethPriceProvider()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCollateralForCoin(
       positionID: BigNumberish,
@@ -886,20 +879,18 @@ export class Settlement extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    getRecentEthChainlinkPrice(overrides?: CallOverrides): Promise<BigNumber>;
+    getRecentPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getRecentEthChainlinkPrice()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "getRecentPrices()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -907,61 +898,73 @@ export class Settlement extends Contract {
 
     "initializeSettlement()"(overrides?: Overrides): Promise<BigNumber>;
 
-    periodLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    priceCandidate(
-      arg0: BigNumberish,
+    noPriceConfidenceUserVotes(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "priceCandidate(uint64)"(
-      arg0: BigNumberish,
+    "noPriceConfidenceUserVotes(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    pricesCandidateVotes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    priceConfidence(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "pricesCandidateVotes(uint64)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "priceConfidence()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setSettlementPriceThreshold(
-      threshold: BigNumberish,
+    priceDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setBtcPriceProvider(
+      provider: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setSettlementPriceThreshold(uint256)"(
-      threshold: BigNumberish,
+    "setBtcPriceProvider(address)"(
+      provider: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    settlementDiscoveryStartTime(overrides?: CallOverrides): Promise<BigNumber>;
+    setEthPriceProvider(
+      provider: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "settlementDiscoveryStartTime()"(
+    "setEthPriceProvider(address)"(
+      provider: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    setNewPriceProviders(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setNewPriceProviders(address,address)"(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    settlementPrice(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
+    "settlementPrice(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    settlementPriceThreshold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "settlementPriceThreshold()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -969,25 +972,25 @@ export class Settlement extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
-    unstakeTokensForSettlementPrice(
-      period: BigNumberish,
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    unstakeTokensForNoPriceConfidence(
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "unstakeTokensForSettlementPrice(uint64)"(
-      period: BigNumberish,
+    "unstakeTokensForNoPriceConfidence()"(
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    userVotes(
-      arg0: BigNumberish,
-      arg1: string,
+    validUpdate(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "userVotes(uint64,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1003,11 +1006,17 @@ export class Settlement extends Contract {
   };
 
   populateTransaction: {
-    SETTLEMENT_MIN_PRICE_THRESHOLD(
+    SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "SETTLEMENT_MIN_PRICE_THRESHOLD()"(
+    "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    btcPriceProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "btcPriceProvider()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1015,23 +1024,27 @@ export class Settlement extends Contract {
 
     "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    confirmPrice(
-      period: BigNumberish,
+    confirmNoPriceConfidence(
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "confirmPrice(uint64)"(
-      period: BigNumberish,
+    "confirmNoPriceConfidence()"(
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    confirmPrices(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "currentPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "confirmPrices()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    ethAggregator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "ethAggregator()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ethPriceProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ethPriceProvider()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getCollateralForCoin(
       positionID: BigNumberish,
@@ -1045,11 +1058,9 @@ export class Settlement extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    getRecentEthChainlinkPrice(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getRecentPrices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getRecentEthChainlinkPrice()"(
+    "getRecentPrices()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1058,12 +1069,12 @@ export class Settlement extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1073,69 +1084,79 @@ export class Settlement extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    priceCandidate(
-      arg0: BigNumberish,
+    noPriceConfidenceUserVotes(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "priceCandidate(uint64)"(
-      arg0: BigNumberish,
+    "noPriceConfidenceUserVotes(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    pricesCandidateVotes(
-      arg0: BigNumberish,
+    priceConfidence(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "priceConfidence()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "pricesCandidateVotes(uint64)"(
-      arg0: BigNumberish,
+    priceDiscoveryStartTime(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setSettlementPriceThreshold(
-      threshold: BigNumberish,
+    "priceDiscoveryStartTime()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setBtcPriceProvider(
+      provider: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setSettlementPriceThreshold(uint256)"(
-      threshold: BigNumberish,
+    "setBtcPriceProvider(address)"(
+      provider: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    settlementDiscoveryStartTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "settlementDiscoveryStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    settlementPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "settlementPrice()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    settlementPriceThreshold(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "settlementPriceThreshold()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    setEthPriceProvider(
+      provider: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "setEthPriceProvider(address)"(
+      provider: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setNewPriceProviders(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setNewPriceProviders(address,address)"(
+      ethProvider: string,
+      btcProvider: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    settlementPrice(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "settlementPrice(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1143,25 +1164,25 @@ export class Settlement extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    unstakeTokensForSettlementPrice(
-      period: BigNumberish,
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    unstakeTokensForNoPriceConfidence(
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unstakeTokensForSettlementPrice(uint64)"(
-      period: BigNumberish,
+    "unstakeTokensForNoPriceConfidence()"(
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    userVotes(
-      arg0: BigNumberish,
-      arg1: string,
+    validUpdate(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "userVotes(uint64,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

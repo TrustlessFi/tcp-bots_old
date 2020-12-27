@@ -19,6 +19,32 @@ export class PeriodTime__factory {
 const _abi = [
   {
     inputs: [],
+    name: "currentPeriod",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "period",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "firstPeriod",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "periodLength",
     outputs: [
       {

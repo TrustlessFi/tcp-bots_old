@@ -20,6 +20,11 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+      {
         internalType: "uint256",
         name: "count",
         type: "uint256",
@@ -31,13 +36,43 @@ const _abi = [
       },
     ],
     name: "adjustDebt",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint128",
+        name: "",
+        type: "uint128",
+      },
+      {
+        internalType: "uint128",
+        name: "",
+        type: "uint128",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "debt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+    ],
+    name: "debtByCollateral",
     outputs: [
       {
         internalType: "uint256",
@@ -75,12 +110,17 @@ const _abi = [
     inputs: [
       {
         internalType: "uint64",
-        name: "id",
+        name: "positionID",
         type: "uint64",
       },
     ],
     name: "getBasicPositionInfo",
     outputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
       {
         internalType: "uint256",
         name: "debtCount",
@@ -96,7 +136,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+    ],
     name: "getLiquidationAccount",
     outputs: [
       {
@@ -180,7 +226,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint64",
-        name: "id",
+        name: "positionID",
         type: "uint64",
       },
     ],
@@ -233,6 +279,11 @@ const _abi = [
             name: "collateralizationBand",
             type: "uint32",
           },
+          {
+            internalType: "enum IAccounting.Collateral",
+            name: "collateralType",
+            type: "uint8",
+          },
         ],
         internalType: "struct IAccounting.DebtPosition",
         name: "acct",
@@ -250,7 +301,12 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "debt",
+            name: "ethDebt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "btcDebt",
             type: "uint256",
           },
           {
@@ -279,6 +335,29 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "uint64",
+        name: "positionID",
+        type: "uint64",
+      },
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+    ],
+    name: "registerPosition",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
       {
         internalType: "address",
         name: "account",
@@ -315,6 +394,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
       {
         components: [
           {
@@ -447,6 +531,11 @@ const _abi = [
             name: "collateralizationBand",
             type: "uint32",
           },
+          {
+            internalType: "enum IAccounting.Collateral",
+            name: "collateralType",
+            type: "uint8",
+          },
         ],
         internalType: "struct IAccounting.DebtPosition",
         name: "dp",
@@ -464,7 +553,12 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "debt",
+            name: "ethDebt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "btcDebt",
             type: "uint256",
           },
           {

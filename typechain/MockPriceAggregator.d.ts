@@ -19,7 +19,7 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface IChainlinkAggregatorV3Interface extends ethers.utils.Interface {
+interface MockPriceAggregatorInterface extends ethers.utils.Interface {
   functions: {
     "decimals()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
@@ -40,7 +40,7 @@ interface IChainlinkAggregatorV3Interface extends ethers.utils.Interface {
   events: {};
 }
 
-export class IChainlinkAggregatorV3 extends Contract {
+export class MockPriceAggregator extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -51,50 +51,36 @@ export class IChainlinkAggregatorV3 extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: IChainlinkAggregatorV3Interface;
+  interface: MockPriceAggregatorInterface;
 
   functions: {
-    decimals(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "decimals()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
 
     latestRoundData(
       overrides?: CallOverrides
-    ): Promise<{
-      roundId: BigNumber;
-      answer: BigNumber;
-      startedAt: BigNumber;
-      updatedAt: BigNumber;
-      answeredInRound: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        roundId: BigNumber;
+        answer: BigNumber;
+        startedAt: BigNumber;
+        updatedAt: BigNumber;
+        answeredInRound: BigNumber;
+      }
+    >;
 
     "latestRoundData()"(
       overrides?: CallOverrides
-    ): Promise<{
-      roundId: BigNumber;
-      answer: BigNumber;
-      startedAt: BigNumber;
-      updatedAt: BigNumber;
-      answeredInRound: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        roundId: BigNumber;
+        answer: BigNumber;
+        startedAt: BigNumber;
+        updatedAt: BigNumber;
+        answeredInRound: BigNumber;
+      }
+    >;
   };
 
   decimals(overrides?: CallOverrides): Promise<number>;
@@ -103,33 +89,27 @@ export class IChainlinkAggregatorV3 extends Contract {
 
   latestRoundData(
     overrides?: CallOverrides
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      roundId: BigNumber;
+      answer: BigNumber;
+      startedAt: BigNumber;
+      updatedAt: BigNumber;
+      answeredInRound: BigNumber;
+    }
+  >;
 
   "latestRoundData()"(
     overrides?: CallOverrides
-  ): Promise<{
-    roundId: BigNumber;
-    answer: BigNumber;
-    startedAt: BigNumber;
-    updatedAt: BigNumber;
-    answeredInRound: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      roundId: BigNumber;
+      answer: BigNumber;
+      startedAt: BigNumber;
+      updatedAt: BigNumber;
+      answeredInRound: BigNumber;
+    }
+  >;
 
   callStatic: {
     decimals(overrides?: CallOverrides): Promise<number>;
@@ -138,33 +118,27 @@ export class IChainlinkAggregatorV3 extends Contract {
 
     latestRoundData(
       overrides?: CallOverrides
-    ): Promise<{
-      roundId: BigNumber;
-      answer: BigNumber;
-      startedAt: BigNumber;
-      updatedAt: BigNumber;
-      answeredInRound: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        roundId: BigNumber;
+        answer: BigNumber;
+        startedAt: BigNumber;
+        updatedAt: BigNumber;
+        answeredInRound: BigNumber;
+      }
+    >;
 
     "latestRoundData()"(
       overrides?: CallOverrides
-    ): Promise<{
-      roundId: BigNumber;
-      answer: BigNumber;
-      startedAt: BigNumber;
-      updatedAt: BigNumber;
-      answeredInRound: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        roundId: BigNumber;
+        answer: BigNumber;
+        startedAt: BigNumber;
+        updatedAt: BigNumber;
+        answeredInRound: BigNumber;
+      }
+    >;
   };
 
   filters: {};

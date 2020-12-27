@@ -22,35 +22,41 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface IAuctionsInterface extends ethers.utils.Interface {
   functions: {
-    "lastAuctionCompletionTime()": FunctionFragment;
+    "latestAuctionCompletionTime()": FunctionFragment;
     "stop()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "lastAuctionCompletionTime",
+    functionFragment: "latestAuctionCompletionTime",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "lastAuctionCompletionTime",
+    functionFragment: "latestAuctionCompletionTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
 
   events: {
-    "AuctionBid(bool,uint64,address,uint256)": EventFragment;
-    "AuctionSettled(bool,uint64,address,address,address)": EventFragment;
-    "AuctionStarted(bool,uint64,uint256,uint64)": EventFragment;
+    "DeficitAuctionBid(uint64,address,uint256)": EventFragment;
+    "DeficitAuctionSettled(uint64,address)": EventFragment;
+    "DeficitAuctionStarted(uint64,uint256,uint64)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
+    "SurplusAuctionBid(uint64,address,uint256)": EventFragment;
+    "SurplusAuctionSettled(uint64,address)": EventFragment;
+    "SurplusAuctionStarted(uint64,uint256,uint64)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AuctionBid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuctionSettled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AuctionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionBid"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionSettled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DeficitAuctionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionBid"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionSettled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SurplusAuctionStarted"): EventFragment;
 }
 
 export class IAuctions extends Contract {
@@ -67,35 +73,33 @@ export class IAuctions extends Contract {
   interface: IAuctionsInterface;
 
   functions: {
-    lastAuctionCompletionTime(
+    latestAuctionCompletionTime(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
-  lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+  latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "lastAuctionCompletionTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "latestAuctionCompletionTime()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
-    lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+    latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -105,23 +109,18 @@ export class IAuctions extends Contract {
   };
 
   filters: {
-    AuctionBid(
-      isSurplus: boolean | null,
+    DeficitAuctionBid(
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
     ): EventFilter;
 
-    AuctionSettled(
-      isSurplus: boolean | null,
+    DeficitAuctionSettled(
       auctionID: BigNumberish | null,
-      winner: string | null,
-      creator: null,
-      cleaner: null
+      winner: string | null
     ): EventFilter;
 
-    AuctionStarted(
-      isSurplus: boolean | null,
+    DeficitAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
@@ -130,12 +129,29 @@ export class IAuctions extends Contract {
     ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
     ParameterUpdated64(paramName: string | null, value: null): EventFilter;
+
+    SurplusAuctionBid(
+      auctionID: BigNumberish | null,
+      bidder: string | null,
+      bid: null
+    ): EventFilter;
+
+    SurplusAuctionSettled(
+      auctionID: BigNumberish | null,
+      winner: string | null
+    ): EventFilter;
+
+    SurplusAuctionStarted(
+      auctionID: BigNumberish | null,
+      count: BigNumberish | null,
+      maxEndTime: null
+    ): EventFilter;
   };
 
   estimateGas: {
-    lastAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
+    latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -145,11 +161,11 @@ export class IAuctions extends Contract {
   };
 
   populateTransaction: {
-    lastAuctionCompletionTime(
+    latestAuctionCompletionTime(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lastAuctionCompletionTime()"(
+    "latestAuctionCompletionTime()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

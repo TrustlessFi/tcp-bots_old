@@ -45,17 +45,9 @@ export class ERC20Decimals extends Contract {
   interface: ERC20DecimalsInterface;
 
   functions: {
-    decimals(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "decimals()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
   };
 
   decimals(overrides?: CallOverrides): Promise<number>;

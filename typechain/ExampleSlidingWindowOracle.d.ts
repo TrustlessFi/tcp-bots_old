@@ -102,98 +102,60 @@ export class ExampleSlidingWindowOracle extends Contract {
       amountIn: BigNumberish,
       tokenOut: string,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     "consult(address,uint256,address)"(
       tokenIn: string,
       amountIn: BigNumberish,
       tokenOut: string,
       overrides?: CallOverrides
-    ): Promise<{
-      amountOut: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
-    factory(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    factory(overrides?: CallOverrides): Promise<[string]>;
 
-    "factory()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "factory()"(overrides?: CallOverrides): Promise<[string]>;
 
-    granularity(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    granularity(overrides?: CallOverrides): Promise<[number]>;
 
-    "granularity()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    "granularity()"(overrides?: CallOverrides): Promise<[number]>;
 
     observationIndexOf(
       timestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      index: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { index: number }>;
 
     "observationIndexOf(uint256)"(
       timestamp: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      index: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { index: number }>;
 
     pairObservations(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      timestamp: BigNumber;
-      price0Cumulative: BigNumber;
-      price1Cumulative: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        timestamp: BigNumber;
+        price0Cumulative: BigNumber;
+        price1Cumulative: BigNumber;
+      }
+    >;
 
     "pairObservations(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      timestamp: BigNumber;
-      price0Cumulative: BigNumber;
-      price1Cumulative: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        timestamp: BigNumber;
+        price0Cumulative: BigNumber;
+        price1Cumulative: BigNumber;
+      }
+    >;
 
-    periodSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    periodSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "periodSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "periodSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     update(
       tokenA: string,
@@ -207,17 +169,9 @@ export class ExampleSlidingWindowOracle extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    windowSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    windowSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "windowSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "windowSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   consult(
@@ -256,27 +210,25 @@ export class ExampleSlidingWindowOracle extends Contract {
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    timestamp: BigNumber;
-    price0Cumulative: BigNumber;
-    price1Cumulative: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      timestamp: BigNumber;
+      price0Cumulative: BigNumber;
+      price1Cumulative: BigNumber;
+    }
+  >;
 
   "pairObservations(address,uint256)"(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    timestamp: BigNumber;
-    price0Cumulative: BigNumber;
-    price1Cumulative: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      timestamp: BigNumber;
+      price0Cumulative: BigNumber;
+      price1Cumulative: BigNumber;
+    }
+  >;
 
   periodSize(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -335,27 +287,25 @@ export class ExampleSlidingWindowOracle extends Contract {
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      timestamp: BigNumber;
-      price0Cumulative: BigNumber;
-      price1Cumulative: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        timestamp: BigNumber;
+        price0Cumulative: BigNumber;
+        price1Cumulative: BigNumber;
+      }
+    >;
 
     "pairObservations(address,uint256)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      timestamp: BigNumber;
-      price0Cumulative: BigNumber;
-      price1Cumulative: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        timestamp: BigNumber;
+        price0Cumulative: BigNumber;
+        price1Cumulative: BigNumber;
+      }
+    >;
 
     periodSize(overrides?: CallOverrides): Promise<BigNumber>;
 

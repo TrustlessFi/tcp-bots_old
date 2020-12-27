@@ -45,17 +45,9 @@ export class CoinSafeMath extends Contract {
   interface: CoinSafeMathInterface;
 
   functions: {
-    ONE(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ONE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "ONE()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "ONE()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   ONE(overrides?: CallOverrides): Promise<BigNumber>;

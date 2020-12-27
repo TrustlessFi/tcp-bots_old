@@ -22,13 +22,15 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface AccountingInterface extends ethers.utils.Interface {
   functions: {
-    "adjustDebt(uint256,bool)": FunctionFragment;
+    "adjustDebt(uint8,uint256,bool)": FunctionFragment;
     "calculateCollateralizationBand(uint256,uint256)": FunctionFragment;
     "collateralizationBand(uint256)": FunctionFragment;
     "debt()": FunctionFragment;
+    "debtByCollateral(uint8)": FunctionFragment;
+    "deployer()": FunctionFragment;
     "distributePairTokens(address,address,uint256)": FunctionFragment;
     "getBasicPositionInfo(uint64)": FunctionFragment;
-    "getLiquidationAccount()": FunctionFragment;
+    "getLiquidationAccount(uint8)": FunctionFragment;
     "getPairTokenPosition(address,address)": FunctionFragment;
     "getPosition(uint64)": FunctionFragment;
     "getSystemDebtInfo()": FunctionFragment;
@@ -36,17 +38,20 @@ interface AccountingInterface extends ethers.utils.Interface {
     "init(address)": FunctionFragment;
     "positionsCollateralization(uint64[])": FunctionFragment;
     "positionsForBand(uint32)": FunctionFragment;
-    "sendCollateral(address,uint256)": FunctionFragment;
+    "registerPosition(uint64,uint8)": FunctionFragment;
+    "sendCollateral(uint8,address,uint256)": FunctionFragment;
     "sendLentCoin(address,uint256)": FunctionFragment;
-    "setLiquidationAccount(tuple)": FunctionFragment;
+    "setLiquidationAccount(uint8,tuple)": FunctionFragment;
     "setPairTokenPosition(address,address,tuple)": FunctionFragment;
     "setPosition(uint64,tuple)": FunctionFragment;
     "setSystemDebtInfo(tuple)": FunctionFragment;
+    "stopped()": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "adjustDebt",
-    values: [BigNumberish, boolean]
+    values: [BigNumberish, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateCollateralizationBand",
@@ -58,6 +63,11 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "debt", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "debtByCollateral",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "distributePairTokens",
     values: [string, string, BigNumberish]
   ): string;
@@ -67,7 +77,7 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLiquidationAccount",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPairTokenPosition",
@@ -92,8 +102,12 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "registerPosition",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "sendCollateral",
-    values: [string, BigNumberish]
+    values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "sendLentCoin",
@@ -102,6 +116,7 @@ interface AccountingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setLiquidationAccount",
     values: [
+      BigNumberish,
       {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -137,6 +152,7 @@ interface AccountingInterface extends ethers.utils.Interface {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       }
     ]
   ): string;
@@ -144,12 +160,18 @@ interface AccountingInterface extends ethers.utils.Interface {
     functionFragment: "setSystemDebtInfo",
     values: [
       {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "adjustDebt", data: BytesLike): Result;
@@ -162,6 +184,11 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "debt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "debtByCollateral",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "distributePairTokens",
     data: BytesLike
@@ -197,6 +224,10 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "registerPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "sendCollateral",
     data: BytesLike
   ): Result;
@@ -218,6 +249,11 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setSystemDebtInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
@@ -245,12 +281,14 @@ export class Accounting extends Contract {
 
   functions: {
     adjustDebt(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "adjustDebt(uint256,bool)"(
+    "adjustDebt(uint8,uint256,bool)"(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -260,47 +298,41 @@ export class Accounting extends Contract {
       debtCount: BigNumberish,
       collateralCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      band: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { band: number }>;
 
     "calculateCollateralizationBand(uint256,uint256)"(
       debtCount: BigNumberish,
       collateralCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      band: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { band: number }>;
 
     collateralizationBand(
       c: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      band: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { band: number }>;
 
     "collateralizationBand(uint256)"(
       c: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      band: number;
-      0: number;
-    }>;
+    ): Promise<[number] & { band: number }>;
 
-    debt(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    debt(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "debt()"(
+    "debt()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    debtByCollateral(
+      collateralType: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
+
+    "debtByCollateral(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
     distributePairTokens(
       to: string,
@@ -317,272 +349,258 @@ export class Accounting extends Contract {
     ): Promise<ContractTransaction>;
 
     getBasicPositionInfo(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      debtCount: BigNumber;
-      collateralCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [number, BigNumber, BigNumber] & {
+        collateralType: number;
+        debtCount: BigNumber;
+        collateralCount: BigNumber;
+      }
+    >;
 
     "getBasicPositionInfo(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      debtCount: BigNumber;
-      collateralCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [number, BigNumber, BigNumber] & {
+        collateralType: number;
+        debtCount: BigNumber;
+        collateralCount: BigNumber;
+      }
+    >;
 
     getLiquidationAccount(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      lqAcct: {
-        startDebtExchangeRate: BigNumber;
-        debt: BigNumber;
-        collateral: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-      };
-      0: {
-        startDebtExchangeRate: BigNumber;
-        debt: BigNumber;
-        collateral: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber] & {
+          startDebtExchangeRate: BigNumber;
+          debt: BigNumber;
+          collateral: BigNumber;
+        }
+      ] & {
+        lqAcct: [BigNumber, BigNumber, BigNumber] & {
+          startDebtExchangeRate: BigNumber;
+          debt: BigNumber;
+          collateral: BigNumber;
+        };
+      }
+    >;
 
-    "getLiquidationAccount()"(
+    "getLiquidationAccount(uint8)"(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      lqAcct: {
-        startDebtExchangeRate: BigNumber;
-        debt: BigNumber;
-        collateral: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-      };
-      0: {
-        startDebtExchangeRate: BigNumber;
-        debt: BigNumber;
-        collateral: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber] & {
+          startDebtExchangeRate: BigNumber;
+          debt: BigNumber;
+          collateral: BigNumber;
+        }
+      ] & {
+        lqAcct: [BigNumber, BigNumber, BigNumber] & {
+          startDebtExchangeRate: BigNumber;
+          debt: BigNumber;
+          collateral: BigNumber;
+        };
+      }
+    >;
 
     getPairTokenPosition(
       owner: string,
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      pt: {
-        totalRewards: BigNumber;
-        count: BigNumber;
-        cumulativePairCoinCount: BigNumber;
-        lastPeriodRewarded: BigNumber;
-        unlockPeriod: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-      };
-      0: {
-        totalRewards: BigNumber;
-        count: BigNumber;
-        cumulativePairCoinCount: BigNumber;
-        lastPeriodRewarded: BigNumber;
-        unlockPeriod: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          totalRewards: BigNumber;
+          count: BigNumber;
+          cumulativePairCoinCount: BigNumber;
+          lastPeriodRewarded: BigNumber;
+          unlockPeriod: BigNumber;
+        }
+      ] & {
+        pt: [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          totalRewards: BigNumber;
+          count: BigNumber;
+          cumulativePairCoinCount: BigNumber;
+          lastPeriodRewarded: BigNumber;
+          unlockPeriod: BigNumber;
+        };
+      }
+    >;
 
     "getPairTokenPosition(address,address)"(
       owner: string,
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      pt: {
-        totalRewards: BigNumber;
-        count: BigNumber;
-        cumulativePairCoinCount: BigNumber;
-        lastPeriodRewarded: BigNumber;
-        unlockPeriod: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-      };
-      0: {
-        totalRewards: BigNumber;
-        count: BigNumber;
-        cumulativePairCoinCount: BigNumber;
-        lastPeriodRewarded: BigNumber;
-        unlockPeriod: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          totalRewards: BigNumber;
+          count: BigNumber;
+          cumulativePairCoinCount: BigNumber;
+          lastPeriodRewarded: BigNumber;
+          unlockPeriod: BigNumber;
+        }
+      ] & {
+        pt: [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          totalRewards: BigNumber;
+          count: BigNumber;
+          cumulativePairCoinCount: BigNumber;
+          lastPeriodRewarded: BigNumber;
+          unlockPeriod: BigNumber;
+        };
+      }
+    >;
 
     getPosition(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: {
-        startCumulativeDebt: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-        startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
-        lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-        5: BigNumber;
-        6: BigNumber;
-        7: BigNumber;
-        8: number;
-      };
-    }>;
+    ): Promise<
+      [
+        [
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          number,
+          number
+        ] & {
+          startCumulativeDebt: BigNumber;
+          collateral: BigNumber;
+          debt: BigNumber;
+          startDebtExchangeRate: BigNumber;
+          startCNPRewards: BigNumber;
+          collateralizationBandIndex: BigNumber;
+          lastUpdateTime: BigNumber;
+          lastBorrowTime: BigNumber;
+          collateralizationBand: number;
+          collateralType: number;
+        }
+      ]
+    >;
 
     "getPosition(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: {
-        startCumulativeDebt: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-        startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
-        lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-        4: BigNumber;
-        5: BigNumber;
-        6: BigNumber;
-        7: BigNumber;
-        8: number;
-      };
-    }>;
+    ): Promise<
+      [
+        [
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          number,
+          number
+        ] & {
+          startCumulativeDebt: BigNumber;
+          collateral: BigNumber;
+          debt: BigNumber;
+          startDebtExchangeRate: BigNumber;
+          startCNPRewards: BigNumber;
+          collateralizationBandIndex: BigNumber;
+          lastUpdateTime: BigNumber;
+          lastBorrowTime: BigNumber;
+          collateralizationBand: number;
+          collateralType: number;
+        }
+      ]
+    >;
 
     getSystemDebtInfo(
       overrides?: CallOverrides
-    ): Promise<{
-      0: {
-        debt: BigNumber;
-        totalCNPRewards: BigNumber;
-        cumulativeDebt: BigNumber;
-        debtExchangeRate: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          ethDebt: BigNumber;
+          btcDebt: BigNumber;
+          totalCNPRewards: BigNumber;
+          cumulativeDebt: BigNumber;
+          debtExchangeRate: BigNumber;
+        }
+      ]
+    >;
 
     "getSystemDebtInfo()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: {
-        debt: BigNumber;
-        totalCNPRewards: BigNumber;
-        cumulativeDebt: BigNumber;
-        debtExchangeRate: BigNumber;
-        0: BigNumber;
-        1: BigNumber;
-        2: BigNumber;
-        3: BigNumber;
-      };
-    }>;
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+          ethDebt: BigNumber;
+          btcDebt: BigNumber;
+          totalCNPRewards: BigNumber;
+          cumulativeDebt: BigNumber;
+          debtExchangeRate: BigNumber;
+        }
+      ]
+    >;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     positionsCollateralization(
       positionIDs: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<{
-      collateralizations: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { collateralizations: BigNumber[] }>;
 
     "positionsCollateralization(uint64[])"(
       positionIDs: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<{
-      collateralizations: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { collateralizations: BigNumber[] }>;
 
     positionsForBand(
       band: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      positions: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { positions: BigNumber[] }>;
 
     "positionsForBand(uint32)"(
       band: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      positions: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { positions: BigNumber[] }>;
+
+    registerPosition(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "registerPosition(uint64,uint8)"(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     sendCollateral(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "sendCollateral(address,uint256)"(
+    "sendCollateral(uint8,address,uint256)"(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -601,6 +619,7 @@ export class Accounting extends Contract {
     ): Promise<ContractTransaction>;
 
     setLiquidationAccount(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -609,7 +628,8 @@ export class Accounting extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setLiquidationAccount(tuple)"(
+    "setLiquidationAccount(uint8,tuple)"(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -656,6 +676,7 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -672,13 +693,15 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setSystemDebtInfo(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
@@ -688,22 +711,39 @@ export class Accounting extends Contract {
 
     "setSystemDebtInfo(tuple)"(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   adjustDebt(
+    collateralType: BigNumberish,
     count: BigNumberish,
     increase: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "adjustDebt(uint256,bool)"(
+  "adjustDebt(uint8,uint256,bool)"(
+    collateralType: BigNumberish,
     count: BigNumberish,
     increase: boolean,
     overrides?: Overrides
@@ -735,6 +775,20 @@ export class Accounting extends Contract {
 
   "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  debtByCollateral(
+    collateralType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "debtByCollateral(uint8)"(
+    collateralType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
   distributePairTokens(
     to: string,
     pair: string,
@@ -750,163 +804,167 @@ export class Accounting extends Contract {
   ): Promise<ContractTransaction>;
 
   getBasicPositionInfo(
-    id: BigNumberish,
+    positionID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    debtCount: BigNumber;
-    collateralCount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [number, BigNumber, BigNumber] & {
+      collateralType: number;
+      debtCount: BigNumber;
+      collateralCount: BigNumber;
+    }
+  >;
 
   "getBasicPositionInfo(uint64)"(
-    id: BigNumberish,
+    positionID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    debtCount: BigNumber;
-    collateralCount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [number, BigNumber, BigNumber] & {
+      collateralType: number;
+      debtCount: BigNumber;
+      collateralCount: BigNumber;
+    }
+  >;
 
   getLiquidationAccount(
+    collateral: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    startDebtExchangeRate: BigNumber;
-    debt: BigNumber;
-    collateral: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      startDebtExchangeRate: BigNumber;
+      debt: BigNumber;
+      collateral: BigNumber;
+    }
+  >;
 
-  "getLiquidationAccount()"(
+  "getLiquidationAccount(uint8)"(
+    collateral: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    startDebtExchangeRate: BigNumber;
-    debt: BigNumber;
-    collateral: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      startDebtExchangeRate: BigNumber;
+      debt: BigNumber;
+      collateral: BigNumber;
+    }
+  >;
 
   getPairTokenPosition(
     owner: string,
     pair: string,
     overrides?: CallOverrides
-  ): Promise<{
-    totalRewards: BigNumber;
-    count: BigNumber;
-    cumulativePairCoinCount: BigNumber;
-    lastPeriodRewarded: BigNumber;
-    unlockPeriod: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      totalRewards: BigNumber;
+      count: BigNumber;
+      cumulativePairCoinCount: BigNumber;
+      lastPeriodRewarded: BigNumber;
+      unlockPeriod: BigNumber;
+    }
+  >;
 
   "getPairTokenPosition(address,address)"(
     owner: string,
     pair: string,
     overrides?: CallOverrides
-  ): Promise<{
-    totalRewards: BigNumber;
-    count: BigNumber;
-    cumulativePairCoinCount: BigNumber;
-    lastPeriodRewarded: BigNumber;
-    unlockPeriod: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      totalRewards: BigNumber;
+      count: BigNumber;
+      cumulativePairCoinCount: BigNumber;
+      lastPeriodRewarded: BigNumber;
+      unlockPeriod: BigNumber;
+    }
+  >;
 
   getPosition(
-    id: BigNumberish,
+    positionID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    startCumulativeDebt: BigNumber;
-    collateral: BigNumber;
-    debt: BigNumber;
-    startDebtExchangeRate: BigNumber;
-    startCNPRewards: BigNumber;
-    collateralizationBandIndex: BigNumber;
-    lastUpdateTime: BigNumber;
-    lastBorrowTime: BigNumber;
-    collateralizationBand: number;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-    5: BigNumber;
-    6: BigNumber;
-    7: BigNumber;
-    8: number;
-  }>;
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      number,
+      number
+    ] & {
+      startCumulativeDebt: BigNumber;
+      collateral: BigNumber;
+      debt: BigNumber;
+      startDebtExchangeRate: BigNumber;
+      startCNPRewards: BigNumber;
+      collateralizationBandIndex: BigNumber;
+      lastUpdateTime: BigNumber;
+      lastBorrowTime: BigNumber;
+      collateralizationBand: number;
+      collateralType: number;
+    }
+  >;
 
   "getPosition(uint64)"(
-    id: BigNumberish,
+    positionID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    startCumulativeDebt: BigNumber;
-    collateral: BigNumber;
-    debt: BigNumber;
-    startDebtExchangeRate: BigNumber;
-    startCNPRewards: BigNumber;
-    collateralizationBandIndex: BigNumber;
-    lastUpdateTime: BigNumber;
-    lastBorrowTime: BigNumber;
-    collateralizationBand: number;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-    5: BigNumber;
-    6: BigNumber;
-    7: BigNumber;
-    8: number;
-  }>;
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      number,
+      number
+    ] & {
+      startCumulativeDebt: BigNumber;
+      collateral: BigNumber;
+      debt: BigNumber;
+      startDebtExchangeRate: BigNumber;
+      startCNPRewards: BigNumber;
+      collateralizationBandIndex: BigNumber;
+      lastUpdateTime: BigNumber;
+      lastBorrowTime: BigNumber;
+      collateralizationBand: number;
+      collateralType: number;
+    }
+  >;
 
   getSystemDebtInfo(
     overrides?: CallOverrides
-  ): Promise<{
-    debt: BigNumber;
-    totalCNPRewards: BigNumber;
-    cumulativeDebt: BigNumber;
-    debtExchangeRate: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      ethDebt: BigNumber;
+      btcDebt: BigNumber;
+      totalCNPRewards: BigNumber;
+      cumulativeDebt: BigNumber;
+      debtExchangeRate: BigNumber;
+    }
+  >;
 
   "getSystemDebtInfo()"(
     overrides?: CallOverrides
-  ): Promise<{
-    debt: BigNumber;
-    totalCNPRewards: BigNumber;
-    cumulativeDebt: BigNumber;
-    debtExchangeRate: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      ethDebt: BigNumber;
+      btcDebt: BigNumber;
+      totalCNPRewards: BigNumber;
+      cumulativeDebt: BigNumber;
+      debtExchangeRate: BigNumber;
+    }
+  >;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -930,13 +988,27 @@ export class Accounting extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  registerPosition(
+    positionID: BigNumberish,
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "registerPosition(uint64,uint8)"(
+    positionID: BigNumberish,
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   sendCollateral(
+    collateralType: BigNumberish,
     dest: string,
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "sendCollateral(address,uint256)"(
+  "sendCollateral(uint8,address,uint256)"(
+    collateralType: BigNumberish,
     dest: string,
     count: BigNumberish,
     overrides?: Overrides
@@ -955,6 +1027,7 @@ export class Accounting extends Contract {
   ): Promise<ContractTransaction>;
 
   setLiquidationAccount(
+    collateral: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -963,7 +1036,8 @@ export class Accounting extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setLiquidationAccount(tuple)"(
+  "setLiquidationAccount(uint8,tuple)"(
+    collateral: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -1010,6 +1084,7 @@ export class Accounting extends Contract {
       lastUpdateTime: BigNumberish;
       lastBorrowTime: BigNumberish;
       collateralizationBand: BigNumberish;
+      collateralType: BigNumberish;
     },
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1026,13 +1101,15 @@ export class Accounting extends Contract {
       lastUpdateTime: BigNumberish;
       lastBorrowTime: BigNumberish;
       collateralizationBand: BigNumberish;
+      collateralType: BigNumberish;
     },
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setSystemDebtInfo(
     _sdi: {
-      debt: BigNumberish;
+      ethDebt: BigNumberish;
+      btcDebt: BigNumberish;
       totalCNPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
@@ -1042,7 +1119,8 @@ export class Accounting extends Contract {
 
   "setSystemDebtInfo(tuple)"(
     _sdi: {
-      debt: BigNumberish;
+      ethDebt: BigNumberish;
+      btcDebt: BigNumberish;
       totalCNPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
@@ -1050,18 +1128,35 @@ export class Accounting extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
     adjustDebt(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<
+      [BigNumber, BigNumber] & { ethDebt: BigNumber; btcDebt: BigNumber }
+    >;
 
-    "adjustDebt(uint256,bool)"(
+    "adjustDebt(uint8,uint256,bool)"(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<
+      [BigNumber, BigNumber] & { ethDebt: BigNumber; btcDebt: BigNumber }
+    >;
 
     calculateCollateralizationBand(
       debtCount: BigNumberish,
@@ -1089,6 +1184,20 @@ export class Accounting extends Contract {
 
     "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    debtByCollateral(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "debtByCollateral(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
     distributePairTokens(
       to: string,
       pair: string,
@@ -1104,163 +1213,167 @@ export class Accounting extends Contract {
     ): Promise<void>;
 
     getBasicPositionInfo(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      debtCount: BigNumber;
-      collateralCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [number, BigNumber, BigNumber] & {
+        collateralType: number;
+        debtCount: BigNumber;
+        collateralCount: BigNumber;
+      }
+    >;
 
     "getBasicPositionInfo(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      debtCount: BigNumber;
-      collateralCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [number, BigNumber, BigNumber] & {
+        collateralType: number;
+        debtCount: BigNumber;
+        collateralCount: BigNumber;
+      }
+    >;
 
     getLiquidationAccount(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startDebtExchangeRate: BigNumber;
-      debt: BigNumber;
-      collateral: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        startDebtExchangeRate: BigNumber;
+        debt: BigNumber;
+        collateral: BigNumber;
+      }
+    >;
 
-    "getLiquidationAccount()"(
+    "getLiquidationAccount(uint8)"(
+      collateral: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startDebtExchangeRate: BigNumber;
-      debt: BigNumber;
-      collateral: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        startDebtExchangeRate: BigNumber;
+        debt: BigNumber;
+        collateral: BigNumber;
+      }
+    >;
 
     getPairTokenPosition(
       owner: string,
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      totalRewards: BigNumber;
-      count: BigNumber;
-      cumulativePairCoinCount: BigNumber;
-      lastPeriodRewarded: BigNumber;
-      unlockPeriod: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalRewards: BigNumber;
+        count: BigNumber;
+        cumulativePairCoinCount: BigNumber;
+        lastPeriodRewarded: BigNumber;
+        unlockPeriod: BigNumber;
+      }
+    >;
 
     "getPairTokenPosition(address,address)"(
       owner: string,
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      totalRewards: BigNumber;
-      count: BigNumber;
-      cumulativePairCoinCount: BigNumber;
-      lastPeriodRewarded: BigNumber;
-      unlockPeriod: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        totalRewards: BigNumber;
+        count: BigNumber;
+        cumulativePairCoinCount: BigNumber;
+        lastPeriodRewarded: BigNumber;
+        unlockPeriod: BigNumber;
+      }
+    >;
 
     getPosition(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     "getPosition(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     getSystemDebtInfo(
       overrides?: CallOverrides
-    ): Promise<{
-      debt: BigNumber;
-      totalCNPRewards: BigNumber;
-      cumulativeDebt: BigNumber;
-      debtExchangeRate: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        ethDebt: BigNumber;
+        btcDebt: BigNumber;
+        totalCNPRewards: BigNumber;
+        cumulativeDebt: BigNumber;
+        debtExchangeRate: BigNumber;
+      }
+    >;
 
     "getSystemDebtInfo()"(
       overrides?: CallOverrides
-    ): Promise<{
-      debt: BigNumber;
-      totalCNPRewards: BigNumber;
-      cumulativeDebt: BigNumber;
-      debtExchangeRate: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        ethDebt: BigNumber;
+        btcDebt: BigNumber;
+        totalCNPRewards: BigNumber;
+        cumulativeDebt: BigNumber;
+        debtExchangeRate: BigNumber;
+      }
+    >;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1284,13 +1397,27 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    registerPosition(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "registerPosition(uint64,uint8)"(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     sendCollateral(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "sendCollateral(address,uint256)"(
+    "sendCollateral(uint8,address,uint256)"(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -1309,6 +1436,7 @@ export class Accounting extends Contract {
     ): Promise<void>;
 
     setLiquidationAccount(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1317,7 +1445,8 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setLiquidationAccount(tuple)"(
+    "setLiquidationAccount(uint8,tuple)"(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1364,6 +1493,7 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1380,13 +1510,15 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
 
     setSystemDebtInfo(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
@@ -1396,13 +1528,25 @@ export class Accounting extends Contract {
 
     "setSystemDebtInfo(tuple)"(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -1413,12 +1557,14 @@ export class Accounting extends Contract {
 
   estimateGas: {
     adjustDebt(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "adjustDebt(uint256,bool)"(
+    "adjustDebt(uint8,uint256,bool)"(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -1450,6 +1596,20 @@ export class Accounting extends Contract {
 
     "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    debtByCollateral(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "debtByCollateral(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     distributePairTokens(
       to: string,
       pair: string,
@@ -1465,18 +1625,24 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     getBasicPositionInfo(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getBasicPositionInfo(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getLiquidationAccount(overrides?: CallOverrides): Promise<BigNumber>;
+    getLiquidationAccount(
+      collateral: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "getLiquidationAccount()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getLiquidationAccount(uint8)"(
+      collateral: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPairTokenPosition(
       owner: string,
@@ -1491,12 +1657,12 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     getPosition(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getPosition(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1508,10 +1674,10 @@ export class Accounting extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1535,13 +1701,27 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    registerPosition(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "registerPosition(uint64,uint8)"(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     sendCollateral(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "sendCollateral(address,uint256)"(
+    "sendCollateral(uint8,address,uint256)"(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1560,6 +1740,7 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     setLiquidationAccount(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1568,7 +1749,8 @@ export class Accounting extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setLiquidationAccount(tuple)"(
+    "setLiquidationAccount(uint8,tuple)"(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1615,6 +1797,7 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1631,13 +1814,15 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     setSystemDebtInfo(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
@@ -1647,23 +1832,40 @@ export class Accounting extends Contract {
 
     "setSystemDebtInfo(tuple)"(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     adjustDebt(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "adjustDebt(uint256,bool)"(
+    "adjustDebt(uint8,uint256,bool)"(
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -1695,6 +1897,20 @@ export class Accounting extends Contract {
 
     "debt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    debtByCollateral(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "debtByCollateral(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     distributePairTokens(
       to: string,
       pair: string,
@@ -1710,20 +1926,22 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getBasicPositionInfo(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getBasicPositionInfo(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getLiquidationAccount(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getLiquidationAccount()"(
+    "getLiquidationAccount(uint8)"(
+      collateral: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1740,12 +1958,12 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getPosition(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getPosition(uint64)"(
-      id: BigNumberish,
+      positionID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1760,12 +1978,12 @@ export class Accounting extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1789,13 +2007,27 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    registerPosition(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "registerPosition(uint64,uint8)"(
+      positionID: BigNumberish,
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     sendCollateral(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "sendCollateral(address,uint256)"(
+    "sendCollateral(uint8,address,uint256)"(
+      collateralType: BigNumberish,
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1814,6 +2046,7 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setLiquidationAccount(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1822,7 +2055,8 @@ export class Accounting extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setLiquidationAccount(tuple)"(
+    "setLiquidationAccount(uint8,tuple)"(
+      collateral: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1869,6 +2103,7 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1885,13 +2120,15 @@ export class Accounting extends Contract {
         lastUpdateTime: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
+        collateralType: BigNumberish;
       },
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setSystemDebtInfo(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
@@ -1901,12 +2138,27 @@ export class Accounting extends Contract {
 
     "setSystemDebtInfo(tuple)"(
       _sdi: {
-        debt: BigNumberish;
+        ethDebt: BigNumberish;
+        btcDebt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

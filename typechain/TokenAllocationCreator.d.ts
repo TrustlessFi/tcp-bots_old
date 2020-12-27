@@ -25,11 +25,14 @@ interface TokenAllocationCreatorInterface extends ethers.utils.Interface {
     "allocation(uint256)": FunctionFragment;
     "allocations()": FunctionFragment;
     "cnp()": FunctionFragment;
-    "createAllocation(uint256,address,uint64,uint64,string)": FunctionFragment;
+    "createAllocation(uint256,address,uint64,uint64,string,bool)": FunctionFragment;
+    "deployer()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "nextAllocationID()": FunctionFragment;
+    "stopped()": FunctionFragment;
     "validAllocation(address)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -43,17 +46,23 @@ interface TokenAllocationCreatorInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "createAllocation",
-    values: [BigNumberish, string, BigNumberish, BigNumberish, string]
+    values: [BigNumberish, string, BigNumberish, BigNumberish, string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
     functionFragment: "nextAllocationID",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "validAllocation",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "allocation", data: BytesLike): Result;
@@ -66,14 +75,20 @@ interface TokenAllocationCreatorInterface extends ethers.utils.Interface {
     functionFragment: "createAllocation",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nextAllocationID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "validAllocation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
@@ -102,43 +117,20 @@ export class TokenAllocationCreator extends Contract {
   interface: TokenAllocationCreatorInterface;
 
   functions: {
-    allocation(
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    allocation(id: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     "allocation(uint256)"(
       id: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
-    allocations(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string[];
-    }>;
+    allocations(overrides?: CallOverrides): Promise<[string[]]>;
 
-    "allocations()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string[];
-    }>;
+    "allocations()"(overrides?: CallOverrides): Promise<[string[]]>;
 
-    cnp(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    cnp(overrides?: CallOverrides): Promise<[string]>;
 
-    "cnp()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
 
     createAllocation(
       count: BigNumberish,
@@ -146,65 +138,65 @@ export class TokenAllocationCreator extends Contract {
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "createAllocation(uint256,address,uint64,uint64,string)"(
+    "createAllocation(uint256,address,uint64,uint64,string,bool)"(
       count: BigNumberish,
       allocatee: string,
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    nextAllocationID(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    nextAllocationID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "nextAllocationID()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "nextAllocationID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     validAllocation(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "validAllocation(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   allocation(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -228,26 +220,32 @@ export class TokenAllocationCreator extends Contract {
     startTime: BigNumberish,
     endTime: BigNumberish,
     allocationPurposeExplanation: string,
+    canAdminister: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "createAllocation(uint256,address,uint64,uint64,string)"(
+  "createAllocation(uint256,address,uint64,uint64,string,bool)"(
     count: BigNumberish,
     allocatee: string,
     startTime: BigNumberish,
     endTime: BigNumberish,
     allocationPurposeExplanation: string,
+    canAdminister: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -255,10 +253,21 @@ export class TokenAllocationCreator extends Contract {
 
   "nextAllocationID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
   validAllocation(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   "validAllocation(address)"(
     arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -284,26 +293,32 @@ export class TokenAllocationCreator extends Contract {
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "createAllocation(uint256,address,uint64,uint64,string)"(
+    "createAllocation(uint256,address,uint64,uint64,string,bool)"(
       count: BigNumberish,
       allocatee: string,
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -311,10 +326,21 @@ export class TokenAllocationCreator extends Contract {
 
     "nextAllocationID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
     validAllocation(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     "validAllocation(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -357,32 +383,42 @@ export class TokenAllocationCreator extends Contract {
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "createAllocation(uint256,address,uint64,uint64,string)"(
+    "createAllocation(uint256,address,uint64,uint64,string,bool)"(
       count: BigNumberish,
       allocatee: string,
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     nextAllocationID(overrides?: CallOverrides): Promise<BigNumber>;
 
     "nextAllocationID()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     validAllocation(
       arg0: string,
@@ -391,6 +427,16 @@ export class TokenAllocationCreator extends Contract {
 
     "validAllocation(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -420,29 +466,35 @@ export class TokenAllocationCreator extends Contract {
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "createAllocation(uint256,address,uint64,uint64,string)"(
+    "createAllocation(uint256,address,uint64,uint64,string,bool)"(
       count: BigNumberish,
       allocatee: string,
       startTime: BigNumberish,
       endTime: BigNumberish,
       allocationPurposeExplanation: string,
+      canAdminister: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -452,6 +504,10 @@ export class TokenAllocationCreator extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     validAllocation(
       arg0: string,
       overrides?: CallOverrides
@@ -459,6 +515,16 @@ export class TokenAllocationCreator extends Contract {
 
     "validAllocation(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -108,12 +108,6 @@ const _abi = [
         name: "settlement",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
-      },
     ],
     name: "UnstakedTokens",
     type: "event",
@@ -134,6 +128,32 @@ const _abi = [
   {
     inputs: [],
     name: "allocationCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "canAdministerProtocol",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "locked",
     outputs: [
       {
         internalType: "uint256",

@@ -22,6 +22,19 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "NoConfidenceConfirmed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "string",
         name: "paramName",
         type: "string",
@@ -34,6 +47,25 @@ const _abi = [
       },
     ],
     name: "ParameterUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "string",
+        name: "paramName",
+        type: "string",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_address",
+        type: "address",
+      },
+    ],
+    name: "ParameterUpdatedAddress",
     type: "event",
   },
   {
@@ -85,31 +117,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "price",
-        type: "uint256",
-      },
-    ],
-    name: "SettlementPriceConfirmed",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "uint64",
         name: "positionID",
         type: "uint64",
@@ -140,25 +147,13 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "price",
-        type: "uint256",
-      },
-      {
         indexed: false,
         internalType: "uint256",
         name: "count",
         type: "uint256",
       },
     ],
-    name: "StakedSettlementTokens",
+    name: "StakedNoConfidenceTokens",
     type: "event",
   },
   {
@@ -171,30 +166,68 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
-      },
-      {
         indexed: false,
         internalType: "uint256",
         name: "count",
         type: "uint256",
       },
     ],
-    name: "UnstakedSettlementTokens",
+    name: "UnstakedNoConfidenceTokens",
     type: "event",
   },
   {
     inputs: [
       {
+        internalType: "contract IPriceProvider",
+        name: "aggregator",
+        type: "address",
+      },
+    ],
+    name: "setBtcPriceProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IPriceProvider",
+        name: "aggregator",
+        type: "address",
+      },
+    ],
+    name: "setEthPriceProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IPriceProvider",
+        name: "ethAggregator",
+        type: "address",
+      },
+      {
+        internalType: "contract IPriceProvider",
+        name: "btcAggregator",
+        type: "address",
+      },
+    ],
+    name: "setNewPriceProviders",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
-        name: "count",
+        name: "countCNPToStake",
         type: "uint256",
       },
     ],
-    name: "stakeTokensForSettlementPrice",
+    name: "stakeTokensForNoPriceConfidence",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -207,14 +240,8 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
-      },
-    ],
-    name: "unstakeTokensForSettlementPrice",
+    inputs: [],
+    name: "unstakeTokensForNoPriceConfidence",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

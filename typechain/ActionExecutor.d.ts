@@ -89,12 +89,7 @@ export class ActionExecutor extends Contract {
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      success: boolean;
-      returnData: string;
-      0: boolean;
-      1: string;
-    }>;
+    ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
     "execute(address,uint256,string,bytes)"(
       target: string,
@@ -102,12 +97,7 @@ export class ActionExecutor extends Contract {
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      success: boolean;
-      returnData: string;
-      0: boolean;
-      1: string;
-    }>;
+    ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
   };
 
   filters: {};

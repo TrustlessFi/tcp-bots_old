@@ -23,16 +23,19 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   functions: {
     "LOCK_EXTENSION()": FunctionFragment;
-    "blacklistAction(bytes4)": FunctionFragment;
+    "blacklistAction(string)": FunctionFragment;
     "contractUpgradeLockDelaysRemaining()": FunctionFragment;
     "contractUpgradeLockTime()": FunctionFragment;
     "delayContractUpgradeExpiration()": FunctionFragment;
     "delayParameterUpdateExpiration()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "parameterUpdateLockDelaysRemaining()": FunctionFragment;
     "parameterUpdateLockTime()": FunctionFragment;
-    "validateAction(string)": FunctionFragment;
+    "stopped()": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
+    "validateAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -41,7 +44,7 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistAction",
-    values: [BytesLike]
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "contractUpgradeLockDelaysRemaining",
@@ -59,6 +62,7 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     functionFragment: "delayParameterUpdateExpiration",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
@@ -69,9 +73,14 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     functionFragment: "parameterUpdateLockTime",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "validateAction",
-    values: [string]
+    values: [string, string]
   ): string;
 
   decodeFunctionResult(
@@ -98,6 +107,7 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     functionFragment: "delayParameterUpdateExpiration",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
@@ -108,18 +118,25 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     functionFragment: "parameterUpdateLockTime",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validateAction",
     data: BytesLike
   ): Result;
 
   events: {
+    "ActionBlacklisted(string)": EventFragment;
     "Initialized(address)": EventFragment;
     "Stopped()": EventFragment;
     "UpdateLockDelayed(uint64,uint8)": EventFragment;
     "UpgradeLockDelayed(uint64,uint8)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ActionBlacklisted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateLockDelayed"): EventFragment;
@@ -140,51 +157,33 @@ export class EnforcedDecentralization extends Contract {
   interface: EnforcedDecentralizationInterface;
 
   functions: {
-    LOCK_EXTENSION(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    LOCK_EXTENSION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "LOCK_EXTENSION()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     blacklistAction(
-      signatureHash: BytesLike,
+      signature: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "blacklistAction(bytes4)"(
-      signatureHash: BytesLike,
+    "blacklistAction(string)"(
+      signature: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     contractUpgradeLockDelaysRemaining(
       overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    ): Promise<[number]>;
 
     "contractUpgradeLockDelaysRemaining()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    ): Promise<[number]>;
 
-    contractUpgradeLockTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    contractUpgradeLockTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "contractUpgradeLockTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     delayContractUpgradeExpiration(
       overrides?: Overrides
@@ -202,65 +201,63 @@ export class EnforcedDecentralization extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     parameterUpdateLockDelaysRemaining(
       overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    ): Promise<[number]>;
 
     "parameterUpdateLockDelaysRemaining()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: number;
-    }>;
+    ): Promise<[number]>;
 
-    parameterUpdateLockTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    parameterUpdateLockTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "parameterUpdateLockTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
+
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: void;
-    }>;
+    ): Promise<[boolean]>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: void;
-    }>;
+    ): Promise<[boolean]>;
   };
 
   LOCK_EXTENSION(overrides?: CallOverrides): Promise<BigNumber>;
@@ -268,12 +265,12 @@ export class EnforcedDecentralization extends Contract {
   "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   blacklistAction(
-    signatureHash: BytesLike,
+    signature: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "blacklistAction(bytes4)"(
-    signatureHash: BytesLike,
+  "blacklistAction(string)"(
+    signature: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -305,14 +302,18 @@ export class EnforcedDecentralization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -328,12 +329,28 @@ export class EnforcedDecentralization extends Contract {
 
   "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  validateAction(signature: string, overrides?: CallOverrides): Promise<void>;
+  stopped(overrides?: CallOverrides): Promise<boolean>;
 
-  "validateAction(string)"(
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  validateAction(
+    target: string,
     signature: string,
     overrides?: CallOverrides
-  ): Promise<void>;
+  ): Promise<boolean>;
+
+  "validateAction(address,string)"(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
     LOCK_EXTENSION(overrides?: CallOverrides): Promise<BigNumber>;
@@ -341,12 +358,12 @@ export class EnforcedDecentralization extends Contract {
     "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     blacklistAction(
-      signatureHash: BytesLike,
+      signature: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "blacklistAction(bytes4)"(
-      signatureHash: BytesLike,
+    "blacklistAction(string)"(
+      signature: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -374,14 +391,18 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -397,15 +418,33 @@ export class EnforcedDecentralization extends Contract {
 
     "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    validateAction(signature: string, overrides?: CallOverrides): Promise<void>;
+    stopped(overrides?: CallOverrides): Promise<boolean>;
 
-    "validateAction(string)"(
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
+
+    "validateAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
+    ActionBlacklisted(signature: string | null): EventFilter;
+
     Initialized(governor: string | null): EventFilter;
 
     Stopped(): EventFilter;
@@ -421,12 +460,12 @@ export class EnforcedDecentralization extends Contract {
     "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     blacklistAction(
-      signatureHash: BytesLike,
+      signature: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "blacklistAction(bytes4)"(
-      signatureHash: BytesLike,
+    "blacklistAction(string)"(
+      signature: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -454,14 +493,18 @@ export class EnforcedDecentralization extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -477,12 +520,28 @@ export class EnforcedDecentralization extends Contract {
 
     "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -496,12 +555,12 @@ export class EnforcedDecentralization extends Contract {
     ): Promise<PopulatedTransaction>;
 
     blacklistAction(
-      signatureHash: BytesLike,
+      signature: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "blacklistAction(bytes4)"(
-      signatureHash: BytesLike,
+    "blacklistAction(string)"(
+      signature: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -537,17 +596,21 @@ export class EnforcedDecentralization extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -567,12 +630,28 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -54,16 +54,12 @@ export class IERC165 extends Contract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
   };
 
   supportsInterface(

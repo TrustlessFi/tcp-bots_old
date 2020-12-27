@@ -101,30 +101,16 @@ export class IUniswapV2Factory extends Contract {
     allPairs(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      pair: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { pair: string }>;
 
     "allPairs(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      pair: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { pair: string }>;
 
-    allPairsLength(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    allPairsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "allPairsLength()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "allPairsLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     createPair(
       tokenA: string,
@@ -138,47 +124,25 @@ export class IUniswapV2Factory extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    feeTo(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    feeTo(overrides?: CallOverrides): Promise<[string]>;
 
-    "feeTo()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "feeTo()"(overrides?: CallOverrides): Promise<[string]>;
 
-    feeToSetter(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    feeToSetter(overrides?: CallOverrides): Promise<[string]>;
 
-    "feeToSetter()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "feeToSetter()"(overrides?: CallOverrides): Promise<[string]>;
 
     getPair(
       tokenA: string,
       tokenB: string,
       overrides?: CallOverrides
-    ): Promise<{
-      pair: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { pair: string }>;
 
     "getPair(address,address)"(
       tokenA: string,
       tokenB: string,
       overrides?: CallOverrides
-    ): Promise<{
-      pair: string;
-      0: string;
-    }>;
+    ): Promise<[string] & { pair: string }>;
 
     setFeeTo(arg0: string, overrides?: Overrides): Promise<ContractTransaction>;
 

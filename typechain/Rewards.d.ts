@@ -22,17 +22,21 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface RewardsInterface extends ethers.utils.Interface {
   functions: {
-    "accrueRewards()": FunctionFragment;
+    "accrueSystemRewards()": FunctionFragment;
     "approximateAdditionalPairTokensAllowed(address)": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
     "collateralPairRewardsPortion()": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "daysRemainingUntilUnlock(address)": FunctionFragment;
-    "ensureMinimumCollateralLiquidity(uint256)": FunctionFragment;
+    "currentPeriod()": FunctionFragment;
+    "deployer()": FunctionFragment;
+    "ensureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
     "ensureMinimumReferenceLiquidity(uint256)": FunctionFragment;
+    "firstPeriod()": FunctionFragment;
     "getRewards(address)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
+    "initialized()": FunctionFragment;
+    "lastPeriodRewardsAccrued()": FunctionFragment;
     "lockPairTokens(address,uint256)": FunctionFragment;
     "maxCollateralPoolLiquidity()": FunctionFragment;
     "maxPriceAge()": FunctionFragment;
@@ -41,25 +45,30 @@ interface RewardsInterface extends ethers.utils.Interface {
     "minCollateralPoolLiquidity()": FunctionFragment;
     "minReferencePoolLiquidity()": FunctionFragment;
     "periodLength()": FunctionFragment;
+    "periodsLocked()": FunctionFragment;
+    "protocolInitialized()": FunctionFragment;
     "referencePairRewardsPortion()": FunctionFragment;
     "referenceRewardsOffPegSensitivity()": FunctionFragment;
     "setCollateralPairRewardsPortion(uint256)": FunctionFragment;
     "setMaxCollateralPoolLiquidity(uint256)": FunctionFragment;
     "setMaxPriceAge(uint64)": FunctionFragment;
+    "setMaxReferencePoolLiquidity(uint256)": FunctionFragment;
     "setMaxTwapTime(uint64)": FunctionFragment;
     "setMinCollateralPoolLiquidity(uint256)": FunctionFragment;
+    "setMinReferencePoolLiquidity(uint256)": FunctionFragment;
     "setPeriodsLocked(uint64)": FunctionFragment;
-    "setmaxReferencePoolLiquidity(uint256)": FunctionFragment;
-    "setminReferencePoolLiquidity(uint256)": FunctionFragment;
-    "setreferencePairRewardsPortion(uint256)": FunctionFragment;
-    "setreferenceRewardsOffPegSensitivity(uint256)": FunctionFragment;
+    "setReferencePairRewardsPortion(uint256)": FunctionFragment;
+    "setReferenceRewardsOffPegSensitivity(uint256)": FunctionFragment;
+    "setupComplete()": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
     "unlockPairTokens(address,uint256)": FunctionFragment;
     "unlockTokensAfterShutdown(address)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "accrueRewards",
+    functionFragment: "accrueSystemRewards",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -79,20 +88,33 @@ interface RewardsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "daysRemainingUntilUnlock",
-    values: [string]
+    functionFragment: "currentPeriod",
+    values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ensureMinimumCollateralLiquidity",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "ensureMinimumReferenceLiquidity",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "firstPeriod",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getRewards", values: [string]): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initialized",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastPeriodRewardsAccrued",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "lockPairTokens",
     values: [string, BigNumberish]
@@ -126,6 +148,14 @@ interface RewardsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "periodsLocked",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "protocolInitialized",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "referencePairRewardsPortion",
     values?: undefined
   ): string;
@@ -146,6 +176,10 @@ interface RewardsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxReferencePoolLiquidity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMaxTwapTime",
     values: [BigNumberish]
   ): string;
@@ -154,26 +188,27 @@ interface RewardsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMinReferencePoolLiquidity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPeriodsLocked",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setmaxReferencePoolLiquidity",
+    functionFragment: "setReferencePairRewardsPortion",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setminReferencePoolLiquidity",
+    functionFragment: "setReferenceRewardsOffPegSensitivity",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setreferencePairRewardsPortion",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setreferenceRewardsOffPegSensitivity",
-    values: [BigNumberish]
+    functionFragment: "setupComplete",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "unlockPairTokens",
     values: [string, BigNumberish]
@@ -182,9 +217,13 @@ interface RewardsInterface extends ethers.utils.Interface {
     functionFragment: "unlockTokensAfterShutdown",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
 
   decodeFunctionResult(
-    functionFragment: "accrueRewards",
+    functionFragment: "accrueSystemRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -204,21 +243,34 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "daysRemainingUntilUnlock",
+    functionFragment: "currentPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ensureMinimumCollateralLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "ensureMinimumReferenceLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "initialized",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "lastPeriodRewardsAccrued",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "lockPairTokens",
     data: BytesLike
   ): Result;
@@ -251,6 +303,14 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "periodsLocked",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "protocolInitialized",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "referencePairRewardsPortion",
     data: BytesLike
   ): Result;
@@ -271,6 +331,10 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setMaxReferencePoolLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setMaxTwapTime",
     data: BytesLike
   ): Result;
@@ -279,32 +343,37 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setMinReferencePoolLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPeriodsLocked",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setmaxReferencePoolLiquidity",
+    functionFragment: "setReferencePairRewardsPortion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setminReferencePoolLiquidity",
+    functionFragment: "setReferenceRewardsOffPegSensitivity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setreferencePairRewardsPortion",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setreferenceRewardsOffPegSensitivity",
+    functionFragment: "setupComplete",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unlockPairTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "unlockTokensAfterShutdown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
@@ -315,7 +384,7 @@ interface RewardsInterface extends ethers.utils.Interface {
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
-    "RewardsDistributed(address,address,uint64,uint64,uint256)": EventFragment;
+    "RewardsDistributed(address,uint64,uint256)": EventFragment;
     "ShutdownPairTokensUnlocked(address,address,uint256)": EventFragment;
     "Stopped()": EventFragment;
   };
@@ -345,77 +414,63 @@ export class Rewards extends Contract {
   interface: RewardsInterface;
 
   functions: {
-    accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
+    accrueSystemRewards(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "accrueSystemRewards()"(
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     approximateAdditionalPairTokensAllowed(
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "approximateAdditionalPairTokensAllowed(address)"(
       pair: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     borrowRewardsPortion(
       overrides?: CallOverrides
-    ): Promise<{
-      portion: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { portion: BigNumber }>;
 
     "borrowRewardsPortion()"(
       overrides?: CallOverrides
-    ): Promise<{
-      portion: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { portion: BigNumber }>;
 
     collateralPairRewardsPortion(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "collateralPairRewardsPortion()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    daysRemainingUntilUnlock(
-      pair: string,
+    currentPeriod(
       overrides?: CallOverrides
-    ): Promise<{
-      daysRemaining: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
-    "daysRemainingUntilUnlock(address)"(
-      pair: string,
+    "currentPeriod()"(
       overrides?: CallOverrides
-    ): Promise<{
-      daysRemaining: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
     ensureMinimumCollateralLiquidity(
-      debt: BigNumberish,
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
-      debt: BigNumberish,
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -429,6 +484,10 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getRewards(
       pair: string,
       overrides?: Overrides
@@ -439,27 +498,29 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    initialized(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "initialized()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    lastPeriodRewardsAccrued(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "lastPeriodRewardsAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     lockPairTokens(
       pair: string,
@@ -473,113 +534,67 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    maxCollateralPoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxCollateralPoolLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "maxCollateralPoolLiquidity()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    maxPriceAge(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxPriceAge(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxPriceAge()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxPriceAge()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxReferencePoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxReferencePoolLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "maxReferencePoolLiquidity()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    maxTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxTwapTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxTwapTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minCollateralPoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "minCollateralPoolLiquidity()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    minReferencePoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minReferencePoolLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "minReferencePoolLiquidity()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    periodLength(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "periodLength()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    periodsLocked(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "periodsLocked()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    protocolInitialized(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "protocolInitialized()"(
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     referencePairRewardsPortion(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "referencePairRewardsPortion()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     referenceRewardsOffPegSensitivity(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "referenceRewardsOffPegSensitivity()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     setCollateralPairRewardsPortion(
       portion: BigNumberish,
@@ -611,6 +626,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setMaxReferencePoolLiquidity(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMaxReferencePoolLiquidity(uint256)"(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setMaxTwapTime(
       time: BigNumberish,
       overrides?: Overrides
@@ -631,6 +656,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setMinReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMinReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     setPeriodsLocked(
       periods: BigNumberish,
       overrides?: Overrides
@@ -641,49 +676,37 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setmaxReferencePoolLiquidity(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setmaxReferencePoolLiquidity(uint256)"(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setminReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setminReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setreferencePairRewardsPortion(
+    setReferencePairRewardsPortion(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setreferencePairRewardsPortion(uint256)"(
+    "setReferencePairRewardsPortion(uint256)"(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setreferenceRewardsOffPegSensitivity(
+    setReferenceRewardsOffPegSensitivity(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setreferenceRewardsOffPegSensitivity(uint256)"(
+    "setReferenceRewardsOffPegSensitivity(uint256)"(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    setupComplete(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "setupComplete()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     unlockPairTokens(
       pair: string,
@@ -706,11 +729,21 @@ export class Rewards extends Contract {
       pair: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
+  accrueSystemRewards(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "accrueSystemRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   approximateAdditionalPairTokensAllowed(
     pair: string,
@@ -736,23 +769,23 @@ export class Rewards extends Contract {
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  daysRemainingUntilUnlock(
-    pair: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "daysRemainingUntilUnlock(address)"(
-    pair: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
   ensureMinimumCollateralLiquidity(
-    debt: BigNumberish,
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "ensureMinimumCollateralLiquidity(uint256)"(
-    debt: BigNumberish,
+  "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -766,6 +799,10 @@ export class Rewards extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   getRewards(pair: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "getRewards(address)"(
@@ -777,12 +814,20 @@ export class Rewards extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  initialized(overrides?: CallOverrides): Promise<boolean>;
+
+  "initialized()"(overrides?: CallOverrides): Promise<boolean>;
+
+  lastPeriodRewardsAccrued(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "lastPeriodRewardsAccrued()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   lockPairTokens(
     pair: string,
@@ -823,6 +868,14 @@ export class Rewards extends Contract {
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  periodsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "periodsLocked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  protocolInitialized(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "protocolInitialized()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   referencePairRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -868,6 +921,16 @@ export class Rewards extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setMaxReferencePoolLiquidity(
+    max: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMaxReferencePoolLiquidity(uint256)"(
+    max: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setMaxTwapTime(
     time: BigNumberish,
     overrides?: Overrides
@@ -888,6 +951,16 @@ export class Rewards extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setMinReferencePoolLiquidity(
+    min: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMinReferencePoolLiquidity(uint256)"(
+    min: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   setPeriodsLocked(
     periods: BigNumberish,
     overrides?: Overrides
@@ -898,49 +971,37 @@ export class Rewards extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setmaxReferencePoolLiquidity(
-    max: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setmaxReferencePoolLiquidity(uint256)"(
-    max: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setminReferencePoolLiquidity(
-    min: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setminReferencePoolLiquidity(uint256)"(
-    min: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setreferencePairRewardsPortion(
+  setReferencePairRewardsPortion(
     portion: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setreferencePairRewardsPortion(uint256)"(
+  "setReferencePairRewardsPortion(uint256)"(
     portion: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setreferenceRewardsOffPegSensitivity(
+  setReferenceRewardsOffPegSensitivity(
     sensitivity: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setreferenceRewardsOffPegSensitivity(uint256)"(
+  "setReferenceRewardsOffPegSensitivity(uint256)"(
     sensitivity: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  setupComplete(overrides?: CallOverrides): Promise<boolean>;
+
+  "setupComplete()"(overrides?: CallOverrides): Promise<boolean>;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
   unlockPairTokens(
     pair: string,
@@ -964,10 +1025,17 @@ export class Rewards extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  callStatic: {
-    accrueRewards(overrides?: CallOverrides): Promise<void>;
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    "accrueRewards()"(overrides?: CallOverrides): Promise<void>;
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  callStatic: {
+    accrueSystemRewards(overrides?: CallOverrides): Promise<void>;
+
+    "accrueSystemRewards()"(overrides?: CallOverrides): Promise<void>;
 
     approximateAdditionalPairTokensAllowed(
       pair: string,
@@ -993,23 +1061,23 @@ export class Rewards extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    daysRemainingUntilUnlock(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "daysRemainingUntilUnlock(address)"(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
 
     ensureMinimumCollateralLiquidity(
-      debt: BigNumberish,
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
-      debt: BigNumberish,
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1023,6 +1091,10 @@ export class Rewards extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRewards(pair: string, overrides?: CallOverrides): Promise<void>;
 
     "getRewards(address)"(
@@ -1034,12 +1106,20 @@ export class Rewards extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    initialized(overrides?: CallOverrides): Promise<boolean>;
+
+    "initialized()"(overrides?: CallOverrides): Promise<boolean>;
+
+    lastPeriodRewardsAccrued(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lastPeriodRewardsAccrued()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     lockPairTokens(
       pair: string,
@@ -1088,6 +1168,14 @@ export class Rewards extends Contract {
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "periodsLocked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    protocolInitialized(overrides?: CallOverrides): Promise<void>;
+
+    "protocolInitialized()"(overrides?: CallOverrides): Promise<void>;
 
     referencePairRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1130,6 +1218,16 @@ export class Rewards extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxReferencePoolLiquidity(
+      max: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMaxReferencePoolLiquidity(uint256)"(
+      max: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setMaxTwapTime(
       time: BigNumberish,
       overrides?: CallOverrides
@@ -1150,6 +1248,16 @@ export class Rewards extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMinReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMinReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPeriodsLocked(
       periods: BigNumberish,
       overrides?: CallOverrides
@@ -1160,49 +1268,37 @@ export class Rewards extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setmaxReferencePoolLiquidity(
-      max: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setmaxReferencePoolLiquidity(uint256)"(
-      max: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setminReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setminReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setreferencePairRewardsPortion(
+    setReferencePairRewardsPortion(
       portion: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setreferencePairRewardsPortion(uint256)"(
+    "setReferencePairRewardsPortion(uint256)"(
       portion: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setreferenceRewardsOffPegSensitivity(
+    setReferenceRewardsOffPegSensitivity(
       sensitivity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setreferenceRewardsOffPegSensitivity(uint256)"(
+    "setReferenceRewardsOffPegSensitivity(uint256)"(
       sensitivity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setupComplete(overrides?: CallOverrides): Promise<boolean>;
+
+    "setupComplete()"(overrides?: CallOverrides): Promise<boolean>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
+
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
     unlockPairTokens(
       pair: string,
@@ -1225,6 +1321,13 @@ export class Rewards extends Contract {
       pair: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -1251,10 +1354,8 @@ export class Rewards extends Contract {
 
     RewardsDistributed(
       account: string | null,
-      pair: string | null,
       period: BigNumberish | null,
-      periods: null,
-      rewards: null
+      cnpRewards: null
     ): EventFilter;
 
     ShutdownPairTokensUnlocked(
@@ -1267,9 +1368,9 @@ export class Rewards extends Contract {
   };
 
   estimateGas: {
-    accrueRewards(overrides?: Overrides): Promise<BigNumber>;
+    accrueSystemRewards(overrides?: Overrides): Promise<BigNumber>;
 
-    "accrueRewards()"(overrides?: Overrides): Promise<BigNumber>;
+    "accrueSystemRewards()"(overrides?: Overrides): Promise<BigNumber>;
 
     approximateAdditionalPairTokensAllowed(
       pair: string,
@@ -1295,23 +1396,23 @@ export class Rewards extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
-    daysRemainingUntilUnlock(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "daysRemainingUntilUnlock(address)"(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ensureMinimumCollateralLiquidity(
-      debt: BigNumberish,
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
-      debt: BigNumberish,
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1325,6 +1426,10 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRewards(pair: string, overrides?: Overrides): Promise<BigNumber>;
 
     "getRewards(address)"(
@@ -1336,12 +1441,20 @@ export class Rewards extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    initialized(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "initialized()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPeriodRewardsAccrued(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lastPeriodRewardsAccrued()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     lockPairTokens(
       pair: string,
@@ -1390,6 +1503,14 @@ export class Rewards extends Contract {
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "periodsLocked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    protocolInitialized(overrides?: Overrides): Promise<BigNumber>;
+
+    "protocolInitialized()"(overrides?: Overrides): Promise<BigNumber>;
 
     referencePairRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1435,6 +1556,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setMaxReferencePoolLiquidity(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMaxReferencePoolLiquidity(uint256)"(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setMaxTwapTime(
       time: BigNumberish,
       overrides?: Overrides
@@ -1455,6 +1586,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setMinReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "setMinReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setPeriodsLocked(
       periods: BigNumberish,
       overrides?: Overrides
@@ -1465,49 +1606,37 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setmaxReferencePoolLiquidity(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setmaxReferencePoolLiquidity(uint256)"(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setminReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setminReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setreferencePairRewardsPortion(
+    setReferencePairRewardsPortion(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setreferencePairRewardsPortion(uint256)"(
+    "setReferencePairRewardsPortion(uint256)"(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setreferenceRewardsOffPegSensitivity(
+    setReferenceRewardsOffPegSensitivity(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setreferenceRewardsOffPegSensitivity(uint256)"(
+    "setReferenceRewardsOffPegSensitivity(uint256)"(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    setupComplete(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "setupComplete()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     stop(overrides?: Overrides): Promise<BigNumber>;
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     unlockPairTokens(
       pair: string,
@@ -1530,12 +1659,24 @@ export class Rewards extends Contract {
       pair: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    accrueRewards(overrides?: Overrides): Promise<PopulatedTransaction>;
+    accrueSystemRewards(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "accrueRewards()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "accrueSystemRewards()"(
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     approximateAdditionalPairTokensAllowed(
       pair: string,
@@ -1567,23 +1708,23 @@ export class Rewards extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    daysRemainingUntilUnlock(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "daysRemainingUntilUnlock(address)"(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ensureMinimumCollateralLiquidity(
-      debt: BigNumberish,
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "ensureMinimumCollateralLiquidity(uint256)"(
-      debt: BigNumberish,
+    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1596,6 +1737,10 @@ export class Rewards extends Contract {
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRewards(
       pair: string,
@@ -1612,13 +1757,25 @@ export class Rewards extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    initialized(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "initialized()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lastPeriodRewardsAccrued(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "lastPeriodRewardsAccrued()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lockPairTokens(
@@ -1677,6 +1834,16 @@ export class Rewards extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    periodsLocked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "periodsLocked()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    protocolInitialized(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "protocolInitialized()"(
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     referencePairRewardsPortion(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1723,6 +1890,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setMaxReferencePoolLiquidity(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxReferencePoolLiquidity(uint256)"(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setMaxTwapTime(
       time: BigNumberish,
       overrides?: Overrides
@@ -1743,6 +1920,16 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    setMinReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMinReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     setPeriodsLocked(
       periods: BigNumberish,
       overrides?: Overrides
@@ -1753,49 +1940,37 @@ export class Rewards extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setmaxReferencePoolLiquidity(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setmaxReferencePoolLiquidity(uint256)"(
-      max: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setminReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setminReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setreferencePairRewardsPortion(
+    setReferencePairRewardsPortion(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setreferencePairRewardsPortion(uint256)"(
+    "setReferencePairRewardsPortion(uint256)"(
       portion: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setreferenceRewardsOffPegSensitivity(
+    setReferenceRewardsOffPegSensitivity(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setreferenceRewardsOffPegSensitivity(uint256)"(
+    "setReferenceRewardsOffPegSensitivity(uint256)"(
       sensitivity: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    setupComplete(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "setupComplete()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unlockPairTokens(
       pair: string,
@@ -1817,6 +1992,16 @@ export class Rewards extends Contract {
     "unlockTokensAfterShutdown(address)"(
       pair: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

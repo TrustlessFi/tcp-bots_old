@@ -99,17 +99,11 @@ export class IPrices extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    referencePairMinTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    referencePairMinTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "referencePairMinTwapTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -155,12 +149,9 @@ export class IPrices extends Contract {
       maxAge: BigNumberish,
       normalizePrice: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
 
     "obtainPrice(address,uint64,uint64,bool)"(
       pair: string,
@@ -168,12 +159,9 @@ export class IPrices extends Contract {
       maxAge: BigNumberish,
       normalizePrice: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
 
     referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 

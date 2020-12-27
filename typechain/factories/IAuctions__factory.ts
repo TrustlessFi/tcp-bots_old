@@ -22,12 +22,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "bool",
-        name: "isSurplus",
-        type: "bool",
-      },
-      {
-        indexed: true,
         internalType: "uint64",
         name: "auctionID",
         type: "uint64",
@@ -45,18 +39,12 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "AuctionBid",
+    name: "DeficitAuctionBid",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "isSurplus",
-        type: "bool",
-      },
       {
         indexed: true,
         internalType: "uint64",
@@ -69,31 +57,13 @@ const _abi = [
         name: "winner",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "creator",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "cleaner",
-        type: "address",
-      },
     ],
-    name: "AuctionSettled",
+    name: "DeficitAuctionSettled",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "isSurplus",
-        type: "bool",
-      },
       {
         indexed: true,
         internalType: "uint64",
@@ -113,7 +83,7 @@ const _abi = [
         type: "uint64",
       },
     ],
-    name: "AuctionStarted",
+    name: "DeficitAuctionStarted",
     type: "event",
   },
   {
@@ -155,8 +125,77 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "auctionID",
+        type: "uint64",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "bidder",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bid",
+        type: "uint256",
+      },
+    ],
+    name: "SurplusAuctionBid",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "auctionID",
+        type: "uint64",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "winner",
+        type: "address",
+      },
+    ],
+    name: "SurplusAuctionSettled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "auctionID",
+        type: "uint64",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "maxEndTime",
+        type: "uint64",
+      },
+    ],
+    name: "SurplusAuctionStarted",
+    type: "event",
+  },
+  {
     inputs: [],
-    name: "lastAuctionCompletionTime",
+    name: "latestAuctionCompletionTime",
     outputs: [
       {
         internalType: "uint64",

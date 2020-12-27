@@ -141,26 +141,14 @@ const _abi = [
       },
       {
         indexed: true,
-        internalType: "address",
-        name: "pair",
-        type: "address",
-      },
-      {
-        indexed: true,
         internalType: "uint64",
         name: "period",
         type: "uint64",
       },
       {
         indexed: false,
-        internalType: "uint64",
-        name: "periods",
-        type: "uint64",
-      },
-      {
-        indexed: false,
         internalType: "uint256",
-        name: "rewards",
+        name: "cnpRewards",
         type: "uint256",
       },
     ],
@@ -214,6 +202,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateralType",
+        type: "uint8",
+      },
       {
         internalType: "uint256",
         name: "collateralDebt",

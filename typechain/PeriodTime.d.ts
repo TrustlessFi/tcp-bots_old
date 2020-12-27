@@ -21,14 +21,32 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PeriodTimeInterface extends ethers.utils.Interface {
   functions: {
+    "currentPeriod()": FunctionFragment;
+    "firstPeriod()": FunctionFragment;
     "periodLength()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "currentPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "firstPeriod",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "periodLength",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "currentPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "firstPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "periodLength",
     data: BytesLike
@@ -51,24 +69,44 @@ export class PeriodTime extends Contract {
   interface: PeriodTimeInterface;
 
   functions: {
-    periodLength(
+    currentPeriod(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
-    "periodLength()"(
+    "currentPeriod()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -77,12 +115,28 @@ export class PeriodTime extends Contract {
   filters: {};
 
   estimateGas: {
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "currentPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -68,6 +68,19 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "newGovernor",
+        type: "address",
+      },
+    ],
+    name: "addGovernor",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "owner",
         type: "address",
       },
@@ -175,7 +188,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "mintTo",
+    name: "distributeTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -184,11 +197,16 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_newGovernor",
+        name: "to",
         type: "address",
       },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
     ],
-    name: "newGovernor",
+    name: "mintTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

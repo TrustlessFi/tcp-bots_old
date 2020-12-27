@@ -22,14 +22,14 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface LiquidationsInterface extends ethers.utils.Interface {
   functions: {
-    "completeSetup()": FunctionFragment;
-    "coverUnbackedDebt()": FunctionFragment;
-    "discoverUndercollateralizedPositions(uint64[])": FunctionFragment;
+    "deployer()": FunctionFragment;
+    "discoverUndercollateralizedPositions(uint8,uint64[])": FunctionFragment;
     "discoveryIncentive()": FunctionFragment;
-    "flashLiquidate(uint256)": FunctionFragment;
+    "ensureLiquidationIncentive(uint8)": FunctionFragment;
+    "flashLiquidate(uint8,uint256)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
-    "liquidate(uint256)": FunctionFragment;
+    "liquidate(uint8,uint256)": FunctionFragment;
     "liquidationIncentive()": FunctionFragment;
     "maxPriceAge()": FunctionFragment;
     "maxRewardsRatio()": FunctionFragment;
@@ -43,33 +43,32 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     "setMaxTwapTime(uint64)": FunctionFragment;
     "setMinLiquidationIncentive(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "coverUnbackedDebt",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "discoverUndercollateralizedPositions",
-    values: [BigNumberish[]]
+    values: [BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "discoveryIncentive",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "flashLiquidate",
+    functionFragment: "ensureLiquidationIncentive",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "flashLiquidate",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
     functionFragment: "liquidate",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "liquidationIncentive",
@@ -120,21 +119,23 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "completeSetup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "coverUnbackedDebt",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "discoverUndercollateralizedPositions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "discoveryIncentive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ensureLiquidationIncentive",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -193,6 +194,11 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
 
   events: {
     "CoveredUnbackedDebt(uint256,uint256,uint256)": EventFragment;
@@ -229,155 +235,107 @@ export class Liquidations extends Contract {
   interface: LiquidationsInterface;
 
   functions: {
-    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    coverUnbackedDebt(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "coverUnbackedDebt()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
     discoverUndercollateralizedPositions(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "discoverUndercollateralizedPositions(uint64[])"(
+    "discoverUndercollateralizedPositions(uint8,uint64[])"(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    discoveryIncentive(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    discoveryIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "discoveryIncentive()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "discoveryIncentive()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    ensureLiquidationIncentive(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "ensureLiquidationIncentive(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     flashLiquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "flashLiquidate(uint256)"(
+    "flashLiquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     liquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "liquidate(uint256)"(
+    "liquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    liquidationIncentive(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    liquidationIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "liquidationIncentive()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "liquidationIncentive()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxPriceAge(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxPriceAge(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxPriceAge()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxPriceAge()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxRewardsRatio(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxRewardsRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxRewardsRatio()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxRewardsRatio()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxTwapTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxTwapTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minLiquidationIncentive(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minLiquidationIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "minLiquidationIncentive()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     rewardsLimit(
       overrides?: CallOverrides
-    ): Promise<{
-      remaining: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+    >;
 
     "rewardsLimit()"(
       overrides?: CallOverrides
-    ): Promise<{
-      remaining: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+    >;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
@@ -442,22 +400,34 @@ export class Liquidations extends Contract {
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+  deployer(overrides?: CallOverrides): Promise<string>;
 
-  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  coverUnbackedDebt(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "coverUnbackedDebt()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
   discoverUndercollateralizedPositions(
+    collateralType: BigNumberish,
     positionIDs: BigNumberish[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "discoverUndercollateralizedPositions(uint64[])"(
+  "discoverUndercollateralizedPositions(uint8,uint64[])"(
+    collateralType: BigNumberish,
     positionIDs: BigNumberish[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -466,12 +436,24 @@ export class Liquidations extends Contract {
 
   "discoveryIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  ensureLiquidationIncentive(
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "ensureLiquidationIncentive(uint8)"(
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   flashLiquidate(
+    collateralType: BigNumberish,
     baseTokensToRepay: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "flashLiquidate(uint256)"(
+  "flashLiquidate(uint8,uint256)"(
+    collateralType: BigNumberish,
     baseTokensToRepay: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -480,19 +462,21 @@ export class Liquidations extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   liquidate(
+    collateralType: BigNumberish,
     baseTokensToRepay: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "liquidate(uint256)"(
+  "liquidate(uint8,uint256)"(
+    collateralType: BigNumberish,
     baseTokensToRepay: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -519,21 +503,15 @@ export class Liquidations extends Contract {
 
   rewardsLimit(
     overrides?: CallOverrides
-  ): Promise<{
-    remaining: BigNumber;
-    priceTime: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+  >;
 
   "rewardsLimit()"(
     overrides?: CallOverrides
-  ): Promise<{
-    remaining: BigNumber;
-    priceTime: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+  >;
 
   setDiscoveryIncentive(
     incentive: BigNumberish,
@@ -599,21 +577,30 @@ export class Liquidations extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
-    completeSetup(overrides?: CallOverrides): Promise<void>;
+    deployer(overrides?: CallOverrides): Promise<string>;
 
-    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
-
-    coverUnbackedDebt(overrides?: CallOverrides): Promise<void>;
-
-    "coverUnbackedDebt()"(overrides?: CallOverrides): Promise<void>;
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
 
     discoverUndercollateralizedPositions(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "discoverUndercollateralizedPositions(uint64[])"(
+    "discoverUndercollateralizedPositions(uint8,uint64[])"(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -622,12 +609,24 @@ export class Liquidations extends Contract {
 
     "discoveryIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ensureLiquidationIncentive(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "ensureLiquidationIncentive(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     flashLiquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "flashLiquidate(uint256)"(
+    "flashLiquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -636,19 +635,21 @@ export class Liquidations extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     liquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "liquidate(uint256)"(
+    "liquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -675,21 +676,15 @@ export class Liquidations extends Contract {
 
     rewardsLimit(
       overrides?: CallOverrides
-    ): Promise<{
-      remaining: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+    >;
 
     "rewardsLimit()"(
       overrides?: CallOverrides
-    ): Promise<{
-      remaining: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
+    >;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
@@ -751,6 +746,17 @@ export class Liquidations extends Contract {
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
+
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -779,20 +785,18 @@ export class Liquidations extends Contract {
   };
 
   estimateGas: {
-    completeSetup(overrides?: Overrides): Promise<BigNumber>;
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
-
-    coverUnbackedDebt(overrides?: Overrides): Promise<BigNumber>;
-
-    "coverUnbackedDebt()"(overrides?: Overrides): Promise<BigNumber>;
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     discoverUndercollateralizedPositions(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "discoverUndercollateralizedPositions(uint64[])"(
+    "discoverUndercollateralizedPositions(uint8,uint64[])"(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -801,12 +805,24 @@ export class Liquidations extends Contract {
 
     "discoveryIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    ensureLiquidationIncentive(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "ensureLiquidationIncentive(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     flashLiquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "flashLiquidate(uint256)"(
+    "flashLiquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -815,19 +831,21 @@ export class Liquidations extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     liquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "liquidate(uint256)"(
+    "liquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -919,23 +937,35 @@ export class Liquidations extends Contract {
     stop(overrides?: Overrides): Promise<BigNumber>;
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    coverUnbackedDebt(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "coverUnbackedDebt()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     discoverUndercollateralizedPositions(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "discoverUndercollateralizedPositions(uint64[])"(
+    "discoverUndercollateralizedPositions(uint8,uint64[])"(
+      collateralType: BigNumberish,
       positionIDs: BigNumberish[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -948,12 +978,24 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    ensureLiquidationIncentive(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "ensureLiquidationIncentive(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     flashLiquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "flashLiquidate(uint256)"(
+    "flashLiquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -963,21 +1005,23 @@ export class Liquidations extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     liquidate(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "liquidate(uint256)"(
+    "liquidate(uint8,uint256)"(
+      collateralType: BigNumberish,
       baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1079,5 +1123,19 @@ export class Liquidations extends Contract {
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

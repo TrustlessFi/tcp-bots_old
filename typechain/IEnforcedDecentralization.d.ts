@@ -21,12 +21,12 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
   functions: {
-    "validateAction(string)": FunctionFragment;
+    "validateAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "validateAction",
-    values: [string]
+    values: [string, string]
   ): string;
 
   decodeFunctionResult(
@@ -35,10 +35,12 @@ interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "ActionBlacklisted(string)": EventFragment;
     "UpdateLockDelayed(uint64,uint8)": EventFragment;
     "UpgradeLockDelayed(uint64,uint8)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ActionBlacklisted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateLockDelayed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpgradeLockDelayed"): EventFragment;
 }
@@ -58,37 +60,47 @@ export class IEnforcedDecentralization extends Contract {
 
   functions: {
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: void;
-    }>;
+    ): Promise<[boolean]>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: void;
-    }>;
+    ): Promise<[boolean]>;
   };
 
-  validateAction(signature: string, overrides?: CallOverrides): Promise<void>;
-
-  "validateAction(string)"(
+  validateAction(
+    target: string,
     signature: string,
     overrides?: CallOverrides
-  ): Promise<void>;
+  ): Promise<boolean>;
+
+  "validateAction(address,string)"(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    validateAction(signature: string, overrides?: CallOverrides): Promise<void>;
-
-    "validateAction(string)"(
+    validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
+
+    "validateAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
+    ActionBlacklisted(signature: string | null): EventFilter;
+
     UpdateLockDelayed(locktime: null, delaysRemaining: null): EventFilter;
 
     UpgradeLockDelayed(locktime: null, delaysRemaining: null): EventFilter;
@@ -96,11 +108,13 @@ export class IEnforcedDecentralization extends Contract {
 
   estimateGas: {
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -108,11 +122,13 @@ export class IEnforcedDecentralization extends Contract {
 
   populateTransaction: {
     validateAction(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "validateAction(string)"(
+    "validateAction(address,string)"(
+      target: string,
       signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

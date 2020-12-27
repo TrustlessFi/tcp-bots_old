@@ -25,6 +25,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
@@ -32,11 +33,12 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     "isApprovedOrOwner(address,uint256)": FunctionFragment;
     "mintTo(address)": FunctionFragment;
     "name()": FunctionFragment;
-    "nextTokenID()": FunctionFragment;
+    "nextPositionID()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "positionIDs(address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "stopped()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenByIndex(uint256)": FunctionFragment;
@@ -44,6 +46,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     "tokenURI(uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -52,6 +55,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
@@ -69,7 +73,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "mintTo", values: [string]): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "nextTokenID",
+    functionFragment: "nextPositionID",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -85,6 +89,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -110,10 +115,15 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -131,7 +141,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "nextTokenID",
+    functionFragment: "nextPositionID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
@@ -147,6 +157,7 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -167,6 +178,10 @@ interface CoinPositionNFTInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
@@ -211,65 +226,42 @@ export class CoinPositionNFT extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "balanceOf(address)"(
       owner: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    baseURI(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    baseURI(overrides?: CallOverrides): Promise<[string]>;
 
-    "baseURI()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "baseURI()"(overrides?: CallOverrides): Promise<[string]>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
     "getApproved(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -277,94 +269,60 @@ export class CoinPositionNFT extends Contract {
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "isApprovedForAll(address,address)"(
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     isApprovedOrOwner(
       account: string,
       tokenID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "isApprovedOrOwner(address,uint256)"(
       account: string,
       tokenID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
-    mintTo(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+    mintTo(dest: string, overrides?: Overrides): Promise<ContractTransaction>;
 
     "mintTo(address)"(
-      to: string,
+      dest: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    name(overrides?: CallOverrides): Promise<[string]>;
 
-    "name()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "name()"(overrides?: CallOverrides): Promise<[string]>;
 
-    nextTokenID(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    nextPositionID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "nextTokenID()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "nextPositionID()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     ownerOf(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
     "ownerOf(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
     positionIDs(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      IDs: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { IDs: BigNumber[] }>;
 
     "positionIDs(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<{
-      IDs: BigNumber[];
-      0: BigNumber[];
-    }>;
+    ): Promise<[BigNumber[]] & { IDs: BigNumber[] }>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -393,87 +351,59 @@ export class CoinPositionNFT extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "supportsInterface(bytes4)"(
       interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
-    symbol(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    "symbol()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
     tokenByIndex(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "tokenByIndex(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     tokenOfOwnerByIndex(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     "tokenOfOwnerByIndex(address,uint256)"(
       owner: string,
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
     "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
-    totalSupply(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalSupply()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
       from: string,
@@ -488,6 +418,16 @@ export class CoinPositionNFT extends Contract {
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   approve(
@@ -513,6 +453,10 @@ export class CoinPositionNFT extends Contract {
 
   "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -527,10 +471,10 @@ export class CoinPositionNFT extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -558,10 +502,10 @@ export class CoinPositionNFT extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  mintTo(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+  mintTo(dest: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "mintTo(address)"(
-    to: string,
+    dest: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -569,9 +513,9 @@ export class CoinPositionNFT extends Contract {
 
   "name()"(overrides?: CallOverrides): Promise<string>;
 
-  nextTokenID(overrides?: CallOverrides): Promise<BigNumber>;
+  nextPositionID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "nextTokenID()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "nextPositionID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -613,6 +557,10 @@ export class CoinPositionNFT extends Contract {
     approved: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
   supportsInterface(
     interfaceId: BytesLike,
@@ -675,6 +623,13 @@ export class CoinPositionNFT extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
     approve(
       to: string,
@@ -699,6 +654,10 @@ export class CoinPositionNFT extends Contract {
 
     "baseURI()"(overrides?: CallOverrides): Promise<string>;
 
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -713,10 +672,10 @@ export class CoinPositionNFT extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -744,10 +703,10 @@ export class CoinPositionNFT extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mintTo(to: string, overrides?: CallOverrides): Promise<BigNumber>;
+    mintTo(dest: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "mintTo(address)"(
-      to: string,
+      dest: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -755,9 +714,9 @@ export class CoinPositionNFT extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<string>;
 
-    nextTokenID(overrides?: CallOverrides): Promise<BigNumber>;
+    nextPositionID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "nextTokenID()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "nextPositionID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
@@ -802,6 +761,10 @@ export class CoinPositionNFT extends Contract {
       approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -863,6 +826,13 @@ export class CoinPositionNFT extends Contract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -913,6 +883,10 @@ export class CoinPositionNFT extends Contract {
 
     "baseURI()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -927,10 +901,10 @@ export class CoinPositionNFT extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -958,17 +932,17 @@ export class CoinPositionNFT extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mintTo(to: string, overrides?: Overrides): Promise<BigNumber>;
+    mintTo(dest: string, overrides?: Overrides): Promise<BigNumber>;
 
-    "mintTo(address)"(to: string, overrides?: Overrides): Promise<BigNumber>;
+    "mintTo(address)"(dest: string, overrides?: Overrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nextTokenID(overrides?: CallOverrides): Promise<BigNumber>;
+    nextPositionID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "nextTokenID()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "nextPositionID()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
       tokenId: BigNumberish,
@@ -1013,6 +987,10 @@ export class CoinPositionNFT extends Contract {
       approved: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -1077,6 +1055,16 @@ export class CoinPositionNFT extends Contract {
       tokenId: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1106,6 +1094,10 @@ export class CoinPositionNFT extends Contract {
 
     "baseURI()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1121,12 +1113,12 @@ export class CoinPositionNFT extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1154,10 +1146,10 @@ export class CoinPositionNFT extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mintTo(to: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+    mintTo(dest: string, overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "mintTo(address)"(
-      to: string,
+      dest: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1165,9 +1157,11 @@ export class CoinPositionNFT extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nextTokenID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    nextPositionID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "nextTokenID()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "nextPositionID()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     ownerOf(
       tokenId: BigNumberish,
@@ -1215,6 +1209,10 @@ export class CoinPositionNFT extends Contract {
       approved: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -1278,6 +1276,16 @@ export class CoinPositionNFT extends Contract {
       to: string,
       tokenId: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

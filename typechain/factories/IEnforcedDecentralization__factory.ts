@@ -25,6 +25,19 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "string",
+        name: "signature",
+        type: "string",
+      },
+    ],
+    name: "ActionBlacklisted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: "uint64",
         name: "locktime",
@@ -62,13 +75,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
         internalType: "string",
         name: "signature",
         type: "string",
       },
     ],
     name: "validateAction",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },

@@ -20,24 +20,22 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface PegManagerInterface extends ethers.utils.Interface {
+interface RatesInterface extends ethers.utils.Interface {
   functions: {
-    "acceptableError()": FunctionFragment;
     "calculatePrice(uint256,uint256,uint256)": FunctionFragment;
-    "errorInterval()": FunctionFragment;
+    "completeSetup()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
-    "interestRate()": FunctionFragment;
-    "interestRateStep()": FunctionFragment;
+    "interestRateAbsoluteValue()": FunctionFragment;
     "maxPriceAge()": FunctionFragment;
     "maxSteps()": FunctionFragment;
     "maxTwapTime()": FunctionFragment;
-    "minRate()": FunctionFragment;
     "minTimeBetweenUpdates()": FunctionFragment;
     "pairs(uint256)": FunctionFragment;
     "positiveInterestRate()": FunctionFragment;
-    "rd()": FunctionFragment;
+    "rateConfig()": FunctionFragment;
     "setAcceptableError(uint128)": FunctionFragment;
     "setErrorInterval(uint128)": FunctionFragment;
     "setInterestRateStep(uint128)": FunctionFragment;
@@ -46,25 +44,25 @@ interface PegManagerInterface extends ethers.utils.Interface {
     "setMaxTwapTime(uint64)": FunctionFragment;
     "setMinRate(int128)": FunctionFragment;
     "setMinTimeBetweenUpdates(uint64)": FunctionFragment;
-    "setValidRange(uint128)": FunctionFragment;
+    "setValidRangeForRawPrices(uint128)": FunctionFragment;
     "stepsOff()": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
+    "storedRateData()": FunctionFragment;
     "update()": FunctionFragment;
-    "validRange()": FunctionFragment;
+    "validRangeForRawPrices()": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "acceptableError",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "calculatePrice",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "errorInterval",
+    functionFragment: "completeSetup",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRewardCount",
     values?: undefined
@@ -72,11 +70,7 @@ interface PegManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "interestRate",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "interestRateStep",
+    functionFragment: "interestRateAbsoluteValue",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -88,7 +82,6 @@ interface PegManagerInterface extends ethers.utils.Interface {
     functionFragment: "maxTwapTime",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "minRate", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "minTimeBetweenUpdates",
     values?: undefined
@@ -98,7 +91,10 @@ interface PegManagerInterface extends ethers.utils.Interface {
     functionFragment: "positiveInterestRate",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "rd", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "rateConfig",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "setAcceptableError",
     values: [BigNumberish]
@@ -132,29 +128,35 @@ interface PegManagerInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setValidRange",
+    functionFragment: "setValidRangeForRawPrices",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stepsOff", values?: undefined): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
-  encodeFunctionData(functionFragment: "update", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "validRange",
+    functionFragment: "storedRateData",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "update", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "validRangeForRawPrices",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "acceptableError",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "calculatePrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "errorInterval",
+    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRewardCount",
     data: BytesLike
@@ -162,11 +164,7 @@ interface PegManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "interestRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "interestRateStep",
+    functionFragment: "interestRateAbsoluteValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -178,7 +176,6 @@ interface PegManagerInterface extends ethers.utils.Interface {
     functionFragment: "maxTwapTime",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "minRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minTimeBetweenUpdates",
     data: BytesLike
@@ -188,7 +185,7 @@ interface PegManagerInterface extends ethers.utils.Interface {
     functionFragment: "positiveInterestRate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "rd", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "rateConfig", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAcceptableError",
     data: BytesLike
@@ -219,13 +216,25 @@ interface PegManagerInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setValidRange",
+    functionFragment: "setValidRangeForRawPrices",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stepsOff", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "storedRateData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "update", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "validRange", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validRangeForRawPrices",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Initialized(address)": EventFragment;
@@ -244,7 +253,7 @@ interface PegManagerInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
 }
 
-export class PegManager extends Contract {
+export class Rates extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -255,224 +264,109 @@ export class PegManager extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: PegManagerInterface;
+  interface: RatesInterface;
 
   functions: {
-    acceptableError(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "acceptableError()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
     calculatePrice(
       price0: BigNumberish,
       price1: BigNumberish,
       price2: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { price: BigNumber }>;
 
     "calculatePrice(uint256,uint256,uint256)"(
       price0: BigNumberish,
       price1: BigNumberish,
       price2: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { price: BigNumber }>;
 
-    errorInterval(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "errorInterval()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
     getRewardCount(
       overrides?: CallOverrides
-    ): Promise<{
-      newRewardCount: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { newRewardCount: BigNumber }>;
 
     "getRewardCount()"(
       overrides?: CallOverrides
-    ): Promise<{
-      newRewardCount: BigNumber;
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { newRewardCount: BigNumber }>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    interestRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "interestRate()"(
+    "interestRateAbsoluteValue()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    interestRateStep(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxPriceAge(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "interestRateStep()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxPriceAge()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxPriceAge(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxSteps(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxPriceAge()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxSteps()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxSteps(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    maxTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxSteps()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "maxTwapTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minTimeBetweenUpdates(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "maxTwapTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "minTimeBetweenUpdates()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "minRate()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    minTimeBetweenUpdates(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "minTimeBetweenUpdates()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    pairs(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    pairs(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     "pairs(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
-    positiveInterestRate(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    positiveInterestRate(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "positiveInterestRate()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    "positiveInterestRate()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    rd(
+    rateConfig(
       overrides?: CallOverrides
-    ): Promise<{
-      rate: BigNumber;
-      stepsOff: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        acceptableError: BigNumber;
+        errorInterval: BigNumber;
+        interestRateStep: BigNumber;
+        maxSteps: BigNumber;
+        minRate: BigNumber;
+      }
+    >;
 
-    "rd()"(
+    "rateConfig()"(
       overrides?: CallOverrides
-    ): Promise<{
-      rate: BigNumber;
-      stepsOff: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        acceptableError: BigNumber;
+        errorInterval: BigNumber;
+        interestRateStep: BigNumber;
+        maxSteps: BigNumber;
+        minRate: BigNumber;
+      }
+    >;
 
     setAcceptableError(
       error: BigNumberish,
@@ -554,52 +448,68 @@ export class PegManager extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setValidRange(
+    setValidRangeForRawPrices(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setValidRange(uint128)"(
+    "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stepsOff(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    stepsOff(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "stepsOff()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "stepsOff()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    storedRateData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        stepsOff: BigNumber;
+        nextUpdateTime: BigNumber;
+        rewardCount: BigNumber;
+      }
+    >;
+
+    "storedRateData()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        stepsOff: BigNumber;
+        nextUpdateTime: BigNumber;
+        rewardCount: BigNumber;
+      }
+    >;
+
     update(overrides?: Overrides): Promise<ContractTransaction>;
 
     "update()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    validRange(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    validRangeForRawPrices(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "validRange()"(
+    "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    validUpdate(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
-
-  acceptableError(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "acceptableError()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   calculatePrice(
     price0: BigNumberish,
@@ -615,9 +525,13 @@ export class PegManager extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  errorInterval(overrides?: CallOverrides): Promise<BigNumber>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "errorInterval()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
 
   getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -627,20 +541,16 @@ export class PegManager extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+  interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  interestRateStep(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "interestRateStep()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "interestRateAbsoluteValue()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxPriceAge(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -653,10 +563,6 @@ export class PegManager extends Contract {
   maxTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   "maxTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "minRate()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -673,31 +579,29 @@ export class PegManager extends Contract {
 
   "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
 
-  rd(
+  rateConfig(
     overrides?: CallOverrides
-  ): Promise<{
-    rate: BigNumber;
-    stepsOff: BigNumber;
-    nextUpdateTime: BigNumber;
-    rewardCount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+    }
+  >;
 
-  "rd()"(
+  "rateConfig()"(
     overrides?: CallOverrides
-  ): Promise<{
-    rate: BigNumber;
-    stepsOff: BigNumber;
-    nextUpdateTime: BigNumber;
-    rewardCount: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+    }
+  >;
 
   setAcceptableError(
     error: BigNumberish,
@@ -779,12 +683,12 @@ export class PegManager extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setValidRange(
+  setValidRangeForRawPrices(
     range: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setValidRange(uint128)"(
+  "setValidRangeForRawPrices(uint128)"(
     range: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -797,19 +701,48 @@ export class PegManager extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  storedRateData(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      rate: BigNumber;
+      stepsOff: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+    }
+  >;
+
+  "storedRateData()"(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      rate: BigNumber;
+      stepsOff: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+    }
+  >;
+
   update(overrides?: Overrides): Promise<ContractTransaction>;
 
   "update()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  validRange(overrides?: CallOverrides): Promise<BigNumber>;
+  validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "validRange()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    acceptableError(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "acceptableError()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     calculatePrice(
       price0: BigNumberish,
       price1: BigNumberish,
@@ -824,9 +757,13 @@ export class PegManager extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    errorInterval(overrides?: CallOverrides): Promise<BigNumber>;
+    completeSetup(overrides?: CallOverrides): Promise<void>;
 
-    "errorInterval()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
 
     getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -836,20 +773,18 @@ export class PegManager extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    interestRateStep(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "interestRateStep()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "interestRateAbsoluteValue()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxPriceAge(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -862,10 +797,6 @@ export class PegManager extends Contract {
     maxTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minRate()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -882,31 +813,29 @@ export class PegManager extends Contract {
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
 
-    rd(
+    rateConfig(
       overrides?: CallOverrides
-    ): Promise<{
-      rate: BigNumber;
-      stepsOff: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        acceptableError: BigNumber;
+        errorInterval: BigNumber;
+        interestRateStep: BigNumber;
+        maxSteps: BigNumber;
+        minRate: BigNumber;
+      }
+    >;
 
-    "rd()"(
+    "rateConfig()"(
       overrides?: CallOverrides
-    ): Promise<{
-      rate: BigNumber;
-      stepsOff: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+        acceptableError: BigNumber;
+        errorInterval: BigNumber;
+        interestRateStep: BigNumber;
+        maxSteps: BigNumber;
+        minRate: BigNumber;
+      }
+    >;
 
     setAcceptableError(
       error: BigNumberish,
@@ -979,12 +908,12 @@ export class PegManager extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setValidRange(
+    setValidRangeForRawPrices(
       range: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setValidRange(uint128)"(
+    "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -997,13 +926,46 @@ export class PegManager extends Contract {
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    storedRateData(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        stepsOff: BigNumber;
+        nextUpdateTime: BigNumber;
+        rewardCount: BigNumber;
+      }
+    >;
+
+    "storedRateData()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+        rate: BigNumber;
+        stepsOff: BigNumber;
+        nextUpdateTime: BigNumber;
+        rewardCount: BigNumber;
+      }
+    >;
+
     update(overrides?: CallOverrides): Promise<void>;
 
     "update()"(overrides?: CallOverrides): Promise<void>;
 
-    validRange(overrides?: CallOverrides): Promise<BigNumber>;
+    validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "validRange()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -1026,10 +988,6 @@ export class PegManager extends Contract {
   };
 
   estimateGas: {
-    acceptableError(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "acceptableError()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     calculatePrice(
       price0: BigNumberish,
       price1: BigNumberish,
@@ -1044,9 +1002,13 @@ export class PegManager extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    errorInterval(overrides?: CallOverrides): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "errorInterval()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1056,20 +1018,18 @@ export class PegManager extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    interestRate(overrides?: CallOverrides): Promise<BigNumber>;
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    interestRateStep(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "interestRateStep()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "interestRateAbsoluteValue()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     maxPriceAge(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1082,10 +1042,6 @@ export class PegManager extends Contract {
     maxTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minRate(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minRate()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1102,9 +1058,9 @@ export class PegManager extends Contract {
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    rd(overrides?: CallOverrides): Promise<BigNumber>;
+    rateConfig(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "rd()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "rateConfig()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     setAcceptableError(
       error: BigNumberish,
@@ -1180,12 +1136,12 @@ export class PegManager extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setValidRange(
+    setValidRangeForRawPrices(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setValidRange(uint128)"(
+    "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1198,22 +1154,34 @@ export class PegManager extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    storedRateData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "storedRateData()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     update(overrides?: Overrides): Promise<BigNumber>;
 
     "update()"(overrides?: Overrides): Promise<BigNumber>;
 
-    validRange(overrides?: CallOverrides): Promise<BigNumber>;
+    validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "validRange()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    acceptableError(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "acceptableError()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     calculatePrice(
       price0: BigNumberish,
       price1: BigNumberish,
@@ -1228,9 +1196,13 @@ export class PegManager extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    errorInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "errorInterval()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRewardCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1243,22 +1215,20 @@ export class PegManager extends Contract {
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    interestRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    interestRateAbsoluteValue(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "interestRate()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    interestRateStep(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "interestRateStep()"(
+    "interestRateAbsoluteValue()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1273,10 +1243,6 @@ export class PegManager extends Contract {
     maxTwapTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "maxTwapTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "minRate()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minTimeBetweenUpdates(
       overrides?: CallOverrides
@@ -1304,9 +1270,9 @@ export class PegManager extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    rd(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    rateConfig(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "rd()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "rateConfig()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setAcceptableError(
       error: BigNumberish,
@@ -1388,12 +1354,12 @@ export class PegManager extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setValidRange(
+    setValidRangeForRawPrices(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setValidRange(uint128)"(
+    "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1406,12 +1372,36 @@ export class PegManager extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    storedRateData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "storedRateData()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     update(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "update()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    validRange(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    validRangeForRawPrices(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "validRange()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "validRangeForRawPrices()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

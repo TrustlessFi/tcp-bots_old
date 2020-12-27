@@ -5,18 +5,14 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IChainlinkAggregatorV3 } from "../IChainlinkAggregatorV3";
+import type { IPriceProvider } from "../IPriceProvider";
 
-export class IChainlinkAggregatorV3__factory {
+export class IPriceProvider__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IChainlinkAggregatorV3 {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as IChainlinkAggregatorV3;
+  ): IPriceProvider {
+    return new Contract(address, _abi, signerOrProvider) as IPriceProvider;
   }
 }
 

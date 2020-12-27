@@ -29,6 +29,7 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
     "allocationPurposeExplanation()": FunctionFragment;
     "available()": FunctionFragment;
     "burnTokensForEmergencyShutdown(uint256)": FunctionFragment;
+    "canAdministerProtocol()": FunctionFragment;
     "claim(uint256)": FunctionFragment;
     "claimed()": FunctionFragment;
     "cnp()": FunctionFragment;
@@ -36,10 +37,11 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
     "endTime()": FunctionFragment;
     "governor()": FunctionFragment;
     "id()": FunctionFragment;
-    "stakeTokensForSettlementPrice(uint256)": FunctionFragment;
+    "locked()": FunctionFragment;
+    "stakeTokensForNoPriceConfidence(uint256)": FunctionFragment;
     "startTime()": FunctionFragment;
     "sweep()": FunctionFragment;
-    "unstakeTokensForSettlementPrice(address,uint64)": FunctionFragment;
+    "unstakeTokensForNoPriceConfidence(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "accept", values?: undefined): string;
@@ -58,6 +60,10 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
     functionFragment: "burnTokensForEmergencyShutdown",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "canAdministerProtocol",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "claimed", values?: undefined): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
@@ -65,15 +71,16 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "endTime", values?: undefined): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "id", values?: undefined): string;
+  encodeFunctionData(functionFragment: "locked", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "stakeTokensForSettlementPrice",
+    functionFragment: "stakeTokensForNoPriceConfidence",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
   encodeFunctionData(functionFragment: "sweep", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "unstakeTokensForSettlementPrice",
-    values: [string, BigNumberish]
+    functionFragment: "unstakeTokensForNoPriceConfidence",
+    values: [string]
   ): string;
 
   decodeFunctionResult(functionFragment: "accept", data: BytesLike): Result;
@@ -92,6 +99,10 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
     functionFragment: "burnTokensForEmergencyShutdown",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "canAdministerProtocol",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
@@ -99,14 +110,15 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "endTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "id", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "locked", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "stakeTokensForSettlementPrice",
+    functionFragment: "stakeTokensForNoPriceConfidence",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "unstakeTokensForSettlementPrice",
+    functionFragment: "unstakeTokensForNoPriceConfidence",
     data: BytesLike
   ): Result;
 
@@ -117,7 +129,7 @@ interface TokenAllocationInterface extends ethers.utils.Interface {
     "Initialized()": EventFragment;
     "StakedTokens(address,uint256)": EventFragment;
     "Sweeped(uint256)": EventFragment;
-    "UnstakedTokens(address,uint64)": EventFragment;
+    "UnstakedTokens(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Accepted"): EventFragment;
@@ -149,65 +161,27 @@ export class TokenAllocation extends Contract {
 
     "accept()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    accepted(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    accepted(overrides?: CallOverrides): Promise<[boolean]>;
 
-    "accepted()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    "accepted()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    allocatee(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    allocatee(overrides?: CallOverrides): Promise<[string]>;
 
-    "allocatee()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "allocatee()"(overrides?: CallOverrides): Promise<[string]>;
 
-    allocationCount(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    allocationCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "allocationCount()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "allocationCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    allocationPurposeExplanation(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    allocationPurposeExplanation(overrides?: CallOverrides): Promise<[string]>;
 
     "allocationPurposeExplanation()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    ): Promise<[string]>;
 
-    available(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    available(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "available()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "available()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     burnTokensForEmergencyShutdown(
       count: BigNumberish,
@@ -219,6 +193,10 @@ export class TokenAllocation extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    canAdministerProtocol(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     claim(
       count: BigNumberish,
       overrides?: Overrides
@@ -229,105 +207,59 @@ export class TokenAllocation extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    claimed(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    claimed(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "claimed()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "claimed()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    cnp(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    cnp(overrides?: CallOverrides): Promise<[string]>;
 
-    "cnp()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
 
     delegate(overrides?: Overrides): Promise<ContractTransaction>;
 
     "delegate()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    endTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    endTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "endTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "endTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    governor(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
-    id(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    id(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "id()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "id()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    locked(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "locked()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    startTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "startTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "startTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     sweep(overrides?: Overrides): Promise<ContractTransaction>;
 
     "sweep()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    unstakeTokensForSettlementPrice(
+    unstakeTokensForNoPriceConfidence(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "unstakeTokensForSettlementPrice(address,uint64)"(
+    "unstakeTokensForNoPriceConfidence(address)"(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -366,6 +298,10 @@ export class TokenAllocation extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  canAdministerProtocol(overrides?: CallOverrides): Promise<boolean>;
+
+  "canAdministerProtocol()"(overrides?: CallOverrides): Promise<boolean>;
+
   claim(
     count: BigNumberish,
     overrides?: Overrides
@@ -400,13 +336,17 @@ export class TokenAllocation extends Contract {
 
   "id()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  stakeTokensForSettlementPrice(
-    count: BigNumberish,
+  locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  stakeTokensForNoPriceConfidence(
+    countCNPToStake: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "stakeTokensForSettlementPrice(uint256)"(
-    count: BigNumberish,
+  "stakeTokensForNoPriceConfidence(uint256)"(
+    countCNPToStake: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -418,15 +358,13 @@ export class TokenAllocation extends Contract {
 
   "sweep()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  unstakeTokensForSettlementPrice(
+  unstakeTokensForNoPriceConfidence(
     settlement: string,
-    period: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "unstakeTokensForSettlementPrice(address,uint64)"(
+  "unstakeTokensForNoPriceConfidence(address)"(
     settlement: string,
-    period: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -467,6 +405,10 @@ export class TokenAllocation extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    canAdministerProtocol(overrides?: CallOverrides): Promise<boolean>;
+
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<boolean>;
+
     claim(count: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     "claim(uint256)"(
@@ -498,13 +440,17 @@ export class TokenAllocation extends Contract {
 
     "id()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -516,15 +462,13 @@ export class TokenAllocation extends Contract {
 
     "sweep()"(overrides?: CallOverrides): Promise<void>;
 
-    unstakeTokensForSettlementPrice(
+    unstakeTokensForNoPriceConfidence(
       settlement: string,
-      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "unstakeTokensForSettlementPrice(address,uint64)"(
+    "unstakeTokensForNoPriceConfidence(address)"(
       settlement: string,
-      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -545,10 +489,7 @@ export class TokenAllocation extends Contract {
 
     Sweeped(count: null): EventFilter;
 
-    UnstakedTokens(
-      settlement: string | null,
-      period: BigNumberish | null
-    ): EventFilter;
+    UnstakedTokens(settlement: string | null): EventFilter;
   };
 
   estimateGas: {
@@ -588,6 +529,10 @@ export class TokenAllocation extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    canAdministerProtocol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "canAdministerProtocol()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     claim(count: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "claim(uint256)"(
@@ -619,13 +564,17 @@ export class TokenAllocation extends Contract {
 
     "id()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    locked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "locked()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -637,15 +586,13 @@ export class TokenAllocation extends Contract {
 
     "sweep()"(overrides?: Overrides): Promise<BigNumber>;
 
-    unstakeTokensForSettlementPrice(
+    unstakeTokensForNoPriceConfidence(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "unstakeTokensForSettlementPrice(address,uint64)"(
+    "unstakeTokensForNoPriceConfidence(address)"(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -691,6 +638,14 @@ export class TokenAllocation extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    canAdministerProtocol(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "canAdministerProtocol()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     claim(
       count: BigNumberish,
       overrides?: Overrides
@@ -725,13 +680,17 @@ export class TokenAllocation extends Contract {
 
     "id()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    stakeTokensForSettlementPrice(
-      count: BigNumberish,
+    locked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "locked()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    stakeTokensForNoPriceConfidence(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "stakeTokensForSettlementPrice(uint256)"(
-      count: BigNumberish,
+    "stakeTokensForNoPriceConfidence(uint256)"(
+      countCNPToStake: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -743,15 +702,13 @@ export class TokenAllocation extends Contract {
 
     "sweep()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    unstakeTokensForSettlementPrice(
+    unstakeTokensForNoPriceConfidence(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "unstakeTokensForSettlementPrice(address,uint64)"(
+    "unstakeTokensForNoPriceConfidence(address)"(
       settlement: string,
-      period: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };

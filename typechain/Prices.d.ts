@@ -24,6 +24,7 @@ interface PricesInterface extends ethers.utils.Interface {
   functions: {
     "collateralPairMinTwapTime()": FunctionFragment;
     "completeSetup()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "obtainPrice(address,uint64,uint64,bool)": FunctionFragment;
@@ -32,7 +33,9 @@ interface PricesInterface extends ethers.utils.Interface {
     "setCollateralPairMinTwapTime(uint64)": FunctionFragment;
     "setReferencePairMinTwapTime(uint64)": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
     "updatePrice(address)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
     "viewPrice(address,bool)": FunctionFragment;
   };
 
@@ -44,6 +47,7 @@ interface PricesInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
@@ -64,7 +68,12 @@ interface PricesInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(functionFragment: "updatePrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "viewPrice",
     values: [string, boolean]
@@ -78,6 +87,7 @@ interface PricesInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
@@ -98,8 +108,13 @@ interface PricesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updatePrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "viewPrice", data: BytesLike): Result;
@@ -131,41 +146,31 @@ export class Prices extends Contract {
   interface: PricesInterface;
 
   functions: {
-    collateralPairMinTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    collateralPairMinTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "collateralPairMinTwapTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -188,54 +193,54 @@ export class Prices extends Contract {
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      cumulative: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      t0DecimalMultiplier: BigNumber;
-      t1DecimalMultiplier: BigNumber;
-      coinIsToken0: boolean;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: boolean;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        price: BigNumber;
+        cumulative: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+        t0DecimalMultiplier: BigNumber;
+        t1DecimalMultiplier: BigNumber;
+        coinIsToken0: boolean;
+      }
+    >;
 
     "priceInfo(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      cumulative: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      t0DecimalMultiplier: BigNumber;
-      t1DecimalMultiplier: BigNumber;
-      coinIsToken0: boolean;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: boolean;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        price: BigNumber;
+        cumulative: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+        t0DecimalMultiplier: BigNumber;
+        t1DecimalMultiplier: BigNumber;
+        coinIsToken0: boolean;
+      }
+    >;
 
-    referencePairMinTwapTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    referencePairMinTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "referencePairMinTwapTime()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
     setCollateralPairMinTwapTime(
       time: BigNumberish,
@@ -261,6 +266,10 @@ export class Prices extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     updatePrice(
       pair: string,
       overrides?: Overrides
@@ -271,31 +280,39 @@ export class Prices extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     viewPrice(
       pair: string,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        price: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+      }
+    >;
 
     "viewPrice(address,bool)"(
       pair: string,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        price: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+      }
+    >;
   };
 
   collateralPairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
@@ -306,14 +323,18 @@ export class Prices extends Contract {
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -336,42 +357,48 @@ export class Prices extends Contract {
   priceInfo(
     arg0: string,
     overrides?: CallOverrides
-  ): Promise<{
-    price: BigNumber;
-    cumulative: BigNumber;
-    priceTime: BigNumber;
-    twapTime: BigNumber;
-    t0DecimalMultiplier: BigNumber;
-    t1DecimalMultiplier: BigNumber;
-    coinIsToken0: boolean;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-    5: BigNumber;
-    6: boolean;
-  }>;
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean
+    ] & {
+      price: BigNumber;
+      cumulative: BigNumber;
+      priceTime: BigNumber;
+      twapTime: BigNumber;
+      t0DecimalMultiplier: BigNumber;
+      t1DecimalMultiplier: BigNumber;
+      coinIsToken0: boolean;
+    }
+  >;
 
   "priceInfo(address)"(
     arg0: string,
     overrides?: CallOverrides
-  ): Promise<{
-    price: BigNumber;
-    cumulative: BigNumber;
-    priceTime: BigNumber;
-    twapTime: BigNumber;
-    t0DecimalMultiplier: BigNumber;
-    t1DecimalMultiplier: BigNumber;
-    coinIsToken0: boolean;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-    3: BigNumber;
-    4: BigNumber;
-    5: BigNumber;
-    6: boolean;
-  }>;
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean
+    ] & {
+      price: BigNumber;
+      cumulative: BigNumber;
+      priceTime: BigNumber;
+      twapTime: BigNumber;
+      t0DecimalMultiplier: BigNumber;
+      t1DecimalMultiplier: BigNumber;
+      coinIsToken0: boolean;
+    }
+  >;
 
   referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -401,6 +428,10 @@ export class Prices extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
   updatePrice(
     pair: string,
     overrides?: Overrides
@@ -411,31 +442,36 @@ export class Prices extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   viewPrice(
     pair: string,
     normalizeDecimals: boolean,
     overrides?: CallOverrides
-  ): Promise<{
-    price: BigNumber;
-    priceTime: BigNumber;
-    twapTime: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      price: BigNumber;
+      priceTime: BigNumber;
+      twapTime: BigNumber;
+    }
+  >;
 
   "viewPrice(address,bool)"(
     pair: string,
     normalizeDecimals: boolean,
     overrides?: CallOverrides
-  ): Promise<{
-    price: BigNumber;
-    priceTime: BigNumber;
-    twapTime: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-    2: BigNumber;
-  }>;
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      price: BigNumber;
+      priceTime: BigNumber;
+      twapTime: BigNumber;
+    }
+  >;
 
   callStatic: {
     collateralPairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
@@ -448,14 +484,18 @@ export class Prices extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -465,12 +505,9 @@ export class Prices extends Contract {
       maxPriceAge: BigNumberish,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
 
     "obtainPrice(address,uint64,uint64,bool)"(
       pair: string,
@@ -478,52 +515,55 @@ export class Prices extends Contract {
       maxPriceAge: BigNumberish,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
 
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      cumulative: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      t0DecimalMultiplier: BigNumber;
-      t1DecimalMultiplier: BigNumber;
-      coinIsToken0: boolean;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: boolean;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        price: BigNumber;
+        cumulative: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+        t0DecimalMultiplier: BigNumber;
+        t1DecimalMultiplier: BigNumber;
+        coinIsToken0: boolean;
+      }
+    >;
 
     "priceInfo(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      cumulative: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      t0DecimalMultiplier: BigNumber;
-      t1DecimalMultiplier: BigNumber;
-      coinIsToken0: boolean;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: boolean;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean
+      ] & {
+        price: BigNumber;
+        cumulative: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+        t0DecimalMultiplier: BigNumber;
+        t1DecimalMultiplier: BigNumber;
+        coinIsToken0: boolean;
+      }
+    >;
 
     referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -553,6 +593,10 @@ export class Prices extends Contract {
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
     updatePrice(pair: string, overrides?: CallOverrides): Promise<void>;
 
     "updatePrice(address)"(
@@ -560,31 +604,36 @@ export class Prices extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     viewPrice(
       pair: string,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        price: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+      }
+    >;
 
     "viewPrice(address,bool)"(
       pair: string,
       normalizeDecimals: boolean,
       overrides?: CallOverrides
-    ): Promise<{
-      price: BigNumber;
-      priceTime: BigNumber;
-      twapTime: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-    }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        price: BigNumber;
+        priceTime: BigNumber;
+        twapTime: BigNumber;
+      }
+    >;
   };
 
   filters: {
@@ -613,14 +662,18 @@ export class Prices extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -675,11 +728,25 @@ export class Prices extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     updatePrice(pair: string, overrides?: Overrides): Promise<BigNumber>;
 
     "updatePrice(address)"(
       pair: string,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     viewPrice(
@@ -708,17 +775,21 @@ export class Prices extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -780,6 +851,10 @@ export class Prices extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     updatePrice(
       pair: string,
       overrides?: Overrides
@@ -788,6 +863,16 @@ export class Prices extends Contract {
     "updatePrice(address)"(
       pair: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     viewPrice(

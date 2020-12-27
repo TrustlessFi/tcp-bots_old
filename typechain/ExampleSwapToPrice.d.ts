@@ -82,12 +82,7 @@ export class ExampleSwapToPrice extends Contract {
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      aToB: boolean;
-      amountIn: BigNumber;
-      0: boolean;
-      1: BigNumber;
-    }>;
+    ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
     "computeProfitMaximizingTrade(uint256,uint256,uint256,uint256)"(
       truePriceTokenA: BigNumberish,
@@ -95,36 +90,15 @@ export class ExampleSwapToPrice extends Contract {
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      aToB: boolean;
-      amountIn: BigNumber;
-      0: boolean;
-      1: BigNumber;
-    }>;
+    ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
-    factory(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    factory(overrides?: CallOverrides): Promise<[string]>;
 
-    "factory()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "factory()"(overrides?: CallOverrides): Promise<[string]>;
 
-    router(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    router(overrides?: CallOverrides): Promise<[string]>;
 
-    "router()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "router()"(overrides?: CallOverrides): Promise<[string]>;
 
     swapToPrice(
       tokenA: string,
@@ -157,12 +131,7 @@ export class ExampleSwapToPrice extends Contract {
     reserveA: BigNumberish,
     reserveB: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    aToB: boolean;
-    amountIn: BigNumber;
-    0: boolean;
-    1: BigNumber;
-  }>;
+  ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
   "computeProfitMaximizingTrade(uint256,uint256,uint256,uint256)"(
     truePriceTokenA: BigNumberish,
@@ -170,12 +139,7 @@ export class ExampleSwapToPrice extends Contract {
     reserveA: BigNumberish,
     reserveB: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<{
-    aToB: boolean;
-    amountIn: BigNumber;
-    0: boolean;
-    1: BigNumber;
-  }>;
+  ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
   factory(overrides?: CallOverrides): Promise<string>;
 
@@ -216,12 +180,7 @@ export class ExampleSwapToPrice extends Contract {
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      aToB: boolean;
-      amountIn: BigNumber;
-      0: boolean;
-      1: BigNumber;
-    }>;
+    ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
     "computeProfitMaximizingTrade(uint256,uint256,uint256,uint256)"(
       truePriceTokenA: BigNumberish,
@@ -229,12 +188,7 @@ export class ExampleSwapToPrice extends Contract {
       reserveA: BigNumberish,
       reserveB: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      aToB: boolean;
-      amountIn: BigNumber;
-      0: boolean;
-      1: BigNumber;
-    }>;
+    ): Promise<[boolean, BigNumber] & { aToB: boolean; amountIn: BigNumber }>;
 
     factory(overrides?: CallOverrides): Promise<string>;
 

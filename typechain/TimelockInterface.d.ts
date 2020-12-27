@@ -101,17 +101,9 @@ export class TimelockInterface extends Contract {
   interface: TimelockInterfaceInterface;
 
   functions: {
-    GRACE_PERIOD(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    GRACE_PERIOD(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "GRACE_PERIOD()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "GRACE_PERIOD()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     acceptAdmin(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -135,17 +127,9 @@ export class TimelockInterface extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    delay(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    delay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "delay()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "delay()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     executeTransaction(
       target: string,
@@ -186,16 +170,12 @@ export class TimelockInterface extends Contract {
     queuedTransactions(
       hash: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
 
     "queuedTransactions(bytes32)"(
       hash: BytesLike,
       overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    ): Promise<[boolean]>;
   };
 
   GRACE_PERIOD(overrides?: CallOverrides): Promise<BigNumber>;
@@ -312,11 +292,7 @@ export class TimelockInterface extends Contract {
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      returnData: string;
-      0: string;
-      1: string;
-    }>;
+    ): Promise<string>;
 
     "executeTransaction(address,uint256,string,bytes,uint256)"(
       target: string,
@@ -325,11 +301,7 @@ export class TimelockInterface extends Contract {
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      returnData: string;
-      0: string;
-      1: string;
-    }>;
+    ): Promise<string>;
 
     queueTransaction(
       target: string,

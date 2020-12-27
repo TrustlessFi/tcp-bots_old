@@ -66,12 +66,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "oldDebt",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "newDebt",
         type: "uint256",
       },
@@ -177,9 +171,9 @@ const _abi = [
         type: "string",
       },
       {
-        indexed: false,
-        internalType: "uint8",
-        name: "key",
+        indexed: true,
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
         type: "uint8",
       },
       {
@@ -189,7 +183,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ParameterUpdatedMapping",
+    name: "ParameterUpdatedByCollateral",
     type: "event",
   },
   {
@@ -240,12 +234,6 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint64",
-        name: "periods",
-        type: "uint64",
-      },
-      {
-        indexed: false,
         internalType: "uint256",
         name: "debtAfter",
         type: "uint256",
@@ -253,7 +241,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "govRewards",
+        name: "cnpRewards",
         type: "uint256",
       },
     ],
@@ -293,7 +281,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "enum IAccounting.Collateral",
+        name: "collateral",
+        type: "uint8",
+      },
+    ],
     name: "collateralizationRequirement",
     outputs: [
       {
@@ -307,12 +301,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "periodsBehind",
+    name: "lastPeriodGlobalInterestAccrued",
     outputs: [
       {
-        internalType: "uint256",
-        name: "periods",
-        type: "uint256",
+        internalType: "uint64",
+        name: "period",
+        type: "uint64",
       },
     ],
     stateMutability: "view",
@@ -389,6 +383,11 @@ const _abi = [
             name: "collateralizationBand",
             type: "uint32",
           },
+          {
+            internalType: "enum IAccounting.Collateral",
+            name: "collateralType",
+            type: "uint8",
+          },
         ],
         internalType: "struct IAccounting.DebtPosition",
         name: "position",
@@ -400,6 +399,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "contract IUniswapV2Pair",
+        name: "pair",
+        type: "address",
+      },
       {
         internalType: "uint256",
         name: "price",

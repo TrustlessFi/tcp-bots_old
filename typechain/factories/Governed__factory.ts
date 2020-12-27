@@ -38,6 +38,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "deployer",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "governor",
     outputs: [
       {
@@ -53,13 +66,45 @@ const _abi = [
     inputs: [
       {
         internalType: "contract IGovernor",
-        name: "governor_",
+        name: "_governor",
         type: "address",
       },
     ],
     name: "init",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "stopped",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "action",
+        type: "bytes4",
+      },
+    ],
+    name: "validUpdate",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

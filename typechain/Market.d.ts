@@ -24,31 +24,36 @@ interface MarketInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
     "borrow(uint64,uint256,uint256)": FunctionFragment;
-    "collateralizationRequirement()": FunctionFragment;
-    "createNewPosition()": FunctionFragment;
-    "dsrPercentage()": FunctionFragment;
+    "collateralizationRequirement(uint8)": FunctionFragment;
+    "createNewPosition(uint8)": FunctionFragment;
+    "currentPeriod()": FunctionFragment;
+    "deployer()": FunctionFragment;
+    "firstPeriod()": FunctionFragment;
+    "getRewards(uint64)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
+    "interestPortionToLenders()": FunctionFragment;
+    "lastPeriodGlobalInterestAccrued()": FunctionFragment;
     "lend(uint256)": FunctionFragment;
-    "lendTokenValue(uint256)": FunctionFragment;
-    "maxDebt()": FunctionFragment;
+    "maxDebt(uint8)": FunctionFragment;
     "minBorrowTime()": FunctionFragment;
-    "minCollateralToDebtRatio()": FunctionFragment;
+    "minCollateralToDebtRatio(uint8)": FunctionFragment;
     "minPositionSize()": FunctionFragment;
     "payback(uint64,uint256,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "periodsBehind()": FunctionFragment;
-    "setCollateralizationRequirement(uint256)": FunctionFragment;
-    "setDsrPercentage(uint256)": FunctionFragment;
-    "setMaxDebt(uint256)": FunctionFragment;
+    "setCollateralizationRequirement(uint8,uint256)": FunctionFragment;
+    "setInterestPortionToLenders(uint256)": FunctionFragment;
+    "setMaxDebt(uint8,uint256)": FunctionFragment;
     "setMinBorrowTime(uint64)": FunctionFragment;
     "setMinPositionSize(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
+    "stopped()": FunctionFragment;
     "systemAccrueInterest()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
-    "systemNotifyCollateralPriceUpdated(uint256)": FunctionFragment;
+    "systemNotifyCollateralPriceUpdated(address,uint256)": FunctionFragment;
     "unlend(uint256)": FunctionFragment;
-    "updatePositionAndRegisterRewards(uint64)": FunctionFragment;
+    "validUpdate(bytes4)": FunctionFragment;
+    "valueOfLendTokensInCoin(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -61,31 +66,47 @@ interface MarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "createNewPosition",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "firstPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "dsrPercentage",
-    values?: undefined
+    functionFragment: "getRewards",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "interestPortionToLenders",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lastPeriodGlobalInterestAccrued",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "lend", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "lendTokenValue",
+    functionFragment: "maxDebt",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "maxDebt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "minBorrowTime",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "minCollateralToDebtRatio",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "minPositionSize",
@@ -100,20 +121,16 @@ interface MarketInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "periodsBehind",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "setCollateralizationRequirement",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDsrPercentage",
+    functionFragment: "setInterestPortionToLenders",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMaxDebt",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinBorrowTime",
@@ -124,6 +141,7 @@ interface MarketInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "systemAccrueInterest",
     values?: undefined
@@ -134,14 +152,18 @@ interface MarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "systemNotifyCollateralPriceUpdated",
-    values: [BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "unlend",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updatePositionAndRegisterRewards",
+    functionFragment: "validUpdate",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "valueOfLendTokensInCoin",
     values: [BigNumberish]
   ): string;
 
@@ -159,16 +181,26 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "dsrPercentage",
+    functionFragment: "currentPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "firstPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lendTokenValue",
+    functionFragment: "interestPortionToLenders",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "lastPeriodGlobalInterestAccrued",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxDebt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minBorrowTime",
@@ -188,15 +220,11 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "periodsBehind",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setCollateralizationRequirement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setDsrPercentage",
+    functionFragment: "setInterestPortionToLenders",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setMaxDebt", data: BytesLike): Result;
@@ -209,6 +237,7 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "systemAccrueInterest",
     data: BytesLike
@@ -223,21 +252,25 @@ interface MarketInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "unlend", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "updatePositionAndRegisterRewards",
+    functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "valueOfLendTokensInCoin",
     data: BytesLike
   ): Result;
 
   events: {
     "Borrow(address,uint64,uint256,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
-    "InterestAccrued(uint64,uint64,uint256,uint256,uint256)": EventFragment;
+    "InterestAccrued(uint64,uint64,uint256,uint256)": EventFragment;
     "Lend(address,uint256,uint256)": EventFragment;
     "NewPositionCreated(address,uint64)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
-    "ParameterUpdatedMapping(string,uint8,uint256)": EventFragment;
+    "ParameterUpdatedByCollateral(string,uint8,uint256)": EventFragment;
     "Payback(address,uint64,uint256,uint256)": EventFragment;
-    "PositionUpdated(uint256,uint64,uint64,uint256,uint256)": EventFragment;
+    "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
     "Stopped()": EventFragment;
     "Unlend(address,uint256,uint256)": EventFragment;
   };
@@ -249,7 +282,9 @@ interface MarketInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedMapping"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "ParameterUpdatedByCollateral"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Payback"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
@@ -289,54 +324,78 @@ export class Market extends Contract {
     ): Promise<ContractTransaction>;
 
     collateralizationRequirement(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "collateralizationRequirement()"(
+    "collateralizationRequirement(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    createNewPosition(overrides?: Overrides): Promise<ContractTransaction>;
+    createNewPosition(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "createNewPosition()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "createNewPosition(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    dsrPercentage(
+    currentPeriod(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
-    "dsrPercentage()"(
+    "currentPeriod()"(
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber] & { period: BigNumber }>;
 
-    governor(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
-    "governor()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
+    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "getRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    governor(overrides?: CallOverrides): Promise<[string]>;
+
+    "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    interestPortionToLenders(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "interestPortionToLenders()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     lend(
       coinCount: BigNumberish,
@@ -348,69 +407,33 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    lendTokenValue(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      coinCount: BigNumber;
-      0: BigNumber;
-    }>;
-
-    "lendTokenValue(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      coinCount: BigNumber;
-      0: BigNumber;
-    }>;
-
     maxDebt(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "maxDebt()"(
+    "maxDebt(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    minBorrowTime(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minBorrowTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minBorrowTime()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "minBorrowTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     minCollateralToDebtRatio(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    "minCollateralToDebtRatio()"(
+    "minCollateralToDebtRatio(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    ): Promise<[BigNumber]>;
 
-    minPositionSize(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    minPositionSize(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minPositionSize()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    "minPositionSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     payback(
       positionID: BigNumberish,
@@ -426,58 +449,40 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    periodLength(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
+    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "periodLength()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    periodsBehind(
-      overrides?: CallOverrides
-    ): Promise<{
-      periods: BigNumber;
-      0: BigNumber;
-    }>;
-
-    "periodsBehind()"(
-      overrides?: CallOverrides
-    ): Promise<{
-      periods: BigNumber;
-      0: BigNumber;
-    }>;
+    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setCollateralizationRequirement(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setCollateralizationRequirement(uint256)"(
+    "setCollateralizationRequirement(uint8,uint256)"(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setDsrPercentage(
+    setInterestPortionToLenders(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setDsrPercentage(uint256)"(
+    "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMaxDebt(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setMaxDebt(uint256)"(
+    "setMaxDebt(uint8,uint256)"(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -506,6 +511,10 @@ export class Market extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
     systemAccrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
     "systemAccrueInterest()"(
@@ -523,11 +532,13 @@ export class Market extends Contract {
     ): Promise<ContractTransaction>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -542,15 +553,25 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    updatePositionAndRegisterRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    "updatePositionAndRegisterRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    valueOfLendTokensInCoin(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
+
+    "valueOfLendTokensInCoin(uint256)"(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
   };
 
   accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
@@ -571,30 +592,70 @@ export class Market extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "collateralizationRequirement()"(
+  collateralizationRequirement(
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  createNewPosition(overrides?: Overrides): Promise<ContractTransaction>;
+  "collateralizationRequirement(uint8)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "createNewPosition()"(overrides?: Overrides): Promise<ContractTransaction>;
+  createNewPosition(
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  dsrPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+  "createNewPosition(uint8)"(
+    collateralType: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "dsrPercentage()"(overrides?: CallOverrides): Promise<BigNumber>;
+  currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
+
+  "deployer()"(overrides?: CallOverrides): Promise<string>;
+
+  firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getRewards(
+    positionID: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "getRewards(uint64)"(
+    positionID: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(governor_: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
-    governor_: string,
+    _governor: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  interestPortionToLenders(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "interestPortionToLenders()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lastPeriodGlobalInterestAccrued(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "lastPeriodGlobalInterestAccrued()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   lend(
     coinCount: BigNumberish,
@@ -606,27 +667,26 @@ export class Market extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  lendTokenValue(
-    lendTokenCount: BigNumberish,
+  maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxDebt(uint8)"(
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  "lendTokenValue(uint256)"(
-    lendTokenCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxDebt(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "maxDebt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
+  minCollateralToDebtRatio(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "minCollateralToDebtRatio(uint8)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -650,36 +710,36 @@ export class Market extends Contract {
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   setCollateralizationRequirement(
+    collateral: BigNumberish,
     requirement: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setCollateralizationRequirement(uint256)"(
+  "setCollateralizationRequirement(uint8,uint256)"(
+    collateral: BigNumberish,
     requirement: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setDsrPercentage(
+  setInterestPortionToLenders(
     percentage: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setDsrPercentage(uint256)"(
+  "setInterestPortionToLenders(uint256)"(
     percentage: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMaxDebt(
+    collateral: BigNumberish,
     debt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setMaxDebt(uint256)"(
+  "setMaxDebt(uint8,uint256)"(
+    collateral: BigNumberish,
     debt: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -708,6 +768,10 @@ export class Market extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  stopped(overrides?: CallOverrides): Promise<boolean>;
+
+  "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
   systemAccrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
   "systemAccrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -723,11 +787,13 @@ export class Market extends Contract {
   ): Promise<ContractTransaction>;
 
   systemNotifyCollateralPriceUpdated(
+    pair: string,
     price: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "systemNotifyCollateralPriceUpdated(uint256)"(
+  "systemNotifyCollateralPriceUpdated(address,uint256)"(
+    pair: string,
     price: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -742,15 +808,22 @@ export class Market extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  updatePositionAndRegisterRewards(
-    positionID: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-  "updatePositionAndRegisterRewards(uint64)"(
-    positionID: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  "validUpdate(bytes4)"(
+    action: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  valueOfLendTokensInCoin(
+    lendTokenCount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "valueOfLendTokensInCoin(uint256)"(
+    lendTokenCount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   callStatic: {
     accrueInterest(overrides?: CallOverrides): Promise<void>;
@@ -771,30 +844,70 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "collateralizationRequirement()"(
+    collateralizationRequirement(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createNewPosition(overrides?: CallOverrides): Promise<BigNumber>;
+    "collateralizationRequirement(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "createNewPosition()"(overrides?: CallOverrides): Promise<BigNumber>;
+    createNewPosition(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    dsrPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+    "createNewPosition(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "dsrPercentage()"(overrides?: CallOverrides): Promise<BigNumber>;
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<string>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRewards(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "getRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    init(governor_: string, overrides?: CallOverrides): Promise<void>;
+    init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    interestPortionToLenders(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "interestPortionToLenders()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     lend(coinCount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -803,27 +916,26 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    lendTokenValue(
-      lendTokenCount: BigNumberish,
+    maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDebt(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "lendTokenValue(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxDebt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxDebt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
+    minCollateralToDebtRatio(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minCollateralToDebtRatio(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -847,33 +959,36 @@ export class Market extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     setCollateralizationRequirement(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setCollateralizationRequirement(uint256)"(
+    "setCollateralizationRequirement(uint8,uint256)"(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setDsrPercentage(
+    setInterestPortionToLenders(
       percentage: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setDsrPercentage(uint256)"(
+    "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMaxDebt(debt: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    setMaxDebt(
+      collateral: BigNumberish,
+      debt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "setMaxDebt(uint256)"(
+    "setMaxDebt(uint8,uint256)"(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -902,6 +1017,10 @@ export class Market extends Contract {
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
+    stopped(overrides?: CallOverrides): Promise<boolean>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
     systemAccrueInterest(overrides?: CallOverrides): Promise<void>;
 
     "systemAccrueInterest()"(overrides?: CallOverrides): Promise<void>;
@@ -909,57 +1028,69 @@ export class Market extends Contract {
     systemGetUpdatedPosition(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<{
-      startCumulativeDebt: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-      startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
-      collateralizationBandIndex: BigNumber;
-      lastUpdateTime: BigNumber;
-      lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      0: BigNumber;
-      1: BigNumber;
-      2: BigNumber;
-      3: BigNumber;
-      4: BigNumber;
-      5: BigNumber;
-      6: BigNumber;
-      7: BigNumber;
-      8: number;
-    }>;
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number
+      ] & {
+        startCumulativeDebt: BigNumber;
+        collateral: BigNumber;
+        debt: BigNumber;
+        startDebtExchangeRate: BigNumber;
+        startCNPRewards: BigNumber;
+        collateralizationBandIndex: BigNumber;
+        lastUpdateTime: BigNumber;
+        lastBorrowTime: BigNumber;
+        collateralizationBand: number;
+        collateralType: number;
+      }
+    >;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -974,15 +1105,22 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updatePositionAndRegisterRewards(
-      positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
-    "updatePositionAndRegisterRewards(uint64)"(
-      positionID: BigNumberish,
+    "validUpdate(bytes4)"(
+      action: BytesLike,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
+
+    valueOfLendTokensInCoin(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "valueOfLendTokensInCoin(uint256)"(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -998,7 +1136,6 @@ export class Market extends Contract {
     InterestAccrued(
       period: BigNumberish | null,
       periods: null,
-      oldDebt: null,
       newDebt: null,
       rewardCount: null
     ): EventFilter;
@@ -1018,9 +1155,9 @@ export class Market extends Contract {
 
     ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdatedMapping(
+    ParameterUpdatedByCollateral(
       paramName: string | null,
-      key: null,
+      collateral: BigNumberish | null,
       value: null
     ): EventFilter;
 
@@ -1034,9 +1171,8 @@ export class Market extends Contract {
     PositionUpdated(
       positionID: BigNumberish | null,
       period: BigNumberish | null,
-      periods: null,
       debtAfter: null,
-      govRewards: null
+      cnpRewards: null
     ): EventFilter;
 
     Stopped(): EventFilter;
@@ -1067,29 +1203,69 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "collateralizationRequirement()"(
+    collateralizationRequirement(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createNewPosition(overrides?: Overrides): Promise<BigNumber>;
+    "collateralizationRequirement(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "createNewPosition()"(overrides?: Overrides): Promise<BigNumber>;
+    createNewPosition(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    dsrPercentage(overrides?: CallOverrides): Promise<BigNumber>;
+    "createNewPosition(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "dsrPercentage()"(overrides?: CallOverrides): Promise<BigNumber>;
+    currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "getRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(governor_: string, overrides?: Overrides): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    interestPortionToLenders(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "interestPortionToLenders()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     lend(coinCount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
@@ -1099,27 +1275,26 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    lendTokenValue(
-      lendTokenCount: BigNumberish,
+    maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDebt(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    "lendTokenValue(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxDebt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxDebt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
+    minCollateralToDebtRatio(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minCollateralToDebtRatio(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1143,33 +1318,36 @@ export class Market extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "periodsBehind()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     setCollateralizationRequirement(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setCollateralizationRequirement(uint256)"(
+    "setCollateralizationRequirement(uint8,uint256)"(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setDsrPercentage(
+    setInterestPortionToLenders(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setDsrPercentage(uint256)"(
+    "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMaxDebt(debt: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+    setMaxDebt(
+      collateral: BigNumberish,
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
-    "setMaxDebt(uint256)"(
+    "setMaxDebt(uint8,uint256)"(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1198,6 +1376,10 @@ export class Market extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
+    stopped(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     systemAccrueInterest(overrides?: Overrides): Promise<BigNumber>;
 
     "systemAccrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
@@ -1213,11 +1395,13 @@ export class Market extends Contract {
     ): Promise<BigNumber>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1232,14 +1416,24 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    updatePositionAndRegisterRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "updatePositionAndRegisterRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    valueOfLendTokensInCoin(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "valueOfLendTokensInCoin(uint256)"(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -1263,33 +1457,75 @@ export class Market extends Contract {
     ): Promise<PopulatedTransaction>;
 
     collateralizationRequirement(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "collateralizationRequirement()"(
+    "collateralizationRequirement(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createNewPosition(overrides?: Overrides): Promise<PopulatedTransaction>;
+    createNewPosition(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    "createNewPosition()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "createNewPosition(uint8)"(
+      collateralType: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
-    dsrPercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "dsrPercentage()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "getRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
-      governor_: string,
+      _governor: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    interestPortionToLenders(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "interestPortionToLenders()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lastPeriodGlobalInterestAccrued(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "lastPeriodGlobalInterestAccrued()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lend(
@@ -1302,29 +1538,27 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    lendTokenValue(
-      lendTokenCount: BigNumberish,
+    maxDebt(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lendTokenValue(uint256)"(
-      lendTokenCount: BigNumberish,
+    "maxDebt(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    maxDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "maxDebt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minBorrowTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minCollateralToDebtRatio(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "minCollateralToDebtRatio()"(
+    "minCollateralToDebtRatio(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1352,36 +1586,36 @@ export class Market extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    periodsBehind(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "periodsBehind()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     setCollateralizationRequirement(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setCollateralizationRequirement(uint256)"(
+    "setCollateralizationRequirement(uint8,uint256)"(
+      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setDsrPercentage(
+    setInterestPortionToLenders(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setDsrPercentage(uint256)"(
+    "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMaxDebt(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setMaxDebt(uint256)"(
+    "setMaxDebt(uint8,uint256)"(
+      collateral: BigNumberish,
       debt: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1410,6 +1644,10 @@ export class Market extends Contract {
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     systemAccrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "systemAccrueInterest()"(
@@ -1427,11 +1665,13 @@ export class Market extends Contract {
     ): Promise<PopulatedTransaction>;
 
     systemNotifyCollateralPriceUpdated(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
+    "systemNotifyCollateralPriceUpdated(address,uint256)"(
+      pair: string,
       price: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1446,14 +1686,24 @@ export class Market extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    updatePositionAndRegisterRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
+    validUpdate(
+      action: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "updatePositionAndRegisterRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
+    "validUpdate(bytes4)"(
+      action: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    valueOfLendTokensInCoin(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "valueOfLendTokensInCoin(uint256)"(
+      lendTokenCount: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
