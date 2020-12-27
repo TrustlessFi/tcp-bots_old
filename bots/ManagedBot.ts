@@ -3,7 +3,7 @@
 
 import { Wallet, BigNumber } from "ethers";
 
-import { StoMS, formatTime, blockTime, hours } from "./library";
+import { StoMS, formatTime, getBlockTime, hours } from "./library";
 import { getProtocol, coinProtocol } from "./ProtocolInfo";
 
 export type runReturn = {
@@ -34,7 +34,7 @@ export class ManagedBot {
   }
 
   async getBlockTime(): Promise<number> {
-    return await blockTime();
+    return await getBlockTime();
   }
 
   _div(a: bigint, b: bigint): bigint {
