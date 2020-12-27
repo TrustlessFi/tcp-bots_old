@@ -57,7 +57,11 @@ export type coinProtocol = {
   extra: {
     allocations: Array<TokenAllocation>,
     coinLiquidator: CoinLiquidator,
-  } // TODO add in the pairs and tokens
+  }; // TODO add in the pairs and tokens
+  pairs: {
+    coinweth: UniswapV2Pair,
+    coinbtc: UniswapV2Pair,
+  }
 }
 
 export const get = async(name: string, address: string): Promise<Contract> => {
@@ -86,12 +90,9 @@ export const getProtocol = async(): Promise<coinProtocol> => {
   let governorAlpha = await get('GovernorAlpha', await timelock.admin()) as GovernorAlpha;
   let allocationCreator = await get('TokenAllocationCreator', await governor.allocationCreator()) as TokenAllocationCreator;
 
-  /*
-  // TODO add these back in
   let collateralPairs = await governor.getCollateralPairs();
   let coinweth = await get('UniswapV2Pair', collateralPairs[0]) as UniswapV2Pair
   let coinbtc = await get('UniswapV2Pair', collateralPairs[1]) as UniswapV2Pair
-  */
 
   let allocationAddresses = await allocationCreator.allocations();
   let allocations = [];
@@ -122,6 +123,10 @@ export const getProtocol = async(): Promise<coinProtocol> => {
       allocations: allocations,
       coinLiquidator: coinLiquidator,
     },
+    pairs: {
+      coinweth: coinweth,
+      coinbtc: coinbtc,
+    }
   };
 
 }

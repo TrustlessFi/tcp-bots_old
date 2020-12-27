@@ -3,7 +3,7 @@
 
 import { Wallet, BigNumber } from "ethers";
 
-import { StoMS, formatTime, blockTime } from "./library";
+import { StoMS, formatTime, blockTime, hours } from "./library";
 import { getProtocol, coinProtocol } from "./ProtocolInfo";
 
 export type runReturn = {
@@ -12,7 +12,7 @@ export type runReturn = {
 }
 
 export const defaultRunReturn: runReturn = {
-  sleepSeconds: 30,
+  sleepSeconds: hours(1),
   nothingToDo: true,
 }
 
@@ -21,7 +21,7 @@ export class ManagedBot {
   name: string = "Name not set.";
   shouldLog: boolean = true;
   timer: NodeJS.Timer | null = null;
-  ONE = BigNumber.from(BigInt(1e18).toString());
+  ONE = BigInt(1e18);
 
   constructor() {}
 
@@ -37,16 +37,16 @@ export class ManagedBot {
     return await blockTime();
   }
 
-  _div(a: BigNumber, b: BigNumber): BigNumber {
+  _div(a: bigint, b: bigint): bigint {
     return this._mulDiv(a, this.ONE, b);
   }
 
-  _mul(a: BigNumber, b: BigNumber): BigNumber {
+  _mul(a: bigint, b: bigint): bigint {
     return this._mulDiv(a, b, this.ONE);
   }
 
-  _mulDiv(a: BigNumber, b: BigNumber, c: BigNumber): BigNumber {
-    return a.mul(b).div(c);
+  _mulDiv(a: bigint, b: bigint, c: bigint): bigint {
+    return (a * b) / c;
   }
 
   async run() {
