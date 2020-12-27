@@ -37,7 +37,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "positionsCollateralization(uint64[])": FunctionFragment;
-    "positionsForBand(uint32)": FunctionFragment;
+    "positionsForBand(uint8,uint32)": FunctionFragment;
     "registerPosition(uint64,uint8)": FunctionFragment;
     "sendCollateral(uint8,address,uint256)": FunctionFragment;
     "sendLentCoin(address,uint256)": FunctionFragment;
@@ -99,7 +99,7 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "positionsForBand",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "registerPosition",
@@ -571,11 +571,13 @@ export class Accounting extends Contract {
     ): Promise<[BigNumber[]] & { collateralizations: BigNumber[] }>;
 
     positionsForBand(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { positions: BigNumber[] }>;
 
-    "positionsForBand(uint32)"(
+    "positionsForBand(uint8,uint32)"(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { positions: BigNumber[] }>;
@@ -979,11 +981,13 @@ export class Accounting extends Contract {
   ): Promise<BigNumber[]>;
 
   positionsForBand(
+    collateralType: BigNumberish,
     band: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  "positionsForBand(uint32)"(
+  "positionsForBand(uint8,uint32)"(
+    collateralType: BigNumberish,
     band: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
@@ -1388,11 +1392,13 @@ export class Accounting extends Contract {
     ): Promise<BigNumber[]>;
 
     positionsForBand(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    "positionsForBand(uint32)"(
+    "positionsForBand(uint8,uint32)"(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
@@ -1692,11 +1698,13 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     positionsForBand(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "positionsForBand(uint32)"(
+    "positionsForBand(uint8,uint32)"(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1998,11 +2006,13 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     positionsForBand(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "positionsForBand(uint32)"(
+    "positionsForBand(uint8,uint32)"(
+      collateralType: BigNumberish,
       band: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
