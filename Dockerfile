@@ -10,4 +10,4 @@ RUN yarn --production
 
 COPY . .
 
-ENTRYPOINT ["yarn", "run"]
+ENTRYPOINT ["yarn", "run", "start_bot"]

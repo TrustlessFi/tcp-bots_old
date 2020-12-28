@@ -37,20 +37,6 @@ export class SettleAuctionsBot extends ManagedBot {
       }
     }
 
-    if (auctionsSettled > 0) this.report("Settled " + auctionsSettled + " auctions ❗️");
-
     return minutes(60);
   }
 }
-
-async function main() {
-  let bot = new SettleAuctionsBot(process.env.PRIVATE_KEY!);
-  await bot.run();
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });

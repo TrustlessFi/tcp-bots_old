@@ -43,8 +43,8 @@ type priceInfoType = {
  *                               after time to next      If it hasn't: liquidate. (liquidate completes the twap automatically)
  *                       possible price pull has elapsed
  */
-export class LiquidationDiscoverBot extends ManagedBot {
-  name = "🤑 Discover Liquidate";
+export class DiscoverLiquidationsBot extends ManagedBot {
+  name = "🤑 Discover Liquidations";
 
   // =================================================================
   // ========================== ENTRY POINT ==========================
@@ -246,15 +246,3 @@ export class LiquidationDiscoverBot extends ManagedBot {
     return BigInt(await this.protocol!.accounting.collateralizationBand(collateralization.toString()));
   }
 }
-
-async function main() {
-  let bot = new LiquidationDiscoverBot(process.env.PRIVATE_KEY!);
-  await bot.run();
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });

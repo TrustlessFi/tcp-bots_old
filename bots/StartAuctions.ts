@@ -1,7 +1,7 @@
 import { ManagedBot } from "./utils/ManagedBot";
 import { bigint, minutes } from "./utils/library";
 
-export class AuctionsStartBot extends ManagedBot {
+export class StartAuctionsBot extends ManagedBot {
   name = "🎩 StartAuctions";
 
   async runImpl(): Promise<number> {
@@ -9,23 +9,12 @@ export class AuctionsStartBot extends ManagedBot {
     let result = await auctions.shouldStartAuctions();
 
     if(bigint(result.surplusAmount) > 0n || bigint(result.deficitAmount) > 0n) {
-      this.report('Starting auctions. 🔥');
+      this.report('Starting auctions...');
       let call = await auctions.connect(this.wallet).checkReservesAndStartAuctions();
       await call.wait(1)
+      this.report('Auctions started. 🔥');
     }
 
     return minutes(60)
   }
 }
-
-async function main() {
-  let bot = new AuctionsStartBot(process.env.PRIVATE_KEY!);
-  await bot.run();
-}
-
-main()
-  .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });

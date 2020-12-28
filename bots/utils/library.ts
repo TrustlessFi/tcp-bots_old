@@ -2,6 +2,7 @@ import hre from 'hardhat';
 const e = hre.ethers;
 const provider = e.provider;
 import { BigNumber } from "ethers";
+import fetch from 'node-fetch';
 
 export const StoMS = (seconds: number) => seconds * 1000;
 
