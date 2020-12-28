@@ -35,7 +35,7 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     "maxRewardsRatio()": FunctionFragment;
     "maxTwapTime()": FunctionFragment;
     "minLiquidationIncentive()": FunctionFragment;
-    "rewardsLimit()": FunctionFragment;
+    "rewardsLimit(uint8)": FunctionFragment;
     "setDiscoveryIncentive(uint256)": FunctionFragment;
     "setLiquidationIncentive(uint256)": FunctionFragment;
     "setMaxPriceAge(uint64)": FunctionFragment;
@@ -92,7 +92,7 @@ interface LiquidationsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "rewardsLimit",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setDiscoveryIncentive",
@@ -326,12 +326,14 @@ export class Liquidations extends Contract {
     ): Promise<[BigNumber]>;
 
     rewardsLimit(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
     >;
 
-    "rewardsLimit()"(
+    "rewardsLimit(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
@@ -502,12 +504,14 @@ export class Liquidations extends Contract {
   "minLiquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   rewardsLimit(
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
   >;
 
-  "rewardsLimit()"(
+  "rewardsLimit(uint8)"(
+    arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
@@ -675,12 +679,14 @@ export class Liquidations extends Contract {
     "minLiquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardsLimit(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
     >;
 
-    "rewardsLimit()"(
+    "rewardsLimit(uint8)"(
+      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { remaining: BigNumber; priceTime: BigNumber }
@@ -870,9 +876,15 @@ export class Liquidations extends Contract {
 
     "minLiquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    rewardsLimit(overrides?: CallOverrides): Promise<BigNumber>;
+    rewardsLimit(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "rewardsLimit()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "rewardsLimit(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
@@ -1056,9 +1068,15 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    rewardsLimit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    rewardsLimit(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    "rewardsLimit()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "rewardsLimit(uint8)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
