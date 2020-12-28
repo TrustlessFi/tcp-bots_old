@@ -72,7 +72,8 @@ export class LiquidationDiscoverBot extends ManagedBot {
     return await this.checkExistLiquidationsAtPrice(priceInfo);
   }
 
-  // check if there are undercollateralized positions at the known price
+  // check if there are undercollateralized positions at protocol price if its valid, or the external
+  // price (coingecko or another api). If there are no undercollateralized positions, stop.
   async checkExistLiquidationsAtPrice(priceInfo: priceInfoType): Promise<number> {
     let price = priceInfo.protocolPriceUsable
       ? bigint(priceInfo.protocolPriceInfo.price)
@@ -93,7 +94,8 @@ export class LiquidationDiscoverBot extends ManagedBot {
     else return await this.checkHowToCompleteAPrice(priceInfo);
   }
 
-  // if there are undercollateralize positions, check if there are any rewards available for the price.
+  // if there are undercollateralized positions and a usable protocol price,
+  // check if there are any rewards available for the price.
   async checkRewardsAvailableForPrice(priceInfo: priceInfoType): Promise<number> {
     let rewardsAvailableForPrice = await this.genAreRewardsAvailable(priceInfo);
     // if there are rewards available, liquidate and then start the loop over
@@ -118,7 +120,7 @@ export class LiquidationDiscoverBot extends ManagedBot {
       } else {
         // if a new price can't be completed but can be initialized, initialize the price.
         // and then come back after the min twaptime.
-        return await this.resultUpdatePrice(priceInfo, minTwapTime);
+        return await this.resultInitializePrice(priceInfo, minTwapTime);
       }
     } else {
       // else if there is already a price initialized but its too early to complete it,
@@ -139,16 +141,19 @@ export class LiquidationDiscoverBot extends ManagedBot {
   }
 
   async resultLiquidate(priceInfo: priceInfoType): Promise<number> {
-    // liquidate
     let positions = priceInfo.undercollatPositions;
+    // sanity check, thi should not throw.
     if (positions.length == 0) throw new Error('No undercollateralized positions in liquidate.');
+
+    // liquidate
     await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(priceInfo.collateral, positions);
 
-    // evaluate from the top of the tree immediately again.
+    // evaluate from the top of the tree immediately again in order to complete a new price
+    // if needed to finish liquidating all positions.
     return seconds(1);
   }
 
-  async resultUpdatePrice(priceInfo: priceInfoType, minTwapTime: BigNumber): Promise<number> {
+  async resultInitializePrice(priceInfo: priceInfoType, minTwapTime: BigNumber): Promise<number> {
     // update price
     await this.protocol!.prices.connect(this.wallet).updatePrice(priceInfo.pair.address);
 

@@ -36,7 +36,6 @@ import { UniswapV2Router02 } from "../typechain/UniswapV2Router02";
 import { WETH9 } from "../typechain/WETH9";
 import { ERC20 } from "../typechain/ERC20";
 
-
 export type coinProtocol = {
   accounting: Accounting,
   auctions: Auctions,
@@ -136,7 +135,7 @@ export const getProtocol = async(): Promise<coinProtocol> => {
   let coinusdt = await getPair(usdt);
   let cointusd = await getPair(tusd);
 
-
+  // return the complete, fully typed protocol for use in bots.
   return {
     accounting: accounting,
     auctions: auctions,

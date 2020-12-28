@@ -1,24 +1,19 @@
 import { ManagedBot, runReturn } from "./ManagedBot";
-import { bigint } from "./library";
+import { bigint, minutes } from "./library";
 
 export class AuctionsStartBot extends ManagedBot {
   name = "🎩 StartAuctions";
 
-  async runImpl(): Promise<runReturn> {
+  async runImpl(): Promise<number> {
     let auctions = this.protocol!.auctions;
-    let nothingToDo = true
     let result = await auctions.shouldStartAuctions();
 
     if(bigint(result.surplusAmount) > 0n || bigint(result.deficitAmount) > 0n) {
       this.report('Starting auctions. 🔥');
       await auctions.checkReservesAndStartAuctions();
-      nothingToDo = false;
     }
 
-    return {
-      sleepSeconds: 30,
-      nothingToDo: nothingToDo,
-    };
+    return minutes(60)
   }
 }
 

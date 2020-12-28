@@ -52,7 +52,6 @@ export class ManagedBot {
   async run() {
     this.report("Starting. 🏁");
 
-    console.log("here!")
     await this.attachProtocol();
 
     while(true) {
@@ -72,6 +71,7 @@ export class ManagedBot {
     }
   }
 
+  // wake up a bot if it is sleeping
   async wakeup() {
     if (this.timer != null) {
       clearTimeout(this.timer);

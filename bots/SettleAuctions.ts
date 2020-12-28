@@ -1,13 +1,12 @@
 
 import { ManagedBot, runReturn } from "./ManagedBot";
-import { hours } from "./library";
+import { hours, minutes } from "./library";
 
 export class SettleAuctionsBot extends ManagedBot {
   name = "✅ SettleAuctions";
 
-  async runImpl(): Promise<runReturn> {
+  async runImpl(): Promise<number> {
     let auctions = this.protocol!.auctions;
-    let runReturn = {sleepSeconds: hours(1), nothingToDo: true}
     let auctionsSettled = 0;
 
     let surplusAuctionCount = await auctions.surplusAuctionCount();
@@ -35,12 +34,9 @@ export class SettleAuctionsBot extends ManagedBot {
       }
     }
 
-    if (auctionsSettled > 0) {
-      this.report("Settled " + auctionsSettled + " auctions ❗️");
-      runReturn.nothingToDo = false;
-    }
+    if (auctionsSettled > 0) this.report("Settled " + auctionsSettled + " auctions ❗️");
 
-    return runReturn;
+    return minutes(60);
   }
 }
 
