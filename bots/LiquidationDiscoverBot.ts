@@ -74,7 +74,10 @@ export class LiquidationDiscoverBot extends ManagedBot {
 
   // check if there are undercollateralized positions at the known price
   async checkExistLiquidationsAtPrice(priceInfo: priceInfoType): Promise<number> {
-    let price = priceInfo.protocolPriceUsable ? bigint(priceInfo.protocolPriceInfo.price) : priceInfo.coinGeckoPrice;
+    let price = priceInfo.protocolPriceUsable
+      ? bigint(priceInfo.protocolPriceInfo.price)
+      : priceInfo.coinGeckoPrice;
+
     let collatReq = await this.protocol!.market.collateralizationRequirement(priceInfo.collateral);
     let positions = await this.genUndercollatPositionsForPrice(priceInfo.collateral, bigint(collatReq), price);
 
@@ -188,7 +191,7 @@ export class LiquidationDiscoverBot extends ManagedBot {
   // Check if there are any rewards available for the current price pull
   async genAreRewardsAvailable(priceInfo: priceInfoType): Promise<boolean> {
     let rewardsLimitInfo: { remaining: BigNumber; priceTime: BigNumber } =
-        await this.protocol!.liquidations.rewardsLimit(priceInfo.collateral);
+      await this.protocol!.liquidations.rewardsLimit(priceInfo.collateral);
     if (rewardsLimitInfo.priceTime != priceInfo.protocolPriceInfo.priceTime) return true;
     return rewardsLimitInfo.remaining.gt(BigNumber.from(0));
   }
