@@ -5,6 +5,7 @@
 import { StartAuctionsBot } from '../StartAuctions'
 import { SettleAuctionsBot } from '../SettleAuctions'
 import { DiscoverLiquidationsBot } from '../DiscoverLiquidations'
+import { UpdateRatesBot } from '../UpdateRates'
 
 async function main() {
   let botName = process.env.BOT;
@@ -12,7 +13,8 @@ async function main() {
   console.log("requested run of " + botName);
 
   if (typeof botName != 'string' || botName.length == 0) {
-    console.log('bot name not provided. Provide it as an environment variable called BOT.');
+    console.log('bot name not provided. Provide it as an environment variable called BOT.')
+    console.log('example: `docker run --rm --env-file env.list -e BOT=discover_liquidations coin-protocol-bots`')
     return;
   }
 
@@ -35,6 +37,8 @@ async function main() {
       await (new SettleAuctionsBot(privateKey)).run();
     case 'discover_liquidations':
       await (new DiscoverLiquidationsBot(privateKey)).run();
+    case 'update_rates':
+      await (new UpdateRatesBot(privateKey)).run();
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');
       console.log('To rebuild: `docker build --tag coin-protocol-bots .`');
