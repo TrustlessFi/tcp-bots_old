@@ -35,7 +35,7 @@ type priceInfoType = {
  *      claimed for this price?                            |
  *      /               \                                  |
  *    yes               no ----------------> We need a new protocol price.
- *    /                                  Has the minimum twap time passed since the last twap?
+ *    /                             Has the minimum twap time passed since the last twap?
  *   /                                      /                 \
  * liquidate, then return to START         no                 yes
  *                                        /                    \
@@ -211,7 +211,6 @@ export class LiquidationDiscoverBot extends ManagedBot {
     price: bigint,
   ): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
-    let market = this.protocol!.market;
 
     let collatCutoff: bigint = this._mul(collatReq, price);
 
