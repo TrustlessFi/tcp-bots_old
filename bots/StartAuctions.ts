@@ -1,4 +1,4 @@
-import { ManagedBot, runReturn } from "./ManagedBot";
+import { ManagedBot } from "./ManagedBot";
 import { bigint, minutes } from "./library";
 
 export class AuctionsStartBot extends ManagedBot {

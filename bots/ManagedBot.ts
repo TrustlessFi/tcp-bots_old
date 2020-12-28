@@ -3,7 +3,7 @@
 
 import hre from "hardhat";
 const e = hre.ethers;
-import { Wallet, BigNumber } from "ethers";
+import { Wallet } from "ethers";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
 import { getProtocol, coinProtocol } from "./ProtocolInfo";
@@ -95,6 +95,6 @@ export class ManagedBot {
     this.report(">>>> ❌ Caught Error ❌ <<<<");
     this.report(error.name);
     this.report(error.message);
-    if (error.stack != null && false) this.report(error.stack!);
+    if (error.stack != null) this.report(error.stack!);
   }
 }

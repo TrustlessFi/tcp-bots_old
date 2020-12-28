@@ -1,6 +1,6 @@
 
-import { ManagedBot, runReturn } from "./ManagedBot";
-import { hours, minutes } from "./library";
+import { ManagedBot } from "./ManagedBot";
+import { minutes } from "./library";
 
 export class SettleAuctionsBot extends ManagedBot {
   name = "✅ SettleAuctions";
@@ -20,7 +20,7 @@ export class SettleAuctionsBot extends ManagedBot {
         this.report("Settling surplus auction " + i + ". 🔥");
         let call = await auctions.connect(this.wallet).settleSurplusAuction(i);
         await call.wait(1);
-        
+
         auctionsSettled++;
       }
     }
