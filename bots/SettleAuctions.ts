@@ -7,7 +7,6 @@ export class SettleAuctionsBot extends ManagedBot {
 
   async runImpl(): Promise<number> {
     let auctions = this.protocol!.auctions;
-    let auctionsSettled = 0;
 
     let surplusAuctionCount = await auctions.surplusAuctionCount();
     let deficitAuctionCount = await auctions.deficitAuctionCount();
@@ -20,8 +19,6 @@ export class SettleAuctionsBot extends ManagedBot {
         this.report("Settling surplus auction " + i + ". 🔥");
         let call = await auctions.connect(this.wallet).settleSurplusAuction(i);
         await call.wait(1);
-
-        auctionsSettled++;
       }
     }
 
@@ -32,8 +29,6 @@ export class SettleAuctionsBot extends ManagedBot {
         this.report("Settling deficit auction " + i + ". 🔥");
         let call = await auctions.connect(this.wallet).settleDeficitAuction(i);
         await call.wait(1)
-
-        auctionsSettled++;
       }
     }
 

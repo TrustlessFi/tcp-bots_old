@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: UNLICENSED
 
 
+import { AuctionBidBot } from '../AuctionBid'
 import { StartAuctionsBot } from '../StartAuctions'
 import { SettleAuctionsBot } from '../SettleAuctions'
 import { DiscoverLiquidationsBot } from '../DiscoverLiquidations'
+import { ExecuteLiquidationBot } from '../ExecuteLiquidation'
 import { UpdateRatesBot } from '../UpdateRates'
+import { ArbPricePegBot } from '../ArbPricePeg'
 
 async function main() {
   let botName = process.env.BOT;
@@ -31,14 +34,27 @@ async function main() {
   }
 
   switch (botName) {
+    case 'auction_bid':
+      await (new AuctionBidBot(privateKey)).run();
+      return;
     case 'start_auctions':
       await (new StartAuctionsBot(privateKey)).run();
+      return;
     case 'settle_auctions':
       await (new SettleAuctionsBot(privateKey)).run();
+      return;
     case 'discover_liquidations':
       await (new DiscoverLiquidationsBot(privateKey)).run();
+      return;
+    case 'execute_liquidation':
+      await (new ExecuteLiquidationBot(privateKey)).run();
+      return;
     case 'update_rates':
       await (new UpdateRatesBot(privateKey)).run();
+      return;
+    case 'arb_peg_price':
+      await (new ArbPricePegBot(privateKey)).run();
+      return;
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');
       console.log('To rebuild: `docker build --tag coin-protocol-bots .`');
