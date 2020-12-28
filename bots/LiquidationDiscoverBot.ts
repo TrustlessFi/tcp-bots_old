@@ -1,9 +1,9 @@
 // Copyright (c) 2020. All Rights Reserved
 // SPDX-License-Identifier: UNLICENSED
 
-import { ManagedBot, runReturn, defaultRunReturn } from "./ManagedBot";
+import { ManagedBot } from "./ManagedBot";
 import { getBlockTime, hours, seconds, getCoinGeckoPriceInUSD, bigint } from "./library";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber } from "ethers";
 import { UniswapV2Pair } from "../typechain/UniswapV2Pair";
 
 type priceInfoType = {
@@ -21,27 +21,27 @@ type priceInfoType = {
 }
 
 /*
- *          START: For each collateral type: Is there a valid price from Prices now?
- *                    /                              \
- *                  yes                              no
- *                  /                                 \
- *         Are there undercollateralized          Are there undercollateralized positions
- *         positions at that price?       at that the external price of the collateral? (coingecko)
- *               /             \               /              |
- *             yes             no            no               |
- *             /                \           /                 |
- *           Are there      return to start in 1 hour        yes
- *         rewards to be                                      |
- *         claimed for this price?                            |
- *         /               \                                  |
- *       yes               no -----------------------> We need a new protocol price.
- *       /                                  Has the minimum twap time passed since the last twap?
- *      /                                      /                 \
- *    liquidate, then return to START         no                  yes
- *                                            /                    \
- *                                   return to START        If the max twap time has passed, start a NEW twap.
- *                                  after time to next      If it hasn't: liquidate. (liquidate completes the twap automatically)
- *                          possible price pull has elapsed
+ *     START: For each collateral type: Is there a valid price from Prices now?
+ *                 /                              \
+ *               yes                              no
+ *               /                                 \
+ *      Are there undercollateralized          Are there undercollateralized positions
+ *      positions at that price?       at the external price of the collateral? (coingecko)
+ *            /             \               /              |
+ *          yes             no            no               |
+ *          /                \           /                 |
+ *        Are there      return to start in 1 hour        yes
+ *      rewards to be                                      |
+ *      claimed for this price?                            |
+ *      /               \                                  |
+ *    yes               no ----------------> We need a new protocol price.
+ *    /                                  Has the minimum twap time passed since the last twap?
+ *   /                                      /                 \
+ * liquidate, then return to START         no                 yes
+ *                                        /                    \
+ *                                return to START        If the max twap time has passed, start a NEW twap.
+ *                               after time to next      If it hasn't: liquidate. (liquidate completes the twap automatically)
+ *                       possible price pull has elapsed
  */
 export class LiquidationDiscoverBot extends ManagedBot {
   name = "🤑 Discover Liquidate";
@@ -146,7 +146,8 @@ export class LiquidationDiscoverBot extends ManagedBot {
     if (positions.length == 0) throw new Error('No undercollateralized positions in liquidate.');
 
     // liquidate
-    await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(priceInfo.collateral, positions);
+    let call = await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(priceInfo.collateral, positions);
+    await call.wait(1);
 
     // evaluate from the top of the tree immediately again in order to complete a new price
     // if needed to finish liquidating all positions.
@@ -155,8 +156,10 @@ export class LiquidationDiscoverBot extends ManagedBot {
 
   async resultInitializePrice(priceInfo: priceInfoType, minTwapTime: BigNumber): Promise<number> {
     // update price
-    await this.protocol!.prices.connect(this.wallet).updatePrice(priceInfo.pair.address);
+    let call = await this.protocol!.prices.connect(this.wallet).updatePrice(priceInfo.pair.address);
+    await call.wait(1);
 
+    // return at the earliest time this price could be completed.
     return seconds(minTwapTime.toNumber());
   }
 
@@ -246,7 +249,7 @@ export class LiquidationDiscoverBot extends ManagedBot {
 }
 
 async function main() {
-  let bot = new LiquidationDiscoverBot();
+  let bot = new LiquidationDiscoverBot(process.env.PRIVATE_KEY!);
   await bot.run();
 }
 

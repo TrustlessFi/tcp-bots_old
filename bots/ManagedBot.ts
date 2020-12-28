@@ -1,6 +1,8 @@
 // Copyright (c) 2020. All Rights Reserved
 // SPDX-License-Identifier: UNLICENSED
 
+import hre from "hardhat";
+const e = hre.ethers;
 import { Wallet, BigNumber } from "ethers";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
@@ -21,9 +23,12 @@ export class ManagedBot {
   name: string = "Name not set.";
   shouldLog: boolean = true;
   timer: NodeJS.Timer | null = null;
+  wallet: Wallet;
   ONE = BigInt(1e18);
 
-  constructor() {}
+  constructor(privateKey: string) {
+    this.wallet = new Wallet(privateKey, e.provider);
+  }
 
   async runImpl(): Promise<number> {
     throw new Error("runImpl not overriden.");

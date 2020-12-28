@@ -10,7 +10,8 @@ export class AuctionsStartBot extends ManagedBot {
 
     if(bigint(result.surplusAmount) > 0n || bigint(result.deficitAmount) > 0n) {
       this.report('Starting auctions. 🔥');
-      await auctions.checkReservesAndStartAuctions();
+      let call = await auctions.connect(this.wallet).checkReservesAndStartAuctions();
+      await call.wait(1)
     }
 
     return minutes(60)
@@ -18,7 +19,7 @@ export class AuctionsStartBot extends ManagedBot {
 }
 
 async function main() {
-  let bot = new AuctionsStartBot();
+  let bot = new AuctionsStartBot(process.env.PRIVATE_KEY!);
   await bot.run();
 }
 

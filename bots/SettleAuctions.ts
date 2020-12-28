@@ -16,10 +16,11 @@ export class SettleAuctionsBot extends ManagedBot {
       let readyToBeSettled = await auctions.surplusAuctionComplete(i);
       // TODO make this smarter and not go through every auction every time, and start from the largest
       // auction index below which there are no active or unsettled auctions.
-
       if (readyToBeSettled) {
         this.report("Settling surplus auction " + i + ". 🔥");
-        await auctions.settleSurplusAuction(i);
+        let call = await auctions.connect(this.wallet).settleSurplusAuction(i);
+        await call.wait(1);
+        
         auctionsSettled++;
       }
     }
@@ -29,7 +30,9 @@ export class SettleAuctionsBot extends ManagedBot {
 
       if (readyToBeSettled) {
         this.report("Settling deficit auction " + i + ". 🔥");
-        await auctions.settleDeficitAuction(i);
+        let call = await auctions.connect(this.wallet).settleDeficitAuction(i);
+        await call.wait(1)
+
         auctionsSettled++;
       }
     }
@@ -41,7 +44,7 @@ export class SettleAuctionsBot extends ManagedBot {
 }
 
 async function main() {
-  let bot = new SettleAuctionsBot();
+  let bot = new SettleAuctionsBot(process.env.PRIVATE_KEY!);
   await bot.run();
 }
 
