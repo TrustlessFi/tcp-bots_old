@@ -3,7 +3,7 @@
 
 import { Wallet, BigNumber } from "ethers";
 
-import { StoMS, formatTime, getBlockTime, hours } from "./library";
+import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
 import { getProtocol, coinProtocol } from "./ProtocolInfo";
 
 export type runReturn = {
@@ -25,7 +25,7 @@ export class ManagedBot {
 
   constructor() {}
 
-  async runImpl(): Promise<typeof defaultRunReturn> {
+  async runImpl(): Promise<number> {
     throw new Error("runImpl not overriden.");
   }
 
@@ -57,19 +57,16 @@ export class ManagedBot {
 
     while(true) {
       this.report("Waking up! ☕️");
-      let result: typeof defaultRunReturn = defaultRunReturn;
+      let waitTime = minutes(60);
       try {
-        result = await this.runImpl();
+         waitTime = await this.runImpl();
       } catch (error) {
         this.reportError(error)
-        result.nothingToDo = false;
       }
-      if (result.nothingToDo) this.report("Nothing to do. 🤷🏽‍♀️");
-      let sleepSeconds = result.sleepSeconds;
-      this.report("Sleeping 💤 for " + formatTime(sleepSeconds));
+      this.report("Sleeping 💤 for " + formatTime(waitTime));
 
       await new Promise(resolve => {
-        this.timer = setTimeout(resolve, StoMS(sleepSeconds))
+        this.timer = setTimeout(resolve, StoMS(waitTime))
         return this.timer;
       });
     }
