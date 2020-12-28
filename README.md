@@ -4,4 +4,7 @@ docker build --tag coin-protocol-bots .
 
 
 ## Run:
-docker run -d coin-protocol-bots npx hardhat run --no-compile --network dockerBot src/boot.ts
+docker run --rm --env-file env.list coin-protocol-bots start_auctions
+
+where env.list is a file with the format:
+PRIVATE_KEY=<private key, no quotes>

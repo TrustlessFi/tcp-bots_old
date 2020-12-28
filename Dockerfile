@@ -9,3 +9,5 @@ COPY ["package.json", "package-lock.json*", "./"]
 RUN yarn --production
 
 COPY . .
+
+ENTRYPOINT ["yarn", "run"]
