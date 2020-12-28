@@ -1,8 +1,8 @@
 // Copyright (c) 2020. All Rights Reserved
 // SPDX-License-Identifier: UNLICENSED
 
-import { ManagedBot } from "./ManagedBot";
-import { getBlockTime, hours, seconds, getCoinGeckoPriceInUSD, bigint } from "./library";
+import { ManagedBot } from "./utils/ManagedBot";
+import { getBlockTime, hours, seconds, getCoinGeckoPriceInUSD, bigint } from "./utils/library";
 import { BigNumber } from "ethers";
 import { UniswapV2Pair } from "../typechain/UniswapV2Pair";
 

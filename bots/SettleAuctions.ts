@@ -1,6 +1,6 @@
 
-import { ManagedBot } from "./ManagedBot";
-import { minutes } from "./library";
+import { ManagedBot } from "./utils/ManagedBot";
+import { minutes } from "./utils/library";
 
 export class SettleAuctionsBot extends ManagedBot {
   name = "✅ SettleAuctions";

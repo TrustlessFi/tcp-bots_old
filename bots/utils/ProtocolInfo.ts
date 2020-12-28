@@ -6,35 +6,35 @@ const e = hre.ethers;
 import { Contract } from "ethers";
 
 // ================ CORE CONTRACTS =================
-import { Accounting } from "../typechain/Accounting";
-import { Auctions } from "../typechain/Auctions";
-import { CNP } from "../typechain/CNP";
-import { Coin } from "../typechain/Coin";
-import { CoinLiquidator } from "../typechain/CoinLiquidator";
-import { CoinPositionNFT } from "../typechain/CoinPositionNFT";
-import { EnforcedDecentralization } from "../typechain/EnforcedDecentralization";
-import { Governor } from "../typechain/Governor";
-import { GovernorAlpha } from "../typechain/GovernorAlpha";
-import { LendCoin } from "../typechain/LendCoin";
-import { Liquidations } from "../typechain/Liquidations";
-import { Market } from "../typechain/Market";
-import { Prices } from "../typechain/Prices";
-import { ProtocolLock } from "../typechain/ProtocolLock";
-import { Rates } from "../typechain/Rates";
-import { Rewards } from "../typechain/Rewards";
-import { Settlement } from "../typechain/Settlement";
-import { Timelock } from "../typechain/Timelock";
-import { TokenAllocationCreator } from "../typechain/TokenAllocationCreator";
+import { Accounting } from "../../typechain/Accounting";
+import { Auctions } from "../../typechain/Auctions";
+import { CNP } from "../../typechain/CNP";
+import { Coin } from "../../typechain/Coin";
+import { CoinLiquidator } from "../../typechain/CoinLiquidator";
+import { CoinPositionNFT } from "../../typechain/CoinPositionNFT";
+import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
+import { Governor } from "../../typechain/Governor";
+import { GovernorAlpha } from "../../typechain/GovernorAlpha";
+import { LendCoin } from "../../typechain/LendCoin";
+import { Liquidations } from "../../typechain/Liquidations";
+import { Market } from "../../typechain/Market";
+import { Prices } from "../../typechain/Prices";
+import { ProtocolLock } from "../../typechain/ProtocolLock";
+import { Rates } from "../../typechain/Rates";
+import { Rewards } from "../../typechain/Rewards";
+import { Settlement } from "../../typechain/Settlement";
+import { Timelock } from "../../typechain/Timelock";
+import { TokenAllocationCreator } from "../../typechain/TokenAllocationCreator";
 
 // ================ SUPPORTING CONTRACTS =================
-import { TokenAllocation } from "../typechain/TokenAllocation";
+import { TokenAllocation } from "../../typechain/TokenAllocation";
 
 // ================ OTHER CONTRACTS =================
-import { UniswapV2Pair } from "../typechain/UniswapV2Pair";
-import { UniswapV2Factory } from "../typechain/UniswapV2Factory";
-import { UniswapV2Router02 } from "../typechain/UniswapV2Router02";
-import { WETH9 } from "../typechain/WETH9";
-import { ERC20 } from "../typechain/ERC20";
+import { UniswapV2Pair } from "../../typechain/UniswapV2Pair";
+import { UniswapV2Factory } from "../../typechain/UniswapV2Factory";
+import { UniswapV2Router02 } from "../../typechain/UniswapV2Router02";
+import { WETH9 } from "../../typechain/WETH9";
+import { ERC20 } from "../../typechain/ERC20";
 
 export type coinProtocol = {
   accounting: Accounting,
