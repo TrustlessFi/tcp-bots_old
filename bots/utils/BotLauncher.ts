@@ -10,7 +10,7 @@ import { UpdateRatesBot } from '../UpdateRates'
 async function main() {
   let botName = process.env.BOT;
 
-  console.log("requested run of " + botName);
+  console.log("requested run of bot " + botName);
 
   if (typeof botName != 'string' || botName.length == 0) {
     console.log('bot name not provided. Provide it as an environment variable called BOT.')
