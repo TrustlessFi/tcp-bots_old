@@ -22,25 +22,25 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface GovernorInterfaceInterface extends ethers.utils.Interface {
   functions: {
+    "circulatingCNP()": FunctionFragment;
     "validateAction(address,string)": FunctionFragment;
-    "votingCNPSupply()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "circulatingCNP",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "validateAction",
     values: [string, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "votingCNPSupply",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
-    functionFragment: "validateAction",
+    functionFragment: "circulatingCNP",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "votingCNPSupply",
+    functionFragment: "validateAction",
     data: BytesLike
   ): Result;
 
@@ -61,6 +61,10 @@ export class GovernorInterface extends Contract {
   interface: GovernorInterfaceInterface;
 
   functions: {
+    circulatingCNP(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     validateAction(
       target: string,
       signature: string,
@@ -72,11 +76,11 @@ export class GovernorInterface extends Contract {
       signature: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   validateAction(
     target: string,
@@ -90,11 +94,11 @@ export class GovernorInterface extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     validateAction(
       target: string,
       signature: string,
@@ -106,15 +110,15 @@ export class GovernorInterface extends Contract {
       signature: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     validateAction(
       target: string,
       signature: string,
@@ -126,13 +130,15 @@ export class GovernorInterface extends Contract {
       signature: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    circulatingCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "circulatingCNP()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     validateAction(
       target: string,
       signature: string,
@@ -143,12 +149,6 @@ export class GovernorInterface extends Contract {
       target: string,
       signature: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "votingCNPSupply()"(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

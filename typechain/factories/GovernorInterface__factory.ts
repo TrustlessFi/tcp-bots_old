@@ -18,6 +18,21 @@ export class GovernorInterface__factory {
 
 const _abi = [
   {
+    constant: true,
+    inputs: [],
+    name: "circulatingCNP",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     constant: false,
     inputs: [
       {
@@ -41,21 +56,6 @@ const _abi = [
     ],
     payable: false,
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    constant: true,
-    inputs: [],
-    name: "votingCNPSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
     type: "function",
   },
 ];

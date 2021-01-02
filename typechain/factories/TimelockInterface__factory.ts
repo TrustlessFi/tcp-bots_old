@@ -50,11 +50,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
         internalType: "string",
         name: "signature",
         type: "string",
@@ -100,11 +95,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
         internalType: "string",
         name: "signature",
         type: "string",
@@ -139,11 +129,6 @@ const _abi = [
         internalType: "address",
         name: "target",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
       },
       {
         internalType: "string",

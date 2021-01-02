@@ -26,7 +26,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     "discoverUndercollateralizedPositions(uint8,uint64[])": FunctionFragment;
     "discoveryIncentive()": FunctionFragment;
     "ensureLiquidationIncentive(uint8)": FunctionFragment;
-    "flashLiquidate(uint8,uint256)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "liquidate(uint8,uint256)": FunctionFragment;
@@ -59,10 +58,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "ensureLiquidationIncentive",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "flashLiquidate",
-    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
@@ -138,10 +133,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     functionFragment: "ensureLiquidationIncentive",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "flashLiquidate",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
@@ -203,7 +194,7 @@ interface LiquidationsInterface extends ethers.utils.Interface {
   events: {
     "CoveredUnbackedDebt(uint256,uint256,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
-    "Liquidated(uint256,bool)": EventFragment;
+    "Liquidated(uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "Stopped()": EventFragment;
@@ -262,18 +253,6 @@ export class Liquidations extends Contract {
 
     "ensureLiquidationIncentive(uint8)"(
       collateralType: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    flashLiquidate(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "flashLiquidate(uint8,uint256)"(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -448,18 +427,6 @@ export class Liquidations extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  flashLiquidate(
-    collateralType: BigNumberish,
-    baseTokensToRepay: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "flashLiquidate(uint8,uint256)"(
-    collateralType: BigNumberish,
-    baseTokensToRepay: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
@@ -623,18 +590,6 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    flashLiquidate(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "flashLiquidate(uint8,uint256)"(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     governor(overrides?: CallOverrides): Promise<string>;
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
@@ -774,7 +729,7 @@ export class Liquidations extends Contract {
 
     Initialized(governor: string | null): EventFilter;
 
-    Liquidated(baseTokensToRepay: null, flash: boolean | null): EventFilter;
+    Liquidated(baseTokensToRepay: null, collateralToReceive: null): EventFilter;
 
     ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
@@ -818,18 +773,6 @@ export class Liquidations extends Contract {
 
     "ensureLiquidationIncentive(uint8)"(
       collateralType: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    flashLiquidate(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "flashLiquidate(uint8,uint256)"(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -997,18 +940,6 @@ export class Liquidations extends Contract {
 
     "ensureLiquidationIncentive(uint8)"(
       collateralType: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    flashLiquidate(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "flashLiquidate(uint8,uint256)"(
-      collateralType: BigNumberish,
-      baseTokensToRepay: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

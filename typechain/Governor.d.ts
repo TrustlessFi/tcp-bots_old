@@ -24,12 +24,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   functions: {
     "EMERGENCY_SHUTDOWN_THRESHOLD()": FunctionFragment;
     "accounting()": FunctionFragment;
-    "allocate(address)": FunctionFragment;
-    "allocationAllotted(address)": FunctionFragment;
-    "allocationCreator()": FunctionFragment;
     "auctions()": FunctionFragment;
     "btc()": FunctionFragment;
     "burnTokensForEmergencyShutdown(uint256)": FunctionFragment;
+    "circulatingCNP()": FunctionFragment;
     "cnp()": FunctionFragment;
     "coin()": FunctionFragment;
     "coinPositionNFT()": FunctionFragment;
@@ -41,14 +39,14 @@ interface GovernorInterface extends ethers.utils.Interface {
     "distributeCNP(address,uint256)": FunctionFragment;
     "emergencyShutdownTokensBurned()": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
-    "execute(address,uint256,string,bytes)": FunctionFragment;
+    "execute(address,string,bytes)": FunctionFragment;
     "executeEmergencyShutdown()": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
     "getCollateralPairs()": FunctionFragment;
     "getReferencePairs()": FunctionFragment;
     "initContracts(address,address,address,address,address,address,address,address,address,address)": FunctionFragment;
-    "initPricePairs(address[],address[],address[])": FunctionFragment;
+    "initPricePairs(address[],address[])": FunctionFragment;
     "isShutdown()": FunctionFragment;
     "lendCoin()": FunctionFragment;
     "liquidations()": FunctionFragment;
@@ -56,7 +54,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     "mintCNP(address,uint256)": FunctionFragment;
     "pairToCollateral(address)": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "powerlessAllocations(uint256)": FunctionFragment;
     "prices()": FunctionFragment;
     "protocolLock()": FunctionFragment;
     "rates()": FunctionFragment;
@@ -68,10 +65,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     "requirePriceAccess(address)": FunctionFragment;
     "requireStoredCollateralAccess(address)": FunctionFragment;
     "rewards()": FunctionFragment;
-    "setTokenAllocationCreator(address)": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
     "timelock()": FunctionFragment;
+    "tokenAllocations()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
     "upgradeMarket(address)": FunctionFragment;
@@ -80,7 +77,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     "upgradeRates(address)": FunctionFragment;
     "upgradeRewards(address)": FunctionFragment;
     "upgradeSettlement(address)": FunctionFragment;
-    "votingCNPSupply()": FunctionFragment;
     "weth()": FunctionFragment;
   };
 
@@ -92,20 +88,15 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "accounting",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "allocate", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "allocationAllotted",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "allocationCreator",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(functionFragment: "btc", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "burnTokensForEmergencyShutdown",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "circulatingCNP",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(functionFragment: "coin", values?: undefined): string;
@@ -144,7 +135,7 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
-    values: [string, BigNumberish, string, BytesLike]
+    values: [string, string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "executeEmergencyShutdown",
@@ -183,7 +174,7 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initPricePairs",
-    values: [string[], string[], string[]]
+    values: [string[], string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isShutdown",
@@ -206,10 +197,6 @@ interface GovernorInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "periodLength",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "powerlessAllocations",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
   encodeFunctionData(
@@ -247,10 +234,6 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "rewards", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "setTokenAllocationCreator",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "settlement",
     values?: undefined
   ): string;
@@ -259,6 +242,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenAllocations",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeAuctions",
     values: [string]
@@ -291,10 +278,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "upgradeSettlement",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "votingCNPSupply",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "weth", values?: undefined): string;
 
   decodeFunctionResult(
@@ -302,19 +285,14 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "allocate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "allocationAllotted",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "allocationCreator",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "btc", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "burnTokensForEmergencyShutdown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "circulatingCNP",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
@@ -397,10 +375,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "periodLength",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "powerlessAllocations",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "protocolLock",
@@ -436,16 +410,16 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAllocationCreator",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "settlement", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "shutdownTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenAllocations",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeAuctions",
     data: BytesLike
@@ -476,10 +450,6 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeSettlement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "votingCNPSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
@@ -529,30 +499,6 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<[string]>;
 
-    allocate(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    allocationAllotted(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "allocationAllotted(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<[string]>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<[string]>;
-
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
     "auctions()"(overrides?: CallOverrides): Promise<[string]>;
@@ -570,6 +516,14 @@ export class Governor extends Contract {
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    circulatingCNP(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { votingSupply: BigNumber }>;
+
+    "circulatingCNP()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { votingSupply: BigNumber }>;
 
     cnp(overrides?: CallOverrides): Promise<[string]>;
 
@@ -649,15 +603,13 @@ export class Governor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -688,7 +640,7 @@ export class Governor extends Contract {
     "getReferencePairs()"(overrides?: CallOverrides): Promise<[string[]]>;
 
     initContracts(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -702,7 +654,7 @@ export class Governor extends Contract {
     ): Promise<ContractTransaction>;
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -718,14 +670,12 @@ export class Governor extends Contract {
     initPricePairs(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initPricePairs(address[],address[],address[])"(
+    "initPricePairs(address[],address[])"(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -770,16 +720,6 @@ export class Governor extends Contract {
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    powerlessAllocations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    "powerlessAllocations(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     prices(overrides?: CallOverrides): Promise<[string]>;
 
@@ -867,16 +807,6 @@ export class Governor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<[string]>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     settlement(overrides?: CallOverrides): Promise<[string]>;
 
     "settlement()"(overrides?: CallOverrides): Promise<[string]>;
@@ -888,6 +818,10 @@ export class Governor extends Contract {
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
     "timelock()"(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<[string]>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<[string]>;
 
     upgradeAuctions(
       _auctions: string,
@@ -969,14 +903,6 @@ export class Governor extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    votingCNPSupply(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { votingSupply: BigNumber }>;
-
-    "votingCNPSupply()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { votingSupply: BigNumber }>;
-
     weth(overrides?: CallOverrides): Promise<[string]>;
 
     "weth()"(overrides?: CallOverrides): Promise<[string]>;
@@ -991,27 +917,6 @@ export class Governor extends Contract {
   accounting(overrides?: CallOverrides): Promise<string>;
 
   "accounting()"(overrides?: CallOverrides): Promise<string>;
-
-  allocate(
-    allocation: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "allocate(address)"(
-    allocation: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  allocationAllotted(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-  "allocationAllotted(address)"(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  allocationCreator(overrides?: CallOverrides): Promise<string>;
-
-  "allocationCreator()"(overrides?: CallOverrides): Promise<string>;
 
   auctions(overrides?: CallOverrides): Promise<string>;
 
@@ -1030,6 +935,10 @@ export class Governor extends Contract {
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -1099,15 +1008,13 @@ export class Governor extends Contract {
 
   execute(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "execute(address,uint256,string,bytes)"(
+  "execute(address,string,bytes)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
@@ -1136,7 +1043,7 @@ export class Governor extends Contract {
   "getReferencePairs()"(overrides?: CallOverrides): Promise<string[]>;
 
   initContracts(
-    _allocationCreator: string,
+    _tokenAllocations: string,
     _auctions: string,
     _cnp: string,
     _liquidations: string,
@@ -1150,7 +1057,7 @@ export class Governor extends Contract {
   ): Promise<ContractTransaction>;
 
   "initContracts(address,address,address,address,address,address,address,address,address,address)"(
-    _allocationCreator: string,
+    _tokenAllocations: string,
     _auctions: string,
     _cnp: string,
     _liquidations: string,
@@ -1166,14 +1073,12 @@ export class Governor extends Contract {
   initPricePairs(
     _collateralPair: string[],
     _referencePair: string[],
-    _powerlessAllocations: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initPricePairs(address[],address[],address[])"(
+  "initPricePairs(address[],address[])"(
     _collateralPair: string[],
     _referencePair: string[],
-    _powerlessAllocations: string[],
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1215,16 +1120,6 @@ export class Governor extends Contract {
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  powerlessAllocations(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  "powerlessAllocations(uint256)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   prices(overrides?: CallOverrides): Promise<string>;
 
@@ -1306,16 +1201,6 @@ export class Governor extends Contract {
 
   "rewards()"(overrides?: CallOverrides): Promise<string>;
 
-  setTokenAllocationCreator(
-    _allocationCreator: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTokenAllocationCreator(address)"(
-    _allocationCreator: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   settlement(overrides?: CallOverrides): Promise<string>;
 
   "settlement()"(overrides?: CallOverrides): Promise<string>;
@@ -1327,6 +1212,10 @@ export class Governor extends Contract {
   timelock(overrides?: CallOverrides): Promise<string>;
 
   "timelock()"(overrides?: CallOverrides): Promise<string>;
+
+  tokenAllocations(overrides?: CallOverrides): Promise<string>;
+
+  "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
 
   upgradeAuctions(
     _auctions: string,
@@ -1408,10 +1297,6 @@ export class Governor extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   weth(overrides?: CallOverrides): Promise<string>;
 
   "weth()"(overrides?: CallOverrides): Promise<string>;
@@ -1426,27 +1311,6 @@ export class Governor extends Contract {
     accounting(overrides?: CallOverrides): Promise<string>;
 
     "accounting()"(overrides?: CallOverrides): Promise<string>;
-
-    allocate(allocation: string, overrides?: CallOverrides): Promise<void>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    allocationAllotted(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "allocationAllotted(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<string>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<string>;
 
     auctions(overrides?: CallOverrides): Promise<string>;
 
@@ -1465,6 +1329,10 @@ export class Governor extends Contract {
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -1536,15 +1404,13 @@ export class Governor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
@@ -1571,7 +1437,7 @@ export class Governor extends Contract {
     "getReferencePairs()"(overrides?: CallOverrides): Promise<string[]>;
 
     initContracts(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -1585,7 +1451,7 @@ export class Governor extends Contract {
     ): Promise<void>;
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -1601,14 +1467,12 @@ export class Governor extends Contract {
     initPricePairs(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initPricePairs(address[],address[],address[])"(
+    "initPricePairs(address[],address[])"(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1650,16 +1514,6 @@ export class Governor extends Contract {
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    powerlessAllocations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "powerlessAllocations(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     prices(overrides?: CallOverrides): Promise<string>;
 
@@ -1747,16 +1601,6 @@ export class Governor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<string>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     settlement(overrides?: CallOverrides): Promise<string>;
 
     "settlement()"(overrides?: CallOverrides): Promise<string>;
@@ -1768,6 +1612,10 @@ export class Governor extends Contract {
     timelock(overrides?: CallOverrides): Promise<string>;
 
     "timelock()"(overrides?: CallOverrides): Promise<string>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<string>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
 
     upgradeAuctions(
       _auctions: string,
@@ -1837,10 +1685,6 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     weth(overrides?: CallOverrides): Promise<string>;
 
     "weth()"(overrides?: CallOverrides): Promise<string>;
@@ -1876,27 +1720,6 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    allocate(allocation: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    allocationAllotted(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "allocationAllotted(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "auctions()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1914,6 +1737,10 @@ export class Governor extends Contract {
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1985,15 +1812,13 @@ export class Governor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -2020,7 +1845,7 @@ export class Governor extends Contract {
     "getReferencePairs()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     initContracts(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -2034,7 +1859,7 @@ export class Governor extends Contract {
     ): Promise<BigNumber>;
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -2050,14 +1875,12 @@ export class Governor extends Contract {
     initPricePairs(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initPricePairs(address[],address[],address[])"(
+    "initPricePairs(address[],address[])"(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2102,16 +1925,6 @@ export class Governor extends Contract {
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    powerlessAllocations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "powerlessAllocations(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     prices(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2199,16 +2012,6 @@ export class Governor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     settlement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "settlement()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2220,6 +2023,10 @@ export class Governor extends Contract {
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "timelock()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeAuctions(
       _auctions: string,
@@ -2289,10 +2096,6 @@ export class Governor extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     weth(overrides?: CallOverrides): Promise<BigNumber>;
 
     "weth()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2311,32 +2114,6 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    allocate(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    allocationAllotted(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "allocationAllotted(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "allocationCreator()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "auctions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2353,6 +2130,12 @@ export class Governor extends Contract {
     "burnTokensForEmergencyShutdown(uint256)"(
       count: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    circulatingCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "circulatingCNP()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2435,15 +2218,13 @@ export class Governor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -2480,7 +2261,7 @@ export class Governor extends Contract {
     ): Promise<PopulatedTransaction>;
 
     initContracts(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -2494,7 +2275,7 @@ export class Governor extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
-      _allocationCreator: string,
+      _tokenAllocations: string,
       _auctions: string,
       _cnp: string,
       _liquidations: string,
@@ -2510,14 +2291,12 @@ export class Governor extends Contract {
     initPricePairs(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initPricePairs(address[],address[],address[])"(
+    "initPricePairs(address[],address[])"(
       _collateralPair: string[],
       _referencePair: string[],
-      _powerlessAllocations: string[],
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2562,16 +2341,6 @@ export class Governor extends Contract {
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    powerlessAllocations(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "powerlessAllocations(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2659,16 +2428,6 @@ export class Governor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     settlement(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "settlement()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2680,6 +2439,12 @@ export class Governor extends Contract {
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "timelock()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tokenAllocations()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     upgradeAuctions(
       _auctions: string,
@@ -2759,12 +2524,6 @@ export class Governor extends Contract {
     "upgradeSettlement(address)"(
       _settlement: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "votingCNPSupply()"(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;

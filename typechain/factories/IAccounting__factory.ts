@@ -20,8 +20,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
       {
@@ -67,8 +67,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
     ],
@@ -117,8 +117,8 @@ const _abi = [
     name: "getBasicPositionInfo",
     outputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
       {
@@ -138,8 +138,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
     ],
@@ -280,7 +280,7 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IAccounting.Collateral",
+            internalType: "enum IGovernor.Collateral",
             name: "collateralType",
             type: "uint8",
           },
@@ -341,8 +341,8 @@ const _abi = [
         type: "uint64",
       },
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
     ],
@@ -354,8 +354,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
       {
@@ -395,8 +395,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
+        internalType: "enum IGovernor.Collateral",
+        name: "collateralType",
         type: "uint8",
       },
       {
@@ -532,7 +532,7 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IAccounting.Collateral",
+            internalType: "enum IGovernor.Collateral",
             name: "collateralType",
             type: "uint8",
           },

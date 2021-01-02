@@ -100,13 +100,11 @@ interface ICoinInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "FlashMint(address,uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FlashMint"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -464,8 +462,6 @@ export class ICoin extends Contract {
       spender: string | null,
       value: null
     ): EventFilter;
-
-    FlashMint(minter: string | null, countMinted: null, fee: null): EventFilter;
 
     ParameterUpdated(paramName: string | null, value: null): EventFilter;
 

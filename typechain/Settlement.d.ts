@@ -35,6 +35,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     "init(address)": FunctionFragment;
     "initializeSettlement()": FunctionFragment;
     "noPriceConfidenceUserVotes(address)": FunctionFragment;
+    "noPriceConfidenceVotes()": FunctionFragment;
     "priceConfidence()": FunctionFragment;
     "priceDiscoveryStartTime()": FunctionFragment;
     "setBtcPriceProvider(address)": FunctionFragment;
@@ -88,6 +89,10 @@ interface SettlementInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "noPriceConfidenceUserVotes",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "noPriceConfidenceVotes",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "priceConfidence",
@@ -170,6 +175,10 @@ interface SettlementInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "noPriceConfidenceUserVotes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "noPriceConfidenceVotes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -347,6 +356,10 @@ export class Settlement extends Contract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    noPriceConfidenceVotes(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "noPriceConfidenceVotes()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     priceConfidence(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -530,6 +543,10 @@ export class Settlement extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  noPriceConfidenceVotes(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "noPriceConfidenceVotes()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   priceConfidence(overrides?: CallOverrides): Promise<boolean>;
 
   "priceConfidence()"(overrides?: CallOverrides): Promise<boolean>;
@@ -704,6 +721,10 @@ export class Settlement extends Contract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    noPriceConfidenceVotes(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "noPriceConfidenceVotes()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     priceConfidence(overrides?: CallOverrides): Promise<boolean>;
 
@@ -908,6 +929,10 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    noPriceConfidenceVotes(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "noPriceConfidenceVotes()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     priceConfidence(overrides?: CallOverrides): Promise<BigNumber>;
 
     "priceConfidence()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1091,6 +1116,14 @@ export class Settlement extends Contract {
 
     "noPriceConfidenceUserVotes(address)"(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    noPriceConfidenceVotes(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "noPriceConfidenceVotes()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -23,9 +23,9 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface IPricesInterface extends ethers.utils.Interface {
   functions: {
     "completeSetup()": FunctionFragment;
-    "obtainPrice(address,uint64,uint64,bool)": FunctionFragment;
     "referencePairMinTwapTime()": FunctionFragment;
     "stop()": FunctionFragment;
+    "systemObtainPrice(address,uint64,uint64,bool)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -33,21 +33,17 @@ interface IPricesInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "obtainPrice",
-    values: [string, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
     functionFragment: "referencePairMinTwapTime",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "systemObtainPrice",
+    values: [string, BigNumberish, BigNumberish, boolean]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "completeSetup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "obtainPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -55,6 +51,10 @@ interface IPricesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "systemObtainPrice",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ParameterUpdated64(string,uint64)": EventFragment;
@@ -83,22 +83,6 @@ export class IPrices extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     referencePairMinTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "referencePairMinTwapTime()"(
@@ -108,27 +92,27 @@ export class IPrices extends Contract {
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  obtainPrice(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxAge: BigNumberish,
-    normalizePrice: boolean,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "obtainPrice(address,uint64,uint64,bool)"(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxAge: BigNumberish,
-    normalizePrice: boolean,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -138,30 +122,26 @@ export class IPrices extends Contract {
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  systemObtainPrice(
+    pair: string,
+    maxTwapTime: BigNumberish,
+    maxAge: BigNumberish,
+    normalizePrice: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemObtainPrice(address,uint64,uint64,bool)"(
+    pair: string,
+    maxTwapTime: BigNumberish,
+    maxAge: BigNumberish,
+    normalizePrice: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
-
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
 
     referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -170,6 +150,26 @@ export class IPrices extends Contract {
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
   };
 
   filters: {
@@ -188,22 +188,6 @@ export class IPrices extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "referencePairMinTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -211,28 +195,28 @@ export class IPrices extends Contract {
     stop(overrides?: Overrides): Promise<BigNumber>;
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
 
     referencePairMinTwapTime(
       overrides?: CallOverrides
@@ -245,5 +229,21 @@ export class IPrices extends Contract {
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxAge: BigNumberish,
+      normalizePrice: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
   };
 }

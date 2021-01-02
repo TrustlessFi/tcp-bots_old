@@ -52,10 +52,10 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: true,
-        internalType: "bool",
-        name: "flash",
-        type: "bool",
+        indexed: false,
+        internalType: "uint256",
+        name: "collateralToReceive",
+        type: "uint256",
       },
     ],
     name: "Liquidated",
@@ -129,24 +129,6 @@ const _abi = [
     ],
     name: "UndercollatPositionDiscovered",
     type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "enum IAccounting.Collateral",
-        name: "collateral",
-        type: "uint8",
-      },
-      {
-        internalType: "uint256",
-        name: "baseTokensToRepay",
-        type: "uint256",
-      },
-    ],
-    name: "flashLiquidate",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     inputs: [],

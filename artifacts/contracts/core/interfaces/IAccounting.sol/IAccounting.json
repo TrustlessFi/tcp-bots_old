@@ -6,8 +6,8 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         },
         {
@@ -53,8 +53,8 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         }
       ],
@@ -103,8 +103,8 @@
       "name": "getBasicPositionInfo",
       "outputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         },
         {
@@ -124,8 +124,8 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         }
       ],
@@ -266,7 +266,7 @@
               "type": "uint32"
             },
             {
-              "internalType": "enum IAccounting.Collateral",
+              "internalType": "enum IGovernor.Collateral",
               "name": "collateralType",
               "type": "uint8"
             }
@@ -327,8 +327,8 @@
           "type": "uint64"
         },
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         }
       ],
@@ -340,8 +340,8 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         },
         {
@@ -381,8 +381,8 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
-          "name": "collateral",
+          "internalType": "enum IGovernor.Collateral",
+          "name": "collateralType",
           "type": "uint8"
         },
         {
@@ -518,7 +518,7 @@
               "type": "uint32"
             },
             {
-              "internalType": "enum IAccounting.Collateral",
+              "internalType": "enum IGovernor.Collateral",
               "name": "collateralType",
               "type": "uint8"
             }

@@ -125,32 +125,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "contract ITokenAllocation",
-          "name": "allocation",
-          "type": "address"
-        }
-      ],
-      "name": "allocate",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "allocationCreator",
-      "outputs": [
-        {
-          "internalType": "contract ITokenAllocationCreator",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "auctions",
       "outputs": [
@@ -177,16 +151,16 @@
       "type": "function"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "circulatingCNP",
+      "outputs": [
         {
           "internalType": "uint256",
-          "name": "count",
+          "name": "circulating",
           "type": "uint256"
         }
       ],
-      "name": "burnTokensForEmergencyShutdown",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -231,7 +205,7 @@
     {
       "inputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
+          "internalType": "enum IGovernor.Collateral",
           "name": "collateral",
           "type": "uint8"
         }
@@ -297,11 +271,6 @@
           "internalType": "address",
           "name": "target",
           "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
         },
         {
           "internalType": "string",
@@ -444,7 +413,7 @@
       "name": "pairToCollateral",
       "outputs": [
         {
-          "internalType": "enum IAccounting.Collateral",
+          "internalType": "enum IGovernor.Collateral",
           "name": "",
           "type": "uint8"
         }
@@ -583,19 +552,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "contract ITokenAllocationCreator",
-          "name": "_allocationCreator",
-          "type": "address"
-        }
-      ],
-      "name": "setTokenAllocationCreator",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "settlement",
       "outputs": [
@@ -627,6 +583,19 @@
       "outputs": [
         {
           "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tokenAllocations",
+      "outputs": [
+        {
+          "internalType": "contract ITokenAllocations",
           "name": "",
           "type": "address"
         }
@@ -736,19 +705,6 @@
       "name": "upgradeSettlement",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "votingCNPSupply",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "circulating",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {

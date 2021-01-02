@@ -172,7 +172,7 @@ const _abi = [
       },
       {
         indexed: true,
-        internalType: "enum IAccounting.Collateral",
+        internalType: "enum IGovernor.Collateral",
         name: "collateral",
         type: "uint8",
       },
@@ -274,16 +274,9 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "accrueInterest",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
+        internalType: "enum IGovernor.Collateral",
         name: "collateral",
         type: "uint8",
       },
@@ -384,7 +377,7 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IAccounting.Collateral",
+            internalType: "enum IGovernor.Collateral",
             name: "collateralType",
             type: "uint8",
           },

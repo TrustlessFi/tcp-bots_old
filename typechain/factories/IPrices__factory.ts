@@ -75,6 +75,26 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "referencePairMinTwapTime",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "stop",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "contract IUniswapV2Pair",
@@ -97,7 +117,7 @@ const _abi = [
         type: "bool",
       },
     ],
-    name: "obtainPrice",
+    name: "systemObtainPrice",
     outputs: [
       {
         internalType: "uint256",
@@ -110,26 +130,6 @@ const _abi = [
         type: "uint64",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "referencePairMinTwapTime",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "stop",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

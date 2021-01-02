@@ -218,14 +218,14 @@ export class IAccounting extends Contract {
 
   functions: {
     adjustDebt(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "adjustDebt(uint8,uint256,bool)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -236,12 +236,12 @@ export class IAccounting extends Contract {
     "debt()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     debtByCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "debtByCollateral(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -264,7 +264,7 @@ export class IAccounting extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [number, BigNumber, BigNumber] & {
-        collateral: number;
+        collateralType: number;
         debtCount: BigNumber;
         collateralCount: BigNumber;
       }
@@ -275,14 +275,14 @@ export class IAccounting extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [number, BigNumber, BigNumber] & {
-        collateral: number;
+        collateralType: number;
         debtCount: BigNumber;
         collateralCount: BigNumber;
       }
     >;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -301,7 +301,7 @@ export class IAccounting extends Contract {
     >;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -491,25 +491,25 @@ export class IAccounting extends Contract {
 
     registerPosition(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "registerPosition(uint64,uint8)"(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     sendCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "sendCollateral(uint8,address,uint256)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -528,7 +528,7 @@ export class IAccounting extends Contract {
     ): Promise<ContractTransaction>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -538,7 +538,7 @@ export class IAccounting extends Contract {
     ): Promise<ContractTransaction>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -631,14 +631,14 @@ export class IAccounting extends Contract {
   };
 
   adjustDebt(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     count: BigNumberish,
     increase: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "adjustDebt(uint8,uint256,bool)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     count: BigNumberish,
     increase: boolean,
     overrides?: Overrides
@@ -649,12 +649,12 @@ export class IAccounting extends Contract {
   "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   debtByCollateral(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   "debtByCollateral(uint8)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -677,7 +677,7 @@ export class IAccounting extends Contract {
     overrides?: CallOverrides
   ): Promise<
     [number, BigNumber, BigNumber] & {
-      collateral: number;
+      collateralType: number;
       debtCount: BigNumber;
       collateralCount: BigNumber;
     }
@@ -688,14 +688,14 @@ export class IAccounting extends Contract {
     overrides?: CallOverrides
   ): Promise<
     [number, BigNumber, BigNumber] & {
-      collateral: number;
+      collateralType: number;
       debtCount: BigNumber;
       collateralCount: BigNumber;
     }
   >;
 
   getLiquidationAccount(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -706,7 +706,7 @@ export class IAccounting extends Contract {
   >;
 
   "getLiquidationAccount(uint8)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -828,25 +828,25 @@ export class IAccounting extends Contract {
 
   registerPosition(
     positionID: BigNumberish,
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "registerPosition(uint64,uint8)"(
     positionID: BigNumberish,
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   sendCollateral(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     account: string,
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "sendCollateral(uint8,address,uint256)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     account: string,
     count: BigNumberish,
     overrides?: Overrides
@@ -865,7 +865,7 @@ export class IAccounting extends Contract {
   ): Promise<ContractTransaction>;
 
   setLiquidationAccount(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -875,7 +875,7 @@ export class IAccounting extends Contract {
   ): Promise<ContractTransaction>;
 
   "setLiquidationAccount(uint8,tuple)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -968,14 +968,14 @@ export class IAccounting extends Contract {
 
   callStatic: {
     adjustDebt(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
     "adjustDebt(uint8,uint256,bool)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: CallOverrides
@@ -986,12 +986,12 @@ export class IAccounting extends Contract {
     "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     debtByCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "debtByCollateral(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1014,7 +1014,7 @@ export class IAccounting extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [number, BigNumber, BigNumber] & {
-        collateral: number;
+        collateralType: number;
         debtCount: BigNumber;
         collateralCount: BigNumber;
       }
@@ -1025,14 +1025,14 @@ export class IAccounting extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [number, BigNumber, BigNumber] & {
-        collateral: number;
+        collateralType: number;
         debtCount: BigNumber;
         collateralCount: BigNumber;
       }
     >;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1043,7 +1043,7 @@ export class IAccounting extends Contract {
     >;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1165,25 +1165,25 @@ export class IAccounting extends Contract {
 
     registerPosition(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "registerPosition(uint64,uint8)"(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     sendCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "sendCollateral(uint8,address,uint256)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -1202,7 +1202,7 @@ export class IAccounting extends Contract {
     ): Promise<void>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1212,7 +1212,7 @@ export class IAccounting extends Contract {
     ): Promise<void>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1308,14 +1308,14 @@ export class IAccounting extends Contract {
 
   estimateGas: {
     adjustDebt(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "adjustDebt(uint8,uint256,bool)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -1326,12 +1326,12 @@ export class IAccounting extends Contract {
     "debt()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     debtByCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "debtByCollateral(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1360,12 +1360,12 @@ export class IAccounting extends Contract {
     ): Promise<BigNumber>;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1397,25 +1397,25 @@ export class IAccounting extends Contract {
 
     registerPosition(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "registerPosition(uint64,uint8)"(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     sendCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "sendCollateral(uint8,address,uint256)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1434,7 +1434,7 @@ export class IAccounting extends Contract {
     ): Promise<BigNumber>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1444,7 +1444,7 @@ export class IAccounting extends Contract {
     ): Promise<BigNumber>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1538,14 +1538,14 @@ export class IAccounting extends Contract {
 
   populateTransaction: {
     adjustDebt(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "adjustDebt(uint8,uint256,bool)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       count: BigNumberish,
       increase: boolean,
       overrides?: Overrides
@@ -1556,12 +1556,12 @@ export class IAccounting extends Contract {
     "debt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     debtByCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "debtByCollateral(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1590,12 +1590,12 @@ export class IAccounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1629,25 +1629,25 @@ export class IAccounting extends Contract {
 
     registerPosition(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "registerPosition(uint64,uint8)"(
       positionID: BigNumberish,
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     sendCollateral(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "sendCollateral(uint8,address,uint256)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       account: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1666,7 +1666,7 @@ export class IAccounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1676,7 +1676,7 @@ export class IAccounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;

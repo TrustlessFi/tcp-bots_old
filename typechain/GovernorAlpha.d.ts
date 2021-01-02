@@ -44,7 +44,7 @@ interface GovernorAlphaInterface extends ethers.utils.Interface {
     "proposalThreshold()": FunctionFragment;
     "proposalThresholdPercentage()": FunctionFragment;
     "proposals(uint256)": FunctionFragment;
-    "propose(address[],uint256[],string[],bytes[],string)": FunctionFragment;
+    "propose(address[],string[],bytes[],string)": FunctionFragment;
     "queue(uint256)": FunctionFragment;
     "quorumVotes()": FunctionFragment;
     "quorumVotesPercentage()": FunctionFragment;
@@ -133,7 +133,7 @@ interface GovernorAlphaInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "propose",
-    values: [string[], BigNumberish[], string[], BytesLike[], string]
+    values: [string[], string[], BytesLike[], string]
   ): string;
   encodeFunctionData(functionFragment: "queue", values: [BigNumberish]): string;
   encodeFunctionData(
@@ -241,7 +241,7 @@ interface GovernorAlphaInterface extends ethers.utils.Interface {
 
   events: {
     "ProposalCanceled(uint256)": EventFragment;
-    "ProposalCreated(uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)": EventFragment;
+    "ProposalCreated(uint256,address,address[],string[],bytes[],uint256,uint256,string)": EventFragment;
     "ProposalExecuted(uint256)": EventFragment;
     "ProposalQueued(uint256,uint256)": EventFragment;
     "VoteCast(address,uint256,bool,uint256)": EventFragment;
@@ -366,9 +366,8 @@ export class GovernorAlpha extends Contract {
       proposalId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string[], BigNumber[], string[], string[]] & {
+      [string[], string[], string[]] & {
         targets: string[];
-        values: BigNumber[];
         signatures: string[];
         calldatas: string[];
       }
@@ -378,9 +377,8 @@ export class GovernorAlpha extends Contract {
       proposalId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string[], BigNumber[], string[], string[]] & {
+      [string[], string[], string[]] & {
         targets: string[];
-        values: BigNumber[];
         signatures: string[];
         calldatas: string[];
       }
@@ -512,16 +510,14 @@ export class GovernorAlpha extends Contract {
 
     propose(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "propose(address[],uint256[],string[],bytes[],string)"(
+    "propose(address[],string[],bytes[],string)"(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
@@ -671,9 +667,8 @@ export class GovernorAlpha extends Contract {
     proposalId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string[], BigNumber[], string[], string[]] & {
+    [string[], string[], string[]] & {
       targets: string[];
-      values: BigNumber[];
       signatures: string[];
       calldatas: string[];
     }
@@ -683,9 +678,8 @@ export class GovernorAlpha extends Contract {
     proposalId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string[], BigNumber[], string[], string[]] & {
+    [string[], string[], string[]] & {
       targets: string[];
-      values: BigNumber[];
       signatures: string[];
       calldatas: string[];
     }
@@ -811,16 +805,14 @@ export class GovernorAlpha extends Contract {
 
   propose(
     targets: string[],
-    values: BigNumberish[],
     signatures: string[],
     calldatas: BytesLike[],
     description: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "propose(address[],uint256[],string[],bytes[],string)"(
+  "propose(address[],string[],bytes[],string)"(
     targets: string[],
-    values: BigNumberish[],
     signatures: string[],
     calldatas: BytesLike[],
     description: string,
@@ -961,9 +953,8 @@ export class GovernorAlpha extends Contract {
       proposalId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string[], BigNumber[], string[], string[]] & {
+      [string[], string[], string[]] & {
         targets: string[];
-        values: BigNumber[];
         signatures: string[];
         calldatas: string[];
       }
@@ -973,9 +964,8 @@ export class GovernorAlpha extends Contract {
       proposalId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string[], BigNumber[], string[], string[]] & {
+      [string[], string[], string[]] & {
         targets: string[];
-        values: BigNumber[];
         signatures: string[];
         calldatas: string[];
       }
@@ -1101,16 +1091,14 @@ export class GovernorAlpha extends Contract {
 
     propose(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "propose(address[],uint256[],string[],bytes[],string)"(
+    "propose(address[],string[],bytes[],string)"(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
@@ -1163,7 +1151,6 @@ export class GovernorAlpha extends Contract {
       id: BigNumberish | null,
       proposer: string | null,
       targets: null,
-      values: null,
       signatures: null,
       calldatas: null,
       startBlock: null,
@@ -1349,16 +1336,14 @@ export class GovernorAlpha extends Contract {
 
     propose(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "propose(address[],uint256[],string[],bytes[],string)"(
+    "propose(address[],string[],bytes[],string)"(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
@@ -1588,16 +1573,14 @@ export class GovernorAlpha extends Contract {
 
     propose(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "propose(address[],uint256[],string[],bytes[],string)"(
+    "propose(address[],string[],bytes[],string)"(
       targets: string[],
-      values: BigNumberish[],
       signatures: string[],
       calldatas: BytesLike[],
       description: string,

@@ -371,7 +371,7 @@ export class Accounting extends Contract {
     >;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -390,7 +390,7 @@ export class Accounting extends Contract {
     >;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -621,7 +621,7 @@ export class Accounting extends Contract {
     ): Promise<ContractTransaction>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -631,7 +631,7 @@ export class Accounting extends Contract {
     ): Promise<ContractTransaction>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -828,7 +828,7 @@ export class Accounting extends Contract {
   >;
 
   getLiquidationAccount(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -839,7 +839,7 @@ export class Accounting extends Contract {
   >;
 
   "getLiquidationAccount(uint8)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -1031,7 +1031,7 @@ export class Accounting extends Contract {
   ): Promise<ContractTransaction>;
 
   setLiquidationAccount(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -1041,7 +1041,7 @@ export class Accounting extends Contract {
   ): Promise<ContractTransaction>;
 
   "setLiquidationAccount(uint8,tuple)"(
-    collateral: BigNumberish,
+    collateralType: BigNumberish,
     lqAcct: {
       startDebtExchangeRate: BigNumberish;
       debt: BigNumberish;
@@ -1239,7 +1239,7 @@ export class Accounting extends Contract {
     >;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1250,7 +1250,7 @@ export class Accounting extends Contract {
     >;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1442,7 +1442,7 @@ export class Accounting extends Contract {
     ): Promise<void>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1452,7 +1452,7 @@ export class Accounting extends Contract {
     ): Promise<void>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1641,12 +1641,12 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1748,7 +1748,7 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1758,7 +1758,7 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -1944,12 +1944,12 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLiquidationAccount(uint8)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2056,7 +2056,7 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     setLiquidationAccount(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;
@@ -2066,7 +2066,7 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "setLiquidationAccount(uint8,tuple)"(
-      collateral: BigNumberish,
+      collateralType: BigNumberish,
       lqAcct: {
         startDebtExchangeRate: BigNumberish;
         debt: BigNumberish;

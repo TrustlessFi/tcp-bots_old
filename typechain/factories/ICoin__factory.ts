@@ -44,31 +44,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "minter",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "countMinted",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fee",
-        type: "uint256",
-      },
-    ],
-    name: "FlashMint",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "string",
         name: "paramName",
         type: "string",

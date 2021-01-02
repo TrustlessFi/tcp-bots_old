@@ -29,8 +29,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     "completeSetup()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "deployer()": FunctionFragment;
-    "ensureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
-    "ensureMinimumReferenceLiquidity(uint256)": FunctionFragment;
     "firstPeriod()": FunctionFragment;
     "getRewards(address)": FunctionFragment;
     "governor()": FunctionFragment;
@@ -62,6 +60,8 @@ interface RewardsInterface extends ethers.utils.Interface {
     "setupComplete()": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
+    "systemEnsureMinimumReferenceLiquidity(uint256)": FunctionFragment;
     "unlockPairTokens(address,uint256)": FunctionFragment;
     "unlockTokensAfterShutdown(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
@@ -92,14 +92,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "ensureMinimumCollateralLiquidity",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ensureMinimumReferenceLiquidity",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "firstPeriod",
     values?: undefined
@@ -210,6 +202,14 @@ interface RewardsInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "systemEnsureMinimumCollateralLiquidity",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "systemEnsureMinimumReferenceLiquidity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "unlockPairTokens",
     values: [string, BigNumberish]
   ): string;
@@ -247,14 +247,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "ensureMinimumCollateralLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ensureMinimumReferenceLiquidity",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "firstPeriod",
     data: BytesLike
@@ -365,6 +357,14 @@ interface RewardsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "systemEnsureMinimumCollateralLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "systemEnsureMinimumReferenceLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "unlockPairTokens",
     data: BytesLike
   ): Result;
@@ -461,28 +461,6 @@ export class Rewards extends Contract {
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     "deployer()"(overrides?: CallOverrides): Promise<[string]>;
-
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -708,6 +686,28 @@ export class Rewards extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     unlockPairTokens(
       pair: string,
       count: BigNumberish,
@@ -776,28 +776,6 @@ export class Rewards extends Contract {
   deployer(overrides?: CallOverrides): Promise<string>;
 
   "deployer()"(overrides?: CallOverrides): Promise<string>;
-
-  ensureMinimumCollateralLiquidity(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  ensureMinimumReferenceLiquidity(
-    debt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "ensureMinimumReferenceLiquidity(uint256)"(
-    debt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1003,6 +981,28 @@ export class Rewards extends Contract {
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
+  systemEnsureMinimumCollateralLiquidity(
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  systemEnsureMinimumReferenceLiquidity(
+    debt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemEnsureMinimumReferenceLiquidity(uint256)"(
+    debt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   unlockPairTokens(
     pair: string,
     count: BigNumberish,
@@ -1068,28 +1068,6 @@ export class Rewards extends Contract {
     deployer(overrides?: CallOverrides): Promise<string>;
 
     "deployer()"(overrides?: CallOverrides): Promise<string>;
-
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1300,6 +1278,28 @@ export class Rewards extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     unlockPairTokens(
       pair: string,
       count: BigNumberish,
@@ -1403,28 +1403,6 @@ export class Rewards extends Contract {
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1638,6 +1616,28 @@ export class Rewards extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     unlockPairTokens(
       pair: string,
       count: BigNumberish,
@@ -1715,28 +1715,6 @@ export class Rewards extends Contract {
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1971,6 +1949,28 @@ export class Rewards extends Contract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     unlockPairTokens(
       pair: string,

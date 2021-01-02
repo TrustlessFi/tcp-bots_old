@@ -22,7 +22,6 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface RatesInterface extends ethers.utils.Interface {
   functions: {
-    "calculatePrice(uint256,uint256,uint256)": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "deployer()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
@@ -40,6 +39,7 @@ interface RatesInterface extends ethers.utils.Interface {
     "setErrorInterval(uint128)": FunctionFragment;
     "setInterestRateStep(uint128)": FunctionFragment;
     "setMaxPriceAge(uint64)": FunctionFragment;
+    "setMaxRate(int128)": FunctionFragment;
     "setMaxSteps(uint64)": FunctionFragment;
     "setMaxTwapTime(uint64)": FunctionFragment;
     "setMinRate(int128)": FunctionFragment;
@@ -54,10 +54,6 @@ interface RatesInterface extends ethers.utils.Interface {
     "validUpdate(bytes4)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "calculatePrice",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "completeSetup",
     values?: undefined
@@ -112,6 +108,10 @@ interface RatesInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMaxRate",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMaxSteps",
     values: [BigNumberish]
   ): string;
@@ -148,10 +148,6 @@ interface RatesInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "calculatePrice",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "completeSetup",
     data: BytesLike
@@ -202,6 +198,7 @@ interface RatesInterface extends ethers.utils.Interface {
     functionFragment: "setMaxPriceAge",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setMaxRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMaxSteps",
     data: BytesLike
@@ -267,20 +264,6 @@ export class Rates extends Contract {
   interface: RatesInterface;
 
   functions: {
-    calculatePrice(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
-
-    "calculatePrice(uint256,uint256,uint256)"(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
-
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -347,24 +330,26 @@ export class Rates extends Contract {
     rateConfig(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
+        maxRate: BigNumber;
       }
     >;
 
     "rateConfig()"(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
+        maxRate: BigNumber;
       }
     >;
 
@@ -405,6 +390,16 @@ export class Rates extends Contract {
 
     "setMaxPriceAge(uint64)"(
       age: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    setMaxRate(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setMaxRate(int128)"(
+      max: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -511,20 +506,6 @@ export class Rates extends Contract {
     ): Promise<[boolean]>;
   };
 
-  calculatePrice(
-    price0: BigNumberish,
-    price1: BigNumberish,
-    price2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "calculatePrice(uint256,uint256,uint256)"(
-    price0: BigNumberish,
-    price1: BigNumberish,
-    price2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -582,24 +563,26 @@ export class Rates extends Contract {
   rateConfig(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       acceptableError: BigNumber;
       errorInterval: BigNumber;
       interestRateStep: BigNumber;
       maxSteps: BigNumber;
       minRate: BigNumber;
+      maxRate: BigNumber;
     }
   >;
 
   "rateConfig()"(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       acceptableError: BigNumber;
       errorInterval: BigNumber;
       interestRateStep: BigNumber;
       maxSteps: BigNumber;
       minRate: BigNumber;
+      maxRate: BigNumber;
     }
   >;
 
@@ -640,6 +623,16 @@ export class Rates extends Contract {
 
   "setMaxPriceAge(uint64)"(
     age: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  setMaxRate(
+    max: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setMaxRate(int128)"(
+    max: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -743,20 +736,6 @@ export class Rates extends Contract {
   ): Promise<boolean>;
 
   callStatic: {
-    calculatePrice(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "calculatePrice(uint256,uint256,uint256)"(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
@@ -816,24 +795,26 @@ export class Rates extends Contract {
     rateConfig(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
+        maxRate: BigNumber;
       }
     >;
 
     "rateConfig()"(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
+        maxRate: BigNumber;
       }
     >;
 
@@ -871,6 +852,13 @@ export class Rates extends Contract {
 
     "setMaxPriceAge(uint64)"(
       age: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMaxRate(max: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "setMaxRate(int128)"(
+      max: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -988,20 +976,6 @@ export class Rates extends Contract {
   };
 
   estimateGas: {
-    calculatePrice(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "calculatePrice(uint256,uint256,uint256)"(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
@@ -1102,6 +1076,13 @@ export class Rates extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setMaxRate(max: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    "setMaxRate(int128)"(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     setMaxSteps(steps: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "setMaxSteps(uint64)"(
@@ -1182,20 +1163,6 @@ export class Rates extends Contract {
   };
 
   populateTransaction: {
-    calculatePrice(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "calculatePrice(uint256,uint256,uint256)"(
-      price0: BigNumberish,
-      price1: BigNumberish,
-      price2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
@@ -1311,6 +1278,16 @@ export class Rates extends Contract {
 
     "setMaxPriceAge(uint64)"(
       age: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setMaxRate(
+      max: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setMaxRate(int128)"(
+      max: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

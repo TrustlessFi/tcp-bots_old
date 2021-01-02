@@ -24,9 +24,9 @@ interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
     "borrowRewardsPortion()": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "ensureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
-    "ensureMinimumReferenceLiquidity(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
+    "systemEnsureMinimumReferenceLiquidity(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -37,15 +37,15 @@ interface IRewardsInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "ensureMinimumCollateralLiquidity",
+    functionFragment: "systemEnsureMinimumCollateralLiquidity",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "ensureMinimumReferenceLiquidity",
+    functionFragment: "systemEnsureMinimumReferenceLiquidity",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "borrowRewardsPortion",
@@ -55,15 +55,15 @@ interface IRewardsInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "ensureMinimumCollateralLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ensureMinimumReferenceLiquidity",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "systemEnsureMinimumCollateralLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "systemEnsureMinimumReferenceLiquidity",
+    data: BytesLike
+  ): Result;
 
   events: {
     "PairTokensLocked(address,address,uint256,uint64)": EventFragment;
@@ -106,31 +106,31 @@ export class IRewards extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
   };
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -141,31 +141,31 @@ export class IRewards extends Contract {
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  ensureMinimumCollateralLiquidity(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  ensureMinimumReferenceLiquidity(
-    debt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "ensureMinimumReferenceLiquidity(uint256)"(
-    debt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  systemEnsureMinimumCollateralLiquidity(
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+    collateralType: BigNumberish,
+    collateralDebt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  systemEnsureMinimumReferenceLiquidity(
+    debt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemEnsureMinimumReferenceLiquidity(uint256)"(
+    debt: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -176,31 +176,31 @@ export class IRewards extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
+
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -245,31 +245,31 @@ export class IRewards extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     stop(overrides?: Overrides): Promise<BigNumber>;
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
+
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -285,30 +285,30 @@ export class IRewards extends Contract {
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    ensureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "ensureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    ensureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "ensureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    systemEnsureMinimumCollateralLiquidity(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
+      collateralType: BigNumberish,
+      collateralDebt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    systemEnsureMinimumReferenceLiquidity(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemEnsureMinimumReferenceLiquidity(uint256)"(
+      debt: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
   };
 }

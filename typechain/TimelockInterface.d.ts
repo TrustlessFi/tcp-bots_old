@@ -25,10 +25,10 @@ interface TimelockInterfaceInterface extends ethers.utils.Interface {
   functions: {
     "GRACE_PERIOD()": FunctionFragment;
     "acceptAdmin()": FunctionFragment;
-    "cancelTransaction(address,uint256,string,bytes,uint256)": FunctionFragment;
+    "cancelTransaction(address,string,bytes,uint256)": FunctionFragment;
     "delay()": FunctionFragment;
-    "executeTransaction(address,uint256,string,bytes,uint256)": FunctionFragment;
-    "queueTransaction(address,uint256,string,bytes,uint256)": FunctionFragment;
+    "executeTransaction(address,string,bytes,uint256)": FunctionFragment;
+    "queueTransaction(address,string,bytes,uint256)": FunctionFragment;
     "queuedTransactions(bytes32)": FunctionFragment;
   };
 
@@ -42,16 +42,16 @@ interface TimelockInterfaceInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cancelTransaction",
-    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+    values: [string, string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "delay", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "executeTransaction",
-    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+    values: [string, string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "queueTransaction",
-    values: [string, BigNumberish, string, BytesLike, BigNumberish]
+    values: [string, string, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "queuedTransactions",
@@ -111,16 +111,14 @@ export class TimelockInterface extends Contract {
 
     cancelTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "cancelTransaction(address,uint256,string,bytes,uint256)"(
+    "cancelTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -133,16 +131,14 @@ export class TimelockInterface extends Contract {
 
     executeTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "executeTransaction(address,uint256,string,bytes,uint256)"(
+    "executeTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -151,16 +147,14 @@ export class TimelockInterface extends Contract {
 
     queueTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "queueTransaction(address,uint256,string,bytes,uint256)"(
+    "queueTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -188,16 +182,14 @@ export class TimelockInterface extends Contract {
 
   cancelTransaction(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "cancelTransaction(address,uint256,string,bytes,uint256)"(
+  "cancelTransaction(address,string,bytes,uint256)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
@@ -210,16 +202,14 @@ export class TimelockInterface extends Contract {
 
   executeTransaction(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
     overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "executeTransaction(address,uint256,string,bytes,uint256)"(
+  "executeTransaction(address,string,bytes,uint256)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
@@ -228,16 +218,14 @@ export class TimelockInterface extends Contract {
 
   queueTransaction(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "queueTransaction(address,uint256,string,bytes,uint256)"(
+  "queueTransaction(address,string,bytes,uint256)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
@@ -265,16 +253,14 @@ export class TimelockInterface extends Contract {
 
     cancelTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "cancelTransaction(address,uint256,string,bytes,uint256)"(
+    "cancelTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -287,16 +273,14 @@ export class TimelockInterface extends Contract {
 
     executeTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "executeTransaction(address,uint256,string,bytes,uint256)"(
+    "executeTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -305,16 +289,14 @@ export class TimelockInterface extends Contract {
 
     queueTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "queueTransaction(address,uint256,string,bytes,uint256)"(
+    "queueTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -345,16 +327,14 @@ export class TimelockInterface extends Contract {
 
     cancelTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "cancelTransaction(address,uint256,string,bytes,uint256)"(
+    "cancelTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -367,16 +347,14 @@ export class TimelockInterface extends Contract {
 
     executeTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "executeTransaction(address,uint256,string,bytes,uint256)"(
+    "executeTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -385,16 +363,14 @@ export class TimelockInterface extends Contract {
 
     queueTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "queueTransaction(address,uint256,string,bytes,uint256)"(
+    "queueTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -423,16 +399,14 @@ export class TimelockInterface extends Contract {
 
     cancelTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "cancelTransaction(address,uint256,string,bytes,uint256)"(
+    "cancelTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -445,16 +419,14 @@ export class TimelockInterface extends Contract {
 
     executeTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "executeTransaction(address,uint256,string,bytes,uint256)"(
+    "executeTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
@@ -463,16 +435,14 @@ export class TimelockInterface extends Contract {
 
     queueTransaction(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "queueTransaction(address,uint256,string,bytes,uint256)"(
+    "queueTransaction(address,string,bytes,uint256)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,

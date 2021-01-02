@@ -22,12 +22,12 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface ActionExecutorInterface extends ethers.utils.Interface {
   functions: {
-    "execute(address,uint256,string,bytes)": FunctionFragment;
+    "execute(address,string,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "execute",
-    values: [string, BigNumberish, string, BytesLike]
+    values: [string, string, BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
@@ -51,15 +51,13 @@ export class ActionExecutor extends Contract {
   functions: {
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -68,15 +66,13 @@ export class ActionExecutor extends Contract {
 
   execute(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "execute(address,uint256,string,bytes)"(
+  "execute(address,string,bytes)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
@@ -85,15 +81,13 @@ export class ActionExecutor extends Contract {
   callStatic: {
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
@@ -105,15 +99,13 @@ export class ActionExecutor extends Contract {
   estimateGas: {
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -123,15 +115,13 @@ export class ActionExecutor extends Contract {
   populateTransaction: {
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides

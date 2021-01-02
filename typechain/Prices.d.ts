@@ -27,13 +27,13 @@ interface PricesInterface extends ethers.utils.Interface {
     "deployer()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
-    "obtainPrice(address,uint64,uint64,bool)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
     "referencePairMinTwapTime()": FunctionFragment;
     "setCollateralPairMinTwapTime(uint64)": FunctionFragment;
     "setReferencePairMinTwapTime(uint64)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
+    "systemObtainPrice(address,uint64,uint64,bool)": FunctionFragment;
     "updatePrice(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
     "viewPrice(address,bool)": FunctionFragment;
@@ -50,10 +50,6 @@ interface PricesInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "obtainPrice",
-    values: [string, BigNumberish, BigNumberish, boolean]
-  ): string;
   encodeFunctionData(functionFragment: "priceInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "referencePairMinTwapTime",
@@ -69,6 +65,10 @@ interface PricesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "systemObtainPrice",
+    values: [string, BigNumberish, BigNumberish, boolean]
+  ): string;
   encodeFunctionData(functionFragment: "updatePrice", values: [string]): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
@@ -90,10 +90,6 @@ interface PricesInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "obtainPrice",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "priceInfo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "referencePairMinTwapTime",
@@ -109,6 +105,10 @@ interface PricesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "systemObtainPrice",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "updatePrice",
     data: BytesLike
@@ -171,22 +171,6 @@ export class Prices extends Contract {
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -270,6 +254,22 @@ export class Prices extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     updatePrice(
       pair: string,
       overrides?: Overrides
@@ -335,22 +335,6 @@ export class Prices extends Contract {
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  obtainPrice(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxPriceAge: BigNumberish,
-    normalizeDecimals: boolean,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "obtainPrice(address,uint64,uint64,bool)"(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxPriceAge: BigNumberish,
-    normalizeDecimals: boolean,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -432,6 +416,22 @@ export class Prices extends Contract {
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
+  systemObtainPrice(
+    pair: string,
+    maxTwapTime: BigNumberish,
+    maxPriceAge: BigNumberish,
+    normalizeDecimals: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "systemObtainPrice(address,uint64,uint64,bool)"(
+    pair: string,
+    maxTwapTime: BigNumberish,
+    maxPriceAge: BigNumberish,
+    normalizeDecimals: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   updatePrice(
     pair: string,
     overrides?: Overrides
@@ -498,26 +498,6 @@ export class Prices extends Contract {
       _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
 
     priceInfo(
       arg0: string,
@@ -596,6 +576,26 @@ export class Prices extends Contract {
     stopped(overrides?: CallOverrides): Promise<boolean>;
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
+    >;
 
     updatePrice(pair: string, overrides?: CallOverrides): Promise<void>;
 
@@ -677,22 +677,6 @@ export class Prices extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     priceInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "priceInfo(address)"(
@@ -731,6 +715,22 @@ export class Prices extends Contract {
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     updatePrice(pair: string, overrides?: Overrides): Promise<BigNumber>;
 
@@ -793,22 +793,6 @@ export class Prices extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    obtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "obtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxPriceAge: BigNumberish,
-      normalizeDecimals: boolean,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
@@ -854,6 +838,22 @@ export class Prices extends Contract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    systemObtainPrice(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "systemObtainPrice(address,uint64,uint64,bool)"(
+      pair: string,
+      maxTwapTime: BigNumberish,
+      maxPriceAge: BigNumberish,
+      normalizeDecimals: boolean,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     updatePrice(
       pair: string,

@@ -23,11 +23,9 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface IGovernorInterface extends ethers.utils.Interface {
   functions: {
     "accounting()": FunctionFragment;
-    "allocate(address)": FunctionFragment;
-    "allocationCreator()": FunctionFragment;
     "auctions()": FunctionFragment;
     "btc()": FunctionFragment;
-    "burnTokensForEmergencyShutdown(uint256)": FunctionFragment;
+    "circulatingCNP()": FunctionFragment;
     "cnp()": FunctionFragment;
     "coin()": FunctionFragment;
     "coinPositionNFT()": FunctionFragment;
@@ -35,7 +33,7 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "currentDailyRewardCount()": FunctionFragment;
     "distributeCNP(address,uint256)": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
-    "execute(address,uint256,string,bytes)": FunctionFragment;
+    "execute(address,string,bytes)": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "getCollateralPairs()": FunctionFragment;
     "getReferencePairs()": FunctionFragment;
@@ -55,10 +53,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "requirePriceAccess(address)": FunctionFragment;
     "requireStoredCollateralAccess(address)": FunctionFragment;
     "rewards()": FunctionFragment;
-    "setTokenAllocationCreator(address)": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
     "timelock()": FunctionFragment;
+    "tokenAllocations()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
     "upgradeMarket(address)": FunctionFragment;
@@ -67,7 +65,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "upgradeRates(address)": FunctionFragment;
     "upgradeRewards(address)": FunctionFragment;
     "upgradeSettlement(address)": FunctionFragment;
-    "votingCNPSupply()": FunctionFragment;
     "weth()": FunctionFragment;
   };
 
@@ -75,16 +72,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "accounting",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "allocate", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "allocationCreator",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(functionFragment: "btc", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "burnTokensForEmergencyShutdown",
-    values: [BigNumberish]
+    functionFragment: "circulatingCNP",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(functionFragment: "coin", values?: undefined): string;
@@ -110,7 +102,7 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
-    values: [string, BigNumberish, string, BytesLike]
+    values: [string, string, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "executeShutdown",
@@ -174,10 +166,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "rewards", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "setTokenAllocationCreator",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "settlement",
     values?: undefined
   ): string;
@@ -186,6 +174,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenAllocations",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeAuctions",
     values: [string]
@@ -218,22 +210,13 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "upgradeSettlement",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "votingCNPSupply",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "weth", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "allocate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "allocationCreator",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "btc", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "burnTokensForEmergencyShutdown",
+    functionFragment: "circulatingCNP",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
@@ -314,16 +297,16 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setTokenAllocationCreator",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "settlement", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "shutdownTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenAllocations",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeAuctions",
     data: BytesLike
@@ -354,10 +337,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeSettlement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "votingCNPSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
@@ -399,20 +378,6 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<[string]>;
 
-    allocate(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<[string]>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<[string]>;
-
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
     "auctions()"(overrides?: CallOverrides): Promise<[string]>;
@@ -421,15 +386,13 @@ export class IGovernor extends Contract {
 
     "btc()"(overrides?: CallOverrides): Promise<[string]>;
 
-    burnTokensForEmergencyShutdown(
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    circulatingCNP(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { circulating: BigNumber }>;
 
-    "burnTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    "circulatingCNP()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { circulating: BigNumber }>;
 
     cnp(overrides?: CallOverrides): Promise<[string]>;
 
@@ -479,15 +442,13 @@ export class IGovernor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -619,16 +580,6 @@ export class IGovernor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<[string]>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     settlement(overrides?: CallOverrides): Promise<[string]>;
 
     "settlement()"(overrides?: CallOverrides): Promise<[string]>;
@@ -640,6 +591,10 @@ export class IGovernor extends Contract {
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
     "timelock()"(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<[string]>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<[string]>;
 
     upgradeAuctions(
       _auctions: string,
@@ -721,14 +676,6 @@ export class IGovernor extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    votingCNPSupply(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { circulating: BigNumber }>;
-
-    "votingCNPSupply()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { circulating: BigNumber }>;
-
     weth(overrides?: CallOverrides): Promise<[string]>;
 
     "weth()"(overrides?: CallOverrides): Promise<[string]>;
@@ -738,20 +685,6 @@ export class IGovernor extends Contract {
 
   "accounting()"(overrides?: CallOverrides): Promise<string>;
 
-  allocate(
-    allocation: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "allocate(address)"(
-    allocation: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  allocationCreator(overrides?: CallOverrides): Promise<string>;
-
-  "allocationCreator()"(overrides?: CallOverrides): Promise<string>;
-
   auctions(overrides?: CallOverrides): Promise<string>;
 
   "auctions()"(overrides?: CallOverrides): Promise<string>;
@@ -760,15 +693,9 @@ export class IGovernor extends Contract {
 
   "btc()"(overrides?: CallOverrides): Promise<string>;
 
-  burnTokensForEmergencyShutdown(
-    count: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "burnTokensForEmergencyShutdown(uint256)"(
-    count: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -814,15 +741,13 @@ export class IGovernor extends Contract {
 
   execute(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "execute(address,uint256,string,bytes)"(
+  "execute(address,string,bytes)"(
     target: string,
-    value: BigNumberish,
     signature: string,
     data: BytesLike,
     overrides?: Overrides
@@ -948,16 +873,6 @@ export class IGovernor extends Contract {
 
   "rewards()"(overrides?: CallOverrides): Promise<string>;
 
-  setTokenAllocationCreator(
-    _allocationCreator: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTokenAllocationCreator(address)"(
-    _allocationCreator: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   settlement(overrides?: CallOverrides): Promise<string>;
 
   "settlement()"(overrides?: CallOverrides): Promise<string>;
@@ -969,6 +884,10 @@ export class IGovernor extends Contract {
   timelock(overrides?: CallOverrides): Promise<string>;
 
   "timelock()"(overrides?: CallOverrides): Promise<string>;
+
+  tokenAllocations(overrides?: CallOverrides): Promise<string>;
+
+  "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
 
   upgradeAuctions(
     _auctions: string,
@@ -1050,10 +969,6 @@ export class IGovernor extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   weth(overrides?: CallOverrides): Promise<string>;
 
   "weth()"(overrides?: CallOverrides): Promise<string>;
@@ -1063,17 +978,6 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<string>;
 
-    allocate(allocation: string, overrides?: CallOverrides): Promise<void>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<string>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<string>;
-
     auctions(overrides?: CallOverrides): Promise<string>;
 
     "auctions()"(overrides?: CallOverrides): Promise<string>;
@@ -1082,15 +986,9 @@ export class IGovernor extends Contract {
 
     "btc()"(overrides?: CallOverrides): Promise<string>;
 
-    burnTokensForEmergencyShutdown(
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "burnTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -1136,15 +1034,13 @@ export class IGovernor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: CallOverrides
@@ -1273,16 +1169,6 @@ export class IGovernor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<string>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     settlement(overrides?: CallOverrides): Promise<string>;
 
     "settlement()"(overrides?: CallOverrides): Promise<string>;
@@ -1294,6 +1180,10 @@ export class IGovernor extends Contract {
     timelock(overrides?: CallOverrides): Promise<string>;
 
     "timelock()"(overrides?: CallOverrides): Promise<string>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<string>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
 
     upgradeAuctions(
       _auctions: string,
@@ -1363,10 +1253,6 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     weth(overrides?: CallOverrides): Promise<string>;
 
     "weth()"(overrides?: CallOverrides): Promise<string>;
@@ -1396,17 +1282,6 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    allocate(allocation: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "allocationCreator()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "auctions()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1415,15 +1290,9 @@ export class IGovernor extends Contract {
 
     "btc()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    burnTokensForEmergencyShutdown(
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "burnTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1469,15 +1338,13 @@ export class IGovernor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -1609,16 +1476,6 @@ export class IGovernor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     settlement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "settlement()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1630,6 +1487,10 @@ export class IGovernor extends Contract {
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "timelock()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tokenAllocations()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeAuctions(
       _auctions: string,
@@ -1699,10 +1560,6 @@ export class IGovernor extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    votingCNPSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "votingCNPSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     weth(overrides?: CallOverrides): Promise<BigNumber>;
 
     "weth()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1713,22 +1570,6 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    allocate(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "allocate(address)"(
-      allocation: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    allocationCreator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "allocationCreator()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "auctions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1737,14 +1578,10 @@ export class IGovernor extends Contract {
 
     "btc()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    burnTokensForEmergencyShutdown(
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
+    circulatingCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "burnTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
-      overrides?: Overrides
+    "circulatingCNP()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1801,15 +1638,13 @@ export class IGovernor extends Contract {
 
     execute(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "execute(address,uint256,string,bytes)"(
+    "execute(address,string,bytes)"(
       target: string,
-      value: BigNumberish,
       signature: string,
       data: BytesLike,
       overrides?: Overrides
@@ -1947,16 +1782,6 @@ export class IGovernor extends Contract {
 
     "rewards()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    setTokenAllocationCreator(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTokenAllocationCreator(address)"(
-      _allocationCreator: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     settlement(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "settlement()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1968,6 +1793,12 @@ export class IGovernor extends Contract {
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "timelock()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenAllocations(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tokenAllocations()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     upgradeAuctions(
       _auctions: string,
@@ -2047,12 +1878,6 @@ export class IGovernor extends Contract {
     "upgradeSettlement(address)"(
       _settlement: string,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    votingCNPSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "votingCNPSupply()"(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;

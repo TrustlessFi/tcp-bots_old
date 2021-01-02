@@ -26,11 +26,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-      {
         internalType: "string",
         name: "signature",
         type: "string",

@@ -22,7 +22,6 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface IMarketInterface extends ethers.utils.Interface {
   functions: {
-    "accrueInterest()": FunctionFragment;
     "collateralizationRequirement(uint8)": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
     "stop()": FunctionFragment;
@@ -31,10 +30,6 @@ interface IMarketInterface extends ethers.utils.Interface {
     "systemNotifyCollateralPriceUpdated(address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "accrueInterest",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
     values: [BigNumberish]
@@ -57,10 +52,6 @@ interface IMarketInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "accrueInterest",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
     data: BytesLike
@@ -124,10 +115,6 @@ export class IMarket extends Contract {
   interface: IMarketInterface;
 
   functions: {
-    accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
     collateralizationRequirement(
       collateral: BigNumberish,
       overrides?: CallOverrides
@@ -179,10 +166,6 @@ export class IMarket extends Contract {
     ): Promise<ContractTransaction>;
   };
 
-  accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
   collateralizationRequirement(
     collateral: BigNumberish,
     overrides?: CallOverrides
@@ -232,10 +215,6 @@ export class IMarket extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    accrueInterest(overrides?: CallOverrides): Promise<void>;
-
-    "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
-
     collateralizationRequirement(
       collateral: BigNumberish,
       overrides?: CallOverrides
@@ -391,10 +370,6 @@ export class IMarket extends Contract {
   };
 
   estimateGas: {
-    accrueInterest(overrides?: Overrides): Promise<BigNumber>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
-
     collateralizationRequirement(
       collateral: BigNumberish,
       overrides?: CallOverrides
@@ -445,10 +420,6 @@ export class IMarket extends Contract {
   };
 
   populateTransaction: {
-    accrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
     collateralizationRequirement(
       collateral: BigNumberish,
       overrides?: CallOverrides

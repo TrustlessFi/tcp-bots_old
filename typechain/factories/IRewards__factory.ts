@@ -201,9 +201,16 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "stop",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
+        internalType: "enum IGovernor.Collateral",
         name: "collateralType",
         type: "uint8",
       },
@@ -213,7 +220,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ensureMinimumCollateralLiquidity",
+    name: "systemEnsureMinimumCollateralLiquidity",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -226,14 +233,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ensureMinimumReferenceLiquidity",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "stop",
+    name: "systemEnsureMinimumReferenceLiquidity",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

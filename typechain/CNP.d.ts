@@ -28,6 +28,7 @@ interface CNPInterface extends ethers.utils.Interface {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
     "checkpoints(address,uint32)": FunctionFragment;
     "decimals()": FunctionFragment;
@@ -68,6 +69,7 @@ interface CNPInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "burnFrom",
     values: [string, BigNumberish]
@@ -150,6 +152,7 @@ interface CNPInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "checkpoints",
@@ -278,6 +281,16 @@ export class CNP extends Contract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    burn(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "burn(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     burnFrom(
       account: string,
@@ -523,6 +536,16 @@ export class CNP extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  burn(
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "burn(uint256)"(
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   burnFrom(
     account: string,
     amount: BigNumberish,
@@ -763,6 +786,13 @@ export class CNP extends Contract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    burn(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "burn(uint256)"(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     burnFrom(
       account: string,
@@ -1027,6 +1057,13 @@ export class CNP extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    burn(amount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    "burn(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     burnFrom(
       account: string,
       amount: BigNumberish,
@@ -1276,6 +1313,16 @@ export class CNP extends Contract {
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "burn(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     burnFrom(

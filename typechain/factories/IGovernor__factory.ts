@@ -139,32 +139,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract ITokenAllocation",
-        name: "allocation",
-        type: "address",
-      },
-    ],
-    name: "allocate",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "allocationCreator",
-    outputs: [
-      {
-        internalType: "contract ITokenAllocationCreator",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "auctions",
     outputs: [
@@ -191,16 +165,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "circulatingCNP",
+    outputs: [
       {
         internalType: "uint256",
-        name: "count",
+        name: "circulating",
         type: "uint256",
       },
     ],
-    name: "burnTokensForEmergencyShutdown",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -245,7 +219,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IAccounting.Collateral",
+        internalType: "enum IGovernor.Collateral",
         name: "collateral",
         type: "uint8",
       },
@@ -311,11 +285,6 @@ const _abi = [
         internalType: "address",
         name: "target",
         type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
       },
       {
         internalType: "string",
@@ -458,7 +427,7 @@ const _abi = [
     name: "pairToCollateral",
     outputs: [
       {
-        internalType: "enum IAccounting.Collateral",
+        internalType: "enum IGovernor.Collateral",
         name: "",
         type: "uint8",
       },
@@ -597,19 +566,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract ITokenAllocationCreator",
-        name: "_allocationCreator",
-        type: "address",
-      },
-    ],
-    name: "setTokenAllocationCreator",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "settlement",
     outputs: [
@@ -641,6 +597,19 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tokenAllocations",
+    outputs: [
+      {
+        internalType: "contract ITokenAllocations",
         name: "",
         type: "address",
       },
@@ -750,19 +719,6 @@ const _abi = [
     name: "upgradeSettlement",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "votingCNPSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "circulating",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
