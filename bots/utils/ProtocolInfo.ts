@@ -93,19 +93,20 @@ export const getSeedAddresses = (): addresses => {
     case 'mainnet':
     default:
       return {
-        coinGovernorAlpha: '0x0bd7f1B2B8479680f837270ec3a6CB3eBc149704',
-        tfGovernorAlpha: '0x0bd7f1B2B8479680f837270ec3a6CB3eBc149704',
-        nftPositionManager: '0x0bd7f1B2B8479680f837270ec3a6CB3eBc149704',
-        swapRouter: '0x0bd7f1B2B8479680f837270ec3a6CB3eBc149704',
+        coinGovernorAlpha: '0x6D502BEBB52004AA12A0e0474D5Af482Bf8c21b7',
+        tfGovernorAlpha: '0x1061D4292eF0E7AC3D4Df658a163F3985aB72f07',
+        nftPositionManager: '0x97c5F28DC94460b8bFe34542B7A3c84bbCC925e5',
+        swapRouter: '0x574afc3fe9cb6e8944eF09fb9C36E7dd75B89a3e',
       }
   }
 }
 
-export const get = async(name: string, address: string): Promise<Contract> =>
-  (await e.getContractFactory(name)).attach(address) as Contract;
 
 export const getProtocol = async(): Promise<deployedCoinProtocol> => {
   let seedAddresses = getSeedAddresses();
+
+  const get = async(name: string, address: string): Promise<Contract> =>
+    (await e.getContractFactory(name)).attach(address) as Contract;
 
   let [
     coinGovernorAlpha,
@@ -202,8 +203,6 @@ export const getProtocol = async(): Promise<deployedCoinProtocol> => {
     let token = ERC20Factory.attach(otherTokenAddress) as ERC20
     referenceTokens[await token.name()] = token
   }))
-
-
 
   return {
     accounting: accounting as Accounting,

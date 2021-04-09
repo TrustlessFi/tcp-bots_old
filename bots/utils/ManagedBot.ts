@@ -6,7 +6,7 @@ const e = hre.ethers;
 import { Wallet } from "ethers";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
-import { getProtocol, coinProtocol } from "./ProtocolInfo";
+import { getProtocol, deployedCoinProtocol } from "./ProtocolInfo";
 
 export type runReturn = {
   sleepSeconds: number,
@@ -19,7 +19,7 @@ export const defaultRunReturn: runReturn = {
 }
 
 export class ManagedBot {
-  protocol: coinProtocol | null = null;
+  protocol: deployedCoinProtocol | null = null;
   name: string = "Name not set.";
   shouldLog: boolean = true;
   timer: NodeJS.Timer | null = null;
