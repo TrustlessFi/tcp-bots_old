@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { ManagedBot } from "./utils/ManagedBot";
-import { getBlockTime, hours, minutes, seconds, getCoinGeckoPriceInUSD, bigint } from "./utils/library";
+import { getBlockTime, hours, minutes, econds, getCoinGeckoPriceInUSD, bigint } from "./utils/library";
 import { BigNumber } from "ethers";
 import { UniswapV3Pool } from "../typechain/UniswapV3Pool";
 
@@ -71,25 +71,25 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       minBandIndex,
       maxBandIndex,
     ] = await Promise.all([
-      await this.protocol!.accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMin, collatReq)),
-      await this.protocol!.accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMax, collatReq)),
+      await accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMin, collatReq)),
+      await accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMax, collatReq)),
     ])
 
-    let positions: Array<BigNumber> = [];
-    for (let i = minBandIndex; i <= maxBandIndex; i++) {
-      let newPositions = await accounting.positionsForBand(i.toString());
-      positions.push.apply(positions, newPositions);
-    }
+    let queries: Array<Promise<Array<BigNumber>>> = [];
+    for (let i = minBandIndex; i <= maxBandIndex; i++) queries.push(accounting.positionsForBand(i))
 
-    let collateralizations: Array<BigNumber> = await this.protocol!.accounting.positionsCollateralization(positions);
+    let results = await Promise.all(queries);
+
+    let positions: Array<BigNumber> = [];
+    results.map(result => positions.push.apply(positions, result))
+
+    let collateralizations: Array<BigNumber> = await accounting.positionsCollateralization(positions);
 
     // Check the positions that are undercollateralized given the price.
     let minCollateralization: BigNumber = this.collatRatioGivenPriceAndRequirement(price, collatReq);
     let undercollatPositions: Array<BigNumber> = [];
     for (let i = 0; i < collateralizations.length; i++) {
-      if (collateralizations[i] < minCollateralization) {
-        undercollatPositions.push(positions[i]);
-      }
+      if (collateralizations[i] < minCollateralization) undercollatPositions.push(positions[i]);
     }
     return undercollatPositions;
   }
