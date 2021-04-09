@@ -28,7 +28,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(this.collateralizationRequirement, price)
 
     if (undercollateralizedPositions.length > 0) {
-      await this.protocol!.liquidations.discoverUndercollateralizedPositions(undercollateralizedPositions)
+      await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(undercollateralizedPositions)
     }
 
     return WAIT_DURATION
