@@ -16,13 +16,12 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   // ========================== ENTRY POINT ==========================
   // =================================================================
   async runImpl(): Promise<number> {
-
     if (this.priceDuration == 0) this.priceDuration = await this.protocol!.liquidations.liquidationTwapDurationSeconds()
     if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.protocol!.market.collateralizationRequirement()
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
-      await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.coineth, this.priceDuration),
+      await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.coineth.address, this.priceDuration),
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 
