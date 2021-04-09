@@ -38,6 +38,7 @@ interface PricesInterface extends ethers.utils.Interface {
     "systemObtainPrice(address,bool)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
     "viewCurrentTwappedPrice(address,bool)": FunctionFragment;
+    "viewInstantTwappedPrice(address,uint32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -90,6 +91,10 @@ interface PricesInterface extends ethers.utils.Interface {
     functionFragment: "viewCurrentTwappedPrice",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(
+    functionFragment: "viewInstantTwappedPrice",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "addReferencePool",
@@ -139,6 +144,10 @@ interface PricesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "viewCurrentTwappedPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "viewInstantTwappedPrice",
     data: BytesLike
   ): Result;
 
@@ -361,6 +370,18 @@ export class Prices extends Contract {
       normalizeDecimals: boolean,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
+
+    viewInstantTwappedPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "viewInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   addReferencePool(
@@ -524,6 +545,18 @@ export class Prices extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  viewInstantTwappedPrice(
+    pool: string,
+    durationSeconds: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "viewInstantTwappedPrice(address,uint32)"(
+    pool: string,
+    durationSeconds: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   callStatic: {
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
@@ -669,6 +702,18 @@ export class Prices extends Contract {
     "viewCurrentTwappedPrice(address,bool)"(
       pool: string,
       normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    viewInstantTwappedPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "viewInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -843,6 +888,18 @@ export class Prices extends Contract {
       normalizeDecimals: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    viewInstantTwappedPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "viewInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -991,6 +1048,18 @@ export class Prices extends Contract {
     "viewCurrentTwappedPrice(address,bool)"(
       pool: string,
       normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    viewInstantTwappedPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "viewInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

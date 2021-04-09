@@ -3,7 +3,7 @@
 
 import hre from "hardhat";
 const e = hre.ethers;
-import { Wallet } from "ethers";
+import { Wallet, BigNumber } from "ethers";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
 import { getProtocol, deployedCoinProtocol } from "./ProtocolInfo";
@@ -24,10 +24,11 @@ export class ManagedBot {
   shouldLog: boolean = true;
   timer: NodeJS.Timer | null = null;
   wallet: Wallet;
-  ONE = BigInt(1e18);
+  ONE: BigNumber = BigNumber.from(BigInt(1e18));
 
   constructor(privateKey: string) {
     this.wallet = new Wallet(privateKey, e.provider);
+
   }
 
   async runImpl(): Promise<number> {
@@ -42,16 +43,16 @@ export class ManagedBot {
     return await getBlockTime();
   }
 
-  _div(a: bigint, b: bigint): bigint {
+  _div(a: BigNumber, b: BigNumber): BigNumber {
     return this._mulDiv(a, this.ONE, b);
   }
 
-  _mul(a: bigint, b: bigint): bigint {
+  _mul(a: BigNumber, b: BigNumber): BigNumber {
     return this._mulDiv(a, b, this.ONE);
   }
 
-  _mulDiv(a: bigint, b: bigint, c: bigint): bigint {
-    return (a * b) / c;
+  _mulDiv(a: BigNumber, b: BigNumber, c: BigNumber): BigNumber {
+    return a.mul(b).div(c)
   }
 
   async run() {
