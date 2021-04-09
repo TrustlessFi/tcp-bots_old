@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { ManagedBot } from "./utils/ManagedBot";
-import { getBlockTime, hours, minutes, econds, getCoinGeckoPriceInUSD, bigint } from "./utils/library";
+import { minutes } from "./utils/library";
 import { BigNumber } from "ethers";
-import { UniswapV3Pool } from "../typechain/UniswapV3Pool";
-
 
 const WAIT_DURATION = minutes(60)
 
@@ -26,7 +24,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       await this.genAreRewardsAvailable(),
       await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.coineth, this.priceDuration),
     ])
-    if (!rewardsAreAvailable) return hours(1)
+    if (!rewardsAreAvailable) return WAIT_DURATION
 
     let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(this.collateralizationRequirement, price)
 
@@ -34,7 +32,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       await this.protocol!.liquidations.discoverUndercollateralizedPositions(undercollateralizedPositions)
     }
 
-    return hours(1)
+    return WAIT_DURATION
   }
 
   // =================================================================
@@ -63,7 +61,6 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   ): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
 
-
     let priceMin = price.mul(80).div(100)
     let priceMax = price.mul(120).div(100)
 
@@ -75,10 +72,10 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       await accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMax, collatReq)),
     ])
 
-    let queries: Array<Promise<Array<BigNumber>>> = [];
-    for (let i = minBandIndex; i <= maxBandIndex; i++) queries.push(accounting.positionsForBand(i))
+    let positionsForBandQueries: Array<Promise<Array<BigNumber>>> = [];
+    for (let i = minBandIndex; i <= maxBandIndex; i++) positionsForBandQueries.push(accounting.positionsForBand(i))
 
-    let results = await Promise.all(queries);
+    let results = await Promise.all(positionsForBandQueries);
 
     let positions: Array<BigNumber> = [];
     results.map(result => positions.push.apply(positions, result))
@@ -91,7 +88,18 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     for (let i = 0; i < collateralizations.length; i++) {
       if (collateralizations[i] < minCollateralization) undercollatPositions.push(positions[i]);
     }
-    return undercollatPositions;
+
+    // prioritize larger positions first
+    let basicPositionInfo = await Promise.all(
+      undercollatPositions.map(undercollatPosition => accounting.getBasicPositionInfo(undercollatPosition))
+    )
+    let positionData = []
+    for (let i = 0; i < basicPositionInfo.length; i++) {
+      positionData.push({positionID: undercollatPositions[i], debt: basicPositionInfo[i].debtCount})
+    }
+    positionData.sort((position0, position1) => position0.debt.sub(position1.debt).lt(0) ? 1 : -1)
+
+    return positionData.map(position => position.positionID);
   }
 
   collatRatioGivenPriceAndRequirement(price: BigNumber, collatReq: BigNumber) {
