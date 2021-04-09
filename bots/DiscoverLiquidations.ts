@@ -4,14 +4,14 @@
 import { ManagedBot } from "./utils/ManagedBot";
 import { getBlockTime, hours, seconds, getCoinGeckoPriceInUSD, bigint } from "./utils/library";
 import { BigNumber } from "ethers";
-import { UniswapV2Pair } from "../typechain/UniswapV2Pair";
+import { UniswapV3Pool } from "../typechain/UniswapV3Pool";
 
 type priceInfoType = {
   coinGeckoPrice: bigint,
   protocolPriceUsable: boolean,
   collateral: number,
   collatReq: BigNumber,
-  pair: UniswapV2Pair,
+  pair: UniswapV3Pool,
   undercollatPositions: Array<BigNumber>,
   protocolPriceInfo: {
     price: BigNumber,
@@ -50,6 +50,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   // ========================== ENTRY POINT ==========================
   // =================================================================
   async runImpl(): Promise<number> {
+    /*
     let wethPair = this.protocol!.pairs.coinweth;
     let btcPair = this.protocol!.pairs.coinbtc;
 
@@ -59,9 +60,11 @@ export class DiscoverLiquidationsBot extends ManagedBot {
 
     let wethWaitTime = await this.genRunForCollateralType(0, wethPair, fmtPriceProtocol(ethPrice));
     let btcWaitTime = await this.genRunForCollateralType(1, btcPair, fmtPriceProtocol(btcPrice));
-    return Math.min(wethWaitTime, btcWaitTime);
+    */
+    return 5
   }
 
+  /*
   // =================================================================
   // ======================= DECISION TREE ===========================
   // =================================================================
@@ -245,4 +248,5 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     let collateralization = this._mul(collatReq, price);
     return BigInt(await this.protocol!.accounting.collateralizationBand(collateralization.toString()));
   }
+  */
 }

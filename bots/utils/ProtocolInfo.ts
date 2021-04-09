@@ -128,7 +128,7 @@ export const getProtocol = async(): Promise<deployedCoinProtocol> => {
   ] = await Promise.all([
     await get('TFGovernor', await tfGovernorAlpha.tfGovernor()) as TFGovernor,
     await get('Governor', await coinGovernorAlpha.governor()) as Governor,
-    await get('WETH9', await nftPositionManager.WETH()) as WETH9,
+    await get('WETH9', await nftPositionManager.WETH9()) as WETH9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as UniswapV3Factory,
   ]);
 
@@ -137,7 +137,7 @@ export const getProtocol = async(): Promise<deployedCoinProtocol> => {
     tfPositionNFT,
     tfTimelock,
   ] = await Promise.all([
-    await get('TFToken', await tfGovernor.tfToken()) as ProtocolToken,
+    await get('ProtocolToken', await tfGovernor.tfToken()) as ProtocolToken,
     await get('TFPositionNFT', await tfGovernor.tfPositionNFT()) as TFPositionNFT,
     await get('Timelock', await tfGovernor.timelock()) as Timelock,
   ]);
@@ -161,7 +161,7 @@ export const getProtocol = async(): Promise<deployedCoinProtocol> => {
   ] = await Promise.all([
     await get('Accounting', await governor.accounting()) as Accounting,
     await get('Auctions', await governor.auctions()) as Auctions,
-    await get('CNP', await governor.cnp()) as ProtocolToken,
+    await get('ProtocolToken', await governor.cnp()) as ProtocolToken,
     await get('Coin', await governor.coin()) as Coin,
     await get('CoinPositionNFT', await governor.coinPositionNFT()) as CoinPositionNFT,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as EnforcedDecentralization,
