@@ -53,7 +53,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     return !rewardsLimitInfo.remaining.isZero()
   }
 
-  // given a price and a collateral type, find all of the undercollateralized positions.
+  // given a price and a collateral type, find all of the undercollateralized positions in sorted order from most debt to least.
   async genUndercollatPositionsForPrice(
     collatReq: BigNumber,
     price: BigNumber,
