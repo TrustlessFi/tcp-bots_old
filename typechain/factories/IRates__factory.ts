@@ -62,6 +62,25 @@ const _abi = [
         type: "string",
       },
       {
+        indexed: true,
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "ParameterUpdatedAddress",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "string",
+        name: "paramName",
+        type: "string",
+      },
+      {
         indexed: false,
         internalType: "int128",
         name: "value",
@@ -103,6 +122,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "addReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "completeSetup",
     outputs: [],
@@ -124,19 +156,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "maxSteps",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "positiveInterestRate",
     outputs: [
       {
@@ -149,16 +168,29 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "stepsOff",
-    outputs: [
+    inputs: [
       {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
     ],
-    stateMutability: "view",
+    name: "removeReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint128",
+        name: "step",
+        type: "uint128",
+      },
+    ],
+    name: "setInterestRateStep",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

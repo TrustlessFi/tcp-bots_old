@@ -9,16 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IAuctionsInterface extends ethers.utils.Interface {
   functions: {
@@ -64,11 +63,41 @@ export class IAuctions extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IAuctionsInterface;
 
@@ -81,9 +110,13 @@ export class IAuctions extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    stop(overrides?: Overrides): Promise<ContractTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
@@ -92,9 +125,13 @@ export class IAuctions extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  stop(overrides?: Overrides): Promise<ContractTransaction>;
+  stop(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "stop()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
@@ -113,39 +150,69 @@ export class IAuctions extends Contract {
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { auctionID: BigNumber; bidder: string; bid: BigNumber }
+    >;
 
     DeficitAuctionSettled(
       auctionID: BigNumberish | null,
       winner: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string],
+      { auctionID: BigNumber; winner: string }
+    >;
 
     DeficitAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      { auctionID: BigNumber; count: BigNumber; maxEndTime: BigNumber }
+    >;
 
-    ParameterUpdated(paramName: string | null, value: null): EventFilter;
+    ParameterUpdated(
+      paramName: string | null,
+      value: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { paramName: string; value: BigNumber }
+    >;
 
-    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
+    ParameterUpdated64(
+      paramName: string | null,
+      value: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { paramName: string; value: BigNumber }
+    >;
 
     SurplusAuctionBid(
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { auctionID: BigNumber; bidder: string; bid: BigNumber }
+    >;
 
     SurplusAuctionSettled(
       auctionID: BigNumberish | null,
       winner: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string],
+      { auctionID: BigNumber; winner: string }
+    >;
 
     SurplusAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      { auctionID: BigNumber; count: BigNumber; maxEndTime: BigNumber }
+    >;
   };
 
   estimateGas: {
@@ -155,9 +222,13 @@ export class IAuctions extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    stop(overrides?: Overrides): Promise<BigNumber>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "stop()"(overrides?: Overrides): Promise<BigNumber>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -169,8 +240,12 @@ export class IAuctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

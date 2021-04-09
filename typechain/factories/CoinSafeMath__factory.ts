@@ -2,9 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Signer } from "ethers";
+import { Signer, Contract, ContractFactory, Overrides } from "ethers";
 import { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Contract, ContractFactory, Overrides } from "@ethersproject/contracts";
 
 import type { CoinSafeMath } from "../CoinSafeMath";
 
@@ -13,10 +12,14 @@ export class CoinSafeMath__factory extends ContractFactory {
     super(_abi, _bytecode, signer);
   }
 
-  deploy(overrides?: Overrides): Promise<CoinSafeMath> {
+  deploy(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<CoinSafeMath> {
     return super.deploy(overrides || {}) as Promise<CoinSafeMath>;
   }
-  getDeployTransaction(overrides?: Overrides): TransactionRequest {
+  getDeployTransaction(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
   attach(address: string): CoinSafeMath {
@@ -50,4 +53,4 @@ const _abi = [
 ];
 
 const _bytecode =
-  "0x6096610024600b82828239805160001a607314601757fe5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361060335760003560e01c8063c2ee3a08146038575b600080fd5b603e6054565b6040518082815260200191505060405180910390f35b670de0b6b3a76400008156fea2646970667358221220ee2ccbad7899cc66d1765b7fae215f85458ca36e03f6db0ed68119f6c33bce0764736f6c63430007040033";
+  "0x609a610027600b82828239805160001a6073141515601957fe5b30600052607381538281f350fe730000000000000000000000000000000000000000301460806040526004361060365760003560e01c8063c2ee3a0814603c576036565b60006000fd5b60426058565b6040518082815260200191505060405180910390f35b670de0b6b3a76400008156fea2646970667358221220ae91334495a53a2bb6eec0da39a28e2901ad821a0425ad6474131456c0d5cc3064736f6c63430007060033";

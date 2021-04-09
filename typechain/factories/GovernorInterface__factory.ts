@@ -18,22 +18,19 @@ export class GovernorInterface__factory {
 
 const _abi = [
   {
-    constant: true,
     inputs: [],
-    name: "circulatingCNP",
+    name: "currentPhase",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint8",
         name: "",
-        type: "uint256",
+        type: "uint8",
       },
     ],
-    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    constant: false,
     inputs: [
       {
         internalType: "address",
@@ -45,16 +42,25 @@ const _abi = [
         name: "signature",
         type: "string",
       },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
     ],
-    name: "validateAction",
+    name: "execute",
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "success",
         type: "bool",
       },
+      {
+        internalType: "bytes",
+        name: "returnData",
+        type: "bytes",
+      },
     ],
-    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },

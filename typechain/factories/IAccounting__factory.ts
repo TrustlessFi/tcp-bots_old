@@ -18,36 +18,42 @@ export class IAccounting__factory {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [],
+    name: "DebtPositionIndexingDisabled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: "PoolPositionIndexingDisabled",
+    type: "event",
+  },
+  {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
-      },
-      {
         internalType: "uint256",
-        name: "count",
+        name: "nftID",
         type: "uint256",
       },
       {
-        internalType: "bool",
-        name: "increase",
-        type: "bool",
-      },
-    ],
-    name: "adjustDebt",
-    outputs: [
-      {
-        internalType: "uint128",
-        name: "",
-        type: "uint128",
+        internalType: "int24",
+        name: "tickLower",
+        type: "int24",
       },
       {
-        internalType: "uint128",
-        name: "",
-        type: "uint128",
+        internalType: "int24",
+        name: "tickUpper",
+        type: "int24",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
     ],
+    name: "addPositionToIndex",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -67,41 +73,48 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
-      },
-    ],
-    name: "debtByCollateral",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
-        type: "address",
-      },
-      {
         internalType: "uint256",
         name: "count",
         type: "uint256",
       },
     ],
-    name: "distributePairTokens",
+    name: "decreaseDebt",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    name: "decreasePoolLiquidity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "nftID",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "dest",
+        type: "address",
+      },
+    ],
+    name: "distributeLiquidityNft",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -116,11 +129,6 @@ const _abi = [
     ],
     name: "getBasicPositionInfo",
     outputs: [
-      {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
-      },
       {
         internalType: "uint256",
         name: "debtCount",
@@ -138,11 +146,24 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
     ],
+    name: "getGenesisPeriodCoinLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getLiquidationAccount",
     outputs: [
       {
@@ -154,12 +175,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "debt",
+            name: "collateral",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "collateral",
+            name: "debt",
             type: "uint256",
           },
         ],
@@ -175,19 +196,53 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
+        name: "account",
         type: "address",
       },
     ],
-    name: "getPairTokenPosition",
+    name: "getParticipatedInMarketGenesis",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "participated",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "nftID",
+        type: "uint256",
+      },
+    ],
+    name: "getPoolPosition",
     outputs: [
       {
         components: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "uint16",
+            name: "poolID",
+            type: "uint16",
+          },
+          {
+            internalType: "int24",
+            name: "tickLower",
+            type: "int24",
+          },
+          {
+            internalType: "int24",
+            name: "tickUpper",
+            type: "int24",
+          },
           {
             internalType: "uint256",
             name: "totalRewards",
@@ -195,27 +250,22 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "count",
+            name: "liquidity",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "cumulativePairCoinCount",
+            name: "cumulativeLiquidity",
             type: "uint256",
           },
           {
             internalType: "uint64",
-            name: "lastPeriodRewarded",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "unlockPeriod",
+            name: "lastTimeRewarded",
             type: "uint64",
           },
         ],
-        internalType: "struct IAccounting.PairTokenPosition",
-        name: "",
+        internalType: "struct IAccounting.PoolPosition",
+        name: "pt",
         type: "tuple",
       },
     ],
@@ -261,12 +311,7 @@ const _abi = [
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "lastUpdateTime",
+            name: "lastTimeUpdated",
             type: "uint64",
           },
           {
@@ -280,13 +325,44 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IGovernor.Collateral",
-            name: "collateralType",
-            type: "uint8",
+            internalType: "uint64",
+            name: "collateralizationBandIndex",
+            type: "uint64",
           },
         ],
         internalType: "struct IAccounting.DebtPosition",
         name: "acct",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
+      },
+    ],
+    name: "getRewardStatus",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "totalRewards",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "cumulativeLiquidity",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IAccounting.RewardStatus",
+        name: "rs",
         type: "tuple",
       },
     ],
@@ -301,12 +377,7 @@ const _abi = [
         components: [
           {
             internalType: "uint256",
-            name: "ethDebt",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "btcDebt",
+            name: "debt",
             type: "uint256",
           },
           {
@@ -336,17 +407,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint64",
-        name: "positionID",
-        type: "uint64",
-      },
-      {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
       },
     ],
-    name: "registerPosition",
+    name: "increaseDebt",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -354,10 +420,68 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
       },
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    name: "increasePoolLiquidity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newRewards",
+        type: "address",
+      },
+    ],
+    name: "onRewardsUpgrade",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "oneToOneMintedCoin",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
+      },
+    ],
+    name: "poolLiquidity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "address",
         name: "account",
@@ -395,10 +519,46 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
       },
+      {
+        internalType: "address",
+        name: "dest",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "sendOneToOneBackedTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    name: "setGenesisPeriodCoinTokenCount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         components: [
           {
@@ -408,12 +568,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "debt",
+            name: "collateral",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "collateral",
+            name: "debt",
             type: "uint256",
           },
         ],
@@ -430,17 +590,63 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "setOneToOneMintedCoin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
-        name: "owner",
+        name: "account",
         type: "address",
       },
       {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
-        type: "address",
+        internalType: "bool",
+        name: "participated",
+        type: "bool",
+      },
+    ],
+    name: "setParticipatedInMarketGenesis",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "nftID",
+        type: "uint256",
       },
       {
         components: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "uint16",
+            name: "poolID",
+            type: "uint16",
+          },
+          {
+            internalType: "int24",
+            name: "tickLower",
+            type: "int24",
+          },
+          {
+            internalType: "int24",
+            name: "tickUpper",
+            type: "int24",
+          },
           {
             internalType: "uint256",
             name: "totalRewards",
@@ -448,31 +654,26 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "count",
+            name: "liquidity",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "cumulativePairCoinCount",
+            name: "cumulativeLiquidity",
             type: "uint256",
           },
           {
             internalType: "uint64",
-            name: "lastPeriodRewarded",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "unlockPeriod",
+            name: "lastTimeRewarded",
             type: "uint64",
           },
         ],
-        internalType: "struct IAccounting.PairTokenPosition",
+        internalType: "struct IAccounting.PoolPosition",
         name: "pt",
         type: "tuple",
       },
     ],
-    name: "setPairTokenPosition",
+    name: "setPoolPosition",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -513,12 +714,7 @@ const _abi = [
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "lastUpdateTime",
+            name: "lastTimeUpdated",
             type: "uint64",
           },
           {
@@ -532,9 +728,9 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IGovernor.Collateral",
-            name: "collateralType",
-            type: "uint8",
+            internalType: "uint64",
+            name: "collateralizationBandIndex",
+            type: "uint64",
           },
         ],
         internalType: "struct IAccounting.DebtPosition",
@@ -550,15 +746,40 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
+      },
+      {
         components: [
           {
             internalType: "uint256",
-            name: "ethDebt",
+            name: "totalRewards",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "btcDebt",
+            name: "cumulativeLiquidity",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IAccounting.RewardStatus",
+        name: "rs",
+        type: "tuple",
+      },
+    ],
+    name: "setRewardStatus",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "debt",
             type: "uint256",
           },
           {

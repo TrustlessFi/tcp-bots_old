@@ -9,71 +9,82 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   functions: {
-    "LOCK_EXTENSION()": FunctionFragment;
+    "LAST_PHASE()": FunctionFragment;
+    "PHASE_DELAY()": FunctionFragment;
+    "PHASE_ONE_DURATION()": FunctionFragment;
     "blacklistAction(string)": FunctionFragment;
-    "contractUpgradeLockDelaysRemaining()": FunctionFragment;
-    "contractUpgradeLockTime()": FunctionFragment;
-    "delayContractUpgradeExpiration()": FunctionFragment;
-    "delayParameterUpdateExpiration()": FunctionFragment;
+    "cnp()": FunctionFragment;
+    "currentPhase()": FunctionFragment;
+    "delayPhaseStartTime(uint8)": FunctionFragment;
     "deployer()": FunctionFragment;
+    "getDelaysRemaining(uint8)": FunctionFragment;
+    "getStartTime(uint8)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
-    "parameterUpdateLockDelaysRemaining()": FunctionFragment;
-    "parameterUpdateLockTime()": FunctionFragment;
+    "setPhaseOneStartTime(uint64)": FunctionFragment;
     "stopped()": FunctionFragment;
+    "transferEmergencyShutdownTokens(address,uint256)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
     "validateAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "LOCK_EXTENSION",
+    functionFragment: "LAST_PHASE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PHASE_DELAY",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PHASE_ONE_DURATION",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "blacklistAction",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "contractUpgradeLockDelaysRemaining",
+    functionFragment: "currentPhase",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "contractUpgradeLockTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delayContractUpgradeExpiration",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delayParameterUpdateExpiration",
-    values?: undefined
+    functionFragment: "delayPhaseStartTime",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getDelaysRemaining",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStartTime",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "parameterUpdateLockDelaysRemaining",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "parameterUpdateLockTime",
-    values?: undefined
+    functionFragment: "setPhaseOneStartTime",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferEmergencyShutdownTokens",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
@@ -83,42 +94,48 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     values: [string, string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "LAST_PHASE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "LOCK_EXTENSION",
+    functionFragment: "PHASE_DELAY",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "PHASE_ONE_DURATION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "blacklistAction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "contractUpgradeLockDelaysRemaining",
+    functionFragment: "currentPhase",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "contractUpgradeLockTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delayContractUpgradeExpiration",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delayParameterUpdateExpiration",
+    functionFragment: "delayPhaseStartTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getDelaysRemaining",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStartTime",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "parameterUpdateLockDelaysRemaining",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "parameterUpdateLockTime",
+    functionFragment: "setPhaseOneStartTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferEmergencyShutdownTokens",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
@@ -131,16 +148,16 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   events: {
     "ActionBlacklisted(string)": EventFragment;
     "Initialized(address)": EventFragment;
+    "PhaseStartDelayed(uint64,uint8)": EventFragment;
     "Stopped()": EventFragment;
     "UpdateLockDelayed(uint64,uint8)": EventFragment;
-    "UpgradeLockDelayed(uint64,uint8)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionBlacklisted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PhaseStartDelayed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateLockDelayed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UpgradeLockDelayed"): EventFragment;
 }
 
 export class EnforcedDecentralization extends Contract {
@@ -148,62 +165,108 @@ export class EnforcedDecentralization extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: EnforcedDecentralizationInterface;
 
   functions: {
-    LOCK_EXTENSION(overrides?: CallOverrides): Promise<[BigNumber]>;
+    LAST_PHASE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "LAST_PHASE()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    PHASE_DELAY(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "PHASE_DELAY()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    PHASE_ONE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "PHASE_ONE_DURATION()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     blacklistAction(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "blacklistAction(string)"(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    contractUpgradeLockDelaysRemaining(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    cnp(overrides?: CallOverrides): Promise<[string]>;
 
-    "contractUpgradeLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
 
-    contractUpgradeLockTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    currentPhase(overrides?: CallOverrides): Promise<[number]>;
 
-    "contractUpgradeLockTime()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "currentPhase()"(overrides?: CallOverrides): Promise<[number]>;
 
-    delayContractUpgradeExpiration(
-      overrides?: Overrides
+    delayPhaseStartTime(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "delayContractUpgradeExpiration()"(
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    delayParameterUpdateExpiration(
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "delayParameterUpdateExpiration()"(
-      overrides?: Overrides
+    "delayPhaseStartTime(uint8)"(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getDelaysRemaining(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { phaseStartDelaysRemaining: BigNumber }>;
+
+    "getDelaysRemaining(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { phaseStartDelaysRemaining: BigNumber }>;
+
+    getStartTime(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { startTime: BigNumber }>;
+
+    "getStartTime(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { startTime: BigNumber }>;
 
     governor(overrides?: CallOverrides): Promise<[string]>;
 
@@ -211,39 +274,44 @@ export class EnforcedDecentralization extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    parameterUpdateLockDelaysRemaining(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
+    setPhaseOneStartTime(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "parameterUpdateLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    parameterUpdateLockTime(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "parameterUpdateLockTime()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "setPhaseOneStartTime(uint64)"(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<[boolean]>;
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    transferEmergencyShutdownTokens(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "transferEmergencyShutdownTokens(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -260,83 +328,114 @@ export class EnforcedDecentralization extends Contract {
     ): Promise<[boolean]>;
   };
 
-  LOCK_EXTENSION(overrides?: CallOverrides): Promise<BigNumber>;
+  LAST_PHASE(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "LAST_PHASE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  PHASE_DELAY(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "PHASE_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  PHASE_ONE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "PHASE_ONE_DURATION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   blacklistAction(
     signature: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "blacklistAction(string)"(
     signature: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  contractUpgradeLockDelaysRemaining(
-    overrides?: CallOverrides
-  ): Promise<number>;
+  cnp(overrides?: CallOverrides): Promise<string>;
 
-  "contractUpgradeLockDelaysRemaining()"(
-    overrides?: CallOverrides
-  ): Promise<number>;
+  "cnp()"(overrides?: CallOverrides): Promise<string>;
 
-  contractUpgradeLockTime(overrides?: CallOverrides): Promise<BigNumber>;
+  currentPhase(overrides?: CallOverrides): Promise<number>;
 
-  "contractUpgradeLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "currentPhase()"(overrides?: CallOverrides): Promise<number>;
 
-  delayContractUpgradeExpiration(
-    overrides?: Overrides
+  delayPhaseStartTime(
+    phaseNumber: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "delayContractUpgradeExpiration()"(
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  delayParameterUpdateExpiration(
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "delayParameterUpdateExpiration()"(
-    overrides?: Overrides
+  "delayPhaseStartTime(uint8)"(
+    phaseNumber: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
 
   "deployer()"(overrides?: CallOverrides): Promise<string>;
 
+  getDelaysRemaining(
+    phase: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getDelaysRemaining(uint8)"(
+    phase: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getStartTime(
+    phase: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getStartTime(uint8)"(
+    phase: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(
+    _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  parameterUpdateLockDelaysRemaining(
-    overrides?: CallOverrides
-  ): Promise<number>;
+  setPhaseOneStartTime(
+    phaseOneStartTime: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "parameterUpdateLockDelaysRemaining()"(
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  parameterUpdateLockTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "setPhaseOneStartTime(uint64)"(
+    phaseOneStartTime: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  transferEmergencyShutdownTokens(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "transferEmergencyShutdownTokens(address,uint256)"(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   "validUpdate(bytes4)"(
-    action: BytesLike,
+    arg0: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -353,9 +452,17 @@ export class EnforcedDecentralization extends Contract {
   ): Promise<boolean>;
 
   callStatic: {
-    LOCK_EXTENSION(overrides?: CallOverrides): Promise<BigNumber>;
+    LAST_PHASE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "LAST_PHASE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PHASE_DELAY(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PHASE_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PHASE_ONE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PHASE_ONE_DURATION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     blacklistAction(
       signature: string,
@@ -367,33 +474,47 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    contractUpgradeLockDelaysRemaining(
-      overrides?: CallOverrides
-    ): Promise<number>;
+    cnp(overrides?: CallOverrides): Promise<string>;
 
-    "contractUpgradeLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<number>;
+    "cnp()"(overrides?: CallOverrides): Promise<string>;
 
-    contractUpgradeLockTime(overrides?: CallOverrides): Promise<BigNumber>;
+    currentPhase(overrides?: CallOverrides): Promise<number>;
 
-    "contractUpgradeLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "currentPhase()"(overrides?: CallOverrides): Promise<number>;
 
-    delayContractUpgradeExpiration(overrides?: CallOverrides): Promise<void>;
-
-    "delayContractUpgradeExpiration()"(
+    delayPhaseStartTime(
+      phaseNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    delayParameterUpdateExpiration(overrides?: CallOverrides): Promise<void>;
-
-    "delayParameterUpdateExpiration()"(
+    "delayPhaseStartTime(uint8)"(
+      phaseNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
     "deployer()"(overrides?: CallOverrides): Promise<string>;
+
+    getDelaysRemaining(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getDelaysRemaining(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStartTime(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getStartTime(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
@@ -406,26 +527,36 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    parameterUpdateLockDelaysRemaining(
+    setPhaseOneStartTime(
+      phaseOneStartTime: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<void>;
 
-    "parameterUpdateLockDelaysRemaining()"(
+    "setPhaseOneStartTime(uint64)"(
+      phaseOneStartTime: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
-
-    parameterUpdateLockTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+    ): Promise<void>;
 
     stopped(overrides?: CallOverrides): Promise<boolean>;
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    transferEmergencyShutdownTokens(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "transferEmergencyShutdownTokens(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -443,94 +574,142 @@ export class EnforcedDecentralization extends Contract {
   };
 
   filters: {
-    ActionBlacklisted(signature: string | null): EventFilter;
+    ActionBlacklisted(
+      signature: string | null
+    ): TypedEventFilter<[string], { signature: string }>;
 
-    Initialized(governor: string | null): EventFilter;
+    Initialized(
+      governor: string | null
+    ): TypedEventFilter<[string], { governor: string }>;
 
-    Stopped(): EventFilter;
+    PhaseStartDelayed(
+      startTime: null,
+      delaysRemaining: null
+    ): TypedEventFilter<
+      [BigNumber, number],
+      { startTime: BigNumber; delaysRemaining: number }
+    >;
 
-    UpdateLockDelayed(locktime: null, delaysRemaining: null): EventFilter;
+    Stopped(): TypedEventFilter<[], {}>;
 
-    UpgradeLockDelayed(locktime: null, delaysRemaining: null): EventFilter;
+    UpdateLockDelayed(
+      locktime: null,
+      delaysRemaining: null
+    ): TypedEventFilter<
+      [BigNumber, number],
+      { locktime: BigNumber; delaysRemaining: number }
+    >;
   };
 
   estimateGas: {
-    LOCK_EXTENSION(overrides?: CallOverrides): Promise<BigNumber>;
+    LAST_PHASE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "LOCK_EXTENSION()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "LAST_PHASE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PHASE_DELAY(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PHASE_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PHASE_ONE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PHASE_ONE_DURATION()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     blacklistAction(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "blacklistAction(string)"(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    contractUpgradeLockDelaysRemaining(
-      overrides?: CallOverrides
+    cnp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentPhase(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    delayPhaseStartTime(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "contractUpgradeLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    contractUpgradeLockTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "contractUpgradeLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    delayContractUpgradeExpiration(overrides?: Overrides): Promise<BigNumber>;
-
-    "delayContractUpgradeExpiration()"(
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    delayParameterUpdateExpiration(overrides?: Overrides): Promise<BigNumber>;
-
-    "delayParameterUpdateExpiration()"(
-      overrides?: Overrides
+    "delayPhaseStartTime(uint8)"(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getDelaysRemaining(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getDelaysRemaining(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStartTime(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getStartTime(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
+    init(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    parameterUpdateLockDelaysRemaining(
-      overrides?: CallOverrides
+    setPhaseOneStartTime(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "parameterUpdateLockDelaysRemaining()"(
-      overrides?: CallOverrides
+    "setPhaseOneStartTime(uint64)"(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    parameterUpdateLockTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "parameterUpdateLockTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
+    transferEmergencyShutdownTokens(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    "transferEmergencyShutdownTokens(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -548,57 +727,73 @@ export class EnforcedDecentralization extends Contract {
   };
 
   populateTransaction: {
-    LOCK_EXTENSION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    LAST_PHASE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "LOCK_EXTENSION()"(
+    "LAST_PHASE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PHASE_DELAY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "PHASE_DELAY()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PHASE_ONE_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "PHASE_ONE_DURATION()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     blacklistAction(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "blacklistAction(string)"(
       signature: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    contractUpgradeLockDelaysRemaining(
-      overrides?: CallOverrides
+    cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    currentPhase(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    delayPhaseStartTime(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "contractUpgradeLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    contractUpgradeLockTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "contractUpgradeLockTime()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    delayContractUpgradeExpiration(
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "delayContractUpgradeExpiration()"(
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    delayParameterUpdateExpiration(
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "delayParameterUpdateExpiration()"(
-      overrides?: Overrides
+    "delayPhaseStartTime(uint8)"(
+      phaseNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getDelaysRemaining(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getDelaysRemaining(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getStartTime(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getStartTime(uint8)"(
+      phase: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -606,41 +801,47 @@ export class EnforcedDecentralization extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    parameterUpdateLockDelaysRemaining(
-      overrides?: CallOverrides
+    setPhaseOneStartTime(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "parameterUpdateLockDelaysRemaining()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    parameterUpdateLockTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "parameterUpdateLockTime()"(
-      overrides?: CallOverrides
+    "setPhaseOneStartTime(uint64)"(
+      phaseOneStartTime: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    transferEmergencyShutdownTokens(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "transferEmergencyShutdownTokens(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     validUpdate(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

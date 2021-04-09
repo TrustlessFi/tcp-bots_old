@@ -4,7 +4,6 @@
   "sourceName": "contracts/core/governance/GovernorAlpha.sol",
   "abi": [
     {
-      "constant": true,
       "inputs": [],
       "name": "GRACE_PERIOD",
       "outputs": [
@@ -14,21 +13,17 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [],
       "name": "acceptAdmin",
       "outputs": [],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [
         {
           "internalType": "address",
@@ -53,12 +48,10 @@
       ],
       "name": "cancelTransaction",
       "outputs": [],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": true,
       "inputs": [],
       "name": "delay",
       "outputs": [
@@ -68,12 +61,10 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [
         {
           "internalType": "address",
@@ -104,12 +95,10 @@
           "type": "bytes"
         }
       ],
-      "payable": true,
       "stateMutability": "payable",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [
         {
           "internalType": "address",
@@ -140,12 +129,10 @@
           "type": "bytes32"
         }
       ],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": true,
       "inputs": [
         {
           "internalType": "bytes32",
@@ -161,7 +148,6 @@
           "type": "bool"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     }

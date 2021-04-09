@@ -41,25 +41,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "allocation",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "allotment",
-        type: "uint256",
-      },
-    ],
-    name: "AllocationAllotted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "string",
         name: "contractName",
         type: "string",
@@ -82,6 +63,12 @@ const _abi = [
         internalType: "uint256",
         name: "emergencyShutdownTokensBurned",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "shutdownTime",
+        type: "uint64",
       },
     ],
     name: "EmergencyShutdownExecuted",
@@ -112,7 +99,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "burner",
+        name: "locker",
         type: "address",
       },
       {
@@ -122,7 +109,26 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ShutdownTokensBurned",
+    name: "ShutdownTokensLocked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "locker",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "ShutdownTokensUnlocked",
     type: "event",
   },
   {
@@ -139,6 +145,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "addReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "auctions",
     outputs: [
@@ -146,32 +165,6 @@ const _abi = [
         internalType: "contract IAuctions",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "btc",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "circulatingCNP",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "circulating",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -208,7 +201,7 @@ const _abi = [
     name: "coinPositionNFT",
     outputs: [
       {
-        internalType: "contract ICoinPositionNFT",
+        internalType: "contract IPositionNFT",
         name: "",
         type: "address",
       },
@@ -217,17 +210,11 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateral",
-        type: "uint8",
-      },
-    ],
-    name: "collateralToPair",
+    inputs: [],
+    name: "collateralPool",
     outputs: [
       {
-        internalType: "contract IUniswapV2Pair",
+        internalType: "contract IUniswapV3Pool",
         name: "",
         type: "address",
       },
@@ -249,6 +236,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "currentPhase",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -261,9 +261,22 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "distributeCNP",
+    name: "distributeLiquidityRewards",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "distributedCNP",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "circulating",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -322,23 +335,10 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getCollateralPairs",
+    name: "getReferencePools",
     outputs: [
       {
-        internalType: "contract IUniswapV2Pair[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getReferencePairs",
-    outputs: [
-      {
-        internalType: "contract IUniswapV2Pair[]",
+        internalType: "contract IUniswapV3Pool[]",
         name: "",
         type: "address[]",
       },
@@ -354,6 +354,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lend",
+    outputs: [
+      {
+        internalType: "contract ILend",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -417,19 +430,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
-        type: "address",
-      },
-    ],
-    name: "pairToCollateral",
+    inputs: [],
+    name: "prices",
     outputs: [
       {
-        internalType: "enum IGovernor.Collateral",
+        internalType: "contract IPrices",
         name: "",
-        type: "uint8",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -437,10 +444,10 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "prices",
+    name: "protocolDeployer",
     outputs: [
       {
-        internalType: "contract IPrices",
+        internalType: "address",
         name: "",
         type: "address",
       },
@@ -463,6 +470,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "protocolPool",
+    outputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "rates",
     outputs: [
       {
@@ -471,6 +491,45 @@ const _abi = [
         type: "address",
       },
     ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "removeReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireAccrueSystemInterestAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireCoinMintingAccess",
+    outputs: [],
     stateMutability: "view",
     type: "function",
   },
@@ -507,8 +566,49 @@ const _abi = [
         name: "caller",
         type: "address",
       },
+      {
+        components: [
+          {
+            internalType: "uint8",
+            name: "v",
+            type: "uint8",
+          },
+          {
+            internalType: "bytes32",
+            name: "r",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "s",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct IGovernor.GenesisAuth",
+        name: "ga",
+        type: "tuple",
+      },
     ],
-    name: "requirePairTokenWriteAccess",
+    name: "requireGenesisAuthenticated",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isGenesis",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireInstantPriceAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -522,19 +622,6 @@ const _abi = [
       },
     ],
     name: "requirePositionWriteAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requirePriceAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -605,19 +692,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "tokenAllocations",
-    outputs: [
-      {
-        internalType: "contract ITokenAllocations",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "contract IAuctions",
@@ -626,6 +700,19 @@ const _abi = [
       },
     ],
     name: "upgradeAuctions",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract ILend",
+        name: "_lend",
+        type: "address",
+      },
+    ],
+    name: "upgradeLend",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -719,19 +806,6 @@ const _abi = [
     name: "upgradeSettlement",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "weth",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ];

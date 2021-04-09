@@ -9,55 +9,59 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IGovernorInterface extends ethers.utils.Interface {
   functions: {
     "accounting()": FunctionFragment;
+    "addReferencePool(address)": FunctionFragment;
     "auctions()": FunctionFragment;
-    "btc()": FunctionFragment;
-    "circulatingCNP()": FunctionFragment;
     "cnp()": FunctionFragment;
     "coin()": FunctionFragment;
     "coinPositionNFT()": FunctionFragment;
-    "collateralToPair(uint8)": FunctionFragment;
+    "collateralPool()": FunctionFragment;
     "currentDailyRewardCount()": FunctionFragment;
-    "distributeCNP(address,uint256)": FunctionFragment;
+    "currentPhase()": FunctionFragment;
+    "distributeLiquidityRewards(address,uint256)": FunctionFragment;
+    "distributedCNP()": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
     "executeShutdown()": FunctionFragment;
-    "getCollateralPairs()": FunctionFragment;
-    "getReferencePairs()": FunctionFragment;
+    "getReferencePools()": FunctionFragment;
     "isShutdown()": FunctionFragment;
+    "lend()": FunctionFragment;
     "lendCoin()": FunctionFragment;
     "liquidations()": FunctionFragment;
     "market()": FunctionFragment;
     "mintCNP(address,uint256)": FunctionFragment;
-    "pairToCollateral(address)": FunctionFragment;
     "prices()": FunctionFragment;
+    "protocolDeployer()": FunctionFragment;
     "protocolLock()": FunctionFragment;
+    "protocolPool()": FunctionFragment;
     "rates()": FunctionFragment;
+    "removeReferencePool(address)": FunctionFragment;
+    "requireAccrueSystemInterestAccess(address)": FunctionFragment;
+    "requireCoinMintingAccess(address)": FunctionFragment;
     "requireCoinReservesBurnAccess(address)": FunctionFragment;
     "requireDebtWriteAccess(address)": FunctionFragment;
-    "requirePairTokenWriteAccess(address)": FunctionFragment;
+    "requireGenesisAuthenticated(address,tuple)": FunctionFragment;
+    "requireInstantPriceAccess(address)": FunctionFragment;
     "requirePositionWriteAccess(address)": FunctionFragment;
-    "requirePriceAccess(address)": FunctionFragment;
     "requireStoredCollateralAccess(address)": FunctionFragment;
     "rewards()": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
     "timelock()": FunctionFragment;
-    "tokenAllocations()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
+    "upgradeLend(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
     "upgradeMarket(address)": FunctionFragment;
     "upgradePrices(address)": FunctionFragment;
@@ -65,19 +69,17 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "upgradeRates(address)": FunctionFragment;
     "upgradeRewards(address)": FunctionFragment;
     "upgradeSettlement(address)": FunctionFragment;
-    "weth()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "accounting",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
-  encodeFunctionData(functionFragment: "btc", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "circulatingCNP",
-    values?: undefined
+    functionFragment: "addReferencePool",
+    values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(functionFragment: "coin", values?: undefined): string;
   encodeFunctionData(
@@ -85,16 +87,24 @@ interface IGovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "collateralToPair",
-    values: [BigNumberish]
+    functionFragment: "collateralPool",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "currentDailyRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "distributeCNP",
+    functionFragment: "currentPhase",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "distributeLiquidityRewards",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "distributedCNP",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "enforcedDecentralization",
@@ -109,17 +119,14 @@ interface IGovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getCollateralPairs",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getReferencePairs",
+    functionFragment: "getReferencePools",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "isShutdown",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "lend", values?: undefined): string;
   encodeFunctionData(functionFragment: "lendCoin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "liquidations",
@@ -130,16 +137,32 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "mintCNP",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "pairToCollateral",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "protocolDeployer",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "protocolLock",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "protocolPool",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "rates", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "removeReferencePool",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireAccrueSystemInterestAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireCoinMintingAccess",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "requireCoinReservesBurnAccess",
     values: [string]
@@ -149,15 +172,15 @@ interface IGovernorInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "requirePairTokenWriteAccess",
+    functionFragment: "requireGenesisAuthenticated",
+    values: [string, { v: BigNumberish; r: BytesLike; s: BytesLike }]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireInstantPriceAccess",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "requirePositionWriteAccess",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requirePriceAccess",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -175,13 +198,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tokenAllocations",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "upgradeAuctions",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "upgradeLend", values: [string]): string;
   encodeFunctionData(
     functionFragment: "upgradeLiquidations",
     values: [string]
@@ -210,15 +230,13 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "upgradeSettlement",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "weth", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "btc", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "circulatingCNP",
+    functionFragment: "addReferencePool",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "coin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -226,7 +244,7 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "collateralToPair",
+    functionFragment: "collateralPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -234,7 +252,15 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "distributeCNP",
+    functionFragment: "currentPhase",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "distributeLiquidityRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "distributedCNP",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -247,14 +273,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getCollateralPairs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferencePairs",
+    functionFragment: "getReferencePools",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isShutdown", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lendCoin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "liquidations",
@@ -262,16 +285,32 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintCNP", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "pairToCollateral",
+    functionFragment: "protocolDeployer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "protocolLock",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "protocolPool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "rates", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeReferencePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireAccrueSystemInterestAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireCoinMintingAccess",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "requireCoinReservesBurnAccess",
     data: BytesLike
@@ -281,15 +320,15 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requirePairTokenWriteAccess",
+    functionFragment: "requireGenesisAuthenticated",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireInstantPriceAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "requirePositionWriteAccess",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requirePriceAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -304,11 +343,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "tokenAllocations",
+    functionFragment: "upgradeAuctions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "upgradeAuctions",
+    functionFragment: "upgradeLend",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -339,25 +378,24 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "upgradeSettlement",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
 
   events: {
     "AdminUpdated(address,address)": EventFragment;
-    "AllocationAllotted(address,uint256)": EventFragment;
     "ContractUpgraded(string,address)": EventFragment;
-    "EmergencyShutdownExecuted(uint256)": EventFragment;
+    "EmergencyShutdownExecuted(uint256,uint64)": EventFragment;
     "ProtocolUpgraded(address)": EventFragment;
     "ShutdownExecuted()": EventFragment;
-    "ShutdownTokensBurned(address,uint256)": EventFragment;
+    "ShutdownTokensLocked(address,uint256)": EventFragment;
+    "ShutdownTokensUnlocked(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AllocationAllotted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ContractUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EmergencyShutdownExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ShutdownExecuted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ShutdownTokensBurned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ShutdownTokensLocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ShutdownTokensUnlocked"): EventFragment;
 }
 
 export class IGovernor extends Contract {
@@ -365,11 +403,41 @@ export class IGovernor extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IGovernorInterface;
 
@@ -378,21 +446,19 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<[string]>;
 
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
     "auctions()"(overrides?: CallOverrides): Promise<[string]>;
-
-    btc(overrides?: CallOverrides): Promise<[string]>;
-
-    "btc()"(overrides?: CallOverrides): Promise<[string]>;
-
-    circulatingCNP(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { circulating: BigNumber }>;
-
-    "circulatingCNP()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { circulating: BigNumber }>;
 
     cnp(overrides?: CallOverrides): Promise<[string]>;
 
@@ -406,15 +472,9 @@ export class IGovernor extends Contract {
 
     "coinPositionNFT()"(overrides?: CallOverrides): Promise<[string]>;
 
-    collateralToPair(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    collateralPool(overrides?: CallOverrides): Promise<[string]>;
 
-    "collateralToPair(uint8)"(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    "collateralPool()"(overrides?: CallOverrides): Promise<[string]>;
 
     currentDailyRewardCount(
       overrides?: CallOverrides
@@ -424,17 +484,29 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { count: BigNumber }>;
 
-    distributeCNP(
+    currentPhase(overrides?: CallOverrides): Promise<[number]>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<[number]>;
+
+    distributeLiquidityRewards(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "distributeCNP(address,uint256)"(
+    "distributeLiquidityRewards(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    distributedCNP(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { circulating: BigNumber }>;
+
+    "distributedCNP()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { circulating: BigNumber }>;
 
     enforcedDecentralization(overrides?: CallOverrides): Promise<[string]>;
 
@@ -444,31 +516,35 @@ export class IGovernor extends Contract {
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "execute(address,string,bytes)"(
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    executeShutdown(overrides?: Overrides): Promise<ContractTransaction>;
+    executeShutdown(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "executeShutdown()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "executeShutdown()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    getCollateralPairs(overrides?: CallOverrides): Promise<[string[]]>;
+    getReferencePools(overrides?: CallOverrides): Promise<[string[]]>;
 
-    "getCollateralPairs()"(overrides?: CallOverrides): Promise<[string[]]>;
-
-    getReferencePairs(overrides?: CallOverrides): Promise<[string[]]>;
-
-    "getReferencePairs()"(overrides?: CallOverrides): Promise<[string[]]>;
+    "getReferencePools()"(overrides?: CallOverrides): Promise<[string[]]>;
 
     isShutdown(overrides?: CallOverrides): Promise<[boolean]>;
 
     "isShutdown()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    lend(overrides?: CallOverrides): Promise<[string]>;
+
+    "lend()"(overrides?: CallOverrides): Promise<[string]>;
 
     lendCoin(overrides?: CallOverrides): Promise<[string]>;
 
@@ -485,36 +561,64 @@ export class IGovernor extends Contract {
     mintCNP(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "mintCNP(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    pairToCollateral(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    "pairToCollateral(address)"(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
 
     prices(overrides?: CallOverrides): Promise<[string]>;
 
     "prices()"(overrides?: CallOverrides): Promise<[string]>;
 
+    protocolDeployer(overrides?: CallOverrides): Promise<[string]>;
+
+    "protocolDeployer()"(overrides?: CallOverrides): Promise<[string]>;
+
     protocolLock(overrides?: CallOverrides): Promise<[string]>;
 
     "protocolLock()"(overrides?: CallOverrides): Promise<[string]>;
 
+    protocolPool(overrides?: CallOverrides): Promise<[string]>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<[string]>;
+
     rates(overrides?: CallOverrides): Promise<[string]>;
 
     "rates()"(overrides?: CallOverrides): Promise<[string]>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    requireAccrueSystemInterestAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    "requireAccrueSystemInterestAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireCoinMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    "requireCoinMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     requireCoinReservesBurnAccess(
       caller: string,
@@ -536,12 +640,24 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    requirePairTokenWriteAccess(
+    requireGenesisAuthenticated(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isGenesis: boolean }>;
+
+    "requireGenesisAuthenticated(address,(uint8,bytes32,bytes32))"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isGenesis: boolean }>;
+
+    requireInstantPriceAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    "requirePairTokenWriteAccess(address)"(
+    "requireInstantPriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -552,16 +668,6 @@ export class IGovernor extends Contract {
     ): Promise<[void]>;
 
     "requirePositionWriteAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    requirePriceAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    "requirePriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -592,110 +698,114 @@ export class IGovernor extends Contract {
 
     "timelock()"(overrides?: CallOverrides): Promise<[string]>;
 
-    tokenAllocations(overrides?: CallOverrides): Promise<[string]>;
-
-    "tokenAllocations()"(overrides?: CallOverrides): Promise<[string]>;
-
     upgradeAuctions(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeAuctions(address)"(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeLend(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "upgradeLend(address)"(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeLiquidations(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeLiquidations(address)"(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeMarket(
       _market: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeMarket(address)"(
       _market: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradePrices(
       _prices: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradePrices(address)"(
       _prices: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeProtocol(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeProtocol(address)"(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeRates(
       _rates: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeRates(address)"(
       _rates: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeRewards(
       _rewards: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeRewards(address)"(
       _rewards: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     upgradeSettlement(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "upgradeSettlement(address)"(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    weth(overrides?: CallOverrides): Promise<[string]>;
-
-    "weth()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   accounting(overrides?: CallOverrides): Promise<string>;
 
   "accounting()"(overrides?: CallOverrides): Promise<string>;
 
+  addReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "addReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   auctions(overrides?: CallOverrides): Promise<string>;
 
   "auctions()"(overrides?: CallOverrides): Promise<string>;
-
-  btc(overrides?: CallOverrides): Promise<string>;
-
-  "btc()"(overrides?: CallOverrides): Promise<string>;
-
-  circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -709,31 +819,33 @@ export class IGovernor extends Contract {
 
   "coinPositionNFT()"(overrides?: CallOverrides): Promise<string>;
 
-  collateralToPair(
-    collateral: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  collateralPool(overrides?: CallOverrides): Promise<string>;
 
-  "collateralToPair(uint8)"(
-    collateral: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  "collateralPool()"(overrides?: CallOverrides): Promise<string>;
 
   currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   "currentDailyRewardCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  distributeCNP(
+  currentPhase(overrides?: CallOverrides): Promise<number>;
+
+  "currentPhase()"(overrides?: CallOverrides): Promise<number>;
+
+  distributeLiquidityRewards(
     to: string,
     count: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "distributeCNP(address,uint256)"(
+  "distributeLiquidityRewards(address,uint256)"(
     to: string,
     count: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   enforcedDecentralization(overrides?: CallOverrides): Promise<string>;
 
@@ -743,31 +855,35 @@ export class IGovernor extends Contract {
     target: string,
     signature: string,
     data: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "execute(address,string,bytes)"(
     target: string,
     signature: string,
     data: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  executeShutdown(overrides?: Overrides): Promise<ContractTransaction>;
+  executeShutdown(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "executeShutdown()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "executeShutdown()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  getCollateralPairs(overrides?: CallOverrides): Promise<string[]>;
+  getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
-  "getCollateralPairs()"(overrides?: CallOverrides): Promise<string[]>;
-
-  getReferencePairs(overrides?: CallOverrides): Promise<string[]>;
-
-  "getReferencePairs()"(overrides?: CallOverrides): Promise<string[]>;
+  "getReferencePools()"(overrides?: CallOverrides): Promise<string[]>;
 
   isShutdown(overrides?: CallOverrides): Promise<boolean>;
 
   "isShutdown()"(overrides?: CallOverrides): Promise<boolean>;
+
+  lend(overrides?: CallOverrides): Promise<string>;
+
+  "lend()"(overrides?: CallOverrides): Promise<string>;
 
   lendCoin(overrides?: CallOverrides): Promise<string>;
 
@@ -784,33 +900,64 @@ export class IGovernor extends Contract {
   mintCNP(
     to: string,
     count: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "mintCNP(address,uint256)"(
     to: string,
     count: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  pairToCollateral(pair: string, overrides?: CallOverrides): Promise<number>;
-
-  "pairToCollateral(address)"(
-    pair: string,
-    overrides?: CallOverrides
-  ): Promise<number>;
 
   prices(overrides?: CallOverrides): Promise<string>;
 
   "prices()"(overrides?: CallOverrides): Promise<string>;
 
+  protocolDeployer(overrides?: CallOverrides): Promise<string>;
+
+  "protocolDeployer()"(overrides?: CallOverrides): Promise<string>;
+
   protocolLock(overrides?: CallOverrides): Promise<string>;
 
   "protocolLock()"(overrides?: CallOverrides): Promise<string>;
 
+  protocolPool(overrides?: CallOverrides): Promise<string>;
+
+  "protocolPool()"(overrides?: CallOverrides): Promise<string>;
+
   rates(overrides?: CallOverrides): Promise<string>;
 
   "rates()"(overrides?: CallOverrides): Promise<string>;
+
+  removeReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "removeReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  requireAccrueSystemInterestAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireAccrueSystemInterestAccess(address)"(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireCoinMintingAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireCoinMintingAccess(address)"(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   requireCoinReservesBurnAccess(
     caller: string,
@@ -832,12 +979,24 @@ export class IGovernor extends Contract {
     overrides?: CallOverrides
   ): Promise<void>;
 
-  requirePairTokenWriteAccess(
+  requireGenesisAuthenticated(
+    caller: string,
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "requireGenesisAuthenticated(address,(uint8,bytes32,bytes32))"(
+    caller: string,
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  requireInstantPriceAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
 
-  "requirePairTokenWriteAccess(address)"(
+  "requireInstantPriceAccess(address)"(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -848,13 +1007,6 @@ export class IGovernor extends Contract {
   ): Promise<void>;
 
   "requirePositionWriteAccess(address)"(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  requirePriceAccess(caller: string, overrides?: CallOverrides): Promise<void>;
-
-  "requirePriceAccess(address)"(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -885,110 +1037,111 @@ export class IGovernor extends Contract {
 
   "timelock()"(overrides?: CallOverrides): Promise<string>;
 
-  tokenAllocations(overrides?: CallOverrides): Promise<string>;
-
-  "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
-
   upgradeAuctions(
     _auctions: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeAuctions(address)"(
     _auctions: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeLend(
+    _lend: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "upgradeLend(address)"(
+    _lend: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeLiquidations(
     _liquidations: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeLiquidations(address)"(
     _liquidations: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeMarket(
     _market: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeMarket(address)"(
     _market: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradePrices(
     _prices: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradePrices(address)"(
     _prices: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeProtocol(
     newGovernor: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeProtocol(address)"(
     newGovernor: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeRates(
     _rates: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeRates(address)"(
     _rates: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeRewards(
     _rewards: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeRewards(address)"(
     _rewards: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   upgradeSettlement(
     _settlement: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "upgradeSettlement(address)"(
     _settlement: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  weth(overrides?: CallOverrides): Promise<string>;
-
-  "weth()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     accounting(overrides?: CallOverrides): Promise<string>;
 
     "accounting()"(overrides?: CallOverrides): Promise<string>;
 
+    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     auctions(overrides?: CallOverrides): Promise<string>;
 
     "auctions()"(overrides?: CallOverrides): Promise<string>;
-
-    btc(overrides?: CallOverrides): Promise<string>;
-
-    "btc()"(overrides?: CallOverrides): Promise<string>;
-
-    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -1002,31 +1155,33 @@ export class IGovernor extends Contract {
 
     "coinPositionNFT()"(overrides?: CallOverrides): Promise<string>;
 
-    collateralToPair(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    collateralPool(overrides?: CallOverrides): Promise<string>;
 
-    "collateralToPair(uint8)"(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    "collateralPool()"(overrides?: CallOverrides): Promise<string>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "currentDailyRewardCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    distributeCNP(
+    currentPhase(overrides?: CallOverrides): Promise<number>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<number>;
+
+    distributeLiquidityRewards(
       to: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "distributeCNP(address,uint256)"(
+    "distributeLiquidityRewards(address,uint256)"(
       to: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     enforcedDecentralization(overrides?: CallOverrides): Promise<string>;
 
@@ -1050,17 +1205,17 @@ export class IGovernor extends Contract {
 
     "executeShutdown()"(overrides?: CallOverrides): Promise<void>;
 
-    getCollateralPairs(overrides?: CallOverrides): Promise<string[]>;
+    getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
-    "getCollateralPairs()"(overrides?: CallOverrides): Promise<string[]>;
-
-    getReferencePairs(overrides?: CallOverrides): Promise<string[]>;
-
-    "getReferencePairs()"(overrides?: CallOverrides): Promise<string[]>;
+    "getReferencePools()"(overrides?: CallOverrides): Promise<string[]>;
 
     isShutdown(overrides?: CallOverrides): Promise<boolean>;
 
     "isShutdown()"(overrides?: CallOverrides): Promise<boolean>;
+
+    lend(overrides?: CallOverrides): Promise<string>;
+
+    "lend()"(overrides?: CallOverrides): Promise<string>;
 
     lendCoin(overrides?: CallOverrides): Promise<string>;
 
@@ -1086,24 +1241,52 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    pairToCollateral(pair: string, overrides?: CallOverrides): Promise<number>;
-
-    "pairToCollateral(address)"(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     prices(overrides?: CallOverrides): Promise<string>;
 
     "prices()"(overrides?: CallOverrides): Promise<string>;
+
+    protocolDeployer(overrides?: CallOverrides): Promise<string>;
+
+    "protocolDeployer()"(overrides?: CallOverrides): Promise<string>;
 
     protocolLock(overrides?: CallOverrides): Promise<string>;
 
     "protocolLock()"(overrides?: CallOverrides): Promise<string>;
 
+    protocolPool(overrides?: CallOverrides): Promise<string>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<string>;
+
     rates(overrides?: CallOverrides): Promise<string>;
 
     "rates()"(overrides?: CallOverrides): Promise<string>;
+
+    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireAccrueSystemInterestAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireAccrueSystemInterestAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireCoinMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireCoinMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     requireCoinReservesBurnAccess(
       caller: string,
@@ -1125,12 +1308,24 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    requirePairTokenWriteAccess(
+    requireGenesisAuthenticated(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "requireGenesisAuthenticated(address,(uint8,bytes32,bytes32))"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    requireInstantPriceAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "requirePairTokenWriteAccess(address)"(
+    "requireInstantPriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1141,16 +1336,6 @@ export class IGovernor extends Contract {
     ): Promise<void>;
 
     "requirePositionWriteAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requirePriceAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "requirePriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1181,10 +1366,6 @@ export class IGovernor extends Contract {
 
     "timelock()"(overrides?: CallOverrides): Promise<string>;
 
-    tokenAllocations(overrides?: CallOverrides): Promise<string>;
-
-    "tokenAllocations()"(overrides?: CallOverrides): Promise<string>;
-
     upgradeAuctions(
       _auctions: string,
       overrides?: CallOverrides
@@ -1192,6 +1373,13 @@ export class IGovernor extends Contract {
 
     "upgradeAuctions(address)"(
       _auctions: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeLend(_lend: string, overrides?: CallOverrides): Promise<void>;
+
+    "upgradeLend(address)"(
+      _lend: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1252,29 +1440,51 @@ export class IGovernor extends Contract {
       _settlement: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    weth(overrides?: CallOverrides): Promise<string>;
-
-    "weth()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    AdminUpdated(from: string | null, to: string | null): EventFilter;
-
-    AllocationAllotted(allocation: string | null, allotment: null): EventFilter;
+    AdminUpdated(
+      from: string | null,
+      to: string | null
+    ): TypedEventFilter<[string, string], { from: string; to: string }>;
 
     ContractUpgraded(
       contractName: string | null,
       contractAddress: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string],
+      { contractName: string; contractAddress: string }
+    >;
 
-    EmergencyShutdownExecuted(emergencyShutdownTokensBurned: null): EventFilter;
+    EmergencyShutdownExecuted(
+      emergencyShutdownTokensBurned: null,
+      shutdownTime: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { emergencyShutdownTokensBurned: BigNumber; shutdownTime: BigNumber }
+    >;
 
-    ProtocolUpgraded(newGovernor: string | null): EventFilter;
+    ProtocolUpgraded(
+      newGovernor: string | null
+    ): TypedEventFilter<[string], { newGovernor: string }>;
 
-    ShutdownExecuted(): EventFilter;
+    ShutdownExecuted(): TypedEventFilter<[], {}>;
 
-    ShutdownTokensBurned(burner: string | null, count: null): EventFilter;
+    ShutdownTokensLocked(
+      locker: string | null,
+      count: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { locker: string; count: BigNumber }
+    >;
+
+    ShutdownTokensUnlocked(
+      locker: string | null,
+      count: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { locker: string; count: BigNumber }
+    >;
   };
 
   estimateGas: {
@@ -1282,17 +1492,19 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "auctions()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    btc(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "btc()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    circulatingCNP(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "circulatingCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1306,31 +1518,33 @@ export class IGovernor extends Contract {
 
     "coinPositionNFT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    collateralToPair(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "collateralToPair(uint8)"(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "collateralPool()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     "currentDailyRewardCount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    distributeCNP(
+    currentPhase(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    distributeLiquidityRewards(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "distributeCNP(address,uint256)"(
+    "distributeLiquidityRewards(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     enforcedDecentralization(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1340,31 +1554,35 @@ export class IGovernor extends Contract {
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "execute(address,string,bytes)"(
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    executeShutdown(overrides?: Overrides): Promise<BigNumber>;
+    executeShutdown(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "executeShutdown()"(overrides?: Overrides): Promise<BigNumber>;
+    "executeShutdown()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    getCollateralPairs(overrides?: CallOverrides): Promise<BigNumber>;
+    getReferencePools(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getCollateralPairs()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getReferencePairs(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getReferencePairs()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getReferencePools()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     isShutdown(overrides?: CallOverrides): Promise<BigNumber>;
 
     "isShutdown()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lend(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lend()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     lendCoin(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1381,36 +1599,64 @@ export class IGovernor extends Contract {
     mintCNP(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "mintCNP(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    pairToCollateral(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "pairToCollateral(address)"(
-      pair: string,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     prices(overrides?: CallOverrides): Promise<BigNumber>;
 
     "prices()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    protocolDeployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "protocolDeployer()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     protocolLock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "protocolLock()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     rates(overrides?: CallOverrides): Promise<BigNumber>;
 
     "rates()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    requireAccrueSystemInterestAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireAccrueSystemInterestAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireCoinMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireCoinMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     requireCoinReservesBurnAccess(
       caller: string,
@@ -1432,12 +1678,24 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    requirePairTokenWriteAccess(
+    requireGenesisAuthenticated(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireGenesisAuthenticated(address,(uint8,bytes32,bytes32))"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireInstantPriceAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "requirePairTokenWriteAccess(address)"(
+    "requireInstantPriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1448,16 +1706,6 @@ export class IGovernor extends Contract {
     ): Promise<BigNumber>;
 
     "requirePositionWriteAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    requirePriceAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "requirePriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1488,81 +1736,95 @@ export class IGovernor extends Contract {
 
     "timelock()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tokenAllocations(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "tokenAllocations()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     upgradeAuctions(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "upgradeAuctions(address)"(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    upgradeLend(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "upgradeLend(address)"(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     upgradeLiquidations(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "upgradeLiquidations(address)"(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradeMarket(_market: string, overrides?: Overrides): Promise<BigNumber>;
+    upgradeMarket(
+      _market: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "upgradeMarket(address)"(
       _market: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradePrices(_prices: string, overrides?: Overrides): Promise<BigNumber>;
+    upgradePrices(
+      _prices: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "upgradePrices(address)"(
       _prices: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     upgradeProtocol(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "upgradeProtocol(address)"(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradeRates(_rates: string, overrides?: Overrides): Promise<BigNumber>;
+    upgradeRates(
+      _rates: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "upgradeRates(address)"(
       _rates: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradeRewards(_rewards: string, overrides?: Overrides): Promise<BigNumber>;
+    upgradeRewards(
+      _rewards: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "upgradeRewards(address)"(
       _rewards: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     upgradeSettlement(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "upgradeSettlement(address)"(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    weth(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "weth()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1570,19 +1832,19 @@ export class IGovernor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "auctions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    btc(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "btc()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    circulatingCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "circulatingCNP()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1598,13 +1860,9 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    collateralToPair(
-      collateral: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "collateralToPair(uint8)"(
-      collateral: BigNumberish,
+    "collateralPool()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1616,16 +1874,26 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    distributeCNP(
+    currentPhase(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "currentPhase()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    distributeLiquidityRewards(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "distributeCNP(address,uint256)"(
+    "distributeLiquidityRewards(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    distributedCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "distributedCNP()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enforcedDecentralization(
@@ -1640,37 +1908,37 @@ export class IGovernor extends Contract {
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "execute(address,string,bytes)"(
       target: string,
       signature: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    executeShutdown(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "executeShutdown()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    getCollateralPairs(
-      overrides?: CallOverrides
+    executeShutdown(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "getCollateralPairs()"(
-      overrides?: CallOverrides
+    "executeShutdown()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getReferencePairs(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getReferencePools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getReferencePairs()"(
+    "getReferencePools()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isShutdown(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "isShutdown()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lend(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "lend()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     lendCoin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1687,36 +1955,66 @@ export class IGovernor extends Contract {
     mintCNP(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "mintCNP(address,uint256)"(
       to: string,
       count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    pairToCollateral(
-      pair: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "pairToCollateral(address)"(
-      pair: string,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "prices()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    protocolDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "protocolDeployer()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     protocolLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "protocolLock()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    protocolPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     rates(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "rates()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    requireAccrueSystemInterestAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireAccrueSystemInterestAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireCoinMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireCoinMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     requireCoinReservesBurnAccess(
       caller: string,
@@ -1738,12 +2036,24 @@ export class IGovernor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    requirePairTokenWriteAccess(
+    requireGenesisAuthenticated(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireGenesisAuthenticated(address,(uint8,bytes32,bytes32))"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireInstantPriceAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "requirePairTokenWriteAccess(address)"(
+    "requireInstantPriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1754,16 +2064,6 @@ export class IGovernor extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "requirePositionWriteAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    requirePriceAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "requirePriceAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1794,94 +2094,94 @@ export class IGovernor extends Contract {
 
     "timelock()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    tokenAllocations(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "tokenAllocations()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     upgradeAuctions(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeAuctions(address)"(
       _auctions: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeLend(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "upgradeLend(address)"(
+      _lend: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeLiquidations(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeLiquidations(address)"(
       _liquidations: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeMarket(
       _market: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeMarket(address)"(
       _market: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradePrices(
       _prices: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradePrices(address)"(
       _prices: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeProtocol(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeProtocol(address)"(
       newGovernor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeRates(
       _rates: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeRates(address)"(
       _rates: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeRewards(
       _rewards: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeRewards(address)"(
       _rewards: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeSettlement(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "upgradeSettlement(address)"(
       _settlement: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "weth()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

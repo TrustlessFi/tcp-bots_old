@@ -41,8 +41,27 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "string",
+        name: "paramName",
+        type: "string",
+      },
+      {
+        indexed: true,
         internalType: "address",
-        name: "pair",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "ParameterUpdatedAddress",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
         type: "address",
       },
       {
@@ -57,15 +76,22 @@ const _abi = [
         name: "cumulative",
         type: "uint256",
       },
-      {
-        indexed: false,
-        internalType: "uint64",
-        name: "twapTime",
-        type: "uint64",
-      },
     ],
     name: "PriceUpdated",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "addReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
@@ -75,13 +101,29 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "referencePairMinTwapTime",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "cnpPoolLiquidity",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidityPerCNP",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidityPerCoin",
+        type: "uint256",
+      },
+    ],
+    name: "getCoinCount",
     outputs: [
       {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
+        internalType: "uint256",
+        name: "coinCount",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -97,23 +139,47 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
         type: "address",
       },
       {
-        internalType: "uint64",
-        name: "maxTwapTime",
-        type: "uint64",
+        internalType: "uint32",
+        name: "durationSeconds",
+        type: "uint32",
+      },
+    ],
+    name: "systemCalculateInstantPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
       {
-        internalType: "uint64",
-        name: "maxAge",
-        type: "uint64",
+        internalType: "int24",
+        name: "",
+        type: "int24",
+      },
+      {
+        internalType: "uint160",
+        name: "",
+        type: "uint160",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
       {
         internalType: "bool",
-        name: "normalizePrice",
+        name: "normalizeDecimals",
         type: "bool",
       },
     ],
@@ -121,16 +187,35 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "price",
+        name: "",
         type: "uint256",
-      },
-      {
-        internalType: "uint64",
-        name: "priceTime",
-        type: "uint64",
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "normalizeDecimals",
+        type: "bool",
+      },
+    ],
+    name: "viewCurrentTwappedPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

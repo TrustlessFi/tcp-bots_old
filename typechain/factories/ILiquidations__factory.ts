@@ -91,12 +91,12 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint64",
+        internalType: "uint32",
         name: "value",
-        type: "uint64",
+        type: "uint32",
       },
     ],
-    name: "ParameterUpdated64",
+    name: "ParameterUpdated32",
     type: "event",
   },
   {
@@ -129,6 +129,13 @@ const _abi = [
     ],
     name: "UndercollatPositionDiscovered",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "completeSetup",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],

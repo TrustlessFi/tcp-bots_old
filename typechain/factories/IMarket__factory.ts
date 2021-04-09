@@ -22,37 +22,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "borrower",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint64",
-        name: "positionID",
-        type: "uint64",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "borrowAmount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "collateralIncrease",
-        type: "uint256",
-      },
-    ],
-    name: "Borrow",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "uint64",
         name: "period",
         type: "uint64",
@@ -75,33 +44,20 @@ const _abi = [
         name: "rewardCount",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "cumulativeDebt",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "debtExchangeRate",
+        type: "uint256",
+      },
     ],
     name: "InterestAccrued",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "coinCount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "lendTokenCount",
-        type: "uint256",
-      },
-    ],
-    name: "Lend",
     type: "event",
   },
   {
@@ -166,55 +122,24 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "string",
-        name: "paramName",
-        type: "string",
-      },
-      {
-        indexed: true,
-        internalType: "enum IGovernor.Collateral",
-        name: "collateral",
-        type: "uint8",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
-    name: "ParameterUpdatedByCollateral",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        indexed: true,
         internalType: "uint64",
         name: "positionID",
         type: "uint64",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "debtPaidBack",
-        type: "uint256",
+        internalType: "int256",
+        name: "debtChange",
+        type: "int256",
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "collateralWithdrawn",
-        type: "uint256",
+        internalType: "int256",
+        name: "collateralChange",
+        type: "int256",
       },
     ],
-    name: "Payback",
+    name: "PositionAdjusted",
     type: "event",
   },
   {
@@ -249,38 +174,14 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "coinCount",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "lendTokenCount",
-        type: "uint256",
-      },
-    ],
-    name: "Unlend",
-    type: "event",
+    inputs: [],
+    name: "accrueInterest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateral",
-        type: "uint8",
-      },
-    ],
+    inputs: [],
     name: "collateralizationRequirement",
     outputs: [
       {
@@ -308,13 +209,6 @@ const _abi = [
   {
     inputs: [],
     name: "stop",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "systemAccrueInterest",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -358,12 +252,7 @@ const _abi = [
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "lastUpdateTime",
+            name: "lastTimeUpdated",
             type: "uint64",
           },
           {
@@ -377,9 +266,9 @@ const _abi = [
             type: "uint32",
           },
           {
-            internalType: "enum IGovernor.Collateral",
-            name: "collateralType",
-            type: "uint8",
+            internalType: "uint64",
+            name: "collateralizationBandIndex",
+            type: "uint64",
           },
         ],
         internalType: "struct IAccounting.DebtPosition",
@@ -392,11 +281,6 @@ const _abi = [
   },
   {
     inputs: [
-      {
-        internalType: "contract IUniswapV2Pair",
-        name: "pair",
-        type: "address",
-      },
       {
         internalType: "uint256",
         name: "price",

@@ -9,26 +9,31 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
+    "addReferencePool(address)": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
     "completeSetup()": FunctionFragment;
+    "maxDebtSupported()": FunctionFragment;
+    "removeReferencePool(address)": FunctionFragment;
     "stop()": FunctionFragment;
-    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)": FunctionFragment;
-    "systemEnsureMinimumReferenceLiquidity(uint256)": FunctionFragment;
+    "systemNotifyNewPriceInfo(address,uint256,int24)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "addReferencePool",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "borrowRewardsPortion",
     values?: undefined
@@ -37,51 +42,87 @@ interface IRewardsInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "maxDebtSupported",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeReferencePool",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "systemEnsureMinimumCollateralLiquidity",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "systemEnsureMinimumReferenceLiquidity",
-    values: [BigNumberish]
+    functionFragment: "systemNotifyNewPriceInfo",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addReferencePool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "borrowRewardsPortion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "completeSetup",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxDebtSupported",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "systemEnsureMinimumCollateralLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "systemEnsureMinimumReferenceLiquidity",
+    functionFragment: "systemNotifyNewPriceInfo",
     data: BytesLike
   ): Result;
 
   events: {
-    "PairTokensLocked(address,address,uint256,uint64)": EventFragment;
-    "PairTokensUnlocked(address,address,uint256)": EventFragment;
-    "ParameterUpdated(string,uint256)": EventFragment;
-    "ParameterUpdated64(string,uint64)": EventFragment;
+    "AddReferencePool(address)": EventFragment;
+    "MaxLiquidityDecreasePerPeriod(uint256)": EventFragment;
+    "MinCoinLiquidityPerPosition(uint128)": EventFragment;
+    "MinCollateralPoolLiquidity(uint256)": EventFragment;
+    "MinLiquidationRatio(uint256)": EventFragment;
+    "MinTotalReferencePoolLiquidity(uint256)": EventFragment;
+    "PoolTokensUnlocked(address,address,uint256)": EventFragment;
+    "PositionLocked(uint256,address,uint128,int24,int24)": EventFragment;
+    "PriceUpdateTwapDuration(uint32)": EventFragment;
+    "RemoveReferencePool(address)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
     "RewardsDistributed(address,uint64,uint256)": EventFragment;
-    "ShutdownPairTokensUnlocked(address,address,uint256)": EventFragment;
+    "RewardsPortions(uint256,uint256,uint256)": EventFragment;
+    "ShutdownPoolTokensUnlocked(address,address,uint256)": EventFragment;
+    "TimePeriodOfOutOfRangeRewardsToReceive(uint64)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "PairTokensLocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PairTokensUnlocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AddReferencePool"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MaxLiquidityDecreasePerPeriod"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MinCoinLiquidityPerPosition"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinCollateralPoolLiquidity"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MinLiquidationRatio"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "MinTotalReferencePoolLiquidity"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PoolTokensUnlocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PositionLocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PriceUpdateTwapDuration"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RemoveReferencePool"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAccrued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsDistributed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ShutdownPairTokensUnlocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsPortions"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ShutdownPoolTokensUnlocked"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "TimePeriodOfOutOfRangeRewardsToReceive"
+  ): EventFragment;
 }
 
 export class IRewards extends Contract {
@@ -89,85 +130,170 @@ export class IRewards extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IRewardsInterface;
 
   functions: {
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    stop(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    systemEnsureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    systemEnsureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
+    maxDebtSupported(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "maxDebtSupported()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "systemEnsureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    systemNotifyNewPriceInfo(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "systemNotifyNewPriceInfo(address,uint256,int24)"(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  addReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "addReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
   "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  stop(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  systemEnsureMinimumCollateralLiquidity(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
+  completeSetup(
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
-    collateralType: BigNumberish,
-    collateralDebt: BigNumberish,
-    overrides?: Overrides
+  "completeSetup()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  systemEnsureMinimumReferenceLiquidity(
-    debt: BigNumberish,
-    overrides?: Overrides
+  maxDebtSupported(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "maxDebtSupported()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  removeReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "systemEnsureMinimumReferenceLiquidity(uint256)"(
-    debt: BigNumberish,
-    overrides?: Overrides
+  "removeReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  stop(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "stop()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  systemNotifyNewPriceInfo(
+    pool: string,
+    liquidityPerCoin: BigNumberish,
+    tick: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "systemNotifyNewPriceInfo(address,uint256,int24)"(
+    pool: string,
+    liquidityPerCoin: BigNumberish,
+    tick: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -176,103 +302,213 @@ export class IRewards extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
+    maxDebtSupported(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDebtSupported()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
-    systemEnsureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
+    systemNotifyNewPriceInfo(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    systemEnsureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "systemEnsureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
+    "systemNotifyNewPriceInfo(address,uint256,int24)"(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    PairTokensLocked(
-      sender: string | null,
-      pair: string | null,
-      count: null,
-      unlockPeriod: null
-    ): EventFilter;
+    AddReferencePool(
+      pool: string | null
+    ): TypedEventFilter<[string], { pool: string }>;
 
-    PairTokensUnlocked(
+    MaxLiquidityDecreasePerPeriod(
+      decreasePortion: null
+    ): TypedEventFilter<[BigNumber], { decreasePortion: BigNumber }>;
+
+    MinCoinLiquidityPerPosition(
+      minCoinLiquidityPerPosition: null
+    ): TypedEventFilter<
+      [BigNumber],
+      { minCoinLiquidityPerPosition: BigNumber }
+    >;
+
+    MinCollateralPoolLiquidity(
+      min: null
+    ): TypedEventFilter<[BigNumber], { min: BigNumber }>;
+
+    MinLiquidationRatio(
+      min: null
+    ): TypedEventFilter<[BigNumber], { min: BigNumber }>;
+
+    MinTotalReferencePoolLiquidity(
+      min: null
+    ): TypedEventFilter<[BigNumber], { min: BigNumber }>;
+
+    PoolTokensUnlocked(
       sender: string | null,
-      pair: string | null,
+      pool: string | null,
       count: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { sender: string; pool: string; count: BigNumber }
+    >;
 
-    ParameterUpdated(paramName: string | null, value: null): EventFilter;
+    PositionLocked(
+      nftID: BigNumberish | null,
+      pool: string | null,
+      liquidity: null,
+      tickLower: null,
+      tickUpper: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber, number, number],
+      {
+        nftID: BigNumber;
+        pool: string;
+        liquidity: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+      }
+    >;
 
-    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
+    PriceUpdateTwapDuration(
+      duration: null
+    ): TypedEventFilter<[number], { duration: number }>;
 
-    RewardsAccrued(count: null, periods: null): EventFilter;
+    RemoveReferencePool(
+      pool: string | null
+    ): TypedEventFilter<[string], { pool: string }>;
+
+    RewardsAccrued(
+      count: null,
+      periods: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { count: BigNumber; periods: BigNumber }
+    >;
 
     RewardsDistributed(
       account: string | null,
       period: BigNumberish | null,
       cnpRewards: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { account: string; period: BigNumber; cnpRewards: BigNumber }
+    >;
 
-    ShutdownPairTokensUnlocked(
+    RewardsPortions(
+      protocolPortion: null,
+      collateralPortion: null,
+      referencePortion: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      {
+        protocolPortion: BigNumber;
+        collateralPortion: BigNumber;
+        referencePortion: BigNumber;
+      }
+    >;
+
+    ShutdownPoolTokensUnlocked(
       sender: string | null,
-      pair: string | null,
+      pool: string | null,
       count: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { sender: string; pool: string; count: BigNumber }
+    >;
+
+    TimePeriodOfOutOfRangeRewardsToReceive(
+      timePeriod: null
+    ): TypedEventFilter<[BigNumber], { timePeriod: BigNumber }>;
   };
 
   estimateGas: {
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    completeSetup(overrides?: Overrides): Promise<BigNumber>;
-
-    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
-
-    stop(overrides?: Overrides): Promise<BigNumber>;
-
-    "stop()"(overrides?: Overrides): Promise<BigNumber>;
-
-    systemEnsureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    systemEnsureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
+    maxDebtSupported(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "maxDebtSupported()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "systemEnsureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    systemNotifyNewPriceInfo(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "systemNotifyNewPriceInfo(address,uint256,int24)"(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     borrowRewardsPortion(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -281,34 +517,50 @@ export class IRewards extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    systemEnsureMinimumCollateralLiquidity(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "systemEnsureMinimumCollateralLiquidity(uint8,uint256)"(
-      collateralType: BigNumberish,
-      collateralDebt: BigNumberish,
-      overrides?: Overrides
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    systemEnsureMinimumReferenceLiquidity(
-      debt: BigNumberish,
-      overrides?: Overrides
+    maxDebtSupported(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "maxDebtSupported()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "systemEnsureMinimumReferenceLiquidity(uint256)"(
-      debt: BigNumberish,
-      overrides?: Overrides
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "removeReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    systemNotifyNewPriceInfo(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "systemNotifyNewPriceInfo(address,uint256,int24)"(
+      pool: string,
+      liquidityPerCoin: BigNumberish,
+      tick: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

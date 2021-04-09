@@ -9,52 +9,47 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface MarketTestableInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
-    "borrow(uint64,uint256,uint256)": FunctionFragment;
-    "collateralizationRequirement(uint8)": FunctionFragment;
-    "createNewPosition(uint8)": FunctionFragment;
+    "adjustPosition(uint64,int256,uint256)": FunctionFragment;
+    "claimRewards(uint64)": FunctionFragment;
+    "collateralizationRequirement()": FunctionFragment;
+    "createGenesisPosition(tuple)": FunctionFragment;
+    "createPosition(uint256)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "deployer()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
-    "getRewards(uint64)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "interestPortionToLenders()": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
-    "lend(uint256)": FunctionFragment;
-    "maxDebt(uint8)": FunctionFragment;
     "minBorrowTime()": FunctionFragment;
-    "minCollateralToDebtRatio(uint8)": FunctionFragment;
+    "minCollateralToDebtRatio()": FunctionFragment;
     "minPositionSize()": FunctionFragment;
-    "payback(uint64,uint256,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "setCollateralizationRequirement(uint8,uint256)": FunctionFragment;
+    "removeGenesisPosition(uint64)": FunctionFragment;
+    "setCollateralizationRequirement(uint256)": FunctionFragment;
     "setInterestPortionToLenders(uint256)": FunctionFragment;
-    "setMaxDebt(uint8,uint256)": FunctionFragment;
     "setMinBorrowTime(uint64)": FunctionFragment;
     "setMinPositionSize(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
-    "systemAccrueInterest()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
-    "systemNotifyCollateralPriceUpdated(address,uint256)": FunctionFragment;
-    "unlend(uint256)": FunctionFragment;
-    "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)": FunctionFragment;
+    "systemNotifyCollateralPriceUpdated(uint256)": FunctionFragment;
+    "updatePositionImpl(tuple,tuple,uint64,uint64)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
-    "valueOfLendTokensInCoin(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -62,15 +57,23 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "borrow",
+    functionFragment: "adjustPosition",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "collateralizationRequirement",
+    functionFragment: "claimRewards",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "createNewPosition",
+    functionFragment: "collateralizationRequirement",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createGenesisPosition",
+    values: [{ v: BigNumberish; r: BytesLike; s: BytesLike }]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createPosition",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -82,10 +85,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getRewards",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
@@ -96,42 +95,33 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "lastPeriodGlobalInterestAccrued",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "lend", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "maxDebt",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "minBorrowTime",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "minCollateralToDebtRatio",
-    values: [BigNumberish]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "minPositionSize",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "payback",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "periodLength",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "removeGenesisPosition",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setCollateralizationRequirement",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setInterestPortionToLenders",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMaxDebt",
-    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinBorrowTime",
@@ -144,19 +134,11 @@ interface MarketTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "systemAccrueInterest",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "systemGetUpdatedPosition",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "systemNotifyCollateralPriceUpdated",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unlend",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -168,21 +150,17 @@ interface MarketTestableInterface extends ethers.utils.Interface {
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      BigNumberish,
-      BigNumberish,
       BigNumberish,
       BigNumberish
     ]
@@ -191,22 +169,29 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "validUpdate",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "valueOfLendTokensInCoin",
-    values: [BigNumberish]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "accrueInterest",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "adjustPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createNewPosition",
+    functionFragment: "createGenesisPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -218,7 +203,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
@@ -229,8 +213,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "lastPeriodGlobalInterestAccrued",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxDebt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minBorrowTime",
     data: BytesLike
@@ -243,9 +225,12 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "minPositionSize",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "payback", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "periodLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeGenesisPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -256,7 +241,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "setInterestPortionToLenders",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setMaxDebt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMinBorrowTime",
     data: BytesLike
@@ -268,10 +252,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "systemAccrueInterest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "systemGetUpdatedPosition",
     data: BytesLike
   ): Result;
@@ -279,7 +259,6 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "systemNotifyCollateralPriceUpdated",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unlend", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updatePositionImpl",
     data: BytesLike
@@ -288,40 +267,26 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "valueOfLendTokensInCoin",
-    data: BytesLike
-  ): Result;
 
   events: {
-    "Borrow(address,uint64,uint256,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
-    "InterestAccrued(uint64,uint64,uint256,uint256)": EventFragment;
-    "Lend(address,uint256,uint256)": EventFragment;
+    "InterestAccrued(uint64,uint64,uint256,uint256,uint256,uint256)": EventFragment;
     "NewPositionCreated(address,uint64)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
-    "ParameterUpdatedByCollateral(string,uint8,uint256)": EventFragment;
-    "Payback(address,uint64,uint256,uint256)": EventFragment;
+    "PositionAdjusted(uint64,int256,int256)": EventFragment;
     "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
     "Stopped()": EventFragment;
-    "Unlend(address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Borrow"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "InterestAccrued"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Lend"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "ParameterUpdatedByCollateral"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Payback"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PositionAdjusted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unlend"): EventFragment;
 }
 
 export class MarketTestable extends Contract {
@@ -329,51 +294,103 @@ export class MarketTestable extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: MarketTestableInterface;
 
   functions: {
-    accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    borrow(
-      positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+    accrueInterest(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "borrow(uint64,uint256,uint256)"(
+    "accrueInterest()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    adjustPosition(
       positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "adjustPosition(uint64,int256,uint256)"(
+      positionID: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    claimRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "claimRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     collateralizationRequirement(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "collateralizationRequirement(uint8)"(
-      arg0: BigNumberish,
+    "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    createNewPosition(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    createGenesisPosition(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "createNewPosition(uint8)"(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    "createGenesisPosition((uint8,bytes32,bytes32))"(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    createPosition(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "createPosition(uint256)"(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     currentPeriod(
@@ -392,28 +409,18 @@ export class MarketTestable extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "getRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     governor(overrides?: CallOverrides): Promise<[string]>;
 
     "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     interestPortionToLenders(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -430,37 +437,13 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    lend(
-      coinCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "lend(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    maxDebt(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "maxDebt(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     minBorrowTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    minCollateralToDebtRatio(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minCollateralToDebtRatio(uint8)"(
-      arg0: BigNumberish,
+    "minCollateralToDebtRatio()"(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -468,122 +451,90 @@ export class MarketTestable extends Contract {
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    payback(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "payback(uint64,uint256,uint256)"(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    setCollateralizationRequirement(
-      collateral: BigNumberish,
-      requirement: BigNumberish,
-      overrides?: Overrides
+    removeGenesisPosition(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setCollateralizationRequirement(uint8,uint256)"(
-      collateral: BigNumberish,
+    "removeGenesisPosition(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCollateralizationRequirement(
       requirement: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setCollateralizationRequirement(uint256)"(
+      requirement: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setInterestPortionToLenders(
       percentage: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setMaxDebt(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setMaxDebt(uint8,uint256)"(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setMinBorrowTime(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setMinBorrowTime(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setMinPositionSize(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    stop(overrides?: Overrides): Promise<ContractTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<[boolean]>;
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    systemAccrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "systemAccrueInterest()"(
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     systemNotifyCollateralPriceUpdated(
-      pair: string,
       price: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(address,uint256)"(
-      pair: string,
+    "systemNotifyCollateralPriceUpdated(uint256)"(
       price: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    unlend(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "unlend(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     updatePositionImpl(
@@ -593,23 +544,19 @@ export class MarketTestable extends Contract {
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -621,20 +568,18 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         },
         BigNumber
       ] & {
@@ -646,49 +591,43 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         };
         rewards: BigNumber;
       }
     >;
 
-    "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)"(
+    "updatePositionImpl((uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64),(uint256,uint256,uint256,uint256),uint64,uint64)"(
       _position: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -700,20 +639,18 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         },
         BigNumber
       ] & {
@@ -725,82 +662,87 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         };
         rewards: BigNumber;
       }
     >;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    valueOfLendTokensInCoin(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
-
-    "valueOfLendTokensInCoin(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
   };
 
-  accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  borrow(
-    positionID: BigNumberish,
-    borrowCount: BigNumberish,
-    collateralCount: BigNumberish,
-    overrides?: Overrides
+  accrueInterest(
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "borrow(uint64,uint256,uint256)"(
-    positionID: BigNumberish,
-    borrowCount: BigNumberish,
-    collateralCount: BigNumberish,
-    overrides?: Overrides
+  "accrueInterest()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  collateralizationRequirement(
-    arg0: BigNumberish,
+  adjustPosition(
+    positionID: BigNumberish,
+    debtChange: BigNumberish,
+    collateralDecrease: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "adjustPosition(uint64,int256,uint256)"(
+    positionID: BigNumberish,
+    debtChange: BigNumberish,
+    collateralDecrease: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claimRewards(
+    positionID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "claimRewards(uint64)"(
+    positionID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "collateralizationRequirement()"(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "collateralizationRequirement(uint8)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  createNewPosition(
-    collateralType: BigNumberish,
-    overrides?: Overrides
+  createGenesisPosition(
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "createNewPosition(uint8)"(
-    collateralType: BigNumberish,
-    overrides?: Overrides
+  "createGenesisPosition((uint8,bytes32,bytes32))"(
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  createPosition(
+    initialDebt: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "createPosition(uint256)"(
+    initialDebt: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -815,25 +757,18 @@ export class MarketTestable extends Contract {
 
   "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getRewards(
-    positionID: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "getRewards(uint64)"(
-    positionID: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(
+    _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   interestPortionToLenders(overrides?: CallOverrides): Promise<BigNumber>;
@@ -848,155 +783,102 @@ export class MarketTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  lend(
-    coinCount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "lend(uint256)"(
-    coinCount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-  "maxDebt(uint8)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  minCollateralToDebtRatio(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "minCollateralToDebtRatio(uint8)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  payback(
-    positionID: BigNumberish,
-    coinsToPayBack: BigNumberish,
-    collateralToWithdraw: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "payback(uint64,uint256,uint256)"(
-    positionID: BigNumberish,
-    coinsToPayBack: BigNumberish,
-    collateralToWithdraw: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  setCollateralizationRequirement(
-    collateral: BigNumberish,
-    requirement: BigNumberish,
-    overrides?: Overrides
+  removeGenesisPosition(
+    positionID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setCollateralizationRequirement(uint8,uint256)"(
-    collateral: BigNumberish,
+  "removeGenesisPosition(uint64)"(
+    positionID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCollateralizationRequirement(
     requirement: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setCollateralizationRequirement(uint256)"(
+    requirement: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setInterestPortionToLenders(
     percentage: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setInterestPortionToLenders(uint256)"(
     percentage: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setMaxDebt(
-    collateral: BigNumberish,
-    debt: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setMaxDebt(uint8,uint256)"(
-    collateral: BigNumberish,
-    debt: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setMinBorrowTime(
     time: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setMinBorrowTime(uint64)"(
     time: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setMinPositionSize(
     size: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setMinPositionSize(uint256)"(
     size: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  stop(overrides?: Overrides): Promise<ContractTransaction>;
+  stop(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "stop()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-  systemAccrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "systemAccrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
   systemGetUpdatedPosition(
     positionID: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "systemGetUpdatedPosition(uint64)"(
     positionID: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   systemNotifyCollateralPriceUpdated(
-    pair: string,
     price: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "systemNotifyCollateralPriceUpdated(address,uint256)"(
-    pair: string,
+  "systemNotifyCollateralPriceUpdated(uint256)"(
     price: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  unlend(
-    lendTokenCount: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "unlend(uint256)"(
-    lendTokenCount: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   updatePositionImpl(
@@ -1006,23 +888,19 @@ export class MarketTestable extends Contract {
       debt: BigNumberish;
       startDebtExchangeRate: BigNumberish;
       startCNPRewards: BigNumberish;
-      collateralizationBandIndex: BigNumberish;
-      lastUpdateTime: BigNumberish;
+      lastTimeUpdated: BigNumberish;
       lastBorrowTime: BigNumberish;
       collateralizationBand: BigNumberish;
-      collateralType: BigNumberish;
+      collateralizationBandIndex: BigNumberish;
     },
     sdi: {
-      ethDebt: BigNumberish;
-      btcDebt: BigNumberish;
+      debt: BigNumberish;
       totalCNPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
     },
-    time: BigNumberish,
-    period: BigNumberish,
-    lastUpdatePeriod: BigNumberish,
-    periodLength: BigNumberish,
+    timeNow: BigNumberish,
+    periods: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -1034,20 +912,18 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       },
       BigNumber
     ] & {
@@ -1059,49 +935,43 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       };
       rewards: BigNumber;
     }
   >;
 
-  "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)"(
+  "updatePositionImpl((uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64),(uint256,uint256,uint256,uint256),uint64,uint64)"(
     _position: {
       startCumulativeDebt: BigNumberish;
       collateral: BigNumberish;
       debt: BigNumberish;
       startDebtExchangeRate: BigNumberish;
       startCNPRewards: BigNumberish;
-      collateralizationBandIndex: BigNumberish;
-      lastUpdateTime: BigNumberish;
+      lastTimeUpdated: BigNumberish;
       lastBorrowTime: BigNumberish;
       collateralizationBand: BigNumberish;
-      collateralType: BigNumberish;
+      collateralizationBandIndex: BigNumberish;
     },
     sdi: {
-      ethDebt: BigNumberish;
-      btcDebt: BigNumberish;
+      debt: BigNumberish;
       totalCNPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
     },
-    time: BigNumberish,
-    period: BigNumberish,
-    lastUpdatePeriod: BigNumberish,
-    periodLength: BigNumberish,
+    timeNow: BigNumberish,
+    periods: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -1113,20 +983,18 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       },
       BigNumber
     ] & {
@@ -1138,78 +1006,82 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       };
       rewards: BigNumber;
     }
   >;
 
-  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   "validUpdate(bytes4)"(
-    action: BytesLike,
+    arg0: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  valueOfLendTokensInCoin(
-    lendTokenCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "valueOfLendTokensInCoin(uint256)"(
-    lendTokenCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   callStatic: {
     accrueInterest(overrides?: CallOverrides): Promise<void>;
 
     "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
 
-    borrow(
+    adjustPosition(
       positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "borrow(uint64,uint256,uint256)"(
+    "adjustPosition(uint64,int256,uint256)"(
       positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    collateralizationRequirement(
-      arg0: BigNumberish,
+    claimRewards(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "claimRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "collateralizationRequirement(uint8)"(
-      arg0: BigNumberish,
+    createGenesisPosition(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createNewPosition(
-      collateralType: BigNumberish,
+    "createGenesisPosition((uint8,bytes32,bytes32))"(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "createNewPosition(uint8)"(
-      collateralType: BigNumberish,
+    createPosition(
+      initialDebt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "createPosition(uint256)"(
+      initialDebt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1224,16 +1096,6 @@ export class MarketTestable extends Contract {
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRewards(
-      positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "getRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
@@ -1258,64 +1120,38 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lend(coinCount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "lend(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxDebt(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minCollateralToDebtRatio(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "minCollateralToDebtRatio(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    payback(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "payback(uint64,uint256,uint256)"(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    removeGenesisPosition(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "removeGenesisPosition(uint64)"(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setCollateralizationRequirement(
-      collateral: BigNumberish,
       requirement: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setCollateralizationRequirement(uint8,uint256)"(
-      collateral: BigNumberish,
+    "setCollateralizationRequirement(uint256)"(
       requirement: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1327,18 +1163,6 @@ export class MarketTestable extends Contract {
 
     "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMaxDebt(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setMaxDebt(uint8,uint256)"(
-      collateral: BigNumberish,
-      debt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1370,10 +1194,6 @@ export class MarketTestable extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-    systemAccrueInterest(overrides?: CallOverrides): Promise<void>;
-
-    "systemAccrueInterest()"(overrides?: CallOverrides): Promise<void>;
-
     systemGetUpdatedPosition(
       positionID: BigNumberish,
       overrides?: CallOverrides
@@ -1386,20 +1206,18 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       }
     >;
 
@@ -1415,42 +1233,28 @@ export class MarketTestable extends Contract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         number,
-        number
+        BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
         startCNPRewards: BigNumber;
-        collateralizationBandIndex: BigNumber;
-        lastUpdateTime: BigNumber;
+        lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
         collateralizationBand: number;
-        collateralType: number;
+        collateralizationBandIndex: BigNumber;
       }
     >;
 
     systemNotifyCollateralPriceUpdated(
-      pair: string,
       price: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "systemNotifyCollateralPriceUpdated(address,uint256)"(
-      pair: string,
+    "systemNotifyCollateralPriceUpdated(uint256)"(
       price: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    unlend(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "unlend(uint256)"(
-      lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1461,23 +1265,19 @@ export class MarketTestable extends Contract {
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1489,20 +1289,18 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         },
         BigNumber
       ] & {
@@ -1514,49 +1312,43 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         };
         rewards: BigNumber;
       }
     >;
 
-    "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)"(
+    "updatePositionImpl((uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64),(uint256,uint256,uint256,uint256),uint64,uint64)"(
       _position: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1568,20 +1360,18 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         },
         BigNumber
       ] & {
@@ -1593,141 +1383,167 @@ export class MarketTestable extends Contract {
           BigNumber,
           BigNumber,
           BigNumber,
-          BigNumber,
           number,
-          number
+          BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
           startCNPRewards: BigNumber;
-          collateralizationBandIndex: BigNumber;
-          lastUpdateTime: BigNumber;
+          lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
           collateralizationBand: number;
-          collateralType: number;
+          collateralizationBandIndex: BigNumber;
         };
         rewards: BigNumber;
       }
     >;
 
-    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    valueOfLendTokensInCoin(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "valueOfLendTokensInCoin(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
-    Borrow(
-      borrower: string | null,
-      positionID: BigNumberish | null,
-      borrowAmount: null,
-      collateralIncrease: null
-    ): EventFilter;
-
-    Initialized(governor: string | null): EventFilter;
+    Initialized(
+      governor: string | null
+    ): TypedEventFilter<[string], { governor: string }>;
 
     InterestAccrued(
       period: BigNumberish | null,
       periods: null,
       newDebt: null,
-      rewardCount: null
-    ): EventFilter;
-
-    Lend(
-      account: string | null,
-      coinCount: null,
-      lendTokenCount: null
-    ): EventFilter;
+      rewardCount: null,
+      cumulativeDebt: null,
+      debtExchangeRate: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        period: BigNumber;
+        periods: BigNumber;
+        newDebt: BigNumber;
+        rewardCount: BigNumber;
+        cumulativeDebt: BigNumber;
+        debtExchangeRate: BigNumber;
+      }
+    >;
 
     NewPositionCreated(
       creator: string | null,
       positionID: BigNumberish | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { creator: string; positionID: BigNumber }
+    >;
 
-    ParameterUpdated(paramName: string | null, value: null): EventFilter;
-
-    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
-
-    ParameterUpdatedByCollateral(
+    ParameterUpdated(
       paramName: string | null,
-      collateral: BigNumberish | null,
       value: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { paramName: string; value: BigNumber }
+    >;
 
-    Payback(
-      caller: string | null,
+    ParameterUpdated64(
+      paramName: string | null,
+      value: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { paramName: string; value: BigNumber }
+    >;
+
+    PositionAdjusted(
       positionID: BigNumberish | null,
-      debtPaidBack: null,
-      collateralWithdrawn: null
-    ): EventFilter;
+      debtChange: null,
+      collateralChange: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber],
+      {
+        positionID: BigNumber;
+        debtChange: BigNumber;
+        collateralChange: BigNumber;
+      }
+    >;
 
     PositionUpdated(
       positionID: BigNumberish | null,
       period: BigNumberish | null,
       debtAfter: null,
       cnpRewards: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        positionID: BigNumber;
+        period: BigNumber;
+        debtAfter: BigNumber;
+        cnpRewards: BigNumber;
+      }
+    >;
 
-    Stopped(): EventFilter;
-
-    Unlend(
-      account: string | null,
-      coinCount: null,
-      lendTokenCount: null
-    ): EventFilter;
+    Stopped(): TypedEventFilter<[], {}>;
   };
 
   estimateGas: {
-    accrueInterest(overrides?: Overrides): Promise<BigNumber>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
-
-    borrow(
-      positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+    accrueInterest(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "borrow(uint64,uint256,uint256)"(
-      positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+    "accrueInterest()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    collateralizationRequirement(
-      arg0: BigNumberish,
+    adjustPosition(
+      positionID: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "adjustPosition(uint64,int256,uint256)"(
+      positionID: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    claimRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "claimRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "collateralizationRequirement(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    createGenesisPosition(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    createNewPosition(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    "createGenesisPosition((uint8,bytes32,bytes32))"(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "createNewPosition(uint8)"(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    createPosition(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "createPosition(uint256)"(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1742,25 +1558,18 @@ export class MarketTestable extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "getRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
+    init(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     interestPortionToLenders(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1775,152 +1584,102 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    lend(coinCount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
-
-    "lend(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    maxDebt(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxDebt(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minCollateralToDebtRatio(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "minCollateralToDebtRatio(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    payback(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "payback(uint64,uint256,uint256)"(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setCollateralizationRequirement(
-      collateral: BigNumberish,
-      requirement: BigNumberish,
-      overrides?: Overrides
+    removeGenesisPosition(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setCollateralizationRequirement(uint8,uint256)"(
-      collateral: BigNumberish,
+    "removeGenesisPosition(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCollateralizationRequirement(
       requirement: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setCollateralizationRequirement(uint256)"(
+      requirement: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setInterestPortionToLenders(
       percentage: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setMaxDebt(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setMaxDebt(uint8,uint256)"(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setMinBorrowTime(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "setMinBorrowTime(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setMinPositionSize(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    stop(overrides?: Overrides): Promise<BigNumber>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "stop()"(overrides?: Overrides): Promise<BigNumber>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    systemAccrueInterest(overrides?: Overrides): Promise<BigNumber>;
-
-    "systemAccrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
-
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     systemNotifyCollateralPriceUpdated(
-      pair: string,
       price: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "systemNotifyCollateralPriceUpdated(address,uint256)"(
-      pair: string,
+    "systemNotifyCollateralPriceUpdated(uint256)"(
       price: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    unlend(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "unlend(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     updatePositionImpl(
@@ -1930,111 +1689,112 @@ export class MarketTestable extends Contract {
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)"(
+    "updatePositionImpl((uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64),(uint256,uint256,uint256,uint256),uint64,uint64)"(
       _position: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    valueOfLendTokensInCoin(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "valueOfLendTokensInCoin(uint256)"(
-      lendTokenCount: BigNumberish,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    accrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    borrow(
-      positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+    accrueInterest(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "borrow(uint64,uint256,uint256)"(
+    "accrueInterest()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adjustPosition(
       positionID: BigNumberish,
-      borrowCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: Overrides
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "adjustPosition(uint64,int256,uint256)"(
+      positionID: BigNumberish,
+      debtChange: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimRewards(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "claimRewards(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     collateralizationRequirement(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "collateralizationRequirement(uint8)"(
-      arg0: BigNumberish,
+    "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createNewPosition(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    createGenesisPosition(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "createNewPosition(uint8)"(
-      collateralType: BigNumberish,
-      overrides?: Overrides
+    "createGenesisPosition((uint8,bytes32,bytes32))"(
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createPosition(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "createPosition(uint256)"(
+      initialDebt: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2049,28 +1809,18 @@ export class MarketTestable extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getRewards(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "getRewards(uint64)"(
-      positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     interestPortionToLenders(
@@ -2089,37 +1839,15 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    lend(
-      coinCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "lend(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    maxDebt(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "maxDebt(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     minBorrowTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "minBorrowTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minCollateralToDebtRatio(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "minCollateralToDebtRatio(uint8)"(
-      arg0: BigNumberish,
+    "minCollateralToDebtRatio()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2129,122 +1857,90 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    payback(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "payback(uint64,uint256,uint256)"(
-      positionID: BigNumberish,
-      coinsToPayBack: BigNumberish,
-      collateralToWithdraw: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    setCollateralizationRequirement(
-      collateral: BigNumberish,
-      requirement: BigNumberish,
-      overrides?: Overrides
+    removeGenesisPosition(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setCollateralizationRequirement(uint8,uint256)"(
-      collateral: BigNumberish,
+    "removeGenesisPosition(uint64)"(
+      positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCollateralizationRequirement(
       requirement: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setCollateralizationRequirement(uint256)"(
+      requirement: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setInterestPortionToLenders(
       percentage: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setInterestPortionToLenders(uint256)"(
       percentage: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setMaxDebt(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setMaxDebt(uint8,uint256)"(
-      collateral: BigNumberish,
-      debt: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setMinBorrowTime(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setMinBorrowTime(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setMinPositionSize(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    systemAccrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "systemAccrueInterest()"(
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     systemNotifyCollateralPriceUpdated(
-      pair: string,
       price: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(address,uint256)"(
-      pair: string,
+    "systemNotifyCollateralPriceUpdated(uint256)"(
       price: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    unlend(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "unlend(uint256)"(
-      lendTokenCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     updatePositionImpl(
@@ -2254,70 +1950,52 @@ export class MarketTestable extends Contract {
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "updatePositionImpl(tuple,tuple,uint64,uint64,uint64,uint64)"(
+    "updatePositionImpl((uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64),(uint256,uint256,uint256,uint256),uint64,uint64)"(
       _position: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
         startCNPRewards: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
-        lastUpdateTime: BigNumberish;
+        lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
         collateralizationBand: BigNumberish;
-        collateralType: BigNumberish;
+        collateralizationBandIndex: BigNumberish;
       },
       sdi: {
-        ethDebt: BigNumberish;
-        btcDebt: BigNumberish;
+        debt: BigNumberish;
         totalCNPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
-      time: BigNumberish,
-      period: BigNumberish,
-      lastUpdatePeriod: BigNumberish,
-      periodLength: BigNumberish,
+      timeNow: BigNumberish,
+      periods: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     validUpdate(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    valueOfLendTokensInCoin(
-      lendTokenCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "valueOfLendTokensInCoin(uint256)"(
-      lendTokenCount: BigNumberish,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

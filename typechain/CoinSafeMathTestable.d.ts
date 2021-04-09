@@ -9,25 +9,20 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface CoinSafeMathTestableInterface extends ethers.utils.Interface {
   functions: {
     "_div(uint256,uint256)": FunctionFragment;
     "_mul(uint256,uint256)": FunctionFragment;
     "_mulDiv(uint256,uint256,uint256)": FunctionFragment;
-    "add(uint256,uint256)": FunctionFragment;
-    "div(uint256,uint256)": FunctionFragment;
-    "mul(uint256,uint256)": FunctionFragment;
-    "sub(uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -42,30 +37,10 @@ interface CoinSafeMathTestableInterface extends ethers.utils.Interface {
     functionFragment: "_mulDiv",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "add",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "div",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mul",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sub",
-    values: [BigNumberish, BigNumberish]
-  ): string;
 
   decodeFunctionResult(functionFragment: "_div", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_mul", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_mulDiv", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "div", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mul", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "sub", data: BytesLike): Result;
 
   events: {};
 }
@@ -75,11 +50,41 @@ export class CoinSafeMathTestable extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: CoinSafeMathTestableInterface;
 
@@ -119,54 +124,6 @@ export class CoinSafeMathTestable extends Contract {
       a: BigNumberish,
       b: BigNumberish,
       c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    add(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    "add(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    div(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    "div(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    mul(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    "mul(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    sub(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { r: BigNumber }>;
-
-    "sub(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { r: BigNumber }>;
   };
@@ -209,54 +166,6 @@ export class CoinSafeMathTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  add(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "add(uint256,uint256)"(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  div(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "div(uint256,uint256)"(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  mul(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "mul(uint256,uint256)"(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  sub(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "sub(uint256,uint256)"(
-    a: BigNumberish,
-    b: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   callStatic: {
     _div(
       a: BigNumberish,
@@ -293,54 +202,6 @@ export class CoinSafeMathTestable extends Contract {
       a: BigNumberish,
       b: BigNumberish,
       c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    add(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "add(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    div(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "div(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mul(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "mul(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    sub(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "sub(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -385,54 +246,6 @@ export class CoinSafeMathTestable extends Contract {
       c: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    add(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "add(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    div(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "div(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mul(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "mul(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    sub(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "sub(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -471,54 +284,6 @@ export class CoinSafeMathTestable extends Contract {
       a: BigNumberish,
       b: BigNumberish,
       c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    add(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "add(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    div(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "div(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mul(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "mul(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    sub(
-      a: BigNumberish,
-      b: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "sub(uint256,uint256)"(
-      a: BigNumberish,
-      b: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

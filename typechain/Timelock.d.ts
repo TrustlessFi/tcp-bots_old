@@ -9,34 +9,32 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface TimelockInterface extends ethers.utils.Interface {
   functions: {
     "GRACE_PERIOD()": FunctionFragment;
     "MAXIMUM_DELAY()": FunctionFragment;
     "MINIMUM_DELAY()": FunctionFragment;
-    "acceptAdmin()": FunctionFragment;
     "admin()": FunctionFragment;
     "cancelTransaction(address,string,bytes,uint256)": FunctionFragment;
-    "completeSetup(address,address)": FunctionFragment;
+    "completeSetup(address,address,address)": FunctionFragment;
+    "currentAdmin()": FunctionFragment;
     "delay()": FunctionFragment;
     "executeTransaction(address,string,bytes,uint256)": FunctionFragment;
     "governor()": FunctionFragment;
-    "pendingAdmin()": FunctionFragment;
+    "preLaunchAdmin()": FunctionFragment;
     "queueTransaction(address,string,bytes,uint256)": FunctionFragment;
     "queuedTransactions(bytes32)": FunctionFragment;
     "setDelay(uint256)": FunctionFragment;
-    "setPendingAdmin(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
@@ -52,10 +50,6 @@ interface TimelockInterface extends ethers.utils.Interface {
     functionFragment: "MINIMUM_DELAY",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "acceptAdmin",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "cancelTransaction",
@@ -63,7 +57,11 @@ interface TimelockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeSetup",
-    values: [string, string]
+    values: [string, string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentAdmin",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "delay", values?: undefined): string;
   encodeFunctionData(
@@ -72,7 +70,7 @@ interface TimelockInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "pendingAdmin",
+    functionFragment: "preLaunchAdmin",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -86,10 +84,6 @@ interface TimelockInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setDelay",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPendingAdmin",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
@@ -108,10 +102,6 @@ interface TimelockInterface extends ethers.utils.Interface {
     functionFragment: "MINIMUM_DELAY",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptAdmin",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelTransaction",
@@ -121,6 +111,10 @@ interface TimelockInterface extends ethers.utils.Interface {
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentAdmin",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "delay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTransaction",
@@ -128,7 +122,7 @@ interface TimelockInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "pendingAdmin",
+    functionFragment: "preLaunchAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -140,10 +134,6 @@ interface TimelockInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setDelay", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setPendingAdmin",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
@@ -171,11 +161,41 @@ export class Timelock extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: TimelockInterface;
 
@@ -192,10 +212,6 @@ export class Timelock extends Contract {
 
     "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    acceptAdmin(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "acceptAdmin()"(overrides?: Overrides): Promise<ContractTransaction>;
-
     admin(overrides?: CallOverrides): Promise<[string]>;
 
     "admin()"(overrides?: CallOverrides): Promise<[string]>;
@@ -205,7 +221,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "cancelTransaction(address,string,bytes,uint256)"(
@@ -213,20 +229,26 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     completeSetup(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "completeSetup(address,address)"(
+    "completeSetup(address,address,address)"(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    currentAdmin(overrides?: CallOverrides): Promise<[string]>;
+
+    "currentAdmin()"(overrides?: CallOverrides): Promise<[string]>;
 
     delay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -237,7 +259,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "executeTransaction(address,string,bytes,uint256)"(
@@ -245,23 +267,23 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     governor(overrides?: CallOverrides): Promise<[string]>;
 
     "governor()"(overrides?: CallOverrides): Promise<[string]>;
 
-    pendingAdmin(overrides?: CallOverrides): Promise<[string]>;
+    preLaunchAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    "pendingAdmin()"(overrides?: CallOverrides): Promise<[string]>;
+    "preLaunchAdmin()"(overrides?: CallOverrides): Promise<[string]>;
 
     queueTransaction(
       target: string,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "queueTransaction(address,string,bytes,uint256)"(
@@ -269,7 +291,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     queuedTransactions(
@@ -284,22 +306,12 @@ export class Timelock extends Contract {
 
     setDelay(
       delay_: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setDelay(uint256)"(
       delay_: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setPendingAdmin(
-      pendingAdmin_: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setPendingAdmin(address)"(
-      pendingAdmin_: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     validUpdate(
@@ -325,10 +337,6 @@ export class Timelock extends Contract {
 
   "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  acceptAdmin(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "acceptAdmin()"(overrides?: Overrides): Promise<ContractTransaction>;
-
   admin(overrides?: CallOverrides): Promise<string>;
 
   "admin()"(overrides?: CallOverrides): Promise<string>;
@@ -338,7 +346,7 @@ export class Timelock extends Contract {
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "cancelTransaction(address,string,bytes,uint256)"(
@@ -346,20 +354,26 @@ export class Timelock extends Contract {
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   completeSetup(
     governor_: string,
     admin_: string,
-    overrides?: Overrides
+    preLaunchAdmin_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "completeSetup(address,address)"(
+  "completeSetup(address,address,address)"(
     governor_: string,
     admin_: string,
-    overrides?: Overrides
+    preLaunchAdmin_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  currentAdmin(overrides?: CallOverrides): Promise<string>;
+
+  "currentAdmin()"(overrides?: CallOverrides): Promise<string>;
 
   delay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -370,7 +384,7 @@ export class Timelock extends Contract {
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "executeTransaction(address,string,bytes,uint256)"(
@@ -378,23 +392,23 @@ export class Timelock extends Contract {
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  pendingAdmin(overrides?: CallOverrides): Promise<string>;
+  preLaunchAdmin(overrides?: CallOverrides): Promise<string>;
 
-  "pendingAdmin()"(overrides?: CallOverrides): Promise<string>;
+  "preLaunchAdmin()"(overrides?: CallOverrides): Promise<string>;
 
   queueTransaction(
     target: string,
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "queueTransaction(address,string,bytes,uint256)"(
@@ -402,7 +416,7 @@ export class Timelock extends Contract {
     signature: string,
     data: BytesLike,
     eta: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   queuedTransactions(
@@ -417,22 +431,12 @@ export class Timelock extends Contract {
 
   setDelay(
     delay_: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setDelay(uint256)"(
     delay_: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setPendingAdmin(
-    pendingAdmin_: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setPendingAdmin(address)"(
-    pendingAdmin_: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
@@ -454,10 +458,6 @@ export class Timelock extends Contract {
     MINIMUM_DELAY(overrides?: CallOverrides): Promise<BigNumber>;
 
     "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptAdmin(overrides?: CallOverrides): Promise<void>;
-
-    "acceptAdmin()"(overrides?: CallOverrides): Promise<void>;
 
     admin(overrides?: CallOverrides): Promise<string>;
 
@@ -482,14 +482,20 @@ export class Timelock extends Contract {
     completeSetup(
       governor_: string,
       admin_: string,
+      preLaunchAdmin_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "completeSetup(address,address)"(
+    "completeSetup(address,address,address)"(
       governor_: string,
       admin_: string,
+      preLaunchAdmin_: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    currentAdmin(overrides?: CallOverrides): Promise<string>;
+
+    "currentAdmin()"(overrides?: CallOverrides): Promise<string>;
 
     delay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -515,9 +521,9 @@ export class Timelock extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<string>;
 
-    pendingAdmin(overrides?: CallOverrides): Promise<string>;
+    preLaunchAdmin(overrides?: CallOverrides): Promise<string>;
 
-    "pendingAdmin()"(overrides?: CallOverrides): Promise<string>;
+    "preLaunchAdmin()"(overrides?: CallOverrides): Promise<string>;
 
     queueTransaction(
       target: string,
@@ -552,16 +558,6 @@ export class Timelock extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setPendingAdmin(
-      pendingAdmin_: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setPendingAdmin(address)"(
-      pendingAdmin_: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     "validUpdate(bytes4)"(
@@ -577,7 +573,16 @@ export class Timelock extends Contract {
       signature: null,
       data: null,
       eta: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, string, string, BigNumber],
+      {
+        txHash: string;
+        target: string;
+        signature: string;
+        data: string;
+        eta: BigNumber;
+      }
+    >;
 
     ExecuteTransaction(
       txHash: BytesLike | null,
@@ -585,13 +590,28 @@ export class Timelock extends Contract {
       signature: null,
       data: null,
       eta: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, string, string, BigNumber],
+      {
+        txHash: string;
+        target: string;
+        signature: string;
+        data: string;
+        eta: BigNumber;
+      }
+    >;
 
-    NewAdmin(newAdmin: string | null): EventFilter;
+    NewAdmin(
+      newAdmin: string | null
+    ): TypedEventFilter<[string], { newAdmin: string }>;
 
-    NewDelay(newDelay: BigNumberish | null): EventFilter;
+    NewDelay(
+      newDelay: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { newDelay: BigNumber }>;
 
-    NewPendingAdmin(newPendingAdmin: string | null): EventFilter;
+    NewPendingAdmin(
+      newPendingAdmin: string | null
+    ): TypedEventFilter<[string], { newPendingAdmin: string }>;
 
     QueueTransaction(
       txHash: BytesLike | null,
@@ -599,7 +619,16 @@ export class Timelock extends Contract {
       signature: null,
       data: null,
       eta: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, string, string, BigNumber],
+      {
+        txHash: string;
+        target: string;
+        signature: string;
+        data: string;
+        eta: BigNumber;
+      }
+    >;
   };
 
   estimateGas: {
@@ -615,10 +644,6 @@ export class Timelock extends Contract {
 
     "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    acceptAdmin(overrides?: Overrides): Promise<BigNumber>;
-
-    "acceptAdmin()"(overrides?: Overrides): Promise<BigNumber>;
-
     admin(overrides?: CallOverrides): Promise<BigNumber>;
 
     "admin()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -628,7 +653,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "cancelTransaction(address,string,bytes,uint256)"(
@@ -636,20 +661,26 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     completeSetup(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "completeSetup(address,address)"(
+    "completeSetup(address,address,address)"(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    currentAdmin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "currentAdmin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     delay(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -660,7 +691,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "executeTransaction(address,string,bytes,uint256)"(
@@ -668,23 +699,23 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pendingAdmin(overrides?: CallOverrides): Promise<BigNumber>;
+    preLaunchAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "pendingAdmin()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "preLaunchAdmin()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     queueTransaction(
       target: string,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "queueTransaction(address,string,bytes,uint256)"(
@@ -692,7 +723,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     queuedTransactions(
@@ -705,21 +736,14 @@ export class Timelock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setDelay(delay_: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+    setDelay(
+      delay_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "setDelay(uint256)"(
       delay_: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setPendingAdmin(
-      pendingAdmin_: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setPendingAdmin(address)"(
-      pendingAdmin_: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     validUpdate(
@@ -746,10 +770,6 @@ export class Timelock extends Contract {
 
     "MINIMUM_DELAY()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    acceptAdmin(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "acceptAdmin()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
     admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "admin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -759,7 +779,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "cancelTransaction(address,string,bytes,uint256)"(
@@ -767,20 +787,26 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     completeSetup(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "completeSetup(address,address)"(
+    "completeSetup(address,address,address)"(
       governor_: string,
       admin_: string,
-      overrides?: Overrides
+      preLaunchAdmin_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    currentAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "currentAdmin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     delay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -791,7 +817,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "executeTransaction(address,string,bytes,uint256)"(
@@ -799,23 +825,25 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    pendingAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    preLaunchAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "pendingAdmin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "preLaunchAdmin()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     queueTransaction(
       target: string,
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "queueTransaction(address,string,bytes,uint256)"(
@@ -823,7 +851,7 @@ export class Timelock extends Contract {
       signature: string,
       data: BytesLike,
       eta: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     queuedTransactions(
@@ -838,22 +866,12 @@ export class Timelock extends Contract {
 
     setDelay(
       delay_: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setDelay(uint256)"(
       delay_: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setPendingAdmin(
-      pendingAdmin_: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setPendingAdmin(address)"(
-      pendingAdmin_: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     validUpdate(

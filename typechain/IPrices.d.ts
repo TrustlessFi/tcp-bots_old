@@ -9,59 +9,87 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IPricesInterface extends ethers.utils.Interface {
   functions: {
+    "addReferencePool(address)": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "referencePairMinTwapTime()": FunctionFragment;
+    "getCoinCount(uint256,uint256,uint256)": FunctionFragment;
     "stop()": FunctionFragment;
-    "systemObtainPrice(address,uint64,uint64,bool)": FunctionFragment;
+    "systemCalculateInstantPrice(address,uint32)": FunctionFragment;
+    "systemObtainPrice(address,bool)": FunctionFragment;
+    "viewCurrentTwappedPrice(address,bool)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "addReferencePool",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "referencePairMinTwapTime",
-    values?: undefined
+    functionFragment: "getCoinCount",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "systemCalculateInstantPrice",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "systemObtainPrice",
-    values: [string, BigNumberish, BigNumberish, boolean]
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "viewCurrentTwappedPrice",
+    values: [string, boolean]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addReferencePool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "referencePairMinTwapTime",
+    functionFragment: "getCoinCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "systemCalculateInstantPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "systemObtainPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "viewCurrentTwappedPrice",
     data: BytesLike
   ): Result;
 
   events: {
     "ParameterUpdated64(string,uint64)": EventFragment;
-    "PriceUpdated(address,uint256,uint256,uint64)": EventFragment;
+    "ParameterUpdatedAddress(string,address)": EventFragment;
+    "PriceUpdated(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PriceUpdated"): EventFragment;
 }
 
@@ -70,180 +98,442 @@ export class IPrices extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IPricesInterface;
 
   functions: {
-    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    referencePairMinTwapTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "referencePairMinTwapTime()"(
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    getCoinCount(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
 
-    stop(overrides?: Overrides): Promise<ContractTransaction>;
+    "getCoinCount(uint256,uint256,uint256)"(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
 
-    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    systemCalculateInstantPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "systemCalculateInstantPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     systemObtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "systemObtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+    "systemObtainPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    viewCurrentTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { price: BigNumber }>;
+
+    "viewCurrentTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { price: BigNumber }>;
   };
 
-  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
+  addReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "addReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
+  completeSetup(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "referencePairMinTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "completeSetup()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  stop(overrides?: Overrides): Promise<ContractTransaction>;
+  getCoinCount(
+    cnpPoolLiquidity: BigNumberish,
+    liquidityPerCNP: BigNumberish,
+    liquidityPerCoin: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "getCoinCount(uint256,uint256,uint256)"(
+    cnpPoolLiquidity: BigNumberish,
+    liquidityPerCNP: BigNumberish,
+    liquidityPerCoin: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  stop(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "stop()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  systemCalculateInstantPrice(
+    pool: string,
+    durationSeconds: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "systemCalculateInstantPrice(address,uint32)"(
+    pool: string,
+    durationSeconds: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   systemObtainPrice(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxAge: BigNumberish,
-    normalizePrice: boolean,
-    overrides?: Overrides
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "systemObtainPrice(address,uint64,uint64,bool)"(
-    pair: string,
-    maxTwapTime: BigNumberish,
-    maxAge: BigNumberish,
-    normalizePrice: boolean,
-    overrides?: Overrides
+  "systemObtainPrice(address,bool)"(
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  viewCurrentTwappedPrice(
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "viewCurrentTwappedPrice(address,bool)"(
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   callStatic: {
+    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
+    getCoinCount(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "referencePairMinTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getCoinCount(uint256,uint256,uint256)"(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
-    systemObtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
+    systemCalculateInstantPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
+    ): Promise<[BigNumber, number, BigNumber]>;
 
-    "systemObtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
+    "systemCalculateInstantPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { price: BigNumber; priceTime: BigNumber }
-    >;
+    ): Promise<[BigNumber, number, BigNumber]>;
+
+    systemObtainPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "systemObtainPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    viewCurrentTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "viewCurrentTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
-    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
+    ParameterUpdated64(
+      paramName: string | null,
+      value: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { paramName: string; value: BigNumber }
+    >;
+
+    ParameterUpdatedAddress(
+      paramName: string | null,
+      addr: string | null
+    ): TypedEventFilter<[string, string], { paramName: string; addr: string }>;
 
     PriceUpdated(
-      pair: string | null,
+      pool: string | null,
       price: null,
-      cumulative: null,
-      twapTime: null
-    ): EventFilter;
+      cumulative: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { pool: string; price: BigNumber; cumulative: BigNumber }
+    >;
   };
 
   estimateGas: {
-    completeSetup(overrides?: Overrides): Promise<BigNumber>;
-
-    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
-
-    referencePairMinTwapTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "referencePairMinTwapTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    stop(overrides?: Overrides): Promise<BigNumber>;
-
-    "stop()"(overrides?: Overrides): Promise<BigNumber>;
-
-    systemObtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "systemObtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getCoinCount(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getCoinCount(uint256,uint256,uint256)"(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    systemCalculateInstantPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "systemCalculateInstantPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    systemObtainPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "systemObtainPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    viewCurrentTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "viewCurrentTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    referencePairMinTwapTime(
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCoinCount(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "referencePairMinTwapTime()"(
+    "getCoinCount(uint256,uint256,uint256)"(
+      cnpPoolLiquidity: BigNumberish,
+      liquidityPerCNP: BigNumberish,
+      liquidityPerCoin: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    systemCalculateInstantPrice(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "systemCalculateInstantPrice(address,uint32)"(
+      pool: string,
+      durationSeconds: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     systemObtainPrice(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "systemObtainPrice(address,uint64,uint64,bool)"(
-      pair: string,
-      maxTwapTime: BigNumberish,
-      maxAge: BigNumberish,
-      normalizePrice: boolean,
-      overrides?: Overrides
+    "systemObtainPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    viewCurrentTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "viewCurrentTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

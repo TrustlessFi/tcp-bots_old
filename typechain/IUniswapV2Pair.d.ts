@@ -9,16 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IUniswapV2PairInterface extends ethers.utils.Interface {
   functions: {
@@ -203,11 +202,41 @@ export class IUniswapV2Pair extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IUniswapV2PairInterface;
 
@@ -239,13 +268,13 @@ export class IUniswapV2Pair extends Contract {
     approve(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "approve(address,uint256)"(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -255,11 +284,14 @@ export class IUniswapV2Pair extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+    burn(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     "burn(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
@@ -293,24 +325,27 @@ export class IUniswapV2Pair extends Contract {
     initialize(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "initialize(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     kLast(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "kLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    mint(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+    mint(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     "mint(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
@@ -332,7 +367,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -343,7 +378,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     price0CumulativeLast(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -354,11 +389,14 @@ export class IUniswapV2Pair extends Contract {
 
     "price1CumulativeLast()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    skim(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+    skim(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     "skim(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     swap(
@@ -366,7 +404,7 @@ export class IUniswapV2Pair extends Contract {
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "swap(uint256,uint256,address,bytes)"(
@@ -374,16 +412,20 @@ export class IUniswapV2Pair extends Contract {
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
-    sync(overrides?: Overrides): Promise<ContractTransaction>;
+    sync(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "sync()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "sync()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     token0(overrides?: CallOverrides): Promise<[string]>;
 
@@ -400,27 +442,27 @@ export class IUniswapV2Pair extends Contract {
     transfer(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "transfer(address,uint256)"(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     transferFrom(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -451,13 +493,13 @@ export class IUniswapV2Pair extends Contract {
   approve(
     spender: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "approve(address,uint256)"(
     spender: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -467,11 +509,14 @@ export class IUniswapV2Pair extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+  burn(
+    to: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "burn(address)"(
     to: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
@@ -505,24 +550,27 @@ export class IUniswapV2Pair extends Contract {
   initialize(
     arg0: string,
     arg1: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "initialize(address,address)"(
     arg0: string,
     arg1: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   kLast(overrides?: CallOverrides): Promise<BigNumber>;
 
   "kLast()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  mint(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+  mint(
+    to: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "mint(address)"(
     to: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -544,7 +592,7 @@ export class IUniswapV2Pair extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -555,7 +603,7 @@ export class IUniswapV2Pair extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   price0CumulativeLast(overrides?: CallOverrides): Promise<BigNumber>;
@@ -566,11 +614,14 @@ export class IUniswapV2Pair extends Contract {
 
   "price1CumulativeLast()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  skim(to: string, overrides?: Overrides): Promise<ContractTransaction>;
+  skim(
+    to: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "skim(address)"(
     to: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   swap(
@@ -578,7 +629,7 @@ export class IUniswapV2Pair extends Contract {
     amount1Out: BigNumberish,
     to: string,
     data: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "swap(uint256,uint256,address,bytes)"(
@@ -586,16 +637,20 @@ export class IUniswapV2Pair extends Contract {
     amount1Out: BigNumberish,
     to: string,
     data: BytesLike,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
   "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-  sync(overrides?: Overrides): Promise<ContractTransaction>;
+  sync(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "sync()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "sync()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   token0(overrides?: CallOverrides): Promise<string>;
 
@@ -612,27 +667,27 @@ export class IUniswapV2Pair extends Contract {
   transfer(
     to: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "transfer(address,uint256)"(
     to: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   transferFrom(
     from: string,
     to: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "transferFrom(address,address,uint256)"(
     from: string,
     to: string,
     value: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -854,16 +909,29 @@ export class IUniswapV2Pair extends Contract {
       owner: string | null,
       spender: string | null,
       value: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { owner: string; spender: string; value: BigNumber }
+    >;
 
     Burn(
       sender: string | null,
       amount0: null,
       amount1: null,
       to: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber, string],
+      { sender: string; amount0: BigNumber; amount1: BigNumber; to: string }
+    >;
 
-    Mint(sender: string | null, amount0: null, amount1: null): EventFilter;
+    Mint(
+      sender: string | null,
+      amount0: null,
+      amount1: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { sender: string; amount0: BigNumber; amount1: BigNumber }
+    >;
 
     Swap(
       sender: string | null,
@@ -872,11 +940,34 @@ export class IUniswapV2Pair extends Contract {
       amount0Out: null,
       amount1Out: null,
       to: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber, BigNumber, BigNumber, string],
+      {
+        sender: string;
+        amount0In: BigNumber;
+        amount1In: BigNumber;
+        amount0Out: BigNumber;
+        amount1Out: BigNumber;
+        to: string;
+      }
+    >;
 
-    Sync(reserve0: null, reserve1: null): EventFilter;
+    Sync(
+      reserve0: null,
+      reserve1: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { reserve0: BigNumber; reserve1: BigNumber }
+    >;
 
-    Transfer(from: string | null, to: string | null, value: null): EventFilter;
+    Transfer(
+      from: string | null,
+      to: string | null,
+      value: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; to: string; value: BigNumber }
+    >;
   };
 
   estimateGas: {
@@ -907,13 +998,13 @@ export class IUniswapV2Pair extends Contract {
     approve(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "approve(address,uint256)"(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -923,9 +1014,15 @@ export class IUniswapV2Pair extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(to: string, overrides?: Overrides): Promise<BigNumber>;
+    burn(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "burn(address)"(to: string, overrides?: Overrides): Promise<BigNumber>;
+    "burn(address)"(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -942,22 +1039,28 @@ export class IUniswapV2Pair extends Contract {
     initialize(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "initialize(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     kLast(overrides?: CallOverrides): Promise<BigNumber>;
 
     "kLast()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mint(to: string, overrides?: Overrides): Promise<BigNumber>;
+    mint(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "mint(address)"(to: string, overrides?: Overrides): Promise<BigNumber>;
+    "mint(address)"(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -978,7 +1081,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -989,7 +1092,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     price0CumulativeLast(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1000,16 +1103,22 @@ export class IUniswapV2Pair extends Contract {
 
     "price1CumulativeLast()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    skim(to: string, overrides?: Overrides): Promise<BigNumber>;
+    skim(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "skim(address)"(to: string, overrides?: Overrides): Promise<BigNumber>;
+    "skim(address)"(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     swap(
       amount0Out: BigNumberish,
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "swap(uint256,uint256,address,bytes)"(
@@ -1017,16 +1126,20 @@ export class IUniswapV2Pair extends Contract {
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    sync(overrides?: Overrides): Promise<BigNumber>;
+    sync(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "sync()"(overrides?: Overrides): Promise<BigNumber>;
+    "sync()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     token0(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1043,27 +1156,27 @@ export class IUniswapV2Pair extends Contract {
     transfer(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "transfer(address,uint256)"(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transferFrom(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1101,13 +1214,13 @@ export class IUniswapV2Pair extends Contract {
     approve(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "approve(address,uint256)"(
       spender: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1120,11 +1233,14 @@ export class IUniswapV2Pair extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(to: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+    burn(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     "burn(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1142,24 +1258,27 @@ export class IUniswapV2Pair extends Contract {
     initialize(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "initialize(address,address)"(
       arg0: string,
       arg1: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     kLast(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "kLast()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    mint(to: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+    mint(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     "mint(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1184,7 +1303,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1195,7 +1314,7 @@ export class IUniswapV2Pair extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     price0CumulativeLast(
@@ -1214,11 +1333,14 @@ export class IUniswapV2Pair extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    skim(to: string, overrides?: Overrides): Promise<PopulatedTransaction>;
+    skim(
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     "skim(address)"(
       to: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     swap(
@@ -1226,7 +1348,7 @@ export class IUniswapV2Pair extends Contract {
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "swap(uint256,uint256,address,bytes)"(
@@ -1234,16 +1356,20 @@ export class IUniswapV2Pair extends Contract {
       amount1Out: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    sync(overrides?: Overrides): Promise<PopulatedTransaction>;
+    sync(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "sync()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "sync()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     token0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1260,27 +1386,27 @@ export class IUniswapV2Pair extends Contract {
     transfer(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "transfer(address,uint256)"(
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "transferFrom(address,address,uint256)"(
       from: string,
       to: string,
       value: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

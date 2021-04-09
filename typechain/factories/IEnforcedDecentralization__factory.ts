@@ -40,7 +40,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint64",
-        name: "locktime",
+        name: "startTime",
         type: "uint64",
       },
       {
@@ -50,7 +50,7 @@ const _abi = [
         type: "uint8",
       },
     ],
-    name: "UpdateLockDelayed",
+    name: "PhaseStartDelayed",
     type: "event",
   },
   {
@@ -69,8 +69,52 @@ const _abi = [
         type: "uint8",
       },
     ],
-    name: "UpgradeLockDelayed",
+    name: "UpdateLockDelayed",
     type: "event",
+  },
+  {
+    inputs: [],
+    name: "currentPhase",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "phaseOneStartTime",
+        type: "uint64",
+      },
+    ],
+    name: "setPhaseOneStartTime",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "dest",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "transferEmergencyShutdownTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [

@@ -9,28 +9,26 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-} from "ethers";
-import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "@ethersproject/contracts";
+} from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
+import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SettlementInterface extends ethers.utils.Interface {
   functions: {
     "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()": FunctionFragment;
-    "btcPriceProvider()": FunctionFragment;
     "cnp()": FunctionFragment;
     "confirmNoPriceConfidence()": FunctionFragment;
     "confirmPrices()": FunctionFragment;
     "deployer()": FunctionFragment;
     "ethPriceProvider()": FunctionFragment;
     "getCollateralForCoin(uint64,uint256)": FunctionFragment;
-    "getRecentPrices()": FunctionFragment;
+    "getRecentPrice()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "initializeSettlement()": FunctionFragment;
@@ -38,10 +36,8 @@ interface SettlementInterface extends ethers.utils.Interface {
     "noPriceConfidenceVotes()": FunctionFragment;
     "priceConfidence()": FunctionFragment;
     "priceDiscoveryStartTime()": FunctionFragment;
-    "setBtcPriceProvider(address)": FunctionFragment;
     "setEthPriceProvider(address)": FunctionFragment;
-    "setNewPriceProviders(address,address)": FunctionFragment;
-    "settlementPrice(uint8)": FunctionFragment;
+    "settlementPrice()": FunctionFragment;
     "stakeTokensForNoPriceConfidence(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
@@ -52,10 +48,6 @@ interface SettlementInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "btcPriceProvider",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
@@ -77,7 +69,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getRecentPrices",
+    functionFragment: "getRecentPrice",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
@@ -103,20 +95,12 @@ interface SettlementInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setBtcPriceProvider",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setEthPriceProvider",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setNewPriceProviders",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "settlementPrice",
-    values: [BigNumberish]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "stakeTokensForNoPriceConfidence",
@@ -141,10 +125,6 @@ interface SettlementInterface extends ethers.utils.Interface {
     functionFragment: "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "btcPriceProvider",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "confirmNoPriceConfidence",
@@ -164,7 +144,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getRecentPrices",
+    functionFragment: "getRecentPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
@@ -190,15 +170,7 @@ interface SettlementInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setBtcPriceProvider",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setEthPriceProvider",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setNewPriceProviders",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -227,7 +199,6 @@ interface SettlementInterface extends ethers.utils.Interface {
   events: {
     "Initialized(address)": EventFragment;
     "NoConfidenceConfirmed(address)": EventFragment;
-    "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
     "SettlementCollateralForCoin(uint64,address,uint256,uint256)": EventFragment;
     "SettlementInitialized(uint256)": EventFragment;
@@ -239,7 +210,6 @@ interface SettlementInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NoConfidenceConfirmed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SettlementCollateralForCoin"
@@ -258,11 +228,41 @@ export class Settlement extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  on(event: EventFilter | string, listener: Listener): this;
-  once(event: EventFilter | string, listener: Listener): this;
-  addListener(eventName: EventFilter | string, listener: Listener): this;
-  removeAllListeners(eventName: EventFilter | string): this;
-  removeListener(eventName: any, listener: Listener): this;
+  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
+  off<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  on<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  once<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    listener: TypedListener<EventArgsArray, EventArgsObject>
+  ): this;
+  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+  ): this;
+
+  listeners(eventName?: string): Array<Listener>;
+  off(eventName: string, listener: Listener): this;
+  on(eventName: string, listener: Listener): this;
+  once(eventName: string, listener: Listener): this;
+  removeListener(eventName: string, listener: Listener): this;
+  removeAllListeners(eventName?: string): this;
+
+  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
+    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: SettlementInterface;
 
@@ -275,25 +275,25 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    btcPriceProvider(overrides?: CallOverrides): Promise<[string]>;
-
-    "btcPriceProvider()"(overrides?: CallOverrides): Promise<[string]>;
-
     cnp(overrides?: CallOverrides): Promise<[string]>;
 
     "cnp()"(overrides?: CallOverrides): Promise<[string]>;
 
     confirmNoPriceConfidence(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "confirmNoPriceConfidence()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    confirmPrices(overrides?: Overrides): Promise<ContractTransaction>;
+    confirmPrices(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "confirmPrices()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "confirmPrices()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
@@ -306,26 +306,22 @@ export class Settlement extends Contract {
     getCollateralForCoin(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "getCollateralForCoin(uint64,uint256)"(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getRecentPrices(
+    getRecentPrice(
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-    >;
+    ): Promise<[BigNumber] & { ethPrice: BigNumber }>;
 
-    "getRecentPrices()"(
+    "getRecentPrice()"(
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-    >;
+    ): Promise<[BigNumber] & { ethPrice: BigNumber }>;
 
     governor(overrides?: CallOverrides): Promise<[string]>;
 
@@ -333,18 +329,20 @@ export class Settlement extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initializeSettlement(overrides?: Overrides): Promise<ContractTransaction>;
+    initializeSettlement(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     "initializeSettlement()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     noPriceConfidenceUserVotes(
@@ -371,92 +369,65 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    setBtcPriceProvider(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setBtcPriceProvider(address)"(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     setEthPriceProvider(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "setEthPriceProvider(address)"(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setNewPriceProviders(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
+    settlementPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "setNewPriceProviders(address,address)"(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    settlementPrice(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "settlementPrice(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "settlementPrice()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     stakeTokensForNoPriceConfidence(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    stop(overrides?: Overrides): Promise<ContractTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<[boolean]>;
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     unstakeTokensForNoPriceConfidence(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "unstakeTokensForNoPriceConfidence()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     withdrawCollateral(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "withdrawCollateral(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
@@ -468,23 +439,25 @@ export class Settlement extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  btcPriceProvider(overrides?: CallOverrides): Promise<string>;
-
-  "btcPriceProvider()"(overrides?: CallOverrides): Promise<string>;
-
   cnp(overrides?: CallOverrides): Promise<string>;
 
   "cnp()"(overrides?: CallOverrides): Promise<string>;
 
-  confirmNoPriceConfidence(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "confirmNoPriceConfidence()"(
-    overrides?: Overrides
+  confirmNoPriceConfidence(
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  confirmPrices(overrides?: Overrides): Promise<ContractTransaction>;
+  "confirmNoPriceConfidence()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "confirmPrices()"(overrides?: Overrides): Promise<ContractTransaction>;
+  confirmPrices(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "confirmPrices()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
 
@@ -497,41 +470,40 @@ export class Settlement extends Contract {
   getCollateralForCoin(
     positionID: BigNumberish,
     coinCount: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "getCollateralForCoin(uint64,uint256)"(
     positionID: BigNumberish,
     coinCount: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getRecentPrices(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-  >;
+  getRecentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getRecentPrices()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-  >;
+  "getRecentPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
+  init(
+    _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  initializeSettlement(overrides?: Overrides): Promise<ContractTransaction>;
+  initializeSettlement(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "initializeSettlement()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "initializeSettlement()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   noPriceConfidenceUserVotes(
     arg0: string,
@@ -555,89 +527,65 @@ export class Settlement extends Contract {
 
   "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  setBtcPriceProvider(
-    provider: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setBtcPriceProvider(address)"(
-    provider: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   setEthPriceProvider(
     provider: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "setEthPriceProvider(address)"(
     provider: string,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setNewPriceProviders(
-    ethProvider: string,
-    btcProvider: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
+  settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "setNewPriceProviders(address,address)"(
-    ethProvider: string,
-    btcProvider: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  settlementPrice(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "settlementPrice(uint8)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   stakeTokensForNoPriceConfidence(
     countCNPToStake: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "stakeTokensForNoPriceConfidence(uint256)"(
     countCNPToStake: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  stop(overrides?: Overrides): Promise<ContractTransaction>;
+  stop(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
+  "stop()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
   unstakeTokensForNoPriceConfidence(
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "unstakeTokensForNoPriceConfidence()"(
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+  validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   "validUpdate(bytes4)"(
-    action: BytesLike,
+    arg0: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   withdrawCollateral(
     positionID: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "withdrawCollateral(uint64)"(
     positionID: BigNumberish,
-    overrides?: Overrides
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -648,10 +596,6 @@ export class Settlement extends Contract {
     "SETTLEMENT_PRICE_NO_CONFIDENCE_THRESHOLD()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    btcPriceProvider(overrides?: CallOverrides): Promise<string>;
-
-    "btcPriceProvider()"(overrides?: CallOverrides): Promise<string>;
 
     cnp(overrides?: CallOverrides): Promise<string>;
 
@@ -685,17 +629,9 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getRecentPrices(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-    >;
+    getRecentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getRecentPrices()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { ethPrice: BigNumber; btcPrice: BigNumber }
-    >;
+    "getRecentPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
@@ -734,16 +670,6 @@ export class Settlement extends Contract {
 
     "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setBtcPriceProvider(
-      provider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBtcPriceProvider(address)"(
-      provider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setEthPriceProvider(
       provider: string,
       overrides?: CallOverrides
@@ -754,27 +680,9 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setNewPriceProviders(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "setNewPriceProviders(address,address)"(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    settlementPrice(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "settlementPrice(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakeTokensForNoPriceConfidence(
       countCNPToStake: BigNumberish,
@@ -800,10 +708,10 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    validUpdate(action: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -819,40 +727,70 @@ export class Settlement extends Contract {
   };
 
   filters: {
-    Initialized(governor: string | null): EventFilter;
+    Initialized(
+      governor: string | null
+    ): TypedEventFilter<[string], { governor: string }>;
 
-    NoConfidenceConfirmed(account: string | null): EventFilter;
-
-    ParameterUpdated(paramName: string | null, value: null): EventFilter;
+    NoConfidenceConfirmed(
+      account: string | null
+    ): TypedEventFilter<[string], { account: string }>;
 
     ParameterUpdatedAddress(
       paramName: string | null,
       _address: string | null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, string],
+      { paramName: string; _address: string }
+    >;
 
     SettlementCollateralForCoin(
       positionID: BigNumberish | null,
       caller: string | null,
       coinCount: null,
       collateralCount: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber, BigNumber],
+      {
+        positionID: BigNumber;
+        caller: string;
+        coinCount: BigNumber;
+        collateralCount: BigNumber;
+      }
+    >;
 
-    SettlementInitialized(settlementDiscoveryStartTime: null): EventFilter;
+    SettlementInitialized(
+      settlementDiscoveryStartTime: null
+    ): TypedEventFilter<
+      [BigNumber],
+      { settlementDiscoveryStartTime: BigNumber }
+    >;
 
     SettlementWithdrawCollateral(
       positionID: BigNumberish | null,
       owner: string | null,
       collateralToWithdraw: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { positionID: BigNumber; owner: string; collateralToWithdraw: BigNumber }
+    >;
 
-    StakedNoConfidenceTokens(account: string | null, count: null): EventFilter;
+    StakedNoConfidenceTokens(
+      account: string | null,
+      count: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { account: string; count: BigNumber }
+    >;
 
-    Stopped(): EventFilter;
+    Stopped(): TypedEventFilter<[], {}>;
 
     UnstakedNoConfidenceTokens(
       account: string | null,
       count: null
-    ): EventFilter;
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { account: string; count: BigNumber }
+    >;
   };
 
   estimateGas: {
@@ -864,21 +802,25 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    btcPriceProvider(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "btcPriceProvider()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     cnp(overrides?: CallOverrides): Promise<BigNumber>;
 
     "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    confirmNoPriceConfidence(overrides?: Overrides): Promise<BigNumber>;
+    confirmNoPriceConfidence(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "confirmNoPriceConfidence()"(overrides?: Overrides): Promise<BigNumber>;
+    "confirmNoPriceConfidence()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    confirmPrices(overrides?: Overrides): Promise<BigNumber>;
+    confirmPrices(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "confirmPrices()"(overrides?: Overrides): Promise<BigNumber>;
+    "confirmPrices()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -891,33 +833,40 @@ export class Settlement extends Contract {
     getCollateralForCoin(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "getCollateralForCoin(uint64,uint256)"(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getRecentPrices(overrides?: CallOverrides): Promise<BigNumber>;
+    getRecentPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getRecentPrices()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getRecentPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
+    init(
+      _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    initializeSettlement(overrides?: Overrides): Promise<BigNumber>;
+    initializeSettlement(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "initializeSettlement()"(overrides?: Overrides): Promise<BigNumber>;
+    "initializeSettlement()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     noPriceConfidenceUserVotes(
       arg0: string,
@@ -941,92 +890,65 @@ export class Settlement extends Contract {
 
     "priceDiscoveryStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setBtcPriceProvider(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setBtcPriceProvider(address)"(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     setEthPriceProvider(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "setEthPriceProvider(address)"(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setNewPriceProviders(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
+    settlementPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "setNewPriceProviders(address,address)"(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    settlementPrice(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "settlementPrice(uint8)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "settlementPrice()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakeTokensForNoPriceConfidence(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    stop(overrides?: Overrides): Promise<BigNumber>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "stop()"(overrides?: Overrides): Promise<BigNumber>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     unstakeTokensForNoPriceConfidence(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "unstakeTokensForNoPriceConfidence()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    validUpdate(
-      action: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     withdrawCollateral(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "withdrawCollateral(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1039,27 +961,25 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    btcPriceProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "btcPriceProvider()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     confirmNoPriceConfidence(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "confirmNoPriceConfidence()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    confirmPrices(overrides?: Overrides): Promise<PopulatedTransaction>;
+    confirmPrices(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "confirmPrices()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "confirmPrices()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1074,18 +994,18 @@ export class Settlement extends Contract {
     getCollateralForCoin(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "getCollateralForCoin(uint64,uint256)"(
       positionID: BigNumberish,
       coinCount: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getRecentPrices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getRecentPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getRecentPrices()"(
+    "getRecentPrice()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1095,18 +1015,20 @@ export class Settlement extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    initializeSettlement(overrides?: Overrides): Promise<PopulatedTransaction>;
+    initializeSettlement(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     "initializeSettlement()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     noPriceConfidenceUserVotes(
@@ -1141,92 +1063,70 @@ export class Settlement extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setBtcPriceProvider(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setBtcPriceProvider(address)"(
-      provider: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     setEthPriceProvider(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "setEthPriceProvider(address)"(
       provider: string,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setNewPriceProviders(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
+    settlementPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "setNewPriceProviders(address,address)"(
-      ethProvider: string,
-      btcProvider: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    settlementPrice(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "settlementPrice(uint8)"(
-      arg0: BigNumberish,
+    "settlementPrice()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     stakeTokensForNoPriceConfidence(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
       countCNPToStake: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
+    stop(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+    "stop()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unstakeTokensForNoPriceConfidence(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "unstakeTokensForNoPriceConfidence()"(
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     validUpdate(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "validUpdate(bytes4)"(
-      action: BytesLike,
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     withdrawCollateral(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "withdrawCollateral(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

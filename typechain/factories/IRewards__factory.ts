@@ -23,29 +23,76 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "sender",
+        name: "pool",
         type: "address",
       },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "pair",
-        type: "address",
-      },
+    ],
+    name: "AddReferencePool",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
       {
         indexed: false,
         internalType: "uint256",
-        name: "count",
+        name: "decreasePortion",
         type: "uint256",
       },
+    ],
+    name: "MaxLiquidityDecreasePerPeriod",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
       {
         indexed: false,
-        internalType: "uint64",
-        name: "unlockPeriod",
-        type: "uint64",
+        internalType: "uint128",
+        name: "minCoinLiquidityPerPosition",
+        type: "uint128",
       },
     ],
-    name: "PairTokensLocked",
+    name: "MinCoinLiquidityPerPosition",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "min",
+        type: "uint256",
+      },
+    ],
+    name: "MinCollateralPoolLiquidity",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "min",
+        type: "uint256",
+      },
+    ],
+    name: "MinLiquidationRatio",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "min",
+        type: "uint256",
+      },
+    ],
+    name: "MinTotalReferencePoolLiquidity",
     type: "event",
   },
   {
@@ -60,7 +107,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "pair",
+        name: "pool",
         type: "address",
       },
       {
@@ -70,7 +117,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "PairTokensUnlocked",
+    name: "PoolTokensUnlocked",
     type: "event",
   },
   {
@@ -78,18 +125,49 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "string",
-        name: "paramName",
-        type: "string",
-      },
-      {
-        indexed: false,
         internalType: "uint256",
-        name: "value",
+        name: "nftID",
         type: "uint256",
       },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "int24",
+        name: "tickLower",
+        type: "int24",
+      },
+      {
+        indexed: false,
+        internalType: "int24",
+        name: "tickUpper",
+        type: "int24",
+      },
     ],
-    name: "ParameterUpdated",
+    name: "PositionLocked",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint32",
+        name: "duration",
+        type: "uint32",
+      },
+    ],
+    name: "PriceUpdateTwapDuration",
     type: "event",
   },
   {
@@ -97,18 +175,12 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "string",
-        name: "paramName",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "uint64",
-        name: "value",
-        type: "uint64",
+        internalType: "address",
+        name: "pool",
+        type: "address",
       },
     ],
-    name: "ParameterUpdated64",
+    name: "RemoveReferencePool",
     type: "event",
   },
   {
@@ -159,6 +231,31 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "protocolPortion",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "collateralPortion",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "referencePortion",
+        type: "uint256",
+      },
+    ],
+    name: "RewardsPortions",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "sender",
@@ -167,7 +264,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "pair",
+        name: "pool",
         type: "address",
       },
       {
@@ -177,8 +274,34 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ShutdownPairTokensUnlocked",
+    name: "ShutdownPoolTokensUnlocked",
     type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "timePeriod",
+        type: "uint64",
+      },
+    ],
+    name: "TimePeriodOfOutOfRangeRewardsToReceive",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "addReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
@@ -202,6 +325,32 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "maxDebtSupported",
+    outputs: [
+      {
+        internalType: "uint192",
+        name: "",
+        type: "uint192",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "removeReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "stop",
     outputs: [],
     stateMutability: "nonpayable",
@@ -210,30 +359,22 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "enum IGovernor.Collateral",
-        name: "collateralType",
-        type: "uint8",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
       {
         internalType: "uint256",
-        name: "collateralDebt",
+        name: "liquidityPerCoin",
         type: "uint256",
       },
-    ],
-    name: "systemEnsureMinimumCollateralLiquidity",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
-        internalType: "uint256",
-        name: "debt",
-        type: "uint256",
+        internalType: "int24",
+        name: "tick",
+        type: "int24",
       },
     ],
-    name: "systemEnsureMinimumReferenceLiquidity",
+    name: "systemNotifyNewPriceInfo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
