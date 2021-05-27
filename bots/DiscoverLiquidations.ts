@@ -9,19 +9,19 @@ const WAIT_DURATION = minutes(60)
 
 export class DiscoverLiquidationsBot extends ManagedBot {
   name = "🤑 Discover Liquidations";
-  priceDuration = 0
+  twapDuration = 0
   collateralizationRequirement = BigNumber.from(0)
 
   // =================================================================
   // ========================== ENTRY POINT ==========================
   // =================================================================
   async runImpl(): Promise<number> {
-    if (this.priceDuration == 0) this.priceDuration = await this.protocol!.liquidations.liquidationTwapDurationSeconds()
+    if (this.twapDuration == 0) this.twapDuration = await this.protocol!.liquidations.twapDuration()
     if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.protocol!.market.collateralizationRequirement()
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
-      await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.zhueth.address, this.priceDuration),
+      await this.protocol!.prices.calculateInstantTwappedPrice(this.protocol!.pools.zhueth.address, this.twapDuration),
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 
@@ -67,14 +67,14 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       minBandIndex,
       maxBandIndex,
     ] = await Promise.all([
-      await accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMin, collatReq)),
-      await accounting.collateralizationBand(this.collatRatioGivenPriceAndRequirement(priceMax, collatReq)),
+      await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMin), this.ONE),
+      await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMax), this.ONE),
     ])
 
-    let positionsForBandQueries: Array<Promise<Array<BigNumber>>> = [];
-    for (let i = minBandIndex; i <= maxBandIndex; i++) positionsForBandQueries.push(accounting.positionsForBand(i))
+    let positionsForTickPromises: Array<Promise<Array<BigNumber>>> = [];
+    for (let i = minBandIndex; i <= maxBandIndex; i++) positionsForTickPromises.push(accounting.positionsForBand(i))
 
-    let results = await Promise.all(positionsForBandQueries);
+    let results = await Promise.all(positionsForTickPromises);
 
     let positions: Array<BigNumber> = [];
     results.map(result => positions.push.apply(positions, result))
