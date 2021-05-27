@@ -1,6 +1,7 @@
 // Copyright (c) 2020. All Rights Reserved
 // SPDX-License-Identifier: UNLICENSED
 
+import * as dotenv from 'dotenv'
 
 import { AuctionBidBot } from '../AuctionBid'
 import { StartAuctionsBot } from '../StartAuctions'
@@ -9,6 +10,8 @@ import { DiscoverLiquidationsBot } from '../DiscoverLiquidations'
 import { ExecuteLiquidationBot } from '../ExecuteLiquidation'
 import { UpdateRatesBot } from '../UpdateRates'
 import { ArbPricePegBot } from '../ArbPricePeg'
+
+dotenv.config({ path: 'env.list'})
 
 async function main() {
   let botName = process.env.BOT;

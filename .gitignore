@@ -5,3 +5,4 @@ cache/
 *.swp
 .DS_Store
 env.list
+yarn-error.log
