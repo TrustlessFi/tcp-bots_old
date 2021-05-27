@@ -21,7 +21,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
-      await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.coineth.address, this.priceDuration),
+      await this.protocol!.prices.viewInstantTwappedPrice(this.protocol!.pools.zhueth.address, this.priceDuration),
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 

@@ -21,70 +21,68 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface AccountingInterface extends ethers.utils.Interface {
   functions: {
+    "TICK_SPACING()": FunctionFragment;
     "addPositionToIndex(uint256,int24,int24,address)": FunctionFragment;
-    "calculateCollateralizationBand(uint256,uint256)": FunctionFragment;
-    "collateralizationBand(uint256)": FunctionFragment;
     "debt()": FunctionFragment;
     "debtPositionIndexingEnabled()": FunctionFragment;
     "decreaseDebt(uint256)": FunctionFragment;
-    "decreasePoolLiquidity(uint16,uint256)": FunctionFragment;
+    "decreasePoolLiquidity(address,uint256)": FunctionFragment;
+    "deletePoolPosition(uint256)": FunctionFragment;
     "deployer()": FunctionFragment;
-    "distributeLiquidityNft(uint256,address)": FunctionFragment;
     "getBasicPositionInfo(uint64)": FunctionFragment;
-    "getGenesisPeriodCoinLiquidity(address)": FunctionFragment;
-    "getLiquidationAccount()": FunctionFragment;
+    "getParticipatedInLiquidityGenesis(address,uint16)": FunctionFragment;
     "getParticipatedInMarketGenesis(address)": FunctionFragment;
     "getPoolPosition(uint256)": FunctionFragment;
+    "getPoolPositionNftIdsByOwner(address)": FunctionFragment;
     "getPosition(uint64)": FunctionFragment;
     "getRewardStatus(uint16)": FunctionFragment;
     "getSystemDebtInfo()": FunctionFragment;
+    "getTick(uint256,uint256)": FunctionFragment;
     "governor()": FunctionFragment;
     "increaseDebt(uint256)": FunctionFragment;
-    "increasePoolLiquidity(uint16,uint256)": FunctionFragment;
+    "increaseLentZhu(uint256)": FunctionFragment;
+    "increasePoolLiquidity(address,uint256)": FunctionFragment;
     "indexLocalNftID(uint256,uint256)": FunctionFragment;
     "indexPoolPositionsByOwner(address,uint256,uint256)": FunctionFragment;
     "indexPoolPositionsByTickLower(int24,uint256,uint256)": FunctionFragment;
     "indexPoolPositionsByTickUpper(int24,uint256,uint256)": FunctionFragment;
     "init(address)": FunctionFragment;
+    "isPositionOwner(uint256,address)": FunctionFragment;
+    "lentZhu()": FunctionFragment;
     "localNftID(uint256)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "onRewardsUpgrade(address)": FunctionFragment;
-    "oneToOneMintedCoin()": FunctionFragment;
-    "poolLiquidity(uint16)": FunctionFragment;
+    "poolLiquidity(address)": FunctionFragment;
+    "poolPosition(uint256)": FunctionFragment;
     "poolPositionIndexingEnabled()": FunctionFragment;
-    "poolPositionsByOwner(address,uint256)": FunctionFragment;
     "positionsByTickLower(int24,uint256)": FunctionFragment;
     "positionsByTickUpper(int24,uint256)": FunctionFragment;
     "positionsCollateralization(uint64[])": FunctionFragment;
-    "positionsForBand(uint32)": FunctionFragment;
+    "positionsForTick(int24)": FunctionFragment;
     "sendCollateral(address,uint256)": FunctionFragment;
-    "sendLentCoin(address,uint256)": FunctionFragment;
+    "sendLentZhu(address,uint256)": FunctionFragment;
     "sendOneToOneBackedTokens(address,address,uint256)": FunctionFragment;
-    "setGenesisPeriodCoinTokenCount(address,uint256)": FunctionFragment;
-    "setLiquidationAccount(tuple)": FunctionFragment;
-    "setOneToOneMintedCoin(uint256)": FunctionFragment;
+    "setParticipatedInLiquidityGenesis(address,uint16,bool)": FunctionFragment;
     "setParticipatedInMarketGenesis(address,bool)": FunctionFragment;
     "setPoolPosition(uint256,tuple)": FunctionFragment;
     "setPosition(uint64,tuple)": FunctionFragment;
     "setRewardStatus(uint16,tuple)": FunctionFragment;
     "setSystemDebtInfo(tuple)": FunctionFragment;
+    "snapRawTickToSpacing(int24,int24)": FunctionFragment;
     "stopIndexingDebtPositions()": FunctionFragment;
     "stopIndexingPoolPositions()": FunctionFragment;
     "stopped()": FunctionFragment;
+    "sweepZhu()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
+    functionFragment: "TICK_SPACING",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "addPositionToIndex",
     values: [BigNumberish, BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateCollateralizationBand",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collateralizationBand",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "debt", values?: undefined): string;
   encodeFunctionData(
@@ -97,24 +95,20 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "decreasePoolLiquidity",
-    values: [BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deletePoolPosition",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "distributeLiquidityNft",
-    values: [BigNumberish, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "getBasicPositionInfo",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getGenesisPeriodCoinLiquidity",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLiquidationAccount",
-    values?: undefined
+    functionFragment: "getParticipatedInLiquidityGenesis",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getParticipatedInMarketGenesis",
@@ -123,6 +117,10 @@ interface AccountingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getPoolPosition",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPoolPositionNftIdsByOwner",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getPosition",
@@ -136,14 +134,22 @@ interface AccountingInterface extends ethers.utils.Interface {
     functionFragment: "getSystemDebtInfo",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTick",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "increaseDebt",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "increaseLentZhu",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "increasePoolLiquidity",
-    values: [BigNumberish, BigNumberish]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "indexLocalNftID",
@@ -163,6 +169,11 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "isPositionOwner",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(functionFragment: "lentZhu", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "localNftID",
     values: [BigNumberish]
   ): string;
@@ -175,20 +186,16 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "oneToOneMintedCoin",
-    values?: undefined
+    functionFragment: "poolLiquidity",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "poolLiquidity",
+    functionFragment: "poolPosition",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "poolPositionIndexingEnabled",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "poolPositionsByOwner",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "positionsByTickLower",
@@ -203,7 +210,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "positionsForBand",
+    functionFragment: "positionsForTick",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -211,7 +218,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "sendLentCoin",
+    functionFragment: "sendLentZhu",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -219,22 +226,8 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setGenesisPeriodCoinTokenCount",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLiquidationAccount",
-    values: [
-      {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setOneToOneMintedCoin",
-    values: [BigNumberish]
+    functionFragment: "setParticipatedInLiquidityGenesis",
+    values: [string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setParticipatedInMarketGenesis",
@@ -247,12 +240,13 @@ interface AccountingInterface extends ethers.utils.Interface {
       {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       }
     ]
   ): string;
@@ -265,11 +259,12 @@ interface AccountingInterface extends ethers.utils.Interface {
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       }
     ]
   ): string;
@@ -285,11 +280,15 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [
       {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "snapRawTickToSpacing",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "stopIndexingDebtPositions",
@@ -300,21 +299,18 @@ interface AccountingInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(functionFragment: "sweepZhu", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "TICK_SPACING",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "addPositionToIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateCollateralizationBand",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "collateralizationBand",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "debt", data: BytesLike): Result;
@@ -330,21 +326,17 @@ interface AccountingInterface extends ethers.utils.Interface {
     functionFragment: "decreasePoolLiquidity",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "distributeLiquidityNft",
+    functionFragment: "deletePoolPosition",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getBasicPositionInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getGenesisPeriodCoinLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLiquidationAccount",
+    functionFragment: "getParticipatedInLiquidityGenesis",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -353,6 +345,10 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getPoolPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPoolPositionNftIdsByOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -367,9 +363,14 @@ interface AccountingInterface extends ethers.utils.Interface {
     functionFragment: "getSystemDebtInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getTick", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "increaseDebt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseLentZhu",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -393,6 +394,11 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isPositionOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lentZhu", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "localNftID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
@@ -403,19 +409,15 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "oneToOneMintedCoin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "poolLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "poolPositionIndexingEnabled",
+    functionFragment: "poolPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "poolPositionsByOwner",
+    functionFragment: "poolPositionIndexingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -431,7 +433,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "positionsForBand",
+    functionFragment: "positionsForTick",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -439,7 +441,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sendLentCoin",
+    functionFragment: "sendLentZhu",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -447,15 +449,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setGenesisPeriodCoinTokenCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLiquidationAccount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setOneToOneMintedCoin",
+    functionFragment: "setParticipatedInLiquidityGenesis",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -479,6 +473,10 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "snapRawTickToSpacing",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "stopIndexingDebtPositions",
     data: BytesLike
   ): Result;
@@ -487,6 +485,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sweepZhu", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
@@ -553,6 +552,10 @@ export class Accounting extends Contract {
   interface: AccountingInterface;
 
   functions: {
+    TICK_SPACING(overrides?: CallOverrides): Promise<[number]>;
+
+    "TICK_SPACING()"(overrides?: CallOverrides): Promise<[number]>;
+
     addPositionToIndex(
       nftID: BigNumberish,
       tickLower: BigNumberish,
@@ -568,28 +571,6 @@ export class Accounting extends Contract {
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    calculateCollateralizationBand(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    "calculateCollateralizationBand(uint256,uint256)"(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    collateralizationBand(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number] & { band: number }>;
-
-    "collateralizationBand(uint256)"(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number] & { band: number }>;
 
     debt(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -612,32 +593,30 @@ export class Accounting extends Contract {
     ): Promise<ContractTransaction>;
 
     decreasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "decreasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "decreasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    deletePoolPosition(
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "deletePoolPosition(uint256)"(
+      nftID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     "deployer()"(overrides?: CallOverrides): Promise<[string]>;
-
-    distributeLiquidityNft(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "distributeLiquidityNft(uint256,address)"(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     getBasicPositionInfo(
       positionID: BigNumberish,
@@ -659,51 +638,17 @@ export class Accounting extends Contract {
       }
     >;
 
-    getGenesisPeriodCoinLiquidity(
+    getParticipatedInLiquidityGenesis(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<[boolean]>;
 
-    "getGenesisPeriodCoinLiquidity(address)"(
+    "getParticipatedInLiquidityGenesis(address,uint16)"(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
-
-    getLiquidationAccount(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber, BigNumber] & {
-          startDebtExchangeRate: BigNumber;
-          collateral: BigNumber;
-          debt: BigNumber;
-        }
-      ] & {
-        lqAcct: [BigNumber, BigNumber, BigNumber] & {
-          startDebtExchangeRate: BigNumber;
-          collateral: BigNumber;
-          debt: BigNumber;
-        };
-      }
-    >;
-
-    "getLiquidationAccount()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber, BigNumber] & {
-          startDebtExchangeRate: BigNumber;
-          collateral: BigNumber;
-          debt: BigNumber;
-        }
-      ] & {
-        lqAcct: [BigNumber, BigNumber, BigNumber] & {
-          startDebtExchangeRate: BigNumber;
-          collateral: BigNumber;
-          debt: BigNumber;
-        };
-      }
-    >;
+    ): Promise<[boolean]>;
 
     getParticipatedInMarketGenesis(
       account: string,
@@ -723,41 +668,45 @@ export class Accounting extends Contract {
         [
           string,
           number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
           number,
           number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
+          cumulativeLiquidity: BigNumber;
+          totalRewards: BigNumber;
+          lastTimeRewarded: BigNumber;
+          lastBlockPositionIncreased: BigNumber;
           tickLower: number;
           tickUpper: number;
-          totalRewards: BigNumber;
           liquidity: BigNumber;
-          cumulativeLiquidity: BigNumber;
-          lastTimeRewarded: BigNumber;
         }
       ] & {
         pp: [
           string,
           number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
           number,
           number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
+          cumulativeLiquidity: BigNumber;
+          totalRewards: BigNumber;
+          lastTimeRewarded: BigNumber;
+          lastBlockPositionIncreased: BigNumber;
           tickLower: number;
           tickUpper: number;
-          totalRewards: BigNumber;
           liquidity: BigNumber;
-          cumulativeLiquidity: BigNumber;
-          lastTimeRewarded: BigNumber;
         };
       }
     >;
@@ -770,44 +719,58 @@ export class Accounting extends Contract {
         [
           string,
           number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
           number,
           number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
+          cumulativeLiquidity: BigNumber;
+          totalRewards: BigNumber;
+          lastTimeRewarded: BigNumber;
+          lastBlockPositionIncreased: BigNumber;
           tickLower: number;
           tickUpper: number;
-          totalRewards: BigNumber;
           liquidity: BigNumber;
-          cumulativeLiquidity: BigNumber;
-          lastTimeRewarded: BigNumber;
         }
       ] & {
         pp: [
           string,
           number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
           number,
           number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
+          cumulativeLiquidity: BigNumber;
+          totalRewards: BigNumber;
+          lastTimeRewarded: BigNumber;
+          lastBlockPositionIncreased: BigNumber;
           tickLower: number;
           tickUpper: number;
-          totalRewards: BigNumber;
           liquidity: BigNumber;
-          cumulativeLiquidity: BigNumber;
-          lastTimeRewarded: BigNumber;
         };
       }
     >;
+
+    getPoolPositionNftIdsByOwner(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getPoolPositionNftIdsByOwner(address)"(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     getPosition(
       positionID: BigNumberish,
@@ -823,17 +786,19 @@ export class Accounting extends Contract {
           BigNumber,
           BigNumber,
           number,
+          boolean,
           BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
-          startCNPRewards: BigNumber;
+          startTCPRewards: BigNumber;
           lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
-          collateralizationBand: number;
-          collateralizationBandIndex: BigNumber;
+          tick: number;
+          tickSet: boolean;
+          tickIndex: BigNumber;
         }
       ]
     >;
@@ -852,17 +817,19 @@ export class Accounting extends Contract {
           BigNumber,
           BigNumber,
           number,
+          boolean,
           BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
           collateral: BigNumber;
           debt: BigNumber;
           startDebtExchangeRate: BigNumber;
-          startCNPRewards: BigNumber;
+          startTCPRewards: BigNumber;
           lastTimeUpdated: BigNumber;
           lastBorrowTime: BigNumber;
-          collateralizationBand: number;
-          collateralizationBandIndex: BigNumber;
+          tick: number;
+          tickSet: boolean;
+          tickIndex: BigNumber;
         }
       ]
     >;
@@ -897,7 +864,7 @@ export class Accounting extends Contract {
       [
         [BigNumber, BigNumber, BigNumber, BigNumber] & {
           debt: BigNumber;
-          totalCNPRewards: BigNumber;
+          totalTCPRewards: BigNumber;
           cumulativeDebt: BigNumber;
           debtExchangeRate: BigNumber;
         }
@@ -910,12 +877,24 @@ export class Accounting extends Contract {
       [
         [BigNumber, BigNumber, BigNumber, BigNumber] & {
           debt: BigNumber;
-          totalCNPRewards: BigNumber;
+          totalTCPRewards: BigNumber;
           cumulativeDebt: BigNumber;
           debtExchangeRate: BigNumber;
         }
       ]
     >;
+
+    getTick(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
+    "getTick(uint256,uint256)"(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     governor(overrides?: CallOverrides): Promise<[string]>;
 
@@ -931,14 +910,24 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    increaseLentZhu(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "increaseLentZhu(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     increasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "increasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "increasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -960,42 +949,42 @@ export class Accounting extends Contract {
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     "indexPoolPositionsByOwner(address,uint256,uint256)"(
       owner: string,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     indexPoolPositionsByTickLower(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     "indexPoolPositionsByTickLower(int24,uint256,uint256)"(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     indexPoolPositionsByTickUpper(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     "indexPoolPositionsByTickUpper(int24,uint256,uint256)"(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number[]] & { subArray: number[] }>;
+    ): Promise<[BigNumber[]] & { subArray: BigNumber[] }>;
 
     init(
       _governor: string,
@@ -1006,6 +995,22 @@ export class Accounting extends Contract {
       _governor: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    isPositionOwner(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "isPositionOwner(uint256,address)"(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    lentZhu(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "lentZhu()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     localNftID(
       arg0: BigNumberish,
@@ -1043,19 +1048,43 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    oneToOneMintedCoin(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "oneToOneMintedCoin()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     poolLiquidity(
-      arg0: BigNumberish,
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "poolLiquidity(uint16)"(
-      arg0: BigNumberish,
+    "poolLiquidity(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    poolPosition(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, number, BigNumber, BigNumber, number, number] & {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: number;
+        lastBlockPositionIncreased: number;
+      }
+    >;
+
+    "poolPosition(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, number, BigNumber, BigNumber, number, number] & {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: number;
+        lastBlockPositionIncreased: number;
+      }
+    >;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -1063,41 +1092,29 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    poolPositionsByOwner(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    "poolPositionsByOwner(address,uint256)"(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     positionsByTickLower(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<[BigNumber]>;
 
     "positionsByTickLower(int24,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<[BigNumber]>;
 
     positionsByTickUpper(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<[BigNumber]>;
 
     "positionsByTickUpper(int24,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<[BigNumber]>;
 
     positionsCollateralization(
       positionIDs: BigNumberish[],
@@ -1109,13 +1126,13 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { collateralizations: BigNumber[] }>;
 
-    positionsForBand(
-      band: BigNumberish,
+    positionsForTick(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    "positionsForBand(uint32)"(
-      band: BigNumberish,
+    "positionsForTick(int24)"(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -1131,13 +1148,13 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    sendLentCoin(
+    sendLentZhu(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "sendLentCoin(address,uint256)"(
+    "sendLentZhu(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1157,43 +1174,17 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setGenesisPeriodCoinTokenCount(
+    setParticipatedInLiquidityGenesis(
       owner: string,
-      liquidity: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setGenesisPeriodCoinTokenCount(address,uint256)"(
+    "setParticipatedInLiquidityGenesis(address,uint16,bool)"(
       owner: string,
-      liquidity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setLiquidationAccount(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setLiquidationAccount((uint256,uint256,uint256))"(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setOneToOneMintedCoin(
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setOneToOneMintedCoin(uint256)"(
-      count: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1214,27 +1205,29 @@ export class Accounting extends Contract {
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setPoolPosition(uint256,(address,uint16,int24,int24,uint256,uint256,uint256,uint64))"(
+    "setPoolPosition(uint256,(address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128))"(
       nftID: BigNumberish,
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1246,27 +1239,29 @@ export class Accounting extends Contract {
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64))"(
+    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,int24,bool,uint64))"(
       positionID: BigNumberish,
       dp: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1286,7 +1281,7 @@ export class Accounting extends Contract {
     setSystemDebtInfo(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
@@ -1296,12 +1291,24 @@ export class Accounting extends Contract {
     "setSystemDebtInfo((uint256,uint256,uint256,uint256))"(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    snapRawTickToSpacing(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
+    "snapRawTickToSpacing(int24,int24)"(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     stopIndexingDebtPositions(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1323,6 +1330,14 @@ export class Accounting extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
 
+    sweepZhu(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "sweepZhu()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     "validUpdate(bytes4)"(
@@ -1330,6 +1345,10 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  TICK_SPACING(overrides?: CallOverrides): Promise<number>;
+
+  "TICK_SPACING()"(overrides?: CallOverrides): Promise<number>;
 
   addPositionToIndex(
     nftID: BigNumberish,
@@ -1346,28 +1365,6 @@ export class Accounting extends Contract {
     owner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  calculateCollateralizationBand(
-    debtCount: BigNumberish,
-    collateralCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  "calculateCollateralizationBand(uint256,uint256)"(
-    debtCount: BigNumberish,
-    collateralCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  collateralizationBand(
-    c: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  "collateralizationBand(uint256)"(
-    c: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
 
   debt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1388,32 +1385,30 @@ export class Accounting extends Contract {
   ): Promise<ContractTransaction>;
 
   decreasePoolLiquidity(
-    poolID: BigNumberish,
+    pool: string,
     liquidity: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "decreasePoolLiquidity(uint16,uint256)"(
-    poolID: BigNumberish,
+  "decreasePoolLiquidity(address,uint256)"(
+    pool: string,
     liquidity: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  deletePoolPosition(
+    nftID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "deletePoolPosition(uint256)"(
+    nftID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
 
   "deployer()"(overrides?: CallOverrides): Promise<string>;
-
-  distributeLiquidityNft(
-    nftID: BigNumberish,
-    dest: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "distributeLiquidityNft(uint256,address)"(
-    nftID: BigNumberish,
-    dest: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   getBasicPositionInfo(
     positionID: BigNumberish,
@@ -1435,35 +1430,17 @@ export class Accounting extends Contract {
     }
   >;
 
-  getGenesisPeriodCoinLiquidity(
+  getParticipatedInLiquidityGenesis(
     owner: string,
+    poolID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
-  "getGenesisPeriodCoinLiquidity(address)"(
+  "getParticipatedInLiquidityGenesis(address,uint16)"(
     owner: string,
+    poolID: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getLiquidationAccount(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      startDebtExchangeRate: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-    }
-  >;
-
-  "getLiquidationAccount()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      startDebtExchangeRate: BigNumber;
-      collateral: BigNumber;
-      debt: BigNumber;
-    }
-  >;
+  ): Promise<boolean>;
 
   getParticipatedInMarketGenesis(
     account: string,
@@ -1482,21 +1459,23 @@ export class Accounting extends Contract {
     [
       string,
       number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
       number,
       number,
-      BigNumber,
-      BigNumber,
-      BigNumber,
       BigNumber
     ] & {
       owner: string;
       poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
       tickLower: number;
       tickUpper: number;
-      totalRewards: BigNumber;
       liquidity: BigNumber;
-      cumulativeLiquidity: BigNumber;
-      lastTimeRewarded: BigNumber;
     }
   >;
 
@@ -1507,23 +1486,35 @@ export class Accounting extends Contract {
     [
       string,
       number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
       number,
       number,
-      BigNumber,
-      BigNumber,
-      BigNumber,
       BigNumber
     ] & {
       owner: string;
       poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
       tickLower: number;
       tickUpper: number;
-      totalRewards: BigNumber;
       liquidity: BigNumber;
-      cumulativeLiquidity: BigNumber;
-      lastTimeRewarded: BigNumber;
     }
   >;
+
+  getPoolPositionNftIdsByOwner(
+    owner: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getPoolPositionNftIdsByOwner(address)"(
+    owner: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   getPosition(
     positionID: BigNumberish,
@@ -1538,17 +1529,19 @@ export class Accounting extends Contract {
       BigNumber,
       BigNumber,
       number,
+      boolean,
       BigNumber
     ] & {
       startCumulativeDebt: BigNumber;
       collateral: BigNumber;
       debt: BigNumber;
       startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
+      startTCPRewards: BigNumber;
       lastTimeUpdated: BigNumber;
       lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      collateralizationBandIndex: BigNumber;
+      tick: number;
+      tickSet: boolean;
+      tickIndex: BigNumber;
     }
   >;
 
@@ -1565,17 +1558,19 @@ export class Accounting extends Contract {
       BigNumber,
       BigNumber,
       number,
+      boolean,
       BigNumber
     ] & {
       startCumulativeDebt: BigNumber;
       collateral: BigNumber;
       debt: BigNumber;
       startDebtExchangeRate: BigNumber;
-      startCNPRewards: BigNumber;
+      startTCPRewards: BigNumber;
       lastTimeUpdated: BigNumber;
       lastBorrowTime: BigNumber;
-      collateralizationBand: number;
-      collateralizationBandIndex: BigNumber;
+      tick: number;
+      tickSet: boolean;
+      tickIndex: BigNumber;
     }
   >;
 
@@ -1604,7 +1599,7 @@ export class Accounting extends Contract {
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber] & {
       debt: BigNumber;
-      totalCNPRewards: BigNumber;
+      totalTCPRewards: BigNumber;
       cumulativeDebt: BigNumber;
       debtExchangeRate: BigNumber;
     }
@@ -1615,11 +1610,23 @@ export class Accounting extends Contract {
   ): Promise<
     [BigNumber, BigNumber, BigNumber, BigNumber] & {
       debt: BigNumber;
-      totalCNPRewards: BigNumber;
+      totalTCPRewards: BigNumber;
       cumulativeDebt: BigNumber;
       debtExchangeRate: BigNumber;
     }
   >;
+
+  getTick(
+    collateralCount: BigNumberish,
+    debtCount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  "getTick(uint256,uint256)"(
+    collateralCount: BigNumberish,
+    debtCount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
@@ -1635,14 +1642,24 @@ export class Accounting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  increaseLentZhu(
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "increaseLentZhu(uint256)"(
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   increasePoolLiquidity(
-    poolID: BigNumberish,
+    pool: string,
     liquidity: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "increasePoolLiquidity(uint16,uint256)"(
-    poolID: BigNumberish,
+  "increasePoolLiquidity(address,uint256)"(
+    pool: string,
     liquidity: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1664,42 +1681,42 @@ export class Accounting extends Contract {
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   "indexPoolPositionsByOwner(address,uint256,uint256)"(
     owner: string,
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   indexPoolPositionsByTickLower(
     tick: BigNumberish,
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   "indexPoolPositionsByTickLower(int24,uint256,uint256)"(
     tick: BigNumberish,
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   indexPoolPositionsByTickUpper(
     tick: BigNumberish,
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   "indexPoolPositionsByTickUpper(int24,uint256,uint256)"(
     tick: BigNumberish,
     start: BigNumberish,
     end: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number[]>;
+  ): Promise<BigNumber[]>;
 
   init(
     _governor: string,
@@ -1710,6 +1727,22 @@ export class Accounting extends Contract {
     _governor: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  isPositionOwner(
+    nftID: BigNumberish,
+    addressToCheck: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "isPositionOwner(uint256,address)"(
+    nftID: BigNumberish,
+    addressToCheck: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  lentZhu(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "lentZhu()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   localNftID(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1744,59 +1777,68 @@ export class Accounting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  oneToOneMintedCoin(overrides?: CallOverrides): Promise<BigNumber>;
+  poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  "oneToOneMintedCoin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  poolLiquidity(
-    arg0: BigNumberish,
+  "poolLiquidity(address)"(
+    arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "poolLiquidity(uint16)"(
+  poolPosition(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<
+    [string, number, BigNumber, BigNumber, number, number] & {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: number;
+      lastBlockPositionIncreased: number;
+    }
+  >;
+
+  "poolPosition(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, number, BigNumber, BigNumber, number, number] & {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: number;
+      lastBlockPositionIncreased: number;
+    }
+  >;
 
   poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   "poolPositionIndexingEnabled()"(overrides?: CallOverrides): Promise<boolean>;
 
-  poolPositionsByOwner(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  "poolPositionsByOwner(address,uint256)"(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
   positionsByTickLower(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<BigNumber>;
 
   "positionsByTickLower(int24,uint256)"(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<BigNumber>;
 
   positionsByTickUpper(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<BigNumber>;
 
   "positionsByTickUpper(int24,uint256)"(
     arg0: BigNumberish,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<BigNumber>;
 
   positionsCollateralization(
     positionIDs: BigNumberish[],
@@ -1808,13 +1850,13 @@ export class Accounting extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  positionsForBand(
-    band: BigNumberish,
+  positionsForTick(
+    tick: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  "positionsForBand(uint32)"(
-    band: BigNumberish,
+  "positionsForTick(int24)"(
+    tick: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -1830,13 +1872,13 @@ export class Accounting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  sendLentCoin(
+  sendLentZhu(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "sendLentCoin(address,uint256)"(
+  "sendLentZhu(address,uint256)"(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1856,43 +1898,17 @@ export class Accounting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setGenesisPeriodCoinTokenCount(
+  setParticipatedInLiquidityGenesis(
     owner: string,
-    liquidity: BigNumberish,
+    poolID: BigNumberish,
+    participated: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setGenesisPeriodCoinTokenCount(address,uint256)"(
+  "setParticipatedInLiquidityGenesis(address,uint16,bool)"(
     owner: string,
-    liquidity: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setLiquidationAccount(
-    lqAcct: {
-      startDebtExchangeRate: BigNumberish;
-      collateral: BigNumberish;
-      debt: BigNumberish;
-    },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setLiquidationAccount((uint256,uint256,uint256))"(
-    lqAcct: {
-      startDebtExchangeRate: BigNumberish;
-      collateral: BigNumberish;
-      debt: BigNumberish;
-    },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setOneToOneMintedCoin(
-    count: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setOneToOneMintedCoin(uint256)"(
-    count: BigNumberish,
+    poolID: BigNumberish,
+    participated: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1913,27 +1929,29 @@ export class Accounting extends Contract {
     pp: {
       owner: string;
       poolID: BigNumberish;
+      cumulativeLiquidity: BigNumberish;
+      totalRewards: BigNumberish;
+      lastTimeRewarded: BigNumberish;
+      lastBlockPositionIncreased: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      totalRewards: BigNumberish;
       liquidity: BigNumberish;
-      cumulativeLiquidity: BigNumberish;
-      lastTimeRewarded: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setPoolPosition(uint256,(address,uint16,int24,int24,uint256,uint256,uint256,uint64))"(
+  "setPoolPosition(uint256,(address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128))"(
     nftID: BigNumberish,
     pp: {
       owner: string;
       poolID: BigNumberish;
+      cumulativeLiquidity: BigNumberish;
+      totalRewards: BigNumberish;
+      lastTimeRewarded: BigNumberish;
+      lastBlockPositionIncreased: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      totalRewards: BigNumberish;
       liquidity: BigNumberish;
-      cumulativeLiquidity: BigNumberish;
-      lastTimeRewarded: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1945,27 +1963,29 @@ export class Accounting extends Contract {
       collateral: BigNumberish;
       debt: BigNumberish;
       startDebtExchangeRate: BigNumberish;
-      startCNPRewards: BigNumberish;
+      startTCPRewards: BigNumberish;
       lastTimeUpdated: BigNumberish;
       lastBorrowTime: BigNumberish;
-      collateralizationBand: BigNumberish;
-      collateralizationBandIndex: BigNumberish;
+      tick: BigNumberish;
+      tickSet: boolean;
+      tickIndex: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64))"(
+  "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,int24,bool,uint64))"(
     positionID: BigNumberish,
     dp: {
       startCumulativeDebt: BigNumberish;
       collateral: BigNumberish;
       debt: BigNumberish;
       startDebtExchangeRate: BigNumberish;
-      startCNPRewards: BigNumberish;
+      startTCPRewards: BigNumberish;
       lastTimeUpdated: BigNumberish;
       lastBorrowTime: BigNumberish;
-      collateralizationBand: BigNumberish;
-      collateralizationBandIndex: BigNumberish;
+      tick: BigNumberish;
+      tickSet: boolean;
+      tickIndex: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1985,7 +2005,7 @@ export class Accounting extends Contract {
   setSystemDebtInfo(
     _sdi: {
       debt: BigNumberish;
-      totalCNPRewards: BigNumberish;
+      totalTCPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
     },
@@ -1995,12 +2015,24 @@ export class Accounting extends Contract {
   "setSystemDebtInfo((uint256,uint256,uint256,uint256))"(
     _sdi: {
       debt: BigNumberish;
-      totalCNPRewards: BigNumberish;
+      totalTCPRewards: BigNumberish;
       cumulativeDebt: BigNumberish;
       debtExchangeRate: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  snapRawTickToSpacing(
+    rawTick: BigNumberish,
+    tickSpacing: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  "snapRawTickToSpacing(int24,int24)"(
+    rawTick: BigNumberish,
+    tickSpacing: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   stopIndexingDebtPositions(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -2022,6 +2054,14 @@ export class Accounting extends Contract {
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
+  sweepZhu(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "sweepZhu()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   "validUpdate(bytes4)"(
@@ -2030,6 +2070,10 @@ export class Accounting extends Contract {
   ): Promise<boolean>;
 
   callStatic: {
+    TICK_SPACING(overrides?: CallOverrides): Promise<number>;
+
+    "TICK_SPACING()"(overrides?: CallOverrides): Promise<number>;
+
     addPositionToIndex(
       nftID: BigNumberish,
       tickLower: BigNumberish,
@@ -2045,28 +2089,6 @@ export class Accounting extends Contract {
       owner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    calculateCollateralizationBand(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "calculateCollateralizationBand(uint256,uint256)"(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    collateralizationBand(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "collateralizationBand(uint256)"(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
 
     debt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2086,32 +2108,30 @@ export class Accounting extends Contract {
     ): Promise<void>;
 
     decreasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "decreasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "decreasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    deletePoolPosition(
+      nftID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "deletePoolPosition(uint256)"(
+      nftID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
     "deployer()"(overrides?: CallOverrides): Promise<string>;
-
-    distributeLiquidityNft(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "distributeLiquidityNft(uint256,address)"(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getBasicPositionInfo(
       positionID: BigNumberish,
@@ -2133,35 +2153,17 @@ export class Accounting extends Contract {
       }
     >;
 
-    getGenesisPeriodCoinLiquidity(
+    getParticipatedInLiquidityGenesis(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
-    "getGenesisPeriodCoinLiquidity(address)"(
+    "getParticipatedInLiquidityGenesis(address,uint16)"(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getLiquidationAccount(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        startDebtExchangeRate: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-      }
-    >;
-
-    "getLiquidationAccount()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        startDebtExchangeRate: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-      }
-    >;
+    ): Promise<boolean>;
 
     getParticipatedInMarketGenesis(
       account: string,
@@ -2180,21 +2182,23 @@ export class Accounting extends Contract {
       [
         string,
         number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         number,
         number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
         BigNumber
       ] & {
         owner: string;
         poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
         tickLower: number;
         tickUpper: number;
-        totalRewards: BigNumber;
         liquidity: BigNumber;
-        cumulativeLiquidity: BigNumber;
-        lastTimeRewarded: BigNumber;
       }
     >;
 
@@ -2205,23 +2209,35 @@ export class Accounting extends Contract {
       [
         string,
         number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         number,
         number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
         BigNumber
       ] & {
         owner: string;
         poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
         tickLower: number;
         tickUpper: number;
-        totalRewards: BigNumber;
         liquidity: BigNumber;
-        cumulativeLiquidity: BigNumber;
-        lastTimeRewarded: BigNumber;
       }
     >;
+
+    getPoolPositionNftIdsByOwner(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getPoolPositionNftIdsByOwner(address)"(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getPosition(
       positionID: BigNumberish,
@@ -2236,17 +2252,19 @@ export class Accounting extends Contract {
         BigNumber,
         BigNumber,
         number,
+        boolean,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
+        startTCPRewards: BigNumber;
         lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        collateralizationBandIndex: BigNumber;
+        tick: number;
+        tickSet: boolean;
+        tickIndex: BigNumber;
       }
     >;
 
@@ -2263,17 +2281,19 @@ export class Accounting extends Contract {
         BigNumber,
         BigNumber,
         number,
+        boolean,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
+        startTCPRewards: BigNumber;
         lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        collateralizationBandIndex: BigNumber;
+        tick: number;
+        tickSet: boolean;
+        tickIndex: BigNumber;
       }
     >;
 
@@ -2302,7 +2322,7 @@ export class Accounting extends Contract {
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
         debt: BigNumber;
-        totalCNPRewards: BigNumber;
+        totalTCPRewards: BigNumber;
         cumulativeDebt: BigNumber;
         debtExchangeRate: BigNumber;
       }
@@ -2313,11 +2333,23 @@ export class Accounting extends Contract {
     ): Promise<
       [BigNumber, BigNumber, BigNumber, BigNumber] & {
         debt: BigNumber;
-        totalCNPRewards: BigNumber;
+        totalTCPRewards: BigNumber;
         cumulativeDebt: BigNumber;
         debtExchangeRate: BigNumber;
       }
     >;
+
+    getTick(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "getTick(uint256,uint256)"(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
@@ -2330,14 +2362,24 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    increaseLentZhu(
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "increaseLentZhu(uint256)"(
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     increasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "increasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "increasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2359,42 +2401,42 @@ export class Accounting extends Contract {
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     "indexPoolPositionsByOwner(address,uint256,uint256)"(
       owner: string,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     indexPoolPositionsByTickLower(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     "indexPoolPositionsByTickLower(int24,uint256,uint256)"(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     indexPoolPositionsByTickUpper(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     "indexPoolPositionsByTickUpper(int24,uint256,uint256)"(
       tick: BigNumberish,
       start: BigNumberish,
       end: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number[]>;
+    ): Promise<BigNumber[]>;
 
     init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
@@ -2402,6 +2444,22 @@ export class Accounting extends Contract {
       _governor: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isPositionOwner(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isPositionOwner(uint256,address)"(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    lentZhu(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lentZhu()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     localNftID(
       arg0: BigNumberish,
@@ -2439,19 +2497,40 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    oneToOneMintedCoin(overrides?: CallOverrides): Promise<BigNumber>;
+    poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "oneToOneMintedCoin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolLiquidity(
-      arg0: BigNumberish,
+    "poolLiquidity(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "poolLiquidity(uint16)"(
+    poolPosition(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [string, number, BigNumber, BigNumber, number, number] & {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: number;
+        lastBlockPositionIncreased: number;
+      }
+    >;
+
+    "poolPosition(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, number, BigNumber, BigNumber, number, number] & {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: number;
+        lastBlockPositionIncreased: number;
+      }
+    >;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
@@ -2459,41 +2538,29 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    poolPositionsByOwner(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "poolPositionsByOwner(address,uint256)"(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     positionsByTickLower(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<BigNumber>;
 
     "positionsByTickLower(int24,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<BigNumber>;
 
     positionsByTickUpper(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<BigNumber>;
 
     "positionsByTickUpper(int24,uint256)"(
       arg0: BigNumberish,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<BigNumber>;
 
     positionsCollateralization(
       positionIDs: BigNumberish[],
@@ -2505,13 +2572,13 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    positionsForBand(
-      band: BigNumberish,
+    positionsForTick(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    "positionsForBand(uint32)"(
-      band: BigNumberish,
+    "positionsForTick(int24)"(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -2527,13 +2594,13 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    sendLentCoin(
+    sendLentZhu(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "sendLentCoin(address,uint256)"(
+    "sendLentZhu(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -2553,43 +2620,17 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setGenesisPeriodCoinTokenCount(
+    setParticipatedInLiquidityGenesis(
       owner: string,
-      liquidity: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setGenesisPeriodCoinTokenCount(address,uint256)"(
+    "setParticipatedInLiquidityGenesis(address,uint16,bool)"(
       owner: string,
-      liquidity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLiquidationAccount(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setLiquidationAccount((uint256,uint256,uint256))"(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setOneToOneMintedCoin(
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setOneToOneMintedCoin(uint256)"(
-      count: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2610,27 +2651,29 @@ export class Accounting extends Contract {
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setPoolPosition(uint256,(address,uint16,int24,int24,uint256,uint256,uint256,uint64))"(
+    "setPoolPosition(uint256,(address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128))"(
       nftID: BigNumberish,
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2642,27 +2685,29 @@ export class Accounting extends Contract {
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64))"(
+    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,int24,bool,uint64))"(
       positionID: BigNumberish,
       dp: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2682,7 +2727,7 @@ export class Accounting extends Contract {
     setSystemDebtInfo(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
@@ -2692,12 +2737,24 @@ export class Accounting extends Contract {
     "setSystemDebtInfo((uint256,uint256,uint256,uint256))"(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    snapRawTickToSpacing(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "snapRawTickToSpacing(int24,int24)"(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     stopIndexingDebtPositions(overrides?: CallOverrides): Promise<void>;
 
@@ -2710,6 +2767,10 @@ export class Accounting extends Contract {
     stopped(overrides?: CallOverrides): Promise<boolean>;
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    sweepZhu(overrides?: CallOverrides): Promise<void>;
+
+    "sweepZhu()"(overrides?: CallOverrides): Promise<void>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -2732,6 +2793,10 @@ export class Accounting extends Contract {
   };
 
   estimateGas: {
+    TICK_SPACING(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "TICK_SPACING()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     addPositionToIndex(
       nftID: BigNumberish,
       tickLower: BigNumberish,
@@ -2746,28 +2811,6 @@ export class Accounting extends Contract {
       tickUpper: BigNumberish,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    calculateCollateralizationBand(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "calculateCollateralizationBand(uint256,uint256)"(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    collateralizationBand(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "collateralizationBand(uint256)"(
-      c: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     debt(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2791,32 +2834,30 @@ export class Accounting extends Contract {
     ): Promise<BigNumber>;
 
     decreasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "decreasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "decreasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    deletePoolPosition(
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "deletePoolPosition(uint256)"(
+      nftID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     "deployer()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    distributeLiquidityNft(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "distributeLiquidityNft(uint256,address)"(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     getBasicPositionInfo(
       positionID: BigNumberish,
@@ -2828,19 +2869,17 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getGenesisPeriodCoinLiquidity(
+    getParticipatedInLiquidityGenesis(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getGenesisPeriodCoinLiquidity(address)"(
+    "getParticipatedInLiquidityGenesis(address,uint16)"(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getLiquidationAccount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLiquidationAccount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getParticipatedInMarketGenesis(
       account: string,
@@ -2859,6 +2898,16 @@ export class Accounting extends Contract {
 
     "getPoolPosition(uint256)"(
       nftID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPoolPositionNftIdsByOwner(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getPoolPositionNftIdsByOwner(address)"(
+      owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2886,6 +2935,18 @@ export class Accounting extends Contract {
 
     "getSystemDebtInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getTick(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getTick(uint256,uint256)"(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2900,14 +2961,24 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    increaseLentZhu(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "increaseLentZhu(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     increasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "increasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "increasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2976,6 +3047,22 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isPositionOwner(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isPositionOwner(uint256,address)"(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    lentZhu(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lentZhu()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     localNftID(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -3012,16 +3099,19 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    oneToOneMintedCoin(overrides?: CallOverrides): Promise<BigNumber>;
+    poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "oneToOneMintedCoin()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "poolLiquidity(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    poolLiquidity(
+    poolPosition(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "poolLiquidity(uint16)"(
+    "poolPosition(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -3029,18 +3119,6 @@ export class Accounting extends Contract {
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
     "poolPositionIndexingEnabled()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    poolPositionsByOwner(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "poolPositionsByOwner(address,uint256)"(
-      arg0: string,
-      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3078,13 +3156,13 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    positionsForBand(
-      band: BigNumberish,
+    positionsForTick(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "positionsForBand(uint32)"(
-      band: BigNumberish,
+    "positionsForTick(int24)"(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3100,13 +3178,13 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    sendLentCoin(
+    sendLentZhu(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "sendLentCoin(address,uint256)"(
+    "sendLentZhu(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -3126,43 +3204,17 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setGenesisPeriodCoinTokenCount(
+    setParticipatedInLiquidityGenesis(
       owner: string,
-      liquidity: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setGenesisPeriodCoinTokenCount(address,uint256)"(
+    "setParticipatedInLiquidityGenesis(address,uint16,bool)"(
       owner: string,
-      liquidity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setLiquidationAccount(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setLiquidationAccount((uint256,uint256,uint256))"(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setOneToOneMintedCoin(
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setOneToOneMintedCoin(uint256)"(
-      count: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -3183,27 +3235,29 @@ export class Accounting extends Contract {
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setPoolPosition(uint256,(address,uint16,int24,int24,uint256,uint256,uint256,uint64))"(
+    "setPoolPosition(uint256,(address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128))"(
       nftID: BigNumberish,
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -3215,27 +3269,29 @@ export class Accounting extends Contract {
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64))"(
+    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,int24,bool,uint64))"(
       positionID: BigNumberish,
       dp: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -3255,7 +3311,7 @@ export class Accounting extends Contract {
     setSystemDebtInfo(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
@@ -3265,11 +3321,23 @@ export class Accounting extends Contract {
     "setSystemDebtInfo((uint256,uint256,uint256,uint256))"(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    snapRawTickToSpacing(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "snapRawTickToSpacing(int24,int24)"(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     stopIndexingDebtPositions(
@@ -3292,6 +3360,14 @@ export class Accounting extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    sweepZhu(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "sweepZhu()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     "validUpdate(bytes4)"(
@@ -3301,6 +3377,10 @@ export class Accounting extends Contract {
   };
 
   populateTransaction: {
+    TICK_SPACING(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "TICK_SPACING()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addPositionToIndex(
       nftID: BigNumberish,
       tickLower: BigNumberish,
@@ -3315,28 +3395,6 @@ export class Accounting extends Contract {
       tickUpper: BigNumberish,
       owner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    calculateCollateralizationBand(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "calculateCollateralizationBand(uint256,uint256)"(
-      debtCount: BigNumberish,
-      collateralCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    collateralizationBand(
-      c: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "collateralizationBand(uint256)"(
-      c: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     debt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3362,32 +3420,30 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     decreasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "decreasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "decreasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    deletePoolPosition(
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "deletePoolPosition(uint256)"(
+      nftID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "deployer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    distributeLiquidityNft(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "distributeLiquidityNft(uint256,address)"(
-      nftID: BigNumberish,
-      dest: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     getBasicPositionInfo(
       positionID: BigNumberish,
@@ -3399,21 +3455,15 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getGenesisPeriodCoinLiquidity(
+    getParticipatedInLiquidityGenesis(
       owner: string,
+      poolID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getGenesisPeriodCoinLiquidity(address)"(
+    "getParticipatedInLiquidityGenesis(address,uint16)"(
       owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getLiquidationAccount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getLiquidationAccount()"(
+      poolID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3434,6 +3484,16 @@ export class Accounting extends Contract {
 
     "getPoolPosition(uint256)"(
       nftID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPoolPositionNftIdsByOwner(
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getPoolPositionNftIdsByOwner(address)"(
+      owner: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3463,6 +3523,18 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTick(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getTick(uint256,uint256)"(
+      collateralCount: BigNumberish,
+      debtCount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     governor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "governor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3477,14 +3549,24 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    increaseLentZhu(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "increaseLentZhu(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     increasePoolLiquidity(
-      poolID: BigNumberish,
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "increasePoolLiquidity(uint16,uint256)"(
-      poolID: BigNumberish,
+    "increasePoolLiquidity(address,uint256)"(
+      pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -3553,6 +3635,22 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    isPositionOwner(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isPositionOwner(uint256,address)"(
+      nftID: BigNumberish,
+      addressToCheck: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lentZhu(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "lentZhu()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     localNftID(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -3589,20 +3687,22 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    oneToOneMintedCoin(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "oneToOneMintedCoin()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     poolLiquidity(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "poolLiquidity(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    poolPosition(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "poolLiquidity(uint16)"(
+    "poolPosition(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3612,18 +3712,6 @@ export class Accounting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "poolPositionIndexingEnabled()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    poolPositionsByOwner(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "poolPositionsByOwner(address,uint256)"(
-      arg0: string,
-      arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3661,13 +3749,13 @@ export class Accounting extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    positionsForBand(
-      band: BigNumberish,
+    positionsForTick(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "positionsForBand(uint32)"(
-      band: BigNumberish,
+    "positionsForTick(int24)"(
+      tick: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3683,13 +3771,13 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    sendLentCoin(
+    sendLentZhu(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "sendLentCoin(address,uint256)"(
+    "sendLentZhu(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -3709,43 +3797,17 @@ export class Accounting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setGenesisPeriodCoinTokenCount(
+    setParticipatedInLiquidityGenesis(
       owner: string,
-      liquidity: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setGenesisPeriodCoinTokenCount(address,uint256)"(
+    "setParticipatedInLiquidityGenesis(address,uint16,bool)"(
       owner: string,
-      liquidity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLiquidationAccount(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setLiquidationAccount((uint256,uint256,uint256))"(
-      lqAcct: {
-        startDebtExchangeRate: BigNumberish;
-        collateral: BigNumberish;
-        debt: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setOneToOneMintedCoin(
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setOneToOneMintedCoin(uint256)"(
-      count: BigNumberish,
+      poolID: BigNumberish,
+      participated: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3766,27 +3828,29 @@ export class Accounting extends Contract {
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setPoolPosition(uint256,(address,uint16,int24,int24,uint256,uint256,uint256,uint64))"(
+    "setPoolPosition(uint256,(address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128))"(
       nftID: BigNumberish,
       pp: {
         owner: string;
         poolID: BigNumberish;
+        cumulativeLiquidity: BigNumberish;
+        totalRewards: BigNumberish;
+        lastTimeRewarded: BigNumberish;
+        lastBlockPositionIncreased: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        totalRewards: BigNumberish;
         liquidity: BigNumberish;
-        cumulativeLiquidity: BigNumberish;
-        lastTimeRewarded: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -3798,27 +3862,29 @@ export class Accounting extends Contract {
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,uint32,uint64))"(
+    "setPosition(uint64,(uint256,uint256,uint256,uint256,uint256,uint64,uint64,int24,bool,uint64))"(
       positionID: BigNumberish,
       dp: {
         startCumulativeDebt: BigNumberish;
         collateral: BigNumberish;
         debt: BigNumberish;
         startDebtExchangeRate: BigNumberish;
-        startCNPRewards: BigNumberish;
+        startTCPRewards: BigNumberish;
         lastTimeUpdated: BigNumberish;
         lastBorrowTime: BigNumberish;
-        collateralizationBand: BigNumberish;
-        collateralizationBandIndex: BigNumberish;
+        tick: BigNumberish;
+        tickSet: boolean;
+        tickIndex: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -3838,7 +3904,7 @@ export class Accounting extends Contract {
     setSystemDebtInfo(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
@@ -3848,11 +3914,23 @@ export class Accounting extends Contract {
     "setSystemDebtInfo((uint256,uint256,uint256,uint256))"(
       _sdi: {
         debt: BigNumberish;
-        totalCNPRewards: BigNumberish;
+        totalTCPRewards: BigNumberish;
         cumulativeDebt: BigNumberish;
         debtExchangeRate: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    snapRawTickToSpacing(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "snapRawTickToSpacing(int24,int24)"(
+      rawTick: BigNumberish,
+      tickSpacing: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     stopIndexingDebtPositions(
@@ -3874,6 +3952,14 @@ export class Accounting extends Contract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    sweepZhu(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "sweepZhu()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     validUpdate(
       arg0: BytesLike,

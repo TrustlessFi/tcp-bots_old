@@ -86,9 +86,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint16",
-        name: "poolID",
-        type: "uint16",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
       {
         internalType: "uint256",
@@ -108,13 +108,8 @@ const _abi = [
         name: "nftID",
         type: "uint256",
       },
-      {
-        internalType: "address",
-        name: "dest",
-        type: "address",
-      },
     ],
-    name: "distributeLiquidityNft",
+    name: "deletePoolPosition",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -150,43 +145,18 @@ const _abi = [
         name: "owner",
         type: "address",
       },
-    ],
-    name: "getGenesisPeriodCoinLiquidity",
-    outputs: [
       {
-        internalType: "uint256",
-        name: "liquidity",
-        type: "uint256",
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getLiquidationAccount",
+    name: "getParticipatedInLiquidityGenesis",
     outputs: [
       {
-        components: [
-          {
-            internalType: "uint256",
-            name: "startDebtExchangeRate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "collateral",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "debt",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct IAccounting.LiquidationAccount",
-        name: "lqAcct",
-        type: "tuple",
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -224,7 +194,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address",
+            internalType: "address payable",
             name: "owner",
             type: "address",
           },
@@ -232,6 +202,26 @@ const _abi = [
             internalType: "uint16",
             name: "poolID",
             type: "uint16",
+          },
+          {
+            internalType: "uint256",
+            name: "cumulativeLiquidity",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "totalRewards",
+            type: "uint256",
+          },
+          {
+            internalType: "uint64",
+            name: "lastTimeRewarded",
+            type: "uint64",
+          },
+          {
+            internalType: "uint256",
+            name: "lastBlockPositionIncreased",
+            type: "uint256",
           },
           {
             internalType: "int24",
@@ -244,24 +234,9 @@ const _abi = [
             type: "int24",
           },
           {
-            internalType: "uint256",
-            name: "totalRewards",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
+            internalType: "uint128",
             name: "liquidity",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cumulativeLiquidity",
-            type: "uint256",
-          },
-          {
-            internalType: "uint64",
-            name: "lastTimeRewarded",
-            type: "uint64",
+            type: "uint128",
           },
         ],
         internalType: "struct IAccounting.PoolPosition",
@@ -306,7 +281,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "startCNPRewards",
+            name: "startTCPRewards",
             type: "uint256",
           },
           {
@@ -320,13 +295,18 @@ const _abi = [
             type: "uint64",
           },
           {
-            internalType: "uint32",
-            name: "collateralizationBand",
-            type: "uint32",
+            internalType: "int24",
+            name: "tick",
+            type: "int24",
+          },
+          {
+            internalType: "bool",
+            name: "tickSet",
+            type: "bool",
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
+            name: "tickIndex",
             type: "uint64",
           },
         ],
@@ -382,7 +362,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "totalCNPRewards",
+            name: "totalTCPRewards",
             type: "uint256",
           },
           {
@@ -420,9 +400,22 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint16",
-        name: "poolID",
-        type: "uint16",
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "increaseLentZhu",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
       {
         internalType: "uint256",
@@ -433,6 +426,43 @@ const _abi = [
     name: "increasePoolLiquidity",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "nftID",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "addressToCheck",
+        type: "address",
+      },
+    ],
+    name: "isPositionOwner",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lentZhu",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -449,24 +479,11 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "oneToOneMintedCoin",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "uint16",
-        name: "poolID",
-        type: "uint16",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
     ],
     name: "poolLiquidity",
@@ -483,7 +500,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
+        internalType: "address payable",
         name: "account",
         type: "address",
       },
@@ -511,7 +528,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "sendLentCoin",
+    name: "sendLentZhu",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -547,55 +564,17 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "liquidity",
-        type: "uint256",
+        internalType: "uint16",
+        name: "poolID",
+        type: "uint16",
       },
-    ],
-    name: "setGenesisPeriodCoinTokenCount",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
-        components: [
-          {
-            internalType: "uint256",
-            name: "startDebtExchangeRate",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "collateral",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "debt",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct IAccounting.LiquidationAccount",
-        name: "lqAcct",
-        type: "tuple",
+        internalType: "bool",
+        name: "participated",
+        type: "bool",
       },
     ],
-    name: "setLiquidationAccount",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
-    name: "setOneToOneMintedCoin",
+    name: "setParticipatedInLiquidityGenesis",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -628,7 +607,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address",
+            internalType: "address payable",
             name: "owner",
             type: "address",
           },
@@ -636,6 +615,26 @@ const _abi = [
             internalType: "uint16",
             name: "poolID",
             type: "uint16",
+          },
+          {
+            internalType: "uint256",
+            name: "cumulativeLiquidity",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "totalRewards",
+            type: "uint256",
+          },
+          {
+            internalType: "uint64",
+            name: "lastTimeRewarded",
+            type: "uint64",
+          },
+          {
+            internalType: "uint256",
+            name: "lastBlockPositionIncreased",
+            type: "uint256",
           },
           {
             internalType: "int24",
@@ -648,24 +647,9 @@ const _abi = [
             type: "int24",
           },
           {
-            internalType: "uint256",
-            name: "totalRewards",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
+            internalType: "uint128",
             name: "liquidity",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cumulativeLiquidity",
-            type: "uint256",
-          },
-          {
-            internalType: "uint64",
-            name: "lastTimeRewarded",
-            type: "uint64",
+            type: "uint128",
           },
         ],
         internalType: "struct IAccounting.PoolPosition",
@@ -709,7 +693,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "startCNPRewards",
+            name: "startTCPRewards",
             type: "uint256",
           },
           {
@@ -723,13 +707,18 @@ const _abi = [
             type: "uint64",
           },
           {
-            internalType: "uint32",
-            name: "collateralizationBand",
-            type: "uint32",
+            internalType: "int24",
+            name: "tick",
+            type: "int24",
+          },
+          {
+            internalType: "bool",
+            name: "tickSet",
+            type: "bool",
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
+            name: "tickIndex",
             type: "uint64",
           },
         ],
@@ -784,7 +773,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "totalCNPRewards",
+            name: "totalTCPRewards",
             type: "uint256",
           },
           {

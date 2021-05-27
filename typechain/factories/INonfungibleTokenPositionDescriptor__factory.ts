@@ -22,25 +22,6 @@ export class INonfungibleTokenPositionDescriptor__factory {
 
 const _abi = [
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "priority",
-        type: "int256",
-      },
-    ],
-    name: "UpdateTokenRatioPriority",
-    type: "event",
-  },
-  {
     inputs: [
       {
         internalType: "contract INonfungiblePositionManager",

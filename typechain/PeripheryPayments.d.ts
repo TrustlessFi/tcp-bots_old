@@ -23,12 +23,14 @@ interface PeripheryPaymentsInterface extends ethers.utils.Interface {
   functions: {
     "WETH9()": FunctionFragment;
     "factory()": FunctionFragment;
+    "refundETH()": FunctionFragment;
     "sweepToken(address,uint256,address)": FunctionFragment;
     "unwrapWETH9(uint256,address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "WETH9", values?: undefined): string;
   encodeFunctionData(functionFragment: "factory", values?: undefined): string;
+  encodeFunctionData(functionFragment: "refundETH", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "sweepToken",
     values: [string, BigNumberish, string]
@@ -40,6 +42,7 @@ interface PeripheryPaymentsInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "WETH9", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sweepToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unwrapWETH9",
@@ -101,6 +104,14 @@ export class PeripheryPayments extends Contract {
 
     "factory()"(overrides?: CallOverrides): Promise<[string]>;
 
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
@@ -136,6 +147,14 @@ export class PeripheryPayments extends Contract {
 
   "factory()"(overrides?: CallOverrides): Promise<string>;
 
+  refundETH(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "refundETH()"(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   sweepToken(
     token: string,
     amountMinimum: BigNumberish,
@@ -170,6 +189,10 @@ export class PeripheryPayments extends Contract {
     factory(overrides?: CallOverrides): Promise<string>;
 
     "factory()"(overrides?: CallOverrides): Promise<string>;
+
+    refundETH(overrides?: CallOverrides): Promise<void>;
+
+    "refundETH()"(overrides?: CallOverrides): Promise<void>;
 
     sweepToken(
       token: string,
@@ -209,6 +232,14 @@ export class PeripheryPayments extends Contract {
 
     "factory()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
@@ -244,6 +275,14 @@ export class PeripheryPayments extends Contract {
     factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "factory()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     sweepToken(
       token: string,

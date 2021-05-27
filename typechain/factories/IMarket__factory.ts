@@ -122,6 +122,25 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "string",
+        name: "paramName",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "value",
+        type: "address",
+      },
+    ],
+    name: "ParameterUpdatedAddress",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "uint64",
         name: "positionID",
         type: "uint64",
@@ -166,7 +185,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "cnpRewards",
+        name: "tcpRewards",
         type: "uint256",
       },
     ],
@@ -176,6 +195,19 @@ const _abi = [
   {
     inputs: [],
     name: "accrueInterest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "addReferencePool",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -195,6 +227,13 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "completeSetup",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "lastPeriodGlobalInterestAccrued",
     outputs: [
       {
@@ -204,6 +243,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "removeReferencePool",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -247,7 +299,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "startCNPRewards",
+            name: "startTCPRewards",
             type: "uint256",
           },
           {
@@ -261,13 +313,18 @@ const _abi = [
             type: "uint64",
           },
           {
-            internalType: "uint32",
-            name: "collateralizationBand",
-            type: "uint32",
+            internalType: "int24",
+            name: "tick",
+            type: "int24",
+          },
+          {
+            internalType: "bool",
+            name: "tickSet",
+            type: "bool",
           },
           {
             internalType: "uint64",
-            name: "collateralizationBandIndex",
+            name: "tickIndex",
             type: "uint64",
           },
         ],
@@ -276,19 +333,6 @@ const _abi = [
         type: "tuple",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "price",
-        type: "uint256",
-      },
-    ],
-    name: "systemNotifyCollateralPriceUpdated",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

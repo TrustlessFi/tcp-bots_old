@@ -78,7 +78,7 @@ const _abi = [
       },
       {
         internalType: "uint160",
-        name: "liquidityCumulative",
+        name: "secondsPerLiquidityCumulativeX128",
         type: "uint160",
       },
       {
@@ -142,25 +142,6 @@ const _abi = [
         internalType: "uint128",
         name: "token1",
         type: "uint128",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "int24",
-        name: "wordPosition",
-        type: "int24",
-      },
-    ],
-    name: "secondsOutside",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -257,6 +238,26 @@ const _abi = [
         internalType: "uint256",
         name: "feeGrowthOutside1X128",
         type: "uint256",
+      },
+      {
+        internalType: "int56",
+        name: "tickCumulativeOutside",
+        type: "int56",
+      },
+      {
+        internalType: "uint160",
+        name: "secondsPerLiquidityOutsideX128",
+        type: "uint160",
+      },
+      {
+        internalType: "uint32",
+        name: "secondsOutside",
+        type: "uint32",
+      },
+      {
+        internalType: "bool",
+        name: "initialized",
+        type: "bool",
       },
     ],
     stateMutability: "view",

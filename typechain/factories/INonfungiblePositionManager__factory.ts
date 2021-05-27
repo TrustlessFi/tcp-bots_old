@@ -76,6 +76,99 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount0",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount1",
+        type: "uint256",
+      },
+    ],
+    name: "Collect",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount0",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount1",
+        type: "uint256",
+      },
+    ],
+    name: "DecreaseLiquidity",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount0",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount1",
+        type: "uint256",
+      },
+    ],
+    name: "IncreaseLiquidity",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "address",
         name: "from",
         type: "address",
@@ -188,24 +281,31 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
-      {
-        internalType: "uint128",
-        name: "amount0Max",
-        type: "uint128",
-      },
-      {
-        internalType: "uint128",
-        name: "amount1Max",
-        type: "uint128",
+        components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "recipient",
+            type: "address",
+          },
+          {
+            internalType: "uint128",
+            name: "amount0Max",
+            type: "uint128",
+          },
+          {
+            internalType: "uint128",
+            name: "amount1Max",
+            type: "uint128",
+          },
+        ],
+        internalType: "struct INonfungiblePositionManager.CollectParams",
+        name: "params",
+        type: "tuple",
       },
     ],
     name: "collect",
@@ -228,12 +328,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "tokenA",
+        name: "token0",
         type: "address",
       },
       {
         internalType: "address",
-        name: "tokenB",
+        name: "token1",
         type: "address",
       },
       {
@@ -261,29 +361,37 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint128",
-        name: "amount",
-        type: "uint128",
-      },
-      {
-        internalType: "uint256",
-        name: "amount0Min",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1Min",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "deadline",
-        type: "uint256",
+        components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint128",
+            name: "liquidity",
+            type: "uint128",
+          },
+          {
+            internalType: "uint256",
+            name: "amount0Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount1Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256",
+          },
+        ],
+        internalType:
+          "struct INonfungiblePositionManager.DecreaseLiquidityParams",
+        name: "params",
+        type: "tuple",
       },
     ],
     name: "decreaseLiquidity",
@@ -337,33 +445,51 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint128",
-        name: "amount",
-        type: "uint128",
-      },
-      {
-        internalType: "uint256",
-        name: "amount0Max",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amount1Max",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "deadline",
-        type: "uint256",
+        components: [
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount0Desired",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount1Desired",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount0Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount1Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256",
+          },
+        ],
+        internalType:
+          "struct INonfungiblePositionManager.IncreaseLiquidityParams",
+        name: "params",
+        type: "tuple",
       },
     ],
     name: "increaseLiquidity",
     outputs: [
+      {
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
       {
         internalType: "uint256",
         name: "amount0",
@@ -432,18 +558,23 @@ const _abi = [
             type: "int24",
           },
           {
-            internalType: "uint128",
-            name: "amount",
-            type: "uint128",
-          },
-          {
             internalType: "uint256",
-            name: "amount0Max",
+            name: "amount0Desired",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "amount1Max",
+            name: "amount1Desired",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount0Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount1Min",
             type: "uint256",
           },
           {
@@ -468,6 +599,11 @@ const _abi = [
         internalType: "uint256",
         name: "tokenId",
         type: "uint256",
+      },
+      {
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
       },
       {
         internalType: "uint256",
@@ -628,6 +764,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "refundETH",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -713,6 +856,29 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountMinimum",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+    ],
+    name: "sweepToken",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -824,6 +990,24 @@ const _abi = [
     name: "transferFrom",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amountMinimum",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+    ],
+    name: "unwrapWETH9",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
 ];

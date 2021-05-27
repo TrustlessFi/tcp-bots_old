@@ -38,7 +38,7 @@ interface ILiquidationsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
 
   events: {
-    "CoveredUnbackedDebt(uint256,uint256,uint256)": EventFragment;
+    "CoveredUnbackedDebt(uint256,uint256)": EventFragment;
     "Liquidated(uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated32(string,uint32)": EventFragment;
@@ -144,15 +144,10 @@ export class ILiquidations extends Contract {
   filters: {
     CoveredUnbackedDebt(
       price: null,
-      positionDebt: null,
-      positionCollateral: null
+      amountCovered: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        price: BigNumber;
-        positionDebt: BigNumber;
-        positionCollateral: BigNumber;
-      }
+      [BigNumber, BigNumber],
+      { price: BigNumber; amountCovered: BigNumber }
     >;
 
     Liquidated(

@@ -29,12 +29,12 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
     "burn(uint256)": FunctionFragment;
-    "collect(uint256,address,uint128,uint128)": FunctionFragment;
+    "collect(tuple)": FunctionFragment;
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)": FunctionFragment;
-    "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)": FunctionFragment;
+    "decreaseLiquidity(tuple)": FunctionFragment;
     "factory()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)": FunctionFragment;
+    "increaseLiquidity(tuple)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(tuple)": FunctionFragment;
     "multicall(bytes[])": FunctionFragment;
@@ -42,6 +42,7 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
     "ownerOf(uint256)": FunctionFragment;
     "permit(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "positions(uint256)": FunctionFragment;
+    "refundETH()": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
@@ -78,7 +79,14 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "collect",
-    values: [BigNumberish, string, BigNumberish, BigNumberish]
+    values: [
+      {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      }
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "createAndInitializePoolIfNecessary",
@@ -87,11 +95,13 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "decreaseLiquidity",
     values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      }
     ]
   ): string;
   encodeFunctionData(functionFragment: "factory", values?: undefined): string;
@@ -102,11 +112,14 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "increaseLiquidity",
     values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
+      {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      }
     ]
   ): string;
   encodeFunctionData(
@@ -122,9 +135,10 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       }
@@ -154,6 +168,7 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
     functionFragment: "positions",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "refundETH", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish]
@@ -285,6 +300,7 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "positions", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
     data: BytesLike
@@ -341,11 +357,17 @@ interface NonfungiblePositionManagerInterface extends ethers.utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "Collect(uint256,address,uint256,uint256)": EventFragment;
+    "DecreaseLiquidity(uint256,uint128,uint256,uint256)": EventFragment;
+    "IncreaseLiquidity(uint256,uint128,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Collect"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DecreaseLiquidity"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncreaseLiquidity"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -439,52 +461,60 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<ContractTransaction>;
 
     collect(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "collect(uint256,address,uint128,uint128)"(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+    "collect((uint256,address,uint128,uint128))"(
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+    "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -503,20 +533,26 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<[string]>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+    "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -539,25 +575,27 @@ export class NonfungiblePositionManager extends Contract {
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "mint((address,address,uint24,int24,int24,uint128,uint256,uint256,address,uint256))"(
+    "mint((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256))"(
       params: {
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
@@ -673,6 +711,14 @@ export class NonfungiblePositionManager extends Contract {
         tokensOwed1: BigNumber;
       }
     >;
+
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -932,52 +978,60 @@ export class NonfungiblePositionManager extends Contract {
   ): Promise<ContractTransaction>;
 
   collect(
-    tokenId: BigNumberish,
-    recipient: string,
-    amount0Max: BigNumberish,
-    amount1Max: BigNumberish,
+    params: {
+      tokenId: BigNumberish;
+      recipient: string;
+      amount0Max: BigNumberish;
+      amount1Max: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "collect(uint256,address,uint128,uint128)"(
-    tokenId: BigNumberish,
-    recipient: string,
-    amount0Max: BigNumberish,
-    amount1Max: BigNumberish,
+  "collect((uint256,address,uint128,uint128))"(
+    params: {
+      tokenId: BigNumberish;
+      recipient: string;
+      amount0Max: BigNumberish;
+      amount1Max: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   createAndInitializePoolIfNecessary(
-    tokenA: string,
-    tokenB: string,
+    token0: string,
+    token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-    tokenA: string,
-    tokenB: string,
+    token0: string,
+    token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   decreaseLiquidity(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    amount0Min: BigNumberish,
-    amount1Min: BigNumberish,
-    deadline: BigNumberish,
+    params: {
+      tokenId: BigNumberish;
+      liquidity: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
+      deadline: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    amount0Min: BigNumberish,
-    amount1Min: BigNumberish,
-    deadline: BigNumberish,
+  "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))"(
+    params: {
+      tokenId: BigNumberish;
+      liquidity: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
+      deadline: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -996,20 +1050,26 @@ export class NonfungiblePositionManager extends Contract {
   ): Promise<string>;
 
   increaseLiquidity(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    amount0Max: BigNumberish,
-    amount1Max: BigNumberish,
-    deadline: BigNumberish,
+    params: {
+      tokenId: BigNumberish;
+      amount0Desired: BigNumberish;
+      amount1Desired: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
+      deadline: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    amount0Max: BigNumberish,
-    amount1Max: BigNumberish,
-    deadline: BigNumberish,
+  "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))"(
+    params: {
+      tokenId: BigNumberish;
+      amount0Desired: BigNumberish;
+      amount1Desired: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
+      deadline: BigNumberish;
+    },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1032,25 +1092,27 @@ export class NonfungiblePositionManager extends Contract {
       fee: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      amount: BigNumberish;
-      amount0Max: BigNumberish;
-      amount1Max: BigNumberish;
+      amount0Desired: BigNumberish;
+      amount1Desired: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
       recipient: string;
       deadline: BigNumberish;
     },
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "mint((address,address,uint24,int24,int24,uint128,uint256,uint256,address,uint256))"(
+  "mint((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256))"(
     params: {
       token0: string;
       token1: string;
       fee: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      amount: BigNumberish;
-      amount0Max: BigNumberish;
-      amount1Max: BigNumberish;
+      amount0Desired: BigNumberish;
+      amount1Desired: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
       recipient: string;
       deadline: BigNumberish;
     },
@@ -1163,6 +1225,14 @@ export class NonfungiblePositionManager extends Contract {
       tokensOwed1: BigNumber;
     }
   >;
+
+  refundETH(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "refundETH()"(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   "safeTransferFrom(address,address,uint256)"(
     from: string,
@@ -1416,58 +1486,66 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<void>;
 
     collect(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
     >;
 
-    "collect(uint256,address,uint128,uint128)"(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+    "collect((uint256,address,uint128,uint128))"(
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
     >;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
     >;
 
-    "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+    "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
@@ -1488,25 +1566,39 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<string>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
+      [BigNumber, BigNumber, BigNumber] & {
+        liquidity: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
     >;
 
-    "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+    "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
+      [BigNumber, BigNumber, BigNumber] & {
+        liquidity: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
     >;
 
     isApprovedForAll(
@@ -1528,38 +1620,42 @@ export class NonfungiblePositionManager extends Contract {
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
         tokenId: BigNumber;
+        liquidity: BigNumber;
         amount0: BigNumber;
         amount1: BigNumber;
       }
     >;
 
-    "mint((address,address,uint24,int24,int24,uint128,uint256,uint256,address,uint256))"(
+    "mint((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256))"(
       params: {
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber] & {
         tokenId: BigNumber;
+        liquidity: BigNumber;
         amount0: BigNumber;
         amount1: BigNumber;
       }
@@ -1668,6 +1764,10 @@ export class NonfungiblePositionManager extends Contract {
         tokensOwed1: BigNumber;
       }
     >;
+
+    refundETH(overrides?: CallOverrides): Promise<void>;
+
+    "refundETH()"(overrides?: CallOverrides): Promise<void>;
 
     "safeTransferFrom(address,address,uint256)"(
       from: string,
@@ -1897,6 +1997,51 @@ export class NonfungiblePositionManager extends Contract {
       { owner: string; operator: string; approved: boolean }
     >;
 
+    Collect(
+      tokenId: BigNumberish | null,
+      recipient: null,
+      amount0: null,
+      amount1: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber, BigNumber],
+      {
+        tokenId: BigNumber;
+        recipient: string;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
+    DecreaseLiquidity(
+      tokenId: BigNumberish | null,
+      liquidity: null,
+      amount0: null,
+      amount1: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        tokenId: BigNumber;
+        liquidity: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
+    IncreaseLiquidity(
+      tokenId: BigNumberish | null,
+      liquidity: null,
+      amount0: null,
+      amount1: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber, BigNumber, BigNumber],
+      {
+        tokenId: BigNumber;
+        liquidity: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
     Transfer(
       from: string | null,
       to: string | null,
@@ -1954,52 +2099,60 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<BigNumber>;
 
     collect(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "collect(uint256,address,uint128,uint128)"(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+    "collect((uint256,address,uint128,uint128))"(
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+    "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2018,20 +2171,26 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<BigNumber>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+    "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2054,25 +2213,27 @@ export class NonfungiblePositionManager extends Contract {
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "mint((address,address,uint24,int24,int24,uint128,uint256,uint256,address,uint256))"(
+    "mint((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256))"(
       params: {
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
@@ -2131,6 +2292,14 @@ export class NonfungiblePositionManager extends Contract {
     "positions(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256)"(
@@ -2399,52 +2568,60 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     collect(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "collect(uint256,address,uint128,uint128)"(
-      tokenId: BigNumberish,
-      recipient: string,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
+    "collect((uint256,address,uint128,uint128))"(
+      params: {
+        tokenId: BigNumberish;
+        recipient: string;
+        amount0Max: BigNumberish;
+        amount1Max: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "decreaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Min: BigNumberish,
-      amount1Min: BigNumberish,
-      deadline: BigNumberish,
+    "decreaseLiquidity((uint256,uint128,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        liquidity: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2463,20 +2640,26 @@ export class NonfungiblePositionManager extends Contract {
     ): Promise<PopulatedTransaction>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "increaseLiquidity(uint256,uint128,uint256,uint256,uint256)"(
-      tokenId: BigNumberish,
-      amount: BigNumberish,
-      amount0Max: BigNumberish,
-      amount1Max: BigNumberish,
-      deadline: BigNumberish,
+    "increaseLiquidity((uint256,uint256,uint256,uint256,uint256,uint256))"(
+      params: {
+        tokenId: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
+        deadline: BigNumberish;
+      },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2499,25 +2682,27 @@ export class NonfungiblePositionManager extends Contract {
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "mint((address,address,uint24,int24,int24,uint128,uint256,uint256,address,uint256))"(
+    "mint((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256))"(
       params: {
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        amount: BigNumberish;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
+        amount0Desired: BigNumberish;
+        amount1Desired: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
       },
@@ -2576,6 +2761,14 @@ export class NonfungiblePositionManager extends Contract {
     "positions(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(

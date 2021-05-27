@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   Contract,
   ContractTransaction,
-  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -22,42 +21,35 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface NonfungibleTokenPositionDescriptorInterface
   extends ethers.utils.Interface {
   functions: {
-    "flipRatio(address,address)": FunctionFragment;
-    "initialize(tuple[])": FunctionFragment;
-    "tokenRatioPriority(address)": FunctionFragment;
+    "WETH9()": FunctionFragment;
+    "flipRatio(address,address,uint256)": FunctionFragment;
+    "tokenRatioPriority(address,uint256)": FunctionFragment;
     "tokenURI(address,uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "WETH9", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "flipRatio",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initialize",
-    values: [{ token: string; priority: BigNumberish }[]]
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenRatioPriority",
-    values: [string]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenURI",
     values: [string, BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "WETH9", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "flipRatio", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenRatioPriority",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
 
-  events: {
-    "UpdateTokenRatioPriority(address,int256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "UpdateTokenRatioPriority"): EventFragment;
+  events: {};
 }
 
 export class NonfungibleTokenPositionDescriptor extends Contract {
@@ -104,35 +96,33 @@ export class NonfungibleTokenPositionDescriptor extends Contract {
   interface: NonfungibleTokenPositionDescriptorInterface;
 
   functions: {
+    WETH9(overrides?: CallOverrides): Promise<[string]>;
+
+    "WETH9()"(overrides?: CallOverrides): Promise<[string]>;
+
     flipRatio(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "flipRatio(address,address)"(
+    "flipRatio(address,address,uint256)"(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    initialize(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "initialize(tuple[])"(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     tokenRatioPriority(
-      arg0: string,
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "tokenRatioPriority(address)"(
-      arg0: string,
+    "tokenRatioPriority(address,uint256)"(
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -149,35 +139,33 @@ export class NonfungibleTokenPositionDescriptor extends Contract {
     ): Promise<[string]>;
   };
 
+  WETH9(overrides?: CallOverrides): Promise<string>;
+
+  "WETH9()"(overrides?: CallOverrides): Promise<string>;
+
   flipRatio(
     token0: string,
     token1: string,
+    chainId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "flipRatio(address,address)"(
+  "flipRatio(address,address,uint256)"(
     token0: string,
     token1: string,
+    chainId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  initialize(
-    tokens: { token: string; priority: BigNumberish }[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "initialize(tuple[])"(
-    tokens: { token: string; priority: BigNumberish }[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   tokenRatioPriority(
-    arg0: string,
+    token: string,
+    chainId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "tokenRatioPriority(address)"(
-    arg0: string,
+  "tokenRatioPriority(address,uint256)"(
+    token: string,
+    chainId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -194,35 +182,33 @@ export class NonfungibleTokenPositionDescriptor extends Contract {
   ): Promise<string>;
 
   callStatic: {
+    WETH9(overrides?: CallOverrides): Promise<string>;
+
+    "WETH9()"(overrides?: CallOverrides): Promise<string>;
+
     flipRatio(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "flipRatio(address,address)"(
+    "flipRatio(address,address,uint256)"(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    initialize(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "initialize(tuple[])"(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     tokenRatioPriority(
-      arg0: string,
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "tokenRatioPriority(address)"(
-      arg0: string,
+    "tokenRatioPriority(address,uint256)"(
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -239,46 +225,36 @@ export class NonfungibleTokenPositionDescriptor extends Contract {
     ): Promise<string>;
   };
 
-  filters: {
-    UpdateTokenRatioPriority(
-      token: null,
-      priority: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { token: string; priority: BigNumber }
-    >;
-  };
+  filters: {};
 
   estimateGas: {
+    WETH9(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "WETH9()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     flipRatio(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "flipRatio(address,address)"(
+    "flipRatio(address,address,uint256)"(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    initialize(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "initialize(tuple[])"(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     tokenRatioPriority(
-      arg0: string,
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "tokenRatioPriority(address)"(
-      arg0: string,
+    "tokenRatioPriority(address,uint256)"(
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -296,35 +272,33 @@ export class NonfungibleTokenPositionDescriptor extends Contract {
   };
 
   populateTransaction: {
+    WETH9(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "WETH9()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     flipRatio(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "flipRatio(address,address)"(
+    "flipRatio(address,address,uint256)"(
       token0: string,
       token1: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    initialize(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(tuple[])"(
-      tokens: { token: string; priority: BigNumberish }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     tokenRatioPriority(
-      arg0: string,
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "tokenRatioPriority(address)"(
-      arg0: string,
+    "tokenRatioPriority(address,uint256)"(
+      token: string,
+      chainId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

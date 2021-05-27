@@ -23,7 +23,6 @@ interface RatesInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "currentPredictedInterestRateUpdate()": FunctionFragment;
     "currentRateData()": FunctionFragment;
     "deployer()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
@@ -33,6 +32,7 @@ interface RatesInterface extends ethers.utils.Interface {
     "interestRateParameters()": FunctionFragment;
     "minTimeBetweenUpdates()": FunctionFragment;
     "positiveInterestRate()": FunctionFragment;
+    "predictInterestRate()": FunctionFragment;
     "referencePools(uint256)": FunctionFragment;
     "removeReferencePool(address)": FunctionFragment;
     "setAcceptableError(uint128)": FunctionFragment;
@@ -42,8 +42,6 @@ interface RatesInterface extends ethers.utils.Interface {
     "setMaxSteps(uint64)": FunctionFragment;
     "setMinRate(int128)": FunctionFragment;
     "setMinTimeBetweenUpdates(uint64)": FunctionFragment;
-    "setStrengthOfPullTowardTarget(uint128)": FunctionFragment;
-    "setTargetRate(int128)": FunctionFragment;
     "setValidRangeForRawPrices(uint128)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
@@ -62,10 +60,6 @@ interface RatesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "completeSetup",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentPredictedInterestRateUpdate",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -93,6 +87,10 @@ interface RatesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "positiveInterestRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "predictInterestRate",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -129,14 +127,6 @@ interface RatesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setMinTimeBetweenUpdates",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStrengthOfPullTowardTarget",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setTargetRate",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -180,10 +170,6 @@ interface RatesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentPredictedInterestRateUpdate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "currentRateData",
     data: BytesLike
   ): Result;
@@ -208,6 +194,10 @@ interface RatesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "positiveInterestRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "predictInterestRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -238,14 +228,6 @@ interface RatesInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "setMinRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMinTimeBetweenUpdates",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStrengthOfPullTowardTarget",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setTargetRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -361,56 +343,11 @@ export class Rates extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    currentPredictedInterestRateUpdate(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        }
-      ] & {
-        price: BigNumber;
-        predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        };
-      }
-    >;
-
-    "currentPredictedInterestRateUpdate()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        }
-      ] & {
-        price: BigNumber;
-        predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        };
-      }
-    >;
-
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         rate: BigNumber;
-        stepsOff: BigNumber;
         nextUpdateTime: BigNumber;
         rewardCount: BigNumber;
       }
@@ -419,9 +356,8 @@ export class Rates extends Contract {
     "currentRateData()"(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         rate: BigNumber;
-        stepsOff: BigNumber;
         nextUpdateTime: BigNumber;
         rewardCount: BigNumber;
       }
@@ -431,13 +367,9 @@ export class Rates extends Contract {
 
     "deployer()"(overrides?: CallOverrides): Promise<[string]>;
 
-    getRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { newRewardCount: BigNumber }>;
+    getRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getRewardCount()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { newRewardCount: BigNumber }>;
+    "getRewardCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     governor(overrides?: CallOverrides): Promise<[string]>;
 
@@ -462,48 +394,26 @@ export class Rates extends Contract {
     interestRateParameters(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
         maxRate: BigNumber;
-        targetRate: BigNumber;
-        strengthOfPullTowardTarget: BigNumber;
       }
     >;
 
     "interestRateParameters()"(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
         maxRate: BigNumber;
-        targetRate: BigNumber;
-        strengthOfPullTowardTarget: BigNumber;
       }
     >;
 
@@ -514,6 +424,14 @@ export class Rates extends Contract {
     positiveInterestRate(overrides?: CallOverrides): Promise<[boolean]>;
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    predictInterestRate(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+
+    "predictInterestRate()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
 
     referencePools(
       arg0: BigNumberish,
@@ -602,26 +520,6 @@ export class Rates extends Contract {
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setStrengthOfPullTowardTarget(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setStrengthOfPullTowardTarget(uint128)"(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setTargetRate(
-      target: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setTargetRate(int128)"(
-      target: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -717,56 +615,11 @@ export class Rates extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  currentPredictedInterestRateUpdate(
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        stepsOff: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    ] & {
-      price: BigNumber;
-      predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        stepsOff: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      };
-    }
-  >;
-
-  "currentPredictedInterestRateUpdate()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        stepsOff: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    ] & {
-      price: BigNumber;
-      predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        stepsOff: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      };
-    }
-  >;
-
   currentRateData(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, BigNumber] & {
       rate: BigNumber;
-      stepsOff: BigNumber;
       nextUpdateTime: BigNumber;
       rewardCount: BigNumber;
     }
@@ -775,9 +628,8 @@ export class Rates extends Contract {
   "currentRateData()"(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, BigNumber] & {
       rate: BigNumber;
-      stepsOff: BigNumber;
       nextUpdateTime: BigNumber;
       rewardCount: BigNumber;
     }
@@ -812,48 +664,26 @@ export class Rates extends Contract {
   interestRateParameters(
     overrides?: CallOverrides
   ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber
-    ] & {
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       acceptableError: BigNumber;
       errorInterval: BigNumber;
       interestRateStep: BigNumber;
       maxSteps: BigNumber;
       minRate: BigNumber;
       maxRate: BigNumber;
-      targetRate: BigNumber;
-      strengthOfPullTowardTarget: BigNumber;
     }
   >;
 
   "interestRateParameters()"(
     overrides?: CallOverrides
   ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber
-    ] & {
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
       acceptableError: BigNumber;
       errorInterval: BigNumber;
       interestRateStep: BigNumber;
       maxSteps: BigNumber;
       minRate: BigNumber;
       maxRate: BigNumber;
-      targetRate: BigNumber;
-      strengthOfPullTowardTarget: BigNumber;
     }
   >;
 
@@ -864,6 +694,14 @@ export class Rates extends Contract {
   positiveInterestRate(overrides?: CallOverrides): Promise<boolean>;
 
   "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
+
+  predictInterestRate(
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+
+  "predictInterestRate()"(
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
 
   referencePools(
     arg0: BigNumberish,
@@ -955,26 +793,6 @@ export class Rates extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setStrengthOfPullTowardTarget(
-    strength: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setStrengthOfPullTowardTarget(uint128)"(
-    strength: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setTargetRate(
-    target: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setTargetRate(int128)"(
-    target: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setValidRangeForRawPrices(
     range: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1060,56 +878,11 @@ export class Rates extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    currentPredictedInterestRateUpdate(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        }
-      ] & {
-        price: BigNumber;
-        predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        };
-      }
-    >;
-
-    "currentPredictedInterestRateUpdate()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        }
-      ] & {
-        price: BigNumber;
-        predictedRateData: [BigNumber, BigNumber, BigNumber, BigNumber] & {
-          rate: BigNumber;
-          stepsOff: BigNumber;
-          nextUpdateTime: BigNumber;
-          rewardCount: BigNumber;
-        };
-      }
-    >;
-
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         rate: BigNumber;
-        stepsOff: BigNumber;
         nextUpdateTime: BigNumber;
         rewardCount: BigNumber;
       }
@@ -1118,9 +891,8 @@ export class Rates extends Contract {
     "currentRateData()"(
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, BigNumber] & {
         rate: BigNumber;
-        stepsOff: BigNumber;
         nextUpdateTime: BigNumber;
         rewardCount: BigNumber;
       }
@@ -1154,48 +926,26 @@ export class Rates extends Contract {
     interestRateParameters(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
         maxRate: BigNumber;
-        targetRate: BigNumber;
-        strengthOfPullTowardTarget: BigNumber;
       }
     >;
 
     "interestRateParameters()"(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ] & {
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         acceptableError: BigNumber;
         errorInterval: BigNumber;
         interestRateStep: BigNumber;
         maxSteps: BigNumber;
         minRate: BigNumber;
         maxRate: BigNumber;
-        targetRate: BigNumber;
-        strengthOfPullTowardTarget: BigNumber;
       }
     >;
 
@@ -1206,6 +956,14 @@ export class Rates extends Contract {
     positiveInterestRate(overrides?: CallOverrides): Promise<boolean>;
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
+
+    predictInterestRate(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+
+    "predictInterestRate()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
 
     referencePools(
       arg0: BigNumberish,
@@ -1282,26 +1040,6 @@ export class Rates extends Contract {
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setStrengthOfPullTowardTarget(
-      strength: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setStrengthOfPullTowardTarget(uint128)"(
-      strength: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setTargetRate(
-      target: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setTargetRate(int128)"(
-      target: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1426,14 +1164,6 @@ export class Rates extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    currentPredictedInterestRateUpdate(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "currentPredictedInterestRateUpdate()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     currentRateData(overrides?: CallOverrides): Promise<BigNumber>;
 
     "currentRateData()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1477,6 +1207,10 @@ export class Rates extends Contract {
     positiveInterestRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    predictInterestRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "predictInterestRate()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     referencePools(
       arg0: BigNumberish,
@@ -1565,26 +1299,6 @@ export class Rates extends Contract {
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStrengthOfPullTowardTarget(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setStrengthOfPullTowardTarget(uint128)"(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setTargetRate(
-      target: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setTargetRate(int128)"(
-      target: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1681,14 +1395,6 @@ export class Rates extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    currentPredictedInterestRateUpdate(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "currentPredictedInterestRateUpdate()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     currentRateData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "currentRateData()"(
@@ -1748,6 +1454,14 @@ export class Rates extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "positiveInterestRate()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    predictInterestRate(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "predictInterestRate()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1838,26 +1552,6 @@ export class Rates extends Contract {
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStrengthOfPullTowardTarget(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setStrengthOfPullTowardTarget(uint128)"(
-      strength: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setTargetRate(
-      target: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setTargetRate(int128)"(
-      target: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

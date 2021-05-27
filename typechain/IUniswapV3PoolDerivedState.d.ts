@@ -21,7 +21,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface IUniswapV3PoolDerivedStateInterface extends ethers.utils.Interface {
   functions: {
     "observe(uint32[])": FunctionFragment;
-    "secondsInside(int24,int24)": FunctionFragment;
+    "snapshotCumulativesInside(int24,int24)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -29,13 +29,13 @@ interface IUniswapV3PoolDerivedStateInterface extends ethers.utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "secondsInside",
+    functionFragment: "snapshotCumulativesInside",
     values: [BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "observe", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "secondsInside",
+    functionFragment: "snapshotCumulativesInside",
     data: BytesLike
   ): Result;
 
@@ -92,7 +92,7 @@ export class IUniswapV3PoolDerivedState extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -102,21 +102,33 @@ export class IUniswapV3PoolDerivedState extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
-    secondsInside(
+    snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
 
-    "secondsInside(int24,int24)"(
+    "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
   };
 
   observe(
@@ -125,7 +137,7 @@ export class IUniswapV3PoolDerivedState extends Contract {
   ): Promise<
     [BigNumber[], BigNumber[]] & {
       tickCumulatives: BigNumber[];
-      liquidityCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
     }
   >;
 
@@ -135,21 +147,33 @@ export class IUniswapV3PoolDerivedState extends Contract {
   ): Promise<
     [BigNumber[], BigNumber[]] & {
       tickCumulatives: BigNumber[];
-      liquidityCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
     }
   >;
 
-  secondsInside(
+  snapshotCumulativesInside(
     tickLower: BigNumberish,
     tickUpper: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+    }
+  >;
 
-  "secondsInside(int24,int24)"(
+  "snapshotCumulativesInside(int24,int24)"(
     tickLower: BigNumberish,
     tickUpper: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+    }
+  >;
 
   callStatic: {
     observe(
@@ -158,7 +182,7 @@ export class IUniswapV3PoolDerivedState extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -168,21 +192,33 @@ export class IUniswapV3PoolDerivedState extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
-    secondsInside(
+    snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
 
-    "secondsInside(int24,int24)"(
+    "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<number>;
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
   };
 
   filters: {};
@@ -198,13 +234,13 @@ export class IUniswapV3PoolDerivedState extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    secondsInside(
+    snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "secondsInside(int24,int24)"(
+    "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
@@ -222,13 +258,13 @@ export class IUniswapV3PoolDerivedState extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    secondsInside(
+    snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "secondsInside(int24,int24)"(
+    "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides

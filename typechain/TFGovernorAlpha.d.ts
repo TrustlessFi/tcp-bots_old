@@ -43,7 +43,7 @@ interface TFGovernorAlphaInterface extends ethers.utils.Interface {
     "propose(address[],string[],bytes[],string)": FunctionFragment;
     "queue(uint256)": FunctionFragment;
     "state(uint256)": FunctionFragment;
-    "tfGovernor()": FunctionFragment;
+    "tfDao()": FunctionFragment;
     "timelock()": FunctionFragment;
     "votingDelay()": FunctionFragment;
     "votingPeriod()": FunctionFragment;
@@ -127,10 +127,7 @@ interface TFGovernorAlphaInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "queue", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "state", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "tfGovernor",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "tfDao", values?: undefined): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "votingDelay",
@@ -201,7 +198,7 @@ interface TFGovernorAlphaInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "propose", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "queue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "state", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "tfGovernor", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "tfDao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "votingDelay",
@@ -709,9 +706,9 @@ export class TFGovernorAlpha extends Contract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    tfGovernor(overrides?: CallOverrides): Promise<[string]>;
+    tfDao(overrides?: CallOverrides): Promise<[string]>;
 
-    "tfGovernor()"(overrides?: CallOverrides): Promise<[string]>;
+    "tfDao()"(overrides?: CallOverrides): Promise<[string]>;
 
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
@@ -1153,9 +1150,9 @@ export class TFGovernorAlpha extends Contract {
     overrides?: CallOverrides
   ): Promise<number>;
 
-  tfGovernor(overrides?: CallOverrides): Promise<string>;
+  tfDao(overrides?: CallOverrides): Promise<string>;
 
-  "tfGovernor()"(overrides?: CallOverrides): Promise<string>;
+  "tfDao()"(overrides?: CallOverrides): Promise<string>;
 
   timelock(overrides?: CallOverrides): Promise<string>;
 
@@ -1586,9 +1583,9 @@ export class TFGovernorAlpha extends Contract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    tfGovernor(overrides?: CallOverrides): Promise<string>;
+    tfDao(overrides?: CallOverrides): Promise<string>;
 
-    "tfGovernor()"(overrides?: CallOverrides): Promise<string>;
+    "tfDao()"(overrides?: CallOverrides): Promise<string>;
 
     timelock(overrides?: CallOverrides): Promise<string>;
 
@@ -1845,9 +1842,9 @@ export class TFGovernorAlpha extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    tfGovernor(overrides?: CallOverrides): Promise<BigNumber>;
+    tfDao(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "tfGovernor()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "tfDao()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2075,9 +2072,9 @@ export class TFGovernorAlpha extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    tfGovernor(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    tfDao(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "tfGovernor()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "tfDao()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

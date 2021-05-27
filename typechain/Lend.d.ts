@@ -29,17 +29,18 @@ interface LendInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "lend(uint256)": FunctionFragment;
-    "maxRatioOfTotalDebtAllowed()": FunctionFragment;
-    "mintCoin(address,uint256)": FunctionFragment;
+    "maxRatioOfTotalDebtAllowedPerBlock()": FunctionFragment;
+    "mintZhu(address,uint256)": FunctionFragment;
+    "oneToOneMintedZhuByBlock()": FunctionFragment;
     "removeReferencePool(address)": FunctionFragment;
-    "returnCoin(address,uint256)": FunctionFragment;
-    "setMaxRatioOfTotalDebtAllowed(uint256)": FunctionFragment;
+    "returnZhu(address,uint256)": FunctionFragment;
+    "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
     "unlend(uint256)": FunctionFragment;
     "validToken(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
-    "valueOfLendTokensInCoin(uint256)": FunctionFragment;
+    "valueOfLendTokensInZhu(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -63,23 +64,27 @@ interface LendInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(functionFragment: "lend", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "maxRatioOfTotalDebtAllowed",
+    functionFragment: "maxRatioOfTotalDebtAllowedPerBlock",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "mintCoin",
+    functionFragment: "mintZhu",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "oneToOneMintedZhuByBlock",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "removeReferencePool",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "returnCoin",
+    functionFragment: "returnZhu",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMaxRatioOfTotalDebtAllowed",
+    functionFragment: "setMaxRatioOfTotalDebtAllowedPerBlock",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
@@ -94,7 +99,7 @@ interface LendInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "valueOfLendTokensInCoin",
+    functionFragment: "valueOfLendTokensInZhu",
     values: [BigNumberish]
   ): string;
 
@@ -119,17 +124,21 @@ interface LendInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "maxRatioOfTotalDebtAllowed",
+    functionFragment: "maxRatioOfTotalDebtAllowedPerBlock",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mintCoin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintZhu", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "oneToOneMintedZhuByBlock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "returnCoin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "returnZhu", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setMaxRatioOfTotalDebtAllowed",
+    functionFragment: "setMaxRatioOfTotalDebtAllowedPerBlock",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -141,29 +150,29 @@ interface LendInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "valueOfLendTokensInCoin",
+    functionFragment: "valueOfLendTokensInZhu",
     data: BytesLike
   ): Result;
 
   events: {
     "Initialized(address)": EventFragment;
     "Lend(address,uint256,uint256)": EventFragment;
-    "MintCoin(address,address,uint256)": EventFragment;
+    "MintZhu(address,address,uint256)": EventFragment;
     "OneToOneMintingDisabled()": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
-    "ReturnCoin(address,address,uint256)": EventFragment;
+    "ReturnZhu(address,address,uint256)": EventFragment;
     "Stopped()": EventFragment;
     "Unlend(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Lend"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MintCoin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintZhu"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OneToOneMintingDisabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ReturnCoin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReturnZhu"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unlend"): EventFragment;
 }
@@ -233,12 +242,12 @@ export class Lend extends Contract {
     countTokensAvailable(
       token: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     "countTokensAvailable(address)"(
       token: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     currentToken(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -266,32 +275,46 @@ export class Lend extends Contract {
     ): Promise<ContractTransaction>;
 
     lend(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "lend(uint256)"(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    maxRatioOfTotalDebtAllowed(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "maxRatioOfTotalDebtAllowed()"(
+    maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    mintCoin(
+    "maxRatioOfTotalDebtAllowedPerBlock()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    mintZhu(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "mintCoin(address,uint256)"(
+    "mintZhu(address,uint256)"(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    oneToOneMintedZhuByBlock(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+    >;
+
+    "oneToOneMintedZhuByBlock()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+    >;
 
     removeReferencePool(
       pool: string,
@@ -303,24 +326,24 @@ export class Lend extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    returnCoin(
+    returnZhu(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "returnCoin(address,uint256)"(
+    "returnZhu(address,uint256)"(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMaxRatioOfTotalDebtAllowed(
+    setMaxRatioOfTotalDebtAllowedPerBlock(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setMaxRatioOfTotalDebtAllowed(uint256)"(
+    "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)"(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -361,15 +384,15 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    valueOfLendTokensInCoin(
+    valueOfLendTokensInZhu(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
-    "valueOfLendTokensInCoin(uint256)"(
+    "valueOfLendTokensInZhu(uint256)"(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
+    ): Promise<[BigNumber]>;
   };
 
   addReferencePool(
@@ -426,30 +449,46 @@ export class Lend extends Contract {
   ): Promise<ContractTransaction>;
 
   lend(
-    coinCount: BigNumberish,
+    zhuCount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "lend(uint256)"(
-    coinCount: BigNumberish,
+    zhuCount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  maxRatioOfTotalDebtAllowed(overrides?: CallOverrides): Promise<BigNumber>;
+  maxRatioOfTotalDebtAllowedPerBlock(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "maxRatioOfTotalDebtAllowed()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "maxRatioOfTotalDebtAllowedPerBlock()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  mintCoin(
+  mintZhu(
     tokenToDeposit: string,
-    coinToMint: BigNumberish,
+    zhuToMint: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "mintCoin(address,uint256)"(
+  "mintZhu(address,uint256)"(
     tokenToDeposit: string,
-    coinToMint: BigNumberish,
+    zhuToMint: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  oneToOneMintedZhuByBlock(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+  >;
+
+  "oneToOneMintedZhuByBlock()"(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+  >;
 
   removeReferencePool(
     pool: string,
@@ -461,24 +500,24 @@ export class Lend extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  returnCoin(
+  returnZhu(
     tokenToRecieve: string,
-    coinToReturn: BigNumberish,
+    zhuToReturn: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "returnCoin(address,uint256)"(
+  "returnZhu(address,uint256)"(
     tokenToRecieve: string,
-    coinToReturn: BigNumberish,
+    zhuToReturn: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMaxRatioOfTotalDebtAllowed(
+  setMaxRatioOfTotalDebtAllowedPerBlock(
     ratio: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setMaxRatioOfTotalDebtAllowed(uint256)"(
+  "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)"(
     ratio: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -519,12 +558,12 @@ export class Lend extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  valueOfLendTokensInCoin(
+  valueOfLendTokensInZhu(
     lendTokenCount: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "valueOfLendTokensInCoin(uint256)"(
+  "valueOfLendTokensInZhu(uint256)"(
     lendTokenCount: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -573,30 +612,44 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    lend(coinCount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    lend(zhuCount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     "lend(uint256)"(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    maxRatioOfTotalDebtAllowed(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxRatioOfTotalDebtAllowed()"(
+    maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mintCoin(
+    "maxRatioOfTotalDebtAllowedPerBlock()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mintZhu(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "mintCoin(address,uint256)"(
+    "mintZhu(address,uint256)"(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    oneToOneMintedZhuByBlock(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+    >;
+
+    "oneToOneMintedZhuByBlock()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { blockNumber: BigNumber; count: BigNumber }
+    >;
 
     removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
@@ -605,24 +658,24 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    returnCoin(
+    returnZhu(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "returnCoin(address,uint256)"(
+    "returnZhu(address,uint256)"(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMaxRatioOfTotalDebtAllowed(
+    setMaxRatioOfTotalDebtAllowedPerBlock(
       ratio: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setMaxRatioOfTotalDebtAllowed(uint256)"(
+    "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)"(
       ratio: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -659,12 +712,12 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    valueOfLendTokensInCoin(
+    valueOfLendTokensInZhu(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "valueOfLendTokensInCoin(uint256)"(
+    "valueOfLendTokensInZhu(uint256)"(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -677,14 +730,14 @@ export class Lend extends Contract {
 
     Lend(
       account: string | null,
-      coinCount: null,
+      zhuCount: null,
       lendTokenCount: null
     ): TypedEventFilter<
       [string, BigNumber, BigNumber],
-      { account: string; coinCount: BigNumber; lendTokenCount: BigNumber }
+      { account: string; zhuCount: BigNumber; lendTokenCount: BigNumber }
     >;
 
-    MintCoin(
+    MintZhu(
       user: string | null,
       token: string | null,
       count: null
@@ -708,7 +761,7 @@ export class Lend extends Contract {
       value: string | null
     ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
 
-    ReturnCoin(
+    ReturnZhu(
       user: string | null,
       token: string | null,
       count: null
@@ -721,11 +774,11 @@ export class Lend extends Contract {
 
     Unlend(
       account: string | null,
-      coinCount: null,
+      zhuCount: null,
       lendTokenCount: null
     ): TypedEventFilter<
       [string, BigNumber, BigNumber],
-      { account: string; coinCount: BigNumber; lendTokenCount: BigNumber }
+      { account: string; zhuCount: BigNumber; lendTokenCount: BigNumber }
     >;
   };
 
@@ -784,32 +837,38 @@ export class Lend extends Contract {
     ): Promise<BigNumber>;
 
     lend(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "lend(uint256)"(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    maxRatioOfTotalDebtAllowed(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "maxRatioOfTotalDebtAllowed()"(
+    maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    mintCoin(
+    "maxRatioOfTotalDebtAllowedPerBlock()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mintZhu(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "mintCoin(address,uint256)"(
+    "mintZhu(address,uint256)"(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    oneToOneMintedZhuByBlock(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "oneToOneMintedZhuByBlock()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     removeReferencePool(
       pool: string,
@@ -821,24 +880,24 @@ export class Lend extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    returnCoin(
+    returnZhu(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "returnCoin(address,uint256)"(
+    "returnZhu(address,uint256)"(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMaxRatioOfTotalDebtAllowed(
+    setMaxRatioOfTotalDebtAllowedPerBlock(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setMaxRatioOfTotalDebtAllowed(uint256)"(
+    "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)"(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -879,12 +938,12 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    valueOfLendTokensInCoin(
+    valueOfLendTokensInZhu(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "valueOfLendTokensInCoin(uint256)"(
+    "valueOfLendTokensInZhu(uint256)"(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -948,33 +1007,41 @@ export class Lend extends Contract {
     ): Promise<PopulatedTransaction>;
 
     lend(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "lend(uint256)"(
-      coinCount: BigNumberish,
+      zhuCount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    maxRatioOfTotalDebtAllowed(
+    maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "maxRatioOfTotalDebtAllowed()"(
+    "maxRatioOfTotalDebtAllowedPerBlock()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mintCoin(
+    mintZhu(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "mintCoin(address,uint256)"(
+    "mintZhu(address,uint256)"(
       tokenToDeposit: string,
-      coinToMint: BigNumberish,
+      zhuToMint: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    oneToOneMintedZhuByBlock(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "oneToOneMintedZhuByBlock()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     removeReferencePool(
@@ -987,24 +1054,24 @@ export class Lend extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    returnCoin(
+    returnZhu(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "returnCoin(address,uint256)"(
+    "returnZhu(address,uint256)"(
       tokenToRecieve: string,
-      coinToReturn: BigNumberish,
+      zhuToReturn: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMaxRatioOfTotalDebtAllowed(
+    setMaxRatioOfTotalDebtAllowedPerBlock(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setMaxRatioOfTotalDebtAllowed(uint256)"(
+    "setMaxRatioOfTotalDebtAllowedPerBlock(uint256)"(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1051,12 +1118,12 @@ export class Lend extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    valueOfLendTokensInCoin(
+    valueOfLendTokensInZhu(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "valueOfLendTokensInCoin(uint256)"(
+    "valueOfLendTokensInZhu(uint256)"(
       lendTokenCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

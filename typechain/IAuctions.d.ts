@@ -21,16 +21,25 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IAuctionsInterface extends ethers.utils.Interface {
   functions: {
+    "completeSetup()": FunctionFragment;
     "latestAuctionCompletionTime()": FunctionFragment;
     "stop()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "completeSetup",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "latestAuctionCompletionTime",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "completeSetup",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "latestAuctionCompletionTime",
     data: BytesLike
@@ -102,6 +111,14 @@ export class IAuctions extends Contract {
   interface: IAuctionsInterface;
 
   functions: {
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     latestAuctionCompletionTime(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -119,6 +136,14 @@ export class IAuctions extends Contract {
     ): Promise<ContractTransaction>;
   };
 
+  completeSetup(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "completeSetup()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   "latestAuctionCompletionTime()"(
@@ -134,6 +159,10 @@ export class IAuctions extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    completeSetup(overrides?: CallOverrides): Promise<void>;
+
+    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
+
     latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "latestAuctionCompletionTime()"(
@@ -216,6 +245,14 @@ export class IAuctions extends Contract {
   };
 
   estimateGas: {
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "latestAuctionCompletionTime()"(
@@ -232,6 +269,14 @@ export class IAuctions extends Contract {
   };
 
   populateTransaction: {
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     latestAuctionCompletionTime(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

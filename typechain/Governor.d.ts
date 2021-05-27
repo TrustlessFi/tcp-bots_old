@@ -22,21 +22,20 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface GovernorInterface extends ethers.utils.Interface {
   functions: {
     "EMERGENCY_SHUTDOWN_THRESHOLD()": FunctionFragment;
+    "GENESIS_PERIODS()": FunctionFragment;
     "NAME()": FunctionFragment;
     "accounting()": FunctionFragment;
-    "addReferencePool(address)": FunctionFragment;
+    "addReferencePoolToProtocol(address)": FunctionFragment;
     "auctions()": FunctionFragment;
-    "cnp()": FunctionFragment;
-    "cnpMinted()": FunctionFragment;
-    "coin()": FunctionFragment;
-    "coinPositionNFT()": FunctionFragment;
     "collateralPool()": FunctionFragment;
     "contractsInitialized()": FunctionFragment;
     "currentDailyRewardCount()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "distributeLiquidityRewards(address,uint256)": FunctionFragment;
-    "distributedCNP()": FunctionFragment;
+    "distributedTCP()": FunctionFragment;
+    "distributionScheduleTokens()": FunctionFragment;
+    "emergencyShutdownThresholdMet()": FunctionFragment;
     "emergencyShutdownTokensLocked(address)": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
@@ -45,15 +44,17 @@ interface GovernorInterface extends ethers.utils.Interface {
     "firstPeriod()": FunctionFragment;
     "getReferencePools()": FunctionFragment;
     "getSignaturePayloadForUserAddress(address)": FunctionFragment;
+    "increaseLiquidationAccountRewards(uint256)": FunctionFragment;
     "initContracts(address,address,address,address,address,address,address,address,address,address)": FunctionFragment;
     "initPools(address,address,address[])": FunctionFragment;
     "isShutdown()": FunctionFragment;
     "lend()": FunctionFragment;
-    "lendCoin()": FunctionFragment;
+    "lendZhu()": FunctionFragment;
+    "liquidationAccountRewards()": FunctionFragment;
     "liquidations()": FunctionFragment;
     "lockTokensForEmergencyShutdown(uint256)": FunctionFragment;
     "market()": FunctionFragment;
-    "mintCNP(address,uint256)": FunctionFragment;
+    "mintTCP(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
     "pricePoolsInitialized()": FunctionFragment;
     "prices()": FunctionFragment;
@@ -61,22 +62,25 @@ interface GovernorInterface extends ethers.utils.Interface {
     "protocolLock()": FunctionFragment;
     "protocolPool()": FunctionFragment;
     "rates()": FunctionFragment;
-    "removeReferencePool(address)": FunctionFragment;
-    "requireAccrueSystemInterestAccess(address)": FunctionFragment;
-    "requireCoinMintingAccess(address)": FunctionFragment;
-    "requireCoinReservesBurnAccess(address)": FunctionFragment;
-    "requireDebtWriteAccess(address)": FunctionFragment;
+    "referencePool(uint256)": FunctionFragment;
+    "removeReferencePoolFromProtocol(address)": FunctionFragment;
+    "requireDecreaseDebtAccess(address)": FunctionFragment;
     "requireGenesisAuthenticated(address,tuple)": FunctionFragment;
-    "requireInstantPriceAccess(address)": FunctionFragment;
+    "requireLentZhuCountAccess(address)": FunctionFragment;
     "requirePositionWriteAccess(address)": FunctionFragment;
     "requireStoredCollateralAccess(address)": FunctionFragment;
+    "requireUpdatePositionAccess(address)": FunctionFragment;
+    "requireZhuMintingAccess(address)": FunctionFragment;
+    "requireZhuReservesBurnAccess(address)": FunctionFragment;
     "rewards()": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
+    "tcp()": FunctionFragment;
+    "tcpMinted()": FunctionFragment;
     "timelock()": FunctionFragment;
     "totalLiquidityRewards()": FunctionFragment;
-    "unlockTokensForEmergencyShutdown(uint256)": FunctionFragment;
+    "unlockTokensForEmergencyShutdown()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
     "upgradeLend(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
@@ -88,10 +92,16 @@ interface GovernorInterface extends ethers.utils.Interface {
     "upgradeSettlement(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
     "validateAction(address,string)": FunctionFragment;
+    "zhu()": FunctionFragment;
+    "zhuPositionNFT()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "EMERGENCY_SHUTDOWN_THRESHOLD",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "GENESIS_PERIODS",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
@@ -100,17 +110,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "addReferencePool",
+    functionFragment: "addReferencePoolToProtocol",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
-  encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
-  encodeFunctionData(functionFragment: "cnpMinted", values?: undefined): string;
-  encodeFunctionData(functionFragment: "coin", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "coinPositionNFT",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "collateralPool",
     values?: undefined
@@ -136,7 +139,15 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "distributedCNP",
+    functionFragment: "distributedTCP",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "distributionScheduleTokens",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "emergencyShutdownThresholdMet",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -172,6 +183,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "increaseLiquidationAccountRewards",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initContracts",
     values: [
       string,
@@ -195,7 +210,11 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "lend", values?: undefined): string;
-  encodeFunctionData(functionFragment: "lendCoin", values?: undefined): string;
+  encodeFunctionData(functionFragment: "lendZhu", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "liquidationAccountRewards",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "liquidations",
     values?: undefined
@@ -206,7 +225,7 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "mintCNP",
+    functionFragment: "mintTCP",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -232,23 +251,15 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "rates", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "removeReferencePool",
+    functionFragment: "referencePool",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeReferencePoolFromProtocol",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "requireAccrueSystemInterestAccess",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requireCoinMintingAccess",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requireCoinReservesBurnAccess",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requireDebtWriteAccess",
+    functionFragment: "requireDecreaseDebtAccess",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -256,7 +267,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [string, { v: BigNumberish; r: BytesLike; s: BytesLike }]
   ): string;
   encodeFunctionData(
-    functionFragment: "requireInstantPriceAccess",
+    functionFragment: "requireLentZhuCountAccess",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -265,6 +276,18 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requireStoredCollateralAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireUpdatePositionAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireZhuMintingAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireZhuReservesBurnAccess",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "rewards", values?: undefined): string;
@@ -280,6 +303,8 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "shutdownTime",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "tcp", values?: undefined): string;
+  encodeFunctionData(functionFragment: "tcpMinted", values?: undefined): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalLiquidityRewards",
@@ -287,7 +312,7 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "unlockTokensForEmergencyShutdown",
-    values: [BigNumberish]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeAuctions",
@@ -330,25 +355,27 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "validateAction",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "zhu", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "zhuPositionNFT",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "EMERGENCY_SHUTDOWN_THRESHOLD",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "GENESIS_PERIODS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addReferencePool",
+    functionFragment: "addReferencePoolToProtocol",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "cnpMinted", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "coin", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "coinPositionNFT",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "collateralPool",
     data: BytesLike
@@ -374,7 +401,15 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "distributedCNP",
+    functionFragment: "distributedTCP",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "distributionScheduleTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "emergencyShutdownThresholdMet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -407,13 +442,21 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "increaseLiquidationAccountRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "initContracts",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initPools", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isShutdown", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "lendCoin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lendZhu", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "liquidationAccountRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "liquidations",
     data: BytesLike
@@ -423,7 +466,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mintCNP", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mintTCP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "periodLength",
     data: BytesLike
@@ -447,23 +490,15 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "rates", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeReferencePool",
+    functionFragment: "referencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requireAccrueSystemInterestAccess",
+    functionFragment: "removeReferencePoolFromProtocol",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requireCoinMintingAccess",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requireCoinReservesBurnAccess",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requireDebtWriteAccess",
+    functionFragment: "requireDecreaseDebtAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -471,7 +506,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requireInstantPriceAccess",
+    functionFragment: "requireLentZhuCountAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -480,6 +515,18 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requireStoredCollateralAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireUpdatePositionAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireZhuMintingAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireZhuReservesBurnAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
@@ -492,6 +539,8 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "shutdownTime",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tcp", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "tcpMinted", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalLiquidityRewards",
@@ -545,11 +594,16 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "validateAction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "zhu", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "zhuPositionNFT",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AdminUpdated(address,address)": EventFragment;
     "ContractUpgraded(string,address)": EventFragment;
-    "EmergencyShutdownExecuted(uint256,uint64)": EventFragment;
+    "EmergencyShutdownExecuted(uint64)": EventFragment;
     "ProtocolUpgraded(address)": EventFragment;
     "ShutdownExecuted()": EventFragment;
     "ShutdownTokensLocked(address,uint256)": EventFragment;
@@ -617,6 +671,10 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    GENESIS_PERIODS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "GENESIS_PERIODS()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     NAME(overrides?: CallOverrides): Promise<[string]>;
 
     "NAME()"(overrides?: CallOverrides): Promise<[string]>;
@@ -625,12 +683,12 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<[string]>;
 
-    addReferencePool(
+    addReferencePoolToProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "addReferencePool(address)"(
+    "addReferencePoolToProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -638,22 +696,6 @@ export class Governor extends Contract {
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
     "auctions()"(overrides?: CallOverrides): Promise<[string]>;
-
-    cnp(overrides?: CallOverrides): Promise<[string]>;
-
-    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
-
-    cnpMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "cnpMinted()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    coin(overrides?: CallOverrides): Promise<[string]>;
-
-    "coin()"(overrides?: CallOverrides): Promise<[string]>;
-
-    coinPositionNFT(overrides?: CallOverrides): Promise<[string]>;
-
-    "coinPositionNFT()"(overrides?: CallOverrides): Promise<[string]>;
 
     collateralPool(overrides?: CallOverrides): Promise<[string]>;
 
@@ -663,13 +705,11 @@ export class Governor extends Contract {
 
     "contractsInitialized()"(overrides?: CallOverrides): Promise<[boolean]>;
 
-    currentDailyRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    currentDailyRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "currentDailyRewardCount()"(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     currentPeriod(
       overrides?: CallOverrides
@@ -695,9 +735,23 @@ export class Governor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    distributedCNP(overrides?: CallOverrides): Promise<[BigNumber]>;
+    distributedTCP(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "distributedCNP()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "distributedTCP()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    distributionScheduleTokens(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "distributionScheduleTokens()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    emergencyShutdownThresholdMet(
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "emergencyShutdownThresholdMet()"(
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     emergencyShutdownTokensLocked(
       arg0: string,
@@ -761,9 +815,19 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    increaseLiquidationAccountRewards(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "increaseLiquidationAccountRewards(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     initContracts(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -777,7 +841,7 @@ export class Governor extends Contract {
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -811,9 +875,15 @@ export class Governor extends Contract {
 
     "lend()"(overrides?: CallOverrides): Promise<[string]>;
 
-    lendCoin(overrides?: CallOverrides): Promise<[string]>;
+    lendZhu(overrides?: CallOverrides): Promise<[string]>;
 
-    "lendCoin()"(overrides?: CallOverrides): Promise<[string]>;
+    "lendZhu()"(overrides?: CallOverrides): Promise<[string]>;
+
+    liquidationAccountRewards(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "liquidationAccountRewards()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     liquidations(overrides?: CallOverrides): Promise<[string]>;
 
@@ -833,13 +903,13 @@ export class Governor extends Contract {
 
     "market()"(overrides?: CallOverrides): Promise<[string]>;
 
-    mintCNP(
+    mintTCP(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "mintCNP(address,uint256)"(
+    "mintTCP(address,uint256)"(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -873,52 +943,32 @@ export class Governor extends Contract {
 
     "rates()"(overrides?: CallOverrides): Promise<[string]>;
 
-    removeReferencePool(
+    referencePool(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "referencePool(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    removeReferencePoolFromProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "removeReferencePool(address)"(
+    "removeReferencePoolFromProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    requireAccrueSystemInterestAccess(
+    requireDecreaseDebtAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    "requireAccrueSystemInterestAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    requireCoinMintingAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    "requireCoinMintingAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    requireCoinReservesBurnAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    "requireCoinReservesBurnAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    requireDebtWriteAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    "requireDebtWriteAccess(address)"(
+    "requireDecreaseDebtAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -935,12 +985,12 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isGenesis: boolean }>;
 
-    requireInstantPriceAccess(
+    requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    "requireInstantPriceAccess(address)"(
+    "requireLentZhuCountAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -961,6 +1011,36 @@ export class Governor extends Contract {
     ): Promise<[void]>;
 
     "requireStoredCollateralAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireUpdatePositionAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    "requireUpdatePositionAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireZhuMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    "requireZhuMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireZhuReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    "requireZhuReservesBurnAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -987,25 +1067,27 @@ export class Governor extends Contract {
 
     "shutdownTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    tcp(overrides?: CallOverrides): Promise<[string]>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<[string]>;
+
+    tcpMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "tcpMinted()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
     "timelock()"(overrides?: CallOverrides): Promise<[string]>;
 
-    totalLiquidityRewards(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    totalLiquidityRewards(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "totalLiquidityRewards()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    "totalLiquidityRewards()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     unlockTokensForEmergencyShutdown(
-      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "unlockTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
+    "unlockTokensForEmergencyShutdown()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1117,6 +1199,14 @@ export class Governor extends Contract {
       signature: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    zhu(overrides?: CallOverrides): Promise<[string]>;
+
+    "zhu()"(overrides?: CallOverrides): Promise<[string]>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<[string]>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   EMERGENCY_SHUTDOWN_THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1124,6 +1214,10 @@ export class Governor extends Contract {
   "EMERGENCY_SHUTDOWN_THRESHOLD()"(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  GENESIS_PERIODS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "GENESIS_PERIODS()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   NAME(overrides?: CallOverrides): Promise<string>;
 
@@ -1133,12 +1227,12 @@ export class Governor extends Contract {
 
   "accounting()"(overrides?: CallOverrides): Promise<string>;
 
-  addReferencePool(
+  addReferencePoolToProtocol(
     pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "addReferencePool(address)"(
+  "addReferencePoolToProtocol(address)"(
     pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1146,22 +1240,6 @@ export class Governor extends Contract {
   auctions(overrides?: CallOverrides): Promise<string>;
 
   "auctions()"(overrides?: CallOverrides): Promise<string>;
-
-  cnp(overrides?: CallOverrides): Promise<string>;
-
-  "cnp()"(overrides?: CallOverrides): Promise<string>;
-
-  cnpMinted(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "cnpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  coin(overrides?: CallOverrides): Promise<string>;
-
-  "coin()"(overrides?: CallOverrides): Promise<string>;
-
-  coinPositionNFT(overrides?: CallOverrides): Promise<string>;
-
-  "coinPositionNFT()"(overrides?: CallOverrides): Promise<string>;
 
   collateralPool(overrides?: CallOverrides): Promise<string>;
 
@@ -1195,9 +1273,19 @@ export class Governor extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+  distributedTCP(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "distributedTCP()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  distributionScheduleTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "distributionScheduleTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  emergencyShutdownThresholdMet(overrides?: CallOverrides): Promise<boolean>;
+
+  "emergencyShutdownThresholdMet()"(
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   emergencyShutdownTokensLocked(
     arg0: string,
@@ -1261,9 +1349,19 @@ export class Governor extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  increaseLiquidationAccountRewards(
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "increaseLiquidationAccountRewards(uint256)"(
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   initContracts(
     _auctions: string,
-    _cnp: string,
+    _tcp: string,
     _lend: string,
     _liquidations: string,
     _market: string,
@@ -1277,7 +1375,7 @@ export class Governor extends Contract {
 
   "initContracts(address,address,address,address,address,address,address,address,address,address)"(
     _auctions: string,
-    _cnp: string,
+    _tcp: string,
     _lend: string,
     _liquidations: string,
     _market: string,
@@ -1311,9 +1409,13 @@ export class Governor extends Contract {
 
   "lend()"(overrides?: CallOverrides): Promise<string>;
 
-  lendCoin(overrides?: CallOverrides): Promise<string>;
+  lendZhu(overrides?: CallOverrides): Promise<string>;
 
-  "lendCoin()"(overrides?: CallOverrides): Promise<string>;
+  "lendZhu()"(overrides?: CallOverrides): Promise<string>;
+
+  liquidationAccountRewards(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "liquidationAccountRewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   liquidations(overrides?: CallOverrides): Promise<string>;
 
@@ -1333,13 +1435,13 @@ export class Governor extends Contract {
 
   "market()"(overrides?: CallOverrides): Promise<string>;
 
-  mintCNP(
+  mintTCP(
     to: string,
     count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "mintCNP(address,uint256)"(
+  "mintTCP(address,uint256)"(
     to: string,
     count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1373,52 +1475,29 @@ export class Governor extends Contract {
 
   "rates()"(overrides?: CallOverrides): Promise<string>;
 
-  removeReferencePool(
+  referencePool(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "referencePool(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  removeReferencePoolFromProtocol(
     pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "removeReferencePool(address)"(
+  "removeReferencePoolFromProtocol(address)"(
     pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  requireAccrueSystemInterestAccess(
+  requireDecreaseDebtAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
 
-  "requireAccrueSystemInterestAccess(address)"(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  requireCoinMintingAccess(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  "requireCoinMintingAccess(address)"(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  requireCoinReservesBurnAccess(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  "requireCoinReservesBurnAccess(address)"(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  requireDebtWriteAccess(
-    caller: string,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  "requireDebtWriteAccess(address)"(
+  "requireDecreaseDebtAccess(address)"(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -1435,12 +1514,12 @@ export class Governor extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  requireInstantPriceAccess(
+  requireLentZhuCountAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
 
-  "requireInstantPriceAccess(address)"(
+  "requireLentZhuCountAccess(address)"(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -1461,6 +1540,36 @@ export class Governor extends Contract {
   ): Promise<void>;
 
   "requireStoredCollateralAccess(address)"(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireUpdatePositionAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireUpdatePositionAccess(address)"(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireZhuMintingAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireZhuMintingAccess(address)"(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireZhuReservesBurnAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireZhuReservesBurnAccess(address)"(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -1487,6 +1596,14 @@ export class Governor extends Contract {
 
   "shutdownTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  tcp(overrides?: CallOverrides): Promise<string>;
+
+  "tcp()"(overrides?: CallOverrides): Promise<string>;
+
+  tcpMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "tcpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   timelock(overrides?: CallOverrides): Promise<string>;
 
   "timelock()"(overrides?: CallOverrides): Promise<string>;
@@ -1496,12 +1613,10 @@ export class Governor extends Contract {
   "totalLiquidityRewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   unlockTokensForEmergencyShutdown(
-    count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "unlockTokensForEmergencyShutdown(uint256)"(
-    count: BigNumberish,
+  "unlockTokensForEmergencyShutdown()"(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1614,12 +1729,24 @@ export class Governor extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  zhu(overrides?: CallOverrides): Promise<string>;
+
+  "zhu()"(overrides?: CallOverrides): Promise<string>;
+
+  zhuPositionNFT(overrides?: CallOverrides): Promise<string>;
+
+  "zhuPositionNFT()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     EMERGENCY_SHUTDOWN_THRESHOLD(overrides?: CallOverrides): Promise<BigNumber>;
 
     "EMERGENCY_SHUTDOWN_THRESHOLD()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    GENESIS_PERIODS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "GENESIS_PERIODS()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     NAME(overrides?: CallOverrides): Promise<string>;
 
@@ -1629,9 +1756,12 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<string>;
 
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+    addReferencePoolToProtocol(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "addReferencePool(address)"(
+    "addReferencePoolToProtocol(address)"(
       pool: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1639,22 +1769,6 @@ export class Governor extends Contract {
     auctions(overrides?: CallOverrides): Promise<string>;
 
     "auctions()"(overrides?: CallOverrides): Promise<string>;
-
-    cnp(overrides?: CallOverrides): Promise<string>;
-
-    "cnp()"(overrides?: CallOverrides): Promise<string>;
-
-    cnpMinted(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "cnpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coin(overrides?: CallOverrides): Promise<string>;
-
-    "coin()"(overrides?: CallOverrides): Promise<string>;
-
-    coinPositionNFT(overrides?: CallOverrides): Promise<string>;
-
-    "coinPositionNFT()"(overrides?: CallOverrides): Promise<string>;
 
     collateralPool(overrides?: CallOverrides): Promise<string>;
 
@@ -1688,9 +1802,21 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+    distributedTCP(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "distributedTCP()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    distributionScheduleTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "distributionScheduleTokens()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    emergencyShutdownThresholdMet(overrides?: CallOverrides): Promise<boolean>;
+
+    "emergencyShutdownThresholdMet()"(
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     emergencyShutdownTokensLocked(
       arg0: string,
@@ -1746,9 +1872,19 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    increaseLiquidationAccountRewards(
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "increaseLiquidationAccountRewards(uint256)"(
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     initContracts(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -1762,7 +1898,7 @@ export class Governor extends Contract {
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -1796,9 +1932,15 @@ export class Governor extends Contract {
 
     "lend()"(overrides?: CallOverrides): Promise<string>;
 
-    lendCoin(overrides?: CallOverrides): Promise<string>;
+    lendZhu(overrides?: CallOverrides): Promise<string>;
 
-    "lendCoin()"(overrides?: CallOverrides): Promise<string>;
+    "lendZhu()"(overrides?: CallOverrides): Promise<string>;
+
+    liquidationAccountRewards(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "liquidationAccountRewards()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     liquidations(overrides?: CallOverrides): Promise<string>;
 
@@ -1818,13 +1960,13 @@ export class Governor extends Contract {
 
     "market()"(overrides?: CallOverrides): Promise<string>;
 
-    mintCNP(
+    mintTCP(
       to: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "mintCNP(address,uint256)"(
+    "mintTCP(address,uint256)"(
       to: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -1858,49 +2000,32 @@ export class Governor extends Contract {
 
     "rates()"(overrides?: CallOverrides): Promise<string>;
 
-    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+    referencePool(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    "removeReferencePool(address)"(
+    "referencePool(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    removeReferencePoolFromProtocol(
       pool: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    requireAccrueSystemInterestAccess(
+    "removeReferencePoolFromProtocol(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireDecreaseDebtAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "requireAccrueSystemInterestAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requireCoinMintingAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "requireCoinMintingAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requireCoinReservesBurnAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "requireCoinReservesBurnAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requireDebtWriteAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "requireDebtWriteAccess(address)"(
+    "requireDecreaseDebtAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1917,12 +2042,12 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    requireInstantPriceAccess(
+    requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "requireInstantPriceAccess(address)"(
+    "requireLentZhuCountAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1943,6 +2068,36 @@ export class Governor extends Contract {
     ): Promise<void>;
 
     "requireStoredCollateralAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireUpdatePositionAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireUpdatePositionAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireZhuMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireZhuMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireZhuReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireZhuReservesBurnAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1969,6 +2124,14 @@ export class Governor extends Contract {
 
     "shutdownTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    tcp(overrides?: CallOverrides): Promise<string>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<string>;
+
+    tcpMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tcpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     timelock(overrides?: CallOverrides): Promise<string>;
 
     "timelock()"(overrides?: CallOverrides): Promise<string>;
@@ -1977,13 +2140,9 @@ export class Governor extends Contract {
 
     "totalLiquidityRewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    unlockTokensForEmergencyShutdown(
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    unlockTokensForEmergencyShutdown(overrides?: CallOverrides): Promise<void>;
 
-    "unlockTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
+    "unlockTokensForEmergencyShutdown()"(
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2080,6 +2239,14 @@ export class Governor extends Contract {
       signature: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    zhu(overrides?: CallOverrides): Promise<string>;
+
+    "zhu()"(overrides?: CallOverrides): Promise<string>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<string>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -2097,12 +2264,8 @@ export class Governor extends Contract {
     >;
 
     EmergencyShutdownExecuted(
-      emergencyShutdownTokensBurned: null,
       shutdownTime: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { emergencyShutdownTokensBurned: BigNumber; shutdownTime: BigNumber }
-    >;
+    ): TypedEventFilter<[BigNumber], { shutdownTime: BigNumber }>;
 
     ProtocolUpgraded(
       newGovernor: string | null
@@ -2134,6 +2297,10 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    GENESIS_PERIODS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "GENESIS_PERIODS()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     NAME(overrides?: CallOverrides): Promise<BigNumber>;
 
     "NAME()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2142,12 +2309,12 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addReferencePool(
+    addReferencePoolToProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "addReferencePool(address)"(
+    "addReferencePoolToProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2155,22 +2322,6 @@ export class Governor extends Contract {
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
     "auctions()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cnp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    cnpMinted(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "cnpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coin(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coinPositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coinPositionNFT()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2204,9 +2355,23 @@ export class Governor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    distributedCNP(overrides?: CallOverrides): Promise<BigNumber>;
+    distributedTCP(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "distributedCNP()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "distributedTCP()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    distributionScheduleTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "distributionScheduleTokens()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    emergencyShutdownThresholdMet(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "emergencyShutdownThresholdMet()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     emergencyShutdownTokensLocked(
       arg0: string,
@@ -2270,9 +2435,19 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    increaseLiquidationAccountRewards(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "increaseLiquidationAccountRewards(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     initContracts(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -2286,7 +2461,7 @@ export class Governor extends Contract {
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -2320,9 +2495,15 @@ export class Governor extends Contract {
 
     "lend()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lendCoin(overrides?: CallOverrides): Promise<BigNumber>;
+    lendZhu(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "lendCoin()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "lendZhu()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    liquidationAccountRewards(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "liquidationAccountRewards()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     liquidations(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2342,13 +2523,13 @@ export class Governor extends Contract {
 
     "market()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mintCNP(
+    mintTCP(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "mintCNP(address,uint256)"(
+    "mintTCP(address,uint256)"(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2382,52 +2563,32 @@ export class Governor extends Contract {
 
     "rates()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    removeReferencePool(
+    referencePool(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "referencePool(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeReferencePoolFromProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "removeReferencePool(address)"(
+    "removeReferencePoolFromProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    requireAccrueSystemInterestAccess(
+    requireDecreaseDebtAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "requireAccrueSystemInterestAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    requireCoinMintingAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "requireCoinMintingAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    requireCoinReservesBurnAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "requireCoinReservesBurnAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    requireDebtWriteAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "requireDebtWriteAccess(address)"(
+    "requireDecreaseDebtAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2444,12 +2605,12 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    requireInstantPriceAccess(
+    requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "requireInstantPriceAccess(address)"(
+    "requireLentZhuCountAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2470,6 +2631,36 @@ export class Governor extends Contract {
     ): Promise<BigNumber>;
 
     "requireStoredCollateralAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireUpdatePositionAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireUpdatePositionAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireZhuMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireZhuMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireZhuReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireZhuReservesBurnAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2496,6 +2687,14 @@ export class Governor extends Contract {
 
     "shutdownTime()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    tcp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tcpMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tcpMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
     "timelock()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2505,12 +2704,10 @@ export class Governor extends Contract {
     "totalLiquidityRewards()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     unlockTokensForEmergencyShutdown(
-      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "unlockTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
+    "unlockTokensForEmergencyShutdown()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2622,6 +2819,14 @@ export class Governor extends Contract {
       signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    zhu(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhu()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -2633,6 +2838,12 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    GENESIS_PERIODS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "GENESIS_PERIODS()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "NAME()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2641,12 +2852,12 @@ export class Governor extends Contract {
 
     "accounting()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addReferencePool(
+    addReferencePoolToProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "addReferencePool(address)"(
+    "addReferencePoolToProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2654,24 +2865,6 @@ export class Governor extends Contract {
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "auctions()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    cnpMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "cnpMinted()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    coin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "coin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    coinPositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "coinPositionNFT()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2715,9 +2908,25 @@ export class Governor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    distributedCNP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    distributedTCP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "distributedCNP()"(
+    "distributedTCP()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    distributionScheduleTokens(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "distributionScheduleTokens()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    emergencyShutdownThresholdMet(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "emergencyShutdownThresholdMet()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2789,9 +2998,19 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    increaseLiquidationAccountRewards(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "increaseLiquidationAccountRewards(uint256)"(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     initContracts(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -2805,7 +3024,7 @@ export class Governor extends Contract {
 
     "initContracts(address,address,address,address,address,address,address,address,address,address)"(
       _auctions: string,
-      _cnp: string,
+      _tcp: string,
       _lend: string,
       _liquidations: string,
       _market: string,
@@ -2839,9 +3058,17 @@ export class Governor extends Contract {
 
     "lend()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    lendCoin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    lendZhu(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "lendCoin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "lendZhu()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    liquidationAccountRewards(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "liquidationAccountRewards()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     liquidations(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2861,13 +3088,13 @@ export class Governor extends Contract {
 
     "market()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    mintCNP(
+    mintTCP(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "mintCNP(address,uint256)"(
+    "mintTCP(address,uint256)"(
       to: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2907,52 +3134,32 @@ export class Governor extends Contract {
 
     "rates()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    removeReferencePool(
+    referencePool(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "referencePool(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeReferencePoolFromProtocol(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "removeReferencePool(address)"(
+    "removeReferencePoolFromProtocol(address)"(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    requireAccrueSystemInterestAccess(
+    requireDecreaseDebtAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "requireAccrueSystemInterestAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    requireCoinMintingAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "requireCoinMintingAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    requireCoinReservesBurnAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "requireCoinReservesBurnAccess(address)"(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    requireDebtWriteAccess(
-      caller: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "requireDebtWriteAccess(address)"(
+    "requireDecreaseDebtAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2969,12 +3176,12 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    requireInstantPriceAccess(
+    requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "requireInstantPriceAccess(address)"(
+    "requireLentZhuCountAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2995,6 +3202,36 @@ export class Governor extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "requireStoredCollateralAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireUpdatePositionAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireUpdatePositionAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireZhuMintingAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireZhuMintingAccess(address)"(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireZhuReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireZhuReservesBurnAccess(address)"(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3021,6 +3258,14 @@ export class Governor extends Contract {
 
     "shutdownTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    tcp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tcpMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tcpMinted()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "timelock()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3034,12 +3279,10 @@ export class Governor extends Contract {
     ): Promise<PopulatedTransaction>;
 
     unlockTokensForEmergencyShutdown(
-      count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "unlockTokensForEmergencyShutdown(uint256)"(
-      count: BigNumberish,
+    "unlockTokensForEmergencyShutdown()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3152,6 +3395,16 @@ export class Governor extends Contract {
     "validateAction(address,string)"(
       target: string,
       signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    zhu(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "zhu()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "zhuPositionNFT()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
