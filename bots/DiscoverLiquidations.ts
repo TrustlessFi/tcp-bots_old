@@ -64,8 +64,8 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   async genUndercollatPositionsForPrice(price: BigNumber): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
 
-    let priceMin = price.mul(90).div(100)
-    let priceMax = price.mul(110).div(100)
+    let priceMin = price.mul(60).div(100)
+    let priceMax = price.mul(140).div(100)
 
     let [
       minTick,
