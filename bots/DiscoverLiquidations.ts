@@ -11,6 +11,12 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   name = "🤑 Discover Liquidations";
   twapDuration = 0
   collateralizationRequirement = BigNumber.from(0)
+  tickSpacing = 0
+  smallestFirst = false
+
+  async setProcessSmallestFirst(smallestFirst: boolean) {
+    this.smallestFirst = smallestFirst
+  }
 
   // =================================================================
   // ========================== ENTRY POINT ==========================
@@ -18,6 +24,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   async runImpl(): Promise<number> {
     if (this.twapDuration == 0) this.twapDuration = await this.protocol!.liquidations.twapDuration()
     if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.protocol!.market.collateralizationRequirement()
+    if (this.tickSpacing == 0) this.tickSpacing = await this.protocol!.accounting.TICK_SPACING()
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
@@ -25,7 +32,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 
-    let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(this.collateralizationRequirement, price)
+    let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(price)
 
     if (undercollateralizedPositions.length > 0) {
       await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(undercollateralizedPositions)
@@ -54,25 +61,28 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   }
 
   // given a price and a collateral type, find all of the undercollateralized positions in sorted order from most debt to least.
-  async genUndercollatPositionsForPrice(
-    collatReq: BigNumber,
-    price: BigNumber,
-  ): Promise<Array<BigNumber>> {
+  async genUndercollatPositionsForPrice(price: BigNumber): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
 
-    let priceMin = price.mul(80).div(100)
-    let priceMax = price.mul(120).div(100)
+    let priceMin = price.mul(90).div(100)
+    let priceMax = price.mul(110).div(100)
 
     let [
-      minBandIndex,
-      maxBandIndex,
+      minTick,
+      maxTick,
     ] = await Promise.all([
       await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMin), this.ONE),
       await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMax), this.ONE),
     ])
 
+    if (maxTick < minTick) {
+      let tempTick = maxTick
+      maxTick = minTick
+      minTick = tempTick
+    }
+
     let positionsForTickPromises: Array<Promise<Array<BigNumber>>> = [];
-    for (let i = minBandIndex; i <= maxBandIndex; i++) positionsForTickPromises.push(accounting.positionsForBand(i))
+    for (let tick = minTick; tick <= maxTick; tick += this.tickSpacing) positionsForTickPromises.push(accounting.positionsForTick(tick))
 
     let results = await Promise.all(positionsForTickPromises);
 
@@ -82,7 +92,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     let collateralizations: Array<BigNumber> = await accounting.positionsCollateralization(positions);
 
     // Check the positions that are undercollateralized given the price.
-    let minCollateralization: BigNumber = this.collatRatioGivenPriceAndRequirement(price, collatReq);
+    let minCollateralization: BigNumber = this.ONE.mul(this.collateralizationRequirement).div(price)
     let undercollatPositions: Array<BigNumber> = [];
     for (let i = 0; i < collateralizations.length; i++) {
       if (collateralizations[i] < minCollateralization) undercollatPositions.push(positions[i]);
@@ -96,12 +106,10 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     for (let i = 0; i < basicPositionInfo.length; i++) {
       positionData.push({positionID: undercollatPositions[i], debt: basicPositionInfo[i].debtCount})
     }
-    positionData.sort((position0, position1) => position0.debt.sub(position1.debt).lt(0) ? 1 : -1)
+    positionData.sort((position0, position1) => position0.debt.sub(position1.debt).lt(0)
+      ? (this.smallestFirst ? -1 : 1)
+      : (this.smallestFirst ? 1 : -1))
 
     return positionData.map(position => position.positionID);
-  }
-
-  collatRatioGivenPriceAndRequirement(price: BigNumber, collatReq: BigNumber) {
-    return this._mul(collatReq, price);
   }
 }

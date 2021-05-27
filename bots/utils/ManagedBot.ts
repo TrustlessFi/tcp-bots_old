@@ -3,6 +3,8 @@
 
 import hre from "hardhat";
 const e = hre.ethers;
+
+import * as ethers from 'ethers'
 import { Wallet, BigNumber } from "ethers";
 
 import { seedAddresses } from "./Addresses";
@@ -30,8 +32,8 @@ export class ManagedBot {
   wallet: Wallet;
   ONE: BigNumber = BigNumber.from(BigInt(1e18));
 
-  constructor(privateKey: string) {
-    this.wallet = new Wallet(privateKey, e.provider);
+  constructor(privateKey: string, provider: ethers.providers.JsonRpcProvider | null = null) {
+    this.wallet = new Wallet(privateKey, provider != null ? provider : e.provider);
   }
 
   // ============= INITIALIZATION AND RUN ==================
