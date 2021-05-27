@@ -27,25 +27,6 @@ const _abi = [
         type: "string",
       },
       {
-        indexed: false,
-        internalType: "uint64",
-        name: "value",
-        type: "uint64",
-      },
-    ],
-    name: "ParameterUpdated64",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "string",
-        name: "paramName",
-        type: "string",
-      },
-      {
         indexed: true,
         internalType: "address",
         name: "addr",
@@ -72,9 +53,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "cumulative",
-        type: "uint256",
+        internalType: "int24",
+        name: "tick",
+        type: "int24",
       },
     ],
     name: "PriceUpdated",
@@ -94,6 +75,78 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+      {
+        internalType: "uint32",
+        name: "twapDuration",
+        type: "uint32",
+      },
+    ],
+    name: "calculateInstantTwappedPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+      {
+        internalType: "uint32",
+        name: "twapDuration",
+        type: "uint32",
+      },
+    ],
+    name: "calculateInstantTwappedTick",
+    outputs: [
+      {
+        internalType: "int24",
+        name: "tick",
+        type: "int24",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "normalizeDecimals",
+        type: "bool",
+      },
+    ],
+    name: "calculateTwappedPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "completeSetup",
     outputs: [],
@@ -103,26 +156,70 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "cnpPoolLiquidity",
-        type: "uint256",
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
       },
       {
-        internalType: "uint256",
-        name: "liquidityPerCNP",
-        type: "uint256",
+        internalType: "int24",
+        name: "tickLower",
+        type: "int24",
       },
       {
-        internalType: "uint256",
-        name: "liquidityPerCoin",
-        type: "uint256",
+        internalType: "int24",
+        name: "tick",
+        type: "int24",
+      },
+      {
+        internalType: "int24",
+        name: "tickUpper",
+        type: "int24",
+      },
+      {
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
+      {
+        internalType: "uint32",
+        name: "twapDuration",
+        type: "uint32",
       },
     ],
-    name: "getCoinCount",
+    name: "getRealZhuCountForSinglePoolPosition",
     outputs: [
       {
         internalType: "uint256",
-        name: "coinCount",
+        name: "zhuCount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+      {
+        internalType: "uint32",
+        name: "twapDuration",
+        type: "uint32",
+      },
+    ],
+    name: "getVirtualZhuCountForLiquidityAmount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "zhuCount",
         type: "uint256",
       },
     ],
@@ -143,75 +240,31 @@ const _abi = [
         name: "pool",
         type: "address",
       },
+    ],
+    name: "systemObtainReferencePrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "uint32",
-        name: "durationSeconds",
+        name: "twapDuration",
         type: "uint32",
       },
     ],
-    name: "systemCalculateInstantPrice",
+    name: "zhuTcpPrice",
     outputs: [
       {
         internalType: "uint256",
         name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "int24",
-        name: "",
-        type: "int24",
-      },
-      {
-        internalType: "uint160",
-        name: "",
-        type: "uint160",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "normalizeDecimals",
-        type: "bool",
-      },
-    ],
-    name: "systemObtainPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "normalizeDecimals",
-        type: "bool",
-      },
-    ],
-    name: "viewCurrentTwappedPrice",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "price",
         type: "uint256",
       },
     ],

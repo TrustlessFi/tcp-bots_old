@@ -21,10 +21,12 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IPeripheryPaymentsInterface extends ethers.utils.Interface {
   functions: {
+    "refundETH()": FunctionFragment;
     "sweepToken(address,uint256,address)": FunctionFragment;
     "unwrapWETH9(uint256,address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "refundETH", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "sweepToken",
     values: [string, BigNumberish, string]
@@ -34,6 +36,7 @@ interface IPeripheryPaymentsInterface extends ethers.utils.Interface {
     values: [BigNumberish, string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "refundETH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sweepToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unwrapWETH9",
@@ -87,6 +90,14 @@ export class IPeripheryPayments extends Contract {
   interface: IPeripheryPaymentsInterface;
 
   functions: {
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
@@ -113,6 +124,14 @@ export class IPeripheryPayments extends Contract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  refundETH(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "refundETH()"(
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   sweepToken(
     token: string,
@@ -141,6 +160,10 @@ export class IPeripheryPayments extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    refundETH(overrides?: CallOverrides): Promise<void>;
+
+    "refundETH()"(overrides?: CallOverrides): Promise<void>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
@@ -171,6 +194,14 @@ export class IPeripheryPayments extends Contract {
   filters: {};
 
   estimateGas: {
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
@@ -199,6 +230,14 @@ export class IPeripheryPayments extends Contract {
   };
 
   populateTransaction: {
+    refundETH(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "refundETH()"(
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,

@@ -22,12 +22,15 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface IPricesInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
+    "calculateInstantTwappedPrice(address,uint32)": FunctionFragment;
+    "calculateInstantTwappedTick(address,uint32)": FunctionFragment;
+    "calculateTwappedPrice(address,bool)": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "getCoinCount(uint256,uint256,uint256)": FunctionFragment;
+    "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
+    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)": FunctionFragment;
     "stop()": FunctionFragment;
-    "systemCalculateInstantPrice(address,uint32)": FunctionFragment;
-    "systemObtainPrice(address,bool)": FunctionFragment;
-    "viewCurrentTwappedPrice(address,bool)": FunctionFragment;
+    "systemObtainReferencePrice(address)": FunctionFragment;
+    "zhuTcpPrice(uint32)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -35,25 +38,44 @@ interface IPricesInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "calculateInstantTwappedPrice",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateInstantTwappedTick",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateTwappedPrice",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getCoinCount",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    functionFragment: "getRealZhuCountForSinglePoolPosition",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVirtualZhuCountForLiquidityAmount",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "systemCalculateInstantPrice",
-    values: [string, BigNumberish]
+    functionFragment: "systemObtainReferencePrice",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "systemObtainPrice",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "viewCurrentTwappedPrice",
-    values: [string, boolean]
+    functionFragment: "zhuTcpPrice",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -61,34 +83,44 @@ interface IPricesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "calculateInstantTwappedPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateInstantTwappedTick",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateTwappedPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getCoinCount",
+    functionFragment: "getRealZhuCountForSinglePoolPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getVirtualZhuCountForLiquidityAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "systemCalculateInstantPrice",
+    functionFragment: "systemObtainReferencePrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "systemObtainPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "viewCurrentTwappedPrice",
+    functionFragment: "zhuTcpPrice",
     data: BytesLike
   ): Result;
 
   events: {
-    "ParameterUpdated64(string,uint64)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
-    "PriceUpdated(address,uint256,uint256)": EventFragment;
+    "PriceUpdated(address,uint256,int24)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PriceUpdated"): EventFragment;
 }
@@ -147,6 +179,42 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    calculateInstantTwappedPrice(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "calculateInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    calculateInstantTwappedTick(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number] & { tick: number }>;
+
+    "calculateInstantTwappedTick(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number] & { tick: number }>;
+
+    calculateTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { price: BigNumber }>;
+
+    "calculateTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { price: BigNumber }>;
+
     completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -155,19 +223,39 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getCoinCount(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    getRealZhuCountForSinglePoolPosition(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
+    ): Promise<[BigNumber] & { zhuCount: BigNumber }>;
 
-    "getCoinCount(uint256,uint256,uint256)"(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)"(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { coinCount: BigNumber }>;
+    ): Promise<[BigNumber] & { zhuCount: BigNumber }>;
+
+    getVirtualZhuCountForLiquidityAmount(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { zhuCount: BigNumber }>;
+
+    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { zhuCount: BigNumber }>;
 
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -177,41 +265,25 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    systemCalculateInstantPrice(
+    systemObtainReferencePrice(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "systemCalculateInstantPrice(address,uint32)"(
+    "systemObtainReferencePrice(address)"(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    systemObtainPrice(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "systemObtainPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    viewCurrentTwappedPrice(
-      pool: string,
-      normalizeDecimals: boolean,
+    zhuTcpPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
-    "viewCurrentTwappedPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
+    "zhuTcpPrice(uint32)"(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
+    ): Promise<[BigNumber]>;
   };
 
   addReferencePool(
@@ -224,6 +296,42 @@ export class IPrices extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  calculateInstantTwappedPrice(
+    pool: string,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "calculateInstantTwappedPrice(address,uint32)"(
+    pool: string,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  calculateInstantTwappedTick(
+    pool: string,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  "calculateInstantTwappedTick(address,uint32)"(
+    pool: string,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  calculateTwappedPrice(
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "calculateTwappedPrice(address,bool)"(
+    pool: string,
+    normalizeDecimals: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   completeSetup(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -232,17 +340,37 @@ export class IPrices extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getCoinCount(
-    cnpPoolLiquidity: BigNumberish,
-    liquidityPerCNP: BigNumberish,
-    liquidityPerCoin: BigNumberish,
+  getRealZhuCountForSinglePoolPosition(
+    pool: string,
+    tickLower: BigNumberish,
+    tick: BigNumberish,
+    tickUpper: BigNumberish,
+    liquidity: BigNumberish,
+    twapDuration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "getCoinCount(uint256,uint256,uint256)"(
-    cnpPoolLiquidity: BigNumberish,
-    liquidityPerCNP: BigNumberish,
-    liquidityPerCoin: BigNumberish,
+  "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)"(
+    pool: string,
+    tickLower: BigNumberish,
+    tick: BigNumberish,
+    tickUpper: BigNumberish,
+    liquidity: BigNumberish,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getVirtualZhuCountForLiquidityAmount(
+    pool: string,
+    liquidity: BigNumberish,
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
+    pool: string,
+    liquidity: BigNumberish,
+    twapDuration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -254,39 +382,23 @@ export class IPrices extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  systemCalculateInstantPrice(
+  systemObtainReferencePrice(
     pool: string,
-    durationSeconds: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "systemCalculateInstantPrice(address,uint32)"(
+  "systemObtainReferencePrice(address)"(
     pool: string,
-    durationSeconds: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  systemObtainPrice(
-    pool: string,
-    normalizeDecimals: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "systemObtainPrice(address,bool)"(
-    pool: string,
-    normalizeDecimals: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  viewCurrentTwappedPrice(
-    pool: string,
-    normalizeDecimals: boolean,
+  zhuTcpPrice(
+    twapDuration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "viewCurrentTwappedPrice(address,bool)"(
-    pool: string,
-    normalizeDecimals: boolean,
+  "zhuTcpPrice(uint32)"(
+    twapDuration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -298,21 +410,77 @@ export class IPrices extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    calculateInstantTwappedPrice(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateInstantTwappedTick(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "calculateInstantTwappedTick(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    calculateTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    getCoinCount(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    getRealZhuCountForSinglePoolPosition(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getCoinCount(uint256,uint256,uint256)"(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)"(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVirtualZhuCountForLiquidityAmount(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -320,52 +488,28 @@ export class IPrices extends Contract {
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
 
-    systemCalculateInstantPrice(
+    systemObtainReferencePrice(
       pool: string,
-      durationSeconds: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, number, BigNumber]>;
-
-    "systemCalculateInstantPrice(address,uint32)"(
-      pool: string,
-      durationSeconds: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, number, BigNumber]>;
-
-    systemObtainPrice(
-      pool: string,
-      normalizeDecimals: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "systemObtainPrice(address,bool)"(
+    "systemObtainReferencePrice(address)"(
       pool: string,
-      normalizeDecimals: boolean,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    viewCurrentTwappedPrice(
-      pool: string,
-      normalizeDecimals: boolean,
+    zhuTcpPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "viewCurrentTwappedPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
+    "zhuTcpPrice(uint32)"(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   filters: {
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
-
     ParameterUpdatedAddress(
       paramName: string | null,
       addr: string | null
@@ -374,10 +518,10 @@ export class IPrices extends Contract {
     PriceUpdated(
       pool: string | null,
       price: null,
-      cumulative: null
+      tick: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { pool: string; price: BigNumber; cumulative: BigNumber }
+      [string, BigNumber, number],
+      { pool: string; price: BigNumber; tick: number }
     >;
   };
 
@@ -392,6 +536,42 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    calculateInstantTwappedPrice(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateInstantTwappedTick(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateInstantTwappedTick(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -400,17 +580,37 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getCoinCount(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    getRealZhuCountForSinglePoolPosition(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getCoinCount(uint256,uint256,uint256)"(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)"(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVirtualZhuCountForLiquidityAmount(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -422,39 +622,23 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    systemCalculateInstantPrice(
+    systemObtainReferencePrice(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "systemCalculateInstantPrice(address,uint32)"(
+    "systemObtainReferencePrice(address)"(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    systemObtainPrice(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "systemObtainPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    viewCurrentTwappedPrice(
-      pool: string,
-      normalizeDecimals: boolean,
+    zhuTcpPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "viewCurrentTwappedPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
+    "zhuTcpPrice(uint32)"(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -470,6 +654,42 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    calculateInstantTwappedPrice(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateInstantTwappedPrice(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateInstantTwappedTick(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateInstantTwappedTick(address,uint32)"(
+      pool: string,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateTwappedPrice(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateTwappedPrice(address,bool)"(
+      pool: string,
+      normalizeDecimals: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -478,17 +698,37 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getCoinCount(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    getRealZhuCountForSinglePoolPosition(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getCoinCount(uint256,uint256,uint256)"(
-      cnpPoolLiquidity: BigNumberish,
-      liquidityPerCNP: BigNumberish,
-      liquidityPerCoin: BigNumberish,
+    "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)"(
+      pool: string,
+      tickLower: BigNumberish,
+      tick: BigNumberish,
+      tickUpper: BigNumberish,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVirtualZhuCountForLiquidityAmount(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
+      pool: string,
+      liquidity: BigNumberish,
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -500,39 +740,23 @@ export class IPrices extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    systemCalculateInstantPrice(
+    systemObtainReferencePrice(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "systemCalculateInstantPrice(address,uint32)"(
+    "systemObtainReferencePrice(address)"(
       pool: string,
-      durationSeconds: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    systemObtainPrice(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "systemObtainPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    viewCurrentTwappedPrice(
-      pool: string,
-      normalizeDecimals: boolean,
+    zhuTcpPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "viewCurrentTwappedPrice(address,bool)"(
-      pool: string,
-      normalizeDecimals: boolean,
+    "zhuTcpPrice(uint32)"(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

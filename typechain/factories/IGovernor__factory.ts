@@ -60,12 +60,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "uint256",
-        name: "emergencyShutdownTokensBurned",
-        type: "uint256",
-      },
-      {
-        indexed: false,
         internalType: "uint64",
         name: "shutdownTime",
         type: "uint64",
@@ -133,6 +127,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "GENESIS_PERIODS",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "periods",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "accounting",
     outputs: [
       {
@@ -152,7 +159,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "addReferencePool",
+    name: "addReferencePoolToProtocol",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -163,45 +170,6 @@ const _abi = [
     outputs: [
       {
         internalType: "contract IAuctions",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "cnp",
-    outputs: [
-      {
-        internalType: "contract ICNP",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "coin",
-    outputs: [
-      {
-        internalType: "contract ICoin",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "coinPositionNFT",
-    outputs: [
-      {
-        internalType: "contract IPositionNFT",
         name: "",
         type: "address",
       },
@@ -268,7 +236,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "distributedCNP",
+    name: "distributedTCP",
     outputs: [
       {
         internalType: "uint256",
@@ -347,6 +315,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "increaseLiquidationAccountRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "isShutdown",
     outputs: [
@@ -374,10 +355,10 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "lendCoin",
+    name: "lendZhu",
     outputs: [
       {
-        internalType: "contract ILendCoin",
+        internalType: "contract ILendZhu",
         name: "",
         type: "address",
       },
@@ -424,7 +405,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "mintCNP",
+    name: "mintTCP",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -502,7 +483,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "removeReferencePool",
+    name: "removeReferencePoolFromProtocol",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -515,46 +496,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "requireAccrueSystemInterestAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireCoinMintingAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireCoinReservesBurnAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireDebtWriteAccess",
+    name: "requireDecreaseDebtAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -608,7 +550,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "requireInstantPriceAccess",
+    name: "requireLentZhuCountAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -635,6 +577,45 @@ const _abi = [
       },
     ],
     name: "requireStoredCollateralAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireUpdatePositionAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireZhuMintingAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireZhuReservesBurnAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -673,6 +654,19 @@ const _abi = [
         internalType: "uint64",
         name: "",
         type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "tcp",
+    outputs: [
+      {
+        internalType: "contract ITCP",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -806,6 +800,56 @@ const _abi = [
     name: "upgradeSettlement",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "signature",
+        type: "string",
+      },
+    ],
+    name: "validateAction",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "zhu",
+    outputs: [
+      {
+        internalType: "contract IZhu",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "zhuPositionNFT",
+    outputs: [
+      {
+        internalType: "contract IPositionNFT",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

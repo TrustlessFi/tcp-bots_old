@@ -21,12 +21,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "tokenA",
+        name: "token0",
         type: "address",
       },
       {
         internalType: "address",
-        name: "tokenB",
+        name: "token1",
         type: "address",
       },
       {
@@ -41,8 +41,14 @@ const _abi = [
       },
     ],
     name: "createAndInitializePoolIfNecessary",
-    outputs: [],
-    stateMutability: "nonpayable",
+    outputs: [
+      {
+        internalType: "address",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -58,6 +64,11 @@ const _abi = [
             internalType: "uint256",
             name: "liquidityToMigrate",
             type: "uint256",
+          },
+          {
+            internalType: "uint8",
+            name: "percentageToMigrate",
+            type: "uint8",
           },
           {
             internalType: "address",
@@ -86,7 +97,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "liquidityV3Min",
+            name: "amount0Min",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "amount1Min",
             type: "uint256",
           },
           {

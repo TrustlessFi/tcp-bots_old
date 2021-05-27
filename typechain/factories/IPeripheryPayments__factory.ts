@@ -18,6 +18,13 @@ export class IPeripheryPayments__factory {
 
 const _abi = [
   {
+    inputs: [],
+    name: "refundETH",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",

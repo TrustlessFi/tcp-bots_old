@@ -23,9 +23,12 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface MarketInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
+    "addReferencePool(address)": FunctionFragment;
+    "adjustGenesisPositionCollateral(uint64,uint256)": FunctionFragment;
     "adjustPosition(uint64,int256,uint256)": FunctionFragment;
     "claimRewards(uint64)": FunctionFragment;
     "collateralizationRequirement()": FunctionFragment;
+    "completeSetup()": FunctionFragment;
     "createGenesisPosition(tuple)": FunctionFragment;
     "createPosition(uint256)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
@@ -35,25 +38,37 @@ interface MarketInterface extends ethers.utils.Interface {
     "init(address)": FunctionFragment;
     "interestPortionToLenders()": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
-    "minBorrowTime()": FunctionFragment;
-    "minCollateralToDebtRatio()": FunctionFragment;
+    "minCollateralPoolLiquidity()": FunctionFragment;
     "minPositionSize()": FunctionFragment;
+    "minTotalReferencePoolLiquidity()": FunctionFragment;
     "periodLength()": FunctionFragment;
+    "referencePools(uint256)": FunctionFragment;
     "removeGenesisPosition(uint64)": FunctionFragment;
+    "removeReferencePool(address)": FunctionFragment;
     "setCollateralizationRequirement(uint256)": FunctionFragment;
     "setInterestPortionToLenders(uint256)": FunctionFragment;
-    "setMinBorrowTime(uint64)": FunctionFragment;
+    "setMinCollateralPoolLiquidity(uint256)": FunctionFragment;
     "setMinPositionSize(uint256)": FunctionFragment;
+    "setMinTotalReferencePoolLiquidity(uint256)": FunctionFragment;
+    "setTwapDuration(uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
-    "systemNotifyCollateralPriceUpdated(uint256)": FunctionFragment;
+    "twapDuration()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "accrueInterest",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addReferencePool",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adjustGenesisPositionCollateral",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "adjustPosition",
@@ -65,6 +80,10 @@ interface MarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -95,11 +114,7 @@ interface MarketInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "minBorrowTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minCollateralToDebtRatio",
+    functionFragment: "minCollateralPoolLiquidity",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -107,12 +122,24 @@ interface MarketInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "minTotalReferencePoolLiquidity",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "periodLength",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "referencePools",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "removeGenesisPosition",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeReferencePool",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setCollateralizationRequirement",
@@ -123,11 +150,19 @@ interface MarketInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMinBorrowTime",
+    functionFragment: "setMinCollateralPoolLiquidity",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinPositionSize",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinTotalReferencePoolLiquidity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTwapDuration",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
@@ -137,8 +172,8 @@ interface MarketInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "systemNotifyCollateralPriceUpdated",
-    values: [BigNumberish]
+    functionFragment: "twapDuration",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
@@ -147,6 +182,14 @@ interface MarketInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "accrueInterest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addReferencePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "adjustGenesisPositionCollateral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -159,6 +202,10 @@ interface MarketInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -189,11 +236,7 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "minBorrowTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minCollateralToDebtRatio",
+    functionFragment: "minCollateralPoolLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -201,11 +244,23 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "minTotalReferencePoolLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "periodLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "referencePools",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "removeGenesisPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -217,11 +272,19 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMinBorrowTime",
+    functionFragment: "setMinCollateralPoolLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setMinPositionSize",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinTotalReferencePoolLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTwapDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -231,7 +294,7 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "systemNotifyCollateralPriceUpdated",
+    functionFragment: "twapDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,6 +308,7 @@ interface MarketInterface extends ethers.utils.Interface {
     "NewPositionCreated(address,uint64)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
+    "ParameterUpdatedAddress(string,address)": EventFragment;
     "PositionAdjusted(uint64,int256,int256)": EventFragment;
     "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
     "Stopped()": EventFragment;
@@ -255,6 +319,7 @@ interface MarketInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionAdjusted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
@@ -312,6 +377,28 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    adjustGenesisPositionCollateral(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "adjustGenesisPositionCollateral(uint64,uint256)"(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     adjustPosition(
       positionID: BigNumberish,
       debtChange: BigNumberish,
@@ -343,6 +430,14 @@ export class Market extends Contract {
     "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     createGenesisPosition(
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
@@ -408,13 +503,9 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    minBorrowTime(overrides?: CallOverrides): Promise<[BigNumber]>;
+    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "minBorrowTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "minCollateralToDebtRatio()"(
+    "minCollateralPoolLiquidity()"(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -422,9 +513,27 @@ export class Market extends Contract {
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    minTotalReferencePoolLiquidity(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "minTotalReferencePoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    referencePools(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "referencePools(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -433,6 +542,16 @@ export class Market extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "removeReferencePool(address)"(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -456,13 +575,13 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMinBorrowTime(
-      time: BigNumberish,
+    setMinCollateralPoolLiquidity(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setMinBorrowTime(uint64)"(
-      time: BigNumberish,
+    "setMinCollateralPoolLiquidity(uint256)"(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -473,6 +592,26 @@ export class Market extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinTotalReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setMinTotalReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -498,15 +637,9 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    systemNotifyCollateralPriceUpdated(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    twapDuration(overrides?: CallOverrides): Promise<[number]>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<[number]>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -522,6 +655,28 @@ export class Market extends Contract {
 
   "accrueInterest()"(
     overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  addReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "addReferencePool(address)"(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  adjustGenesisPositionCollateral(
+    positionID: BigNumberish,
+    collateralDecrease: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "adjustGenesisPositionCollateral(uint64,uint256)"(
+    positionID: BigNumberish,
+    collateralDecrease: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   adjustPosition(
@@ -553,6 +708,14 @@ export class Market extends Contract {
   "collateralizationRequirement()"(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  completeSetup(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "completeSetup()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   createGenesisPosition(
     ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
@@ -612,21 +775,33 @@ export class Market extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
+  minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "minCollateralPoolLiquidity()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  minTotalReferencePoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "minTotalReferencePoolLiquidity()"(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  referencePools(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "referencePools(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   removeGenesisPosition(
     positionID: BigNumberish,
@@ -635,6 +810,16 @@ export class Market extends Contract {
 
   "removeGenesisPosition(uint64)"(
     positionID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  removeReferencePool(
+    pool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "removeReferencePool(address)"(
+    pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -658,13 +843,13 @@ export class Market extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMinBorrowTime(
-    time: BigNumberish,
+  setMinCollateralPoolLiquidity(
+    min: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setMinBorrowTime(uint64)"(
-    time: BigNumberish,
+  "setMinCollateralPoolLiquidity(uint256)"(
+    min: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -675,6 +860,26 @@ export class Market extends Contract {
 
   "setMinPositionSize(uint256)"(
     size: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinTotalReferencePoolLiquidity(
+    min: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setMinTotalReferencePoolLiquidity(uint256)"(
+    min: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setTwapDuration(
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setTwapDuration(uint32)"(
+    duration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -700,15 +905,9 @@ export class Market extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  systemNotifyCollateralPriceUpdated(
-    price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  twapDuration(overrides?: CallOverrides): Promise<number>;
 
-  "systemNotifyCollateralPriceUpdated(uint256)"(
-    price: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "twapDuration()"(overrides?: CallOverrides): Promise<number>;
 
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -721,6 +920,25 @@ export class Market extends Contract {
     accrueInterest(overrides?: CallOverrides): Promise<void>;
 
     "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
+
+    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adjustGenesisPositionCollateral(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "adjustGenesisPositionCollateral(uint64,uint256)"(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     adjustPosition(
       positionID: BigNumberish,
@@ -751,6 +969,10 @@ export class Market extends Contract {
     "collateralizationRequirement()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    completeSetup(overrides?: CallOverrides): Promise<void>;
+
+    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
     createGenesisPosition(
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
@@ -807,21 +1029,37 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
+    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minCollateralPoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minTotalReferencePoolLiquidity(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "minTotalReferencePoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    referencePools(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "referencePools(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -830,6 +1068,13 @@ export class Market extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    "removeReferencePool(address)"(
+      pool: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -853,13 +1098,13 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMinBorrowTime(
-      time: BigNumberish,
+    setMinCollateralPoolLiquidity(
+      min: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setMinBorrowTime(uint64)"(
-      time: BigNumberish,
+    "setMinCollateralPoolLiquidity(uint256)"(
+      min: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -870,6 +1115,26 @@ export class Market extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinTotalReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setMinTotalReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -894,17 +1159,19 @@ export class Market extends Contract {
         BigNumber,
         BigNumber,
         number,
+        boolean,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
+        startTCPRewards: BigNumber;
         lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        collateralizationBandIndex: BigNumber;
+        tick: number;
+        tickSet: boolean;
+        tickIndex: BigNumber;
       }
     >;
 
@@ -921,29 +1188,25 @@ export class Market extends Contract {
         BigNumber,
         BigNumber,
         number,
+        boolean,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
         collateral: BigNumber;
         debt: BigNumber;
         startDebtExchangeRate: BigNumber;
-        startCNPRewards: BigNumber;
+        startTCPRewards: BigNumber;
         lastTimeUpdated: BigNumber;
         lastBorrowTime: BigNumber;
-        collateralizationBand: number;
-        collateralizationBandIndex: BigNumber;
+        tick: number;
+        tickSet: boolean;
+        tickIndex: BigNumber;
       }
     >;
 
-    systemNotifyCollateralPriceUpdated(
-      price: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    twapDuration(overrides?: CallOverrides): Promise<number>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
-      price: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<number>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1001,6 +1264,11 @@ export class Market extends Contract {
       { paramName: string; value: BigNumber }
     >;
 
+    ParameterUpdatedAddress(
+      paramName: string | null,
+      value: null
+    ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
+
     PositionAdjusted(
       positionID: BigNumberish | null,
       debtChange: null,
@@ -1018,14 +1286,14 @@ export class Market extends Contract {
       positionID: BigNumberish | null,
       period: BigNumberish | null,
       debtAfter: null,
-      cnpRewards: null
+      tcpRewards: null
     ): TypedEventFilter<
       [BigNumber, BigNumber, BigNumber, BigNumber],
       {
         positionID: BigNumber;
         period: BigNumber;
         debtAfter: BigNumber;
-        cnpRewards: BigNumber;
+        tcpRewards: BigNumber;
       }
     >;
 
@@ -1039,6 +1307,28 @@ export class Market extends Contract {
 
     "accrueInterest()"(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    adjustGenesisPositionCollateral(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "adjustGenesisPositionCollateral(uint64,uint256)"(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     adjustPosition(
@@ -1069,6 +1359,14 @@ export class Market extends Contract {
 
     "collateralizationRequirement()"(
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     createGenesisPosition(
@@ -1129,21 +1427,37 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minBorrowTime(overrides?: CallOverrides): Promise<BigNumber>;
+    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "minBorrowTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minCollateralToDebtRatio(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minCollateralToDebtRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "minCollateralPoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minTotalReferencePoolLiquidity(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "minTotalReferencePoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    referencePools(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "referencePools(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -1152,6 +1466,16 @@ export class Market extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "removeReferencePool(address)"(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1175,13 +1499,13 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMinBorrowTime(
-      time: BigNumberish,
+    setMinCollateralPoolLiquidity(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setMinBorrowTime(uint64)"(
-      time: BigNumberish,
+    "setMinCollateralPoolLiquidity(uint256)"(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1192,6 +1516,26 @@ export class Market extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMinTotalReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setMinTotalReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1217,15 +1561,9 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    systemNotifyCollateralPriceUpdated(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    twapDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1242,6 +1580,28 @@ export class Market extends Contract {
 
     "accrueInterest()"(
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "addReferencePool(address)"(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    adjustGenesisPositionCollateral(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "adjustGenesisPositionCollateral(uint64,uint256)"(
+      positionID: BigNumberish,
+      collateralDecrease: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     adjustPosition(
@@ -1274,6 +1634,14 @@ export class Market extends Contract {
 
     "collateralizationRequirement()"(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createGenesisPosition(
@@ -1338,15 +1706,11 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minBorrowTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "minBorrowTime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minCollateralToDebtRatio(
+    minCollateralPoolLiquidity(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "minCollateralToDebtRatio()"(
+    "minCollateralPoolLiquidity()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1356,9 +1720,27 @@ export class Market extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    minTotalReferencePoolLiquidity(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "minTotalReferencePoolLiquidity()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    referencePools(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "referencePools(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -1367,6 +1749,16 @@ export class Market extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeReferencePool(
+      pool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "removeReferencePool(address)"(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1390,13 +1782,13 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMinBorrowTime(
-      time: BigNumberish,
+    setMinCollateralPoolLiquidity(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setMinBorrowTime(uint64)"(
-      time: BigNumberish,
+    "setMinCollateralPoolLiquidity(uint256)"(
+      min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1407,6 +1799,26 @@ export class Market extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinTotalReferencePoolLiquidity(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setMinTotalReferencePoolLiquidity(uint256)"(
+      min: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1432,15 +1844,9 @@ export class Market extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    systemNotifyCollateralPriceUpdated(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    twapDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "systemNotifyCollateralPriceUpdated(uint256)"(
-      price: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     validUpdate(
       arg0: BytesLike,

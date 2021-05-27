@@ -23,7 +23,7 @@ interface OracleEchidnaTestInterface extends ethers.utils.Interface {
   functions: {
     "advanceTime(uint32)": FunctionFragment;
     "checkTimeWeightedAveragesAlwaysFitsType(uint32)": FunctionFragment;
-    "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)": FunctionFragment;
+    "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)": FunctionFragment;
     "echidna_AlwaysInitialized()": FunctionFragment;
     "echidna_canAlwaysObserve0IfInitialized()": FunctionFragment;
     "echidna_cardinalityAlwaysLteNext()": FunctionFragment;
@@ -42,7 +42,7 @@ interface OracleEchidnaTestInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "checkTwoAdjacentObservationsModTimeElapsedAlways0",
+    functionFragment: "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -80,7 +80,7 @@ interface OracleEchidnaTestInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "checkTwoAdjacentObservationsModTimeElapsedAlways0",
+    functionFragment: "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -170,12 +170,12 @@ export class OracleEchidnaTest extends Contract {
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    checkTwoAdjacentObservationsModTimeElapsedAlways0(
+    checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)"(
+    "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -269,12 +269,12 @@ export class OracleEchidnaTest extends Contract {
     overrides?: CallOverrides
   ): Promise<void>;
 
-  checkTwoAdjacentObservationsModTimeElapsedAlways0(
+  checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<void>;
 
-  "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)"(
+  "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)"(
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -359,12 +359,12 @@ export class OracleEchidnaTest extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    checkTwoAdjacentObservationsModTimeElapsedAlways0(
+    checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)"(
+    "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -456,12 +456,12 @@ export class OracleEchidnaTest extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    checkTwoAdjacentObservationsModTimeElapsedAlways0(
+    checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)"(
+    "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -556,12 +556,12 @@ export class OracleEchidnaTest extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    checkTwoAdjacentObservationsModTimeElapsedAlways0(
+    checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "checkTwoAdjacentObservationsModTimeElapsedAlways0(uint16)"(
+    "checkTwoAdjacentObservationsTickCumulativeModTimeElapsedAlways0(uint16)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

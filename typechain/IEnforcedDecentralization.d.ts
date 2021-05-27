@@ -63,11 +63,13 @@ interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
 
   events: {
     "ActionBlacklisted(string)": EventFragment;
-    "PhaseStartDelayed(uint64,uint8)": EventFragment;
+    "PhaseOneStartTimeSet(uint64)": EventFragment;
+    "PhaseStartDelayed(uint8,uint64,uint8)": EventFragment;
     "UpdateLockDelayed(uint64,uint8)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ActionBlacklisted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PhaseOneStartTimeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PhaseStartDelayed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdateLockDelayed"): EventFragment;
 }
@@ -238,12 +240,17 @@ export class IEnforcedDecentralization extends Contract {
       signature: string | null
     ): TypedEventFilter<[string], { signature: string }>;
 
+    PhaseOneStartTimeSet(
+      startTime: null
+    ): TypedEventFilter<[BigNumber], { startTime: BigNumber }>;
+
     PhaseStartDelayed(
+      phase: BigNumberish | null,
       startTime: null,
       delaysRemaining: null
     ): TypedEventFilter<
-      [BigNumber, number],
-      { startTime: BigNumber; delaysRemaining: number }
+      [number, BigNumber, number],
+      { phase: number; startTime: BigNumber; delaysRemaining: number }
     >;
 
     UpdateLockDelayed(

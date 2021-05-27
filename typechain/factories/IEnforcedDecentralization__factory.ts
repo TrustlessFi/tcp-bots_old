@@ -43,6 +43,25 @@ const _abi = [
         name: "startTime",
         type: "uint64",
       },
+    ],
+    name: "PhaseOneStartTimeSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint8",
+        name: "phase",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "startTime",
+        type: "uint64",
+      },
       {
         indexed: false,
         internalType: "uint8",

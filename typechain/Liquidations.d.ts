@@ -32,18 +32,18 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     "init(address)": FunctionFragment;
     "liquidate(uint256)": FunctionFragment;
     "liquidationIncentive()": FunctionFragment;
-    "liquidationTwapDurationSeconds()": FunctionFragment;
     "maxRewardsRatio()": FunctionFragment;
     "minLiquidationIncentive()": FunctionFragment;
     "periodLength()": FunctionFragment;
     "rewardsLimit()": FunctionFragment;
     "setDiscoveryIncentive(uint256)": FunctionFragment;
     "setLiquidationIncentive(uint256)": FunctionFragment;
-    "setLiquidationTwap(uint32)": FunctionFragment;
     "setMaxRewardsRatio(uint256)": FunctionFragment;
     "setMinLiquidationIncentive(uint256)": FunctionFragment;
+    "setTwapDuration(uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
+    "twapDuration()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
@@ -83,10 +83,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "liquidationTwapDurationSeconds",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxRewardsRatio",
     values?: undefined
   ): string;
@@ -111,10 +107,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLiquidationTwap",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setMaxRewardsRatio",
     values: [BigNumberish]
   ): string;
@@ -122,8 +114,16 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     functionFragment: "setMinLiquidationIncentive",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setTwapDuration",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "twapDuration",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
@@ -162,10 +162,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "liquidationTwapDurationSeconds",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "maxRewardsRatio",
     data: BytesLike
   ): Result;
@@ -190,10 +186,6 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setLiquidationTwap",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setMaxRewardsRatio",
     data: BytesLike
   ): Result;
@@ -201,15 +193,23 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     functionFragment: "setMinLiquidationIncentive",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTwapDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "twapDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
   events: {
-    "CoveredUnbackedDebt(uint256,uint256,uint256)": EventFragment;
+    "CoveredUnbackedDebt(uint256,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
     "Liquidated(uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
@@ -347,14 +347,6 @@ export class Liquidations extends Contract {
 
     "liquidationIncentive()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    liquidationTwapDurationSeconds(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    "liquidationTwapDurationSeconds()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     maxRewardsRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "maxRewardsRatio()"(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -401,16 +393,6 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLiquidationTwap(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setLiquidationTwap(uint32)"(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setMaxRewardsRatio(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -431,6 +413,16 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -442,6 +434,10 @@ export class Liquidations extends Contract {
     stopped(overrides?: CallOverrides): Promise<[boolean]>;
 
     "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    twapDuration(overrides?: CallOverrides): Promise<[number]>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<[number]>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -521,12 +517,6 @@ export class Liquidations extends Contract {
 
   "liquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  liquidationTwapDurationSeconds(overrides?: CallOverrides): Promise<number>;
-
-  "liquidationTwapDurationSeconds()"(
-    overrides?: CallOverrides
-  ): Promise<number>;
-
   maxRewardsRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
   "maxRewardsRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -571,16 +561,6 @@ export class Liquidations extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLiquidationTwap(
-    duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setLiquidationTwap(uint32)"(
-    duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setMaxRewardsRatio(
     ratio: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -601,6 +581,16 @@ export class Liquidations extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setTwapDuration(
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setTwapDuration(uint32)"(
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   stop(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -612,6 +602,10 @@ export class Liquidations extends Contract {
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+  twapDuration(overrides?: CallOverrides): Promise<number>;
+
+  "twapDuration()"(overrides?: CallOverrides): Promise<number>;
 
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -680,12 +674,6 @@ export class Liquidations extends Contract {
 
     "liquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    liquidationTwapDurationSeconds(overrides?: CallOverrides): Promise<number>;
-
-    "liquidationTwapDurationSeconds()"(
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     maxRewardsRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxRewardsRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -730,16 +718,6 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLiquidationTwap(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setLiquidationTwap(uint32)"(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setMaxRewardsRatio(
       ratio: BigNumberish,
       overrides?: CallOverrides
@@ -760,6 +738,16 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     stop(overrides?: CallOverrides): Promise<void>;
 
     "stop()"(overrides?: CallOverrides): Promise<void>;
@@ -767,6 +755,10 @@ export class Liquidations extends Contract {
     stopped(overrides?: CallOverrides): Promise<boolean>;
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
+
+    twapDuration(overrides?: CallOverrides): Promise<number>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<number>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
@@ -779,15 +771,10 @@ export class Liquidations extends Contract {
   filters: {
     CoveredUnbackedDebt(
       price: null,
-      positionDebt: null,
-      positionCollateral: null
+      amountCovered: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        price: BigNumber;
-        positionDebt: BigNumber;
-        positionCollateral: BigNumber;
-      }
+      [BigNumber, BigNumber],
+      { price: BigNumber; amountCovered: BigNumber }
     >;
 
     Initialized(
@@ -904,14 +891,6 @@ export class Liquidations extends Contract {
 
     "liquidationIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    liquidationTwapDurationSeconds(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "liquidationTwapDurationSeconds()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     maxRewardsRatio(overrides?: CallOverrides): Promise<BigNumber>;
 
     "maxRewardsRatio()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -948,16 +927,6 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLiquidationTwap(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setLiquidationTwap(uint32)"(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setMaxRewardsRatio(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -978,6 +947,16 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -989,6 +968,10 @@ export class Liquidations extends Contract {
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    twapDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1077,14 +1060,6 @@ export class Liquidations extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    liquidationTwapDurationSeconds(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "liquidationTwapDurationSeconds()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     maxRewardsRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "maxRewardsRatio()"(
@@ -1127,16 +1102,6 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setLiquidationTwap(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setLiquidationTwap(uint32)"(
-      duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setMaxRewardsRatio(
       ratio: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1157,6 +1122,16 @@ export class Liquidations extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1168,6 +1143,10 @@ export class Liquidations extends Contract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    twapDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     validUpdate(
       arg0: BytesLike,

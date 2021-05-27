@@ -72,9 +72,9 @@
     {
       "inputs": [
         {
-          "internalType": "uint16",
-          "name": "poolID",
-          "type": "uint16"
+          "internalType": "contract IUniswapV3Pool",
+          "name": "pool",
+          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -93,14 +93,9 @@
           "internalType": "uint256",
           "name": "nftID",
           "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "dest",
-          "type": "address"
         }
       ],
-      "name": "distributeLiquidityNft",
+      "name": "deletePoolPosition",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -135,44 +130,19 @@
           "internalType": "address",
           "name": "owner",
           "type": "address"
+        },
+        {
+          "internalType": "uint16",
+          "name": "poolID",
+          "type": "uint16"
         }
       ],
-      "name": "getGenesisPeriodCoinLiquidity",
+      "name": "getParticipatedInLiquidityGenesis",
       "outputs": [
         {
-          "internalType": "uint256",
-          "name": "liquidity",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getLiquidationAccount",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "startDebtExchangeRate",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "collateral",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "debt",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct IAccounting.LiquidationAccount",
-          "name": "lqAcct",
-          "type": "tuple"
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -210,7 +180,7 @@
         {
           "components": [
             {
-              "internalType": "address",
+              "internalType": "address payable",
               "name": "owner",
               "type": "address"
             },
@@ -218,6 +188,26 @@
               "internalType": "uint16",
               "name": "poolID",
               "type": "uint16"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cumulativeLiquidity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalRewards",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lastTimeRewarded",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastBlockPositionIncreased",
+              "type": "uint256"
             },
             {
               "internalType": "int24",
@@ -230,24 +220,9 @@
               "type": "int24"
             },
             {
-              "internalType": "uint256",
-              "name": "totalRewards",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
+              "internalType": "uint128",
               "name": "liquidity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "cumulativeLiquidity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint64",
-              "name": "lastTimeRewarded",
-              "type": "uint64"
+              "type": "uint128"
             }
           ],
           "internalType": "struct IAccounting.PoolPosition",
@@ -292,7 +267,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "startCNPRewards",
+              "name": "startTCPRewards",
               "type": "uint256"
             },
             {
@@ -306,13 +281,18 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint32",
-              "name": "collateralizationBand",
-              "type": "uint32"
+              "internalType": "int24",
+              "name": "tick",
+              "type": "int24"
+            },
+            {
+              "internalType": "bool",
+              "name": "tickSet",
+              "type": "bool"
             },
             {
               "internalType": "uint64",
-              "name": "collateralizationBandIndex",
+              "name": "tickIndex",
               "type": "uint64"
             }
           ],
@@ -368,7 +348,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "totalCNPRewards",
+              "name": "totalTCPRewards",
               "type": "uint256"
             },
             {
@@ -406,9 +386,22 @@
     {
       "inputs": [
         {
-          "internalType": "uint16",
-          "name": "poolID",
-          "type": "uint16"
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "name": "increaseLentZhu",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IUniswapV3Pool",
+          "name": "pool",
+          "type": "address"
         },
         {
           "internalType": "uint256",
@@ -419,6 +412,43 @@
       "name": "increasePoolLiquidity",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "nftID",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "addressToCheck",
+          "type": "address"
+        }
+      ],
+      "name": "isPositionOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "lentZhu",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -435,24 +465,11 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "oneToOneMintedCoin",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
-          "internalType": "uint16",
-          "name": "poolID",
-          "type": "uint16"
+          "internalType": "contract IUniswapV3Pool",
+          "name": "pool",
+          "type": "address"
         }
       ],
       "name": "poolLiquidity",
@@ -469,7 +486,7 @@
     {
       "inputs": [
         {
-          "internalType": "address",
+          "internalType": "address payable",
           "name": "account",
           "type": "address"
         },
@@ -497,7 +514,7 @@
           "type": "uint256"
         }
       ],
-      "name": "sendLentCoin",
+      "name": "sendLentZhu",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -533,55 +550,17 @@
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "liquidity",
-          "type": "uint256"
-        }
-      ],
-      "name": "setGenesisPeriodCoinTokenCount",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
+          "internalType": "uint16",
+          "name": "poolID",
+          "type": "uint16"
+        },
         {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "startDebtExchangeRate",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "collateral",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "debt",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct IAccounting.LiquidationAccount",
-          "name": "lqAcct",
-          "type": "tuple"
+          "internalType": "bool",
+          "name": "participated",
+          "type": "bool"
         }
       ],
-      "name": "setLiquidationAccount",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "count",
-          "type": "uint256"
-        }
-      ],
-      "name": "setOneToOneMintedCoin",
+      "name": "setParticipatedInLiquidityGenesis",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -614,7 +593,7 @@
         {
           "components": [
             {
-              "internalType": "address",
+              "internalType": "address payable",
               "name": "owner",
               "type": "address"
             },
@@ -622,6 +601,26 @@
               "internalType": "uint16",
               "name": "poolID",
               "type": "uint16"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cumulativeLiquidity",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalRewards",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "lastTimeRewarded",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastBlockPositionIncreased",
+              "type": "uint256"
             },
             {
               "internalType": "int24",
@@ -634,24 +633,9 @@
               "type": "int24"
             },
             {
-              "internalType": "uint256",
-              "name": "totalRewards",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
+              "internalType": "uint128",
               "name": "liquidity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "cumulativeLiquidity",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint64",
-              "name": "lastTimeRewarded",
-              "type": "uint64"
+              "type": "uint128"
             }
           ],
           "internalType": "struct IAccounting.PoolPosition",
@@ -695,7 +679,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "startCNPRewards",
+              "name": "startTCPRewards",
               "type": "uint256"
             },
             {
@@ -709,13 +693,18 @@
               "type": "uint64"
             },
             {
-              "internalType": "uint32",
-              "name": "collateralizationBand",
-              "type": "uint32"
+              "internalType": "int24",
+              "name": "tick",
+              "type": "int24"
+            },
+            {
+              "internalType": "bool",
+              "name": "tickSet",
+              "type": "bool"
             },
             {
               "internalType": "uint64",
-              "name": "collateralizationBandIndex",
+              "name": "tickIndex",
               "type": "uint64"
             }
           ],
@@ -770,7 +759,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "totalCNPRewards",
+              "name": "totalTCPRewards",
               "type": "uint256"
             },
             {

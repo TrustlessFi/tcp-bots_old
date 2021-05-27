@@ -38,7 +38,7 @@ const _abi = [
       },
       {
         internalType: "uint160[]",
-        name: "liquidityCumulatives",
+        name: "secondsPerLiquidityCumulativeX128s",
         type: "uint160[]",
       },
     ],
@@ -58,11 +58,21 @@ const _abi = [
         type: "int24",
       },
     ],
-    name: "secondsInside",
+    name: "snapshotCumulativesInside",
     outputs: [
       {
+        internalType: "int56",
+        name: "tickCumulativeInside",
+        type: "int56",
+      },
+      {
+        internalType: "uint160",
+        name: "secondsPerLiquidityInsideX128",
+        type: "uint160",
+      },
+      {
         internalType: "uint32",
-        name: "",
+        name: "secondsInside",
         type: "uint32",
       },
     ],

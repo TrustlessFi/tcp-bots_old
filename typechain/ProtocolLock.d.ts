@@ -22,6 +22,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface ProtocolLockInterface extends ethers.utils.Interface {
   functions: {
     "authorizeCaller(address)": FunctionFragment;
+    "authorizedCaller(address)": FunctionFragment;
     "enter()": FunctionFragment;
     "exit()": FunctionFragment;
     "governor()": FunctionFragment;
@@ -30,6 +31,10 @@ interface ProtocolLockInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "authorizeCaller",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "authorizedCaller",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "enter", values?: undefined): string;
@@ -42,6 +47,10 @@ interface ProtocolLockInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "authorizeCaller",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizedCaller",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "enter", data: BytesLike): Result;
@@ -115,6 +124,16 @@ export class ProtocolLock extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    authorizedCaller(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "authorizedCaller(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     enter(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -156,6 +175,13 @@ export class ProtocolLock extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  authorizedCaller(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+  "authorizedCaller(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   enter(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -193,6 +219,13 @@ export class ProtocolLock extends Contract {
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    authorizedCaller(arg0: string, overrides?: CallOverrides): Promise<boolean>;
+
+    "authorizedCaller(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     enter(overrides?: CallOverrides): Promise<void>;
 
@@ -235,6 +268,16 @@ export class ProtocolLock extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    authorizedCaller(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "authorizedCaller(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     enter(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -275,6 +318,16 @@ export class ProtocolLock extends Contract {
     "authorizeCaller(address)"(
       caller: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    authorizedCaller(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "authorizedCaller(address)"(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enter(

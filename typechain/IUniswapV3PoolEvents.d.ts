@@ -29,7 +29,7 @@ interface IUniswapV3PoolEventsInterface extends ethers.utils.Interface {
     "Initialize(uint160,int24)": EventFragment;
     "Mint(address,address,int24,int24,uint128,uint256,uint256)": EventFragment;
     "SetFeeProtocol(uint8,uint8,uint8,uint8)": EventFragment;
-    "Swap(address,address,int256,int256,uint160,int24)": EventFragment;
+    "Swap(address,address,int256,int256,uint160,uint128,int24)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Burn"): EventFragment;
@@ -226,15 +226,17 @@ export class IUniswapV3PoolEvents extends Contract {
       amount0: null,
       amount1: null,
       sqrtPriceX96: null,
+      liquidity: null,
       tick: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber, BigNumber, number],
+      [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number],
       {
         sender: string;
         recipient: string;
         amount0: BigNumber;
         amount1: BigNumber;
         sqrtPriceX96: BigNumber;
+        liquidity: BigNumber;
         tick: number;
       }
     >;

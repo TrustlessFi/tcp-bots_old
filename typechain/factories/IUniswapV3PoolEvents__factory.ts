@@ -334,6 +334,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "uint128",
+        name: "liquidity",
+        type: "uint128",
+      },
+      {
+        indexed: false,
         internalType: "int24",
         name: "tick",
         type: "int24",

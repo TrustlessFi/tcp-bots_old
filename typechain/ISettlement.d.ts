@@ -58,7 +58,7 @@ interface ISettlementInterface extends ethers.utils.Interface {
   events: {
     "NoConfidenceConfirmed(address)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
-    "SettlementCollateralForCoin(uint64,address,uint256,uint256)": EventFragment;
+    "SettlementCollateralForZhu(uint64,address,uint256,uint256)": EventFragment;
     "SettlementInitialized(uint256)": EventFragment;
     "SettlementWithdrawCollateral(uint64,address,uint256)": EventFragment;
     "StakedNoConfidenceTokens(address,uint256)": EventFragment;
@@ -67,9 +67,7 @@ interface ISettlementInterface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "NoConfidenceConfirmed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "SettlementCollateralForCoin"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SettlementCollateralForZhu"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SettlementInitialized"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "SettlementWithdrawCollateral"
@@ -133,12 +131,12 @@ export class ISettlement extends Contract {
     ): Promise<ContractTransaction>;
 
     stakeTokensForNoPriceConfidence(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -170,12 +168,12 @@ export class ISettlement extends Contract {
   ): Promise<ContractTransaction>;
 
   stakeTokensForNoPriceConfidence(
-    countCNPToStake: BigNumberish,
+    countTCPToStake: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "stakeTokensForNoPriceConfidence(uint256)"(
-    countCNPToStake: BigNumberish,
+    countTCPToStake: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -207,12 +205,12 @@ export class ISettlement extends Contract {
     ): Promise<void>;
 
     stakeTokensForNoPriceConfidence(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -240,17 +238,17 @@ export class ISettlement extends Contract {
       { paramName: string; _address: string }
     >;
 
-    SettlementCollateralForCoin(
+    SettlementCollateralForZhu(
       positionID: BigNumberish | null,
       caller: string | null,
-      coinCount: null,
+      zhuCount: null,
       collateralCount: null
     ): TypedEventFilter<
       [BigNumber, string, BigNumber, BigNumber],
       {
         positionID: BigNumber;
         caller: string;
-        coinCount: BigNumber;
+        zhuCount: BigNumber;
         collateralCount: BigNumber;
       }
     >;
@@ -300,12 +298,12 @@ export class ISettlement extends Contract {
     ): Promise<BigNumber>;
 
     stakeTokensForNoPriceConfidence(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -338,12 +336,12 @@ export class ISettlement extends Contract {
     ): Promise<PopulatedTransaction>;
 
     stakeTokensForNoPriceConfidence(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "stakeTokensForNoPriceConfidence(uint256)"(
-      countCNPToStake: BigNumberish,
+      countTCPToStake: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

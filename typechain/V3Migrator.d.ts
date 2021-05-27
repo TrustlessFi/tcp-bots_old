@@ -46,12 +46,14 @@ interface V3MigratorInterface extends ethers.utils.Interface {
       {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -189,19 +191,19 @@ export class V3Migrator extends Contract {
     "WETH9()"(overrides?: CallOverrides): Promise<[string]>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     factory(overrides?: CallOverrides): Promise<[string]>;
@@ -212,12 +214,14 @@ export class V3Migrator extends Contract {
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -225,16 +229,18 @@ export class V3Migrator extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "migrate((address,uint256,address,address,uint24,int24,int24,uint256,address,uint256,bool))"(
+    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -344,19 +350,19 @@ export class V3Migrator extends Contract {
   "WETH9()"(overrides?: CallOverrides): Promise<string>;
 
   createAndInitializePoolIfNecessary(
-    tokenA: string,
-    tokenB: string,
+    token0: string,
+    token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-    tokenA: string,
-    tokenB: string,
+    token0: string,
+    token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   factory(overrides?: CallOverrides): Promise<string>;
@@ -367,12 +373,14 @@ export class V3Migrator extends Contract {
     params: {
       pair: string;
       liquidityToMigrate: BigNumberish;
+      percentageToMigrate: BigNumberish;
       token0: string;
       token1: string;
       fee: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      liquidityV3Min: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
       recipient: string;
       deadline: BigNumberish;
       refundAsETH: boolean;
@@ -380,16 +388,18 @@ export class V3Migrator extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "migrate((address,uint256,address,address,uint24,int24,int24,uint256,address,uint256,bool))"(
+  "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
     params: {
       pair: string;
       liquidityToMigrate: BigNumberish;
+      percentageToMigrate: BigNumberish;
       token0: string;
       token1: string;
       fee: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      liquidityV3Min: BigNumberish;
+      amount0Min: BigNumberish;
+      amount1Min: BigNumberish;
       recipient: string;
       deadline: BigNumberish;
       refundAsETH: boolean;
@@ -497,20 +507,20 @@ export class V3Migrator extends Contract {
     "WETH9()"(overrides?: CallOverrides): Promise<string>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
     factory(overrides?: CallOverrides): Promise<string>;
 
@@ -520,12 +530,14 @@ export class V3Migrator extends Contract {
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -533,16 +545,18 @@ export class V3Migrator extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "migrate((address,uint256,address,address,uint24,int24,int24,uint256,address,uint256,bool))"(
+    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -650,19 +664,19 @@ export class V3Migrator extends Contract {
     "WETH9()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     factory(overrides?: CallOverrides): Promise<BigNumber>;
@@ -673,12 +687,14 @@ export class V3Migrator extends Contract {
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -686,16 +702,18 @@ export class V3Migrator extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "migrate((address,uint256,address,address,uint24,int24,int24,uint256,address,uint256,bool))"(
+    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -806,19 +824,19 @@ export class V3Migrator extends Contract {
     "WETH9()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     createAndInitializePoolIfNecessary(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
-      tokenA: string,
-      tokenB: string,
+      token0: string,
+      token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -829,12 +847,14 @@ export class V3Migrator extends Contract {
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;
@@ -842,16 +862,18 @@ export class V3Migrator extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "migrate((address,uint256,address,address,uint24,int24,int24,uint256,address,uint256,bool))"(
+    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
+        percentageToMigrate: BigNumberish;
         token0: string;
         token1: string;
         fee: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidityV3Min: BigNumberish;
+        amount0Min: BigNumberish;
+        amount1Min: BigNumberish;
         recipient: string;
         deadline: BigNumberish;
         refundAsETH: boolean;

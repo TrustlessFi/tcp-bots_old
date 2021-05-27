@@ -57,20 +57,20 @@ interface ILendInterface extends ethers.utils.Interface {
 
   events: {
     "Lend(address,uint256,uint256)": EventFragment;
-    "MintCoin(address,address,uint256)": EventFragment;
+    "MintZhu(address,address,uint256)": EventFragment;
     "OneToOneMintingDisabled()": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
-    "ReturnCoin(address,address,uint256)": EventFragment;
+    "ReturnZhu(address,address,uint256)": EventFragment;
     "Unlend(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Lend"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MintCoin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MintZhu"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OneToOneMintingDisabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ReturnCoin"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ReturnZhu"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unlend"): EventFragment;
 }
 
@@ -218,14 +218,14 @@ export class ILend extends Contract {
   filters: {
     Lend(
       account: string | null,
-      coinCount: null,
+      zhuCount: null,
       lendTokenCount: null
     ): TypedEventFilter<
       [string, BigNumber, BigNumber],
-      { account: string; coinCount: BigNumber; lendTokenCount: BigNumber }
+      { account: string; zhuCount: BigNumber; lendTokenCount: BigNumber }
     >;
 
-    MintCoin(
+    MintZhu(
       user: string | null,
       token: string | null,
       count: null
@@ -249,7 +249,7 @@ export class ILend extends Contract {
       value: string | null
     ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
 
-    ReturnCoin(
+    ReturnZhu(
       user: string | null,
       token: string | null,
       count: null
@@ -260,11 +260,11 @@ export class ILend extends Contract {
 
     Unlend(
       account: string | null,
-      coinCount: null,
+      zhuCount: null,
       lendTokenCount: null
     ): TypedEventFilter<
       [string, BigNumber, BigNumber],
-      { account: string; coinCount: BigNumber; lendTokenCount: BigNumber }
+      { account: string; zhuCount: BigNumber; lendTokenCount: BigNumber }
     >;
   };
 

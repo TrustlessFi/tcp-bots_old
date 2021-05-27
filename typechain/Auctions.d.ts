@@ -21,15 +21,10 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface AuctionsInterface extends ethers.utils.Interface {
   functions: {
-    "CNP_COIN_VALUE_MULTIPLIER()": FunctionFragment;
-    "COIN_CNP_VALUE_MULTIPLIER()": FunctionFragment;
-    "approximateCNPEquivalent(uint256)": FunctionFragment;
-    "bidDeficitAuction(uint64,uint256)": FunctionFragment;
-    "bidSurplusAuction(uint64,uint256)": FunctionFragment;
+    "bidDeficitAuction(uint64,uint128)": FunctionFragment;
+    "bidSurplusAuction(uint64,uint128)": FunctionFragment;
     "checkReservesAndStartAuctions()": FunctionFragment;
-    "cnp()": FunctionFragment;
-    "coinToBeBought()": FunctionFragment;
-    "coinToBeSold()": FunctionFragment;
+    "completeSetup()": FunctionFragment;
     "deficitAuction(uint64)": FunctionFragment;
     "deficitAuctionComplete(uint64)": FunctionFragment;
     "deficitAuctionCount()": FunctionFragment;
@@ -59,6 +54,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
     "setMinLotSize(uint256)": FunctionFragment;
     "setReservesBufferLowerBound(uint256)": FunctionFragment;
     "setReservesBufferUpperBound(uint256)": FunctionFragment;
+    "setTwapDuration(uint32)": FunctionFragment;
     "settleDeficitAuction(uint64)": FunctionFragment;
     "settleSurplusAuction(uint64)": FunctionFragment;
     "shouldStartAuctions()": FunctionFragment;
@@ -68,21 +64,13 @@ interface AuctionsInterface extends ethers.utils.Interface {
     "surplusAuctionComplete(uint64)": FunctionFragment;
     "surplusAuctionCount()": FunctionFragment;
     "surplusAuctionLive(uint64)": FunctionFragment;
+    "tcp()": FunctionFragment;
+    "twapDuration()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
+    "zhuToBeBought()": FunctionFragment;
+    "zhuToBeSold()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "CNP_COIN_VALUE_MULTIPLIER",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "COIN_CNP_VALUE_MULTIPLIER",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approximateCNPEquivalent",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "bidDeficitAuction",
     values: [BigNumberish, BigNumberish]
@@ -95,13 +83,8 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "checkReservesAndStartAuctions",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "cnp", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "coinToBeBought",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "coinToBeSold",
+    functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -212,6 +195,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTwapDuration",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "settleDeficitAuction",
     values: [BigNumberish]
   ): string;
@@ -241,23 +228,24 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "surplusAuctionLive",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "tcp", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "twapDuration",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "zhuToBeBought",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "zhuToBeSold",
+    values?: undefined
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "CNP_COIN_VALUE_MULTIPLIER",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "COIN_CNP_VALUE_MULTIPLIER",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "approximateCNPEquivalent",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "bidDeficitAuction",
     data: BytesLike
@@ -270,13 +258,8 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "checkReservesAndStartAuctions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "cnp", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "coinToBeBought",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "coinToBeSold",
+    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -384,6 +367,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setTwapDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "settleDeficitAuction",
     data: BytesLike
   ): Result;
@@ -413,8 +400,21 @@ interface AuctionsInterface extends ethers.utils.Interface {
     functionFragment: "surplusAuctionLive",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tcp", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "twapDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "zhuToBeBought",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "zhuToBeSold",
     data: BytesLike
   ): Result;
 
@@ -487,35 +487,13 @@ export class Auctions extends Contract {
   interface: AuctionsInterface;
 
   functions: {
-    CNP_COIN_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "CNP_COIN_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    COIN_CNP_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "COIN_CNP_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    approximateCNPEquivalent(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "approximateCNPEquivalent(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "bidDeficitAuction(uint64,uint256)"(
+    "bidDeficitAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -527,7 +505,7 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "bidSurplusAuction(uint64,uint256)"(
+    "bidSurplusAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -541,28 +519,24 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    cnp(overrides?: CallOverrides): Promise<[string]>;
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "cnp()"(overrides?: CallOverrides): Promise<[string]>;
-
-    coinToBeBought(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "coinToBeBought()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    coinToBeSold(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "coinToBeSold()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -570,12 +544,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -617,22 +591,22 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[],
         BigNumber[],
         boolean[]
       ] & {
-        _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        _auctions: ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[];
         _auctionIDs: BigNumber[];
         _isComplete: boolean[];
@@ -645,22 +619,22 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[],
         BigNumber[],
         boolean[]
       ] & {
-        _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        _auctions: ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[];
         _auctionIDs: BigNumber[];
         _isComplete: boolean[];
@@ -829,6 +803,16 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     settleDeficitAuction(
       auctionID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -883,12 +867,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -896,12 +880,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -929,31 +913,29 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    tcp(overrides?: CallOverrides): Promise<[string]>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<[string]>;
+
+    twapDuration(overrides?: CallOverrides): Promise<[number]>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<[number]>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    zhuToBeBought(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "zhuToBeBought()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    zhuToBeSold(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "zhuToBeSold()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
-
-  CNP_COIN_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "CNP_COIN_VALUE_MULTIPLIER()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  COIN_CNP_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "COIN_CNP_VALUE_MULTIPLIER()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  approximateCNPEquivalent(
-    coinCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "approximateCNPEquivalent(uint256)"(
-    coinCount: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   bidDeficitAuction(
     auctionID: BigNumberish,
@@ -961,7 +943,7 @@ export class Auctions extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "bidDeficitAuction(uint64,uint256)"(
+  "bidDeficitAuction(uint64,uint128)"(
     auctionID: BigNumberish,
     bid: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -973,7 +955,7 @@ export class Auctions extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "bidSurplusAuction(uint64,uint256)"(
+  "bidSurplusAuction(uint64,uint128)"(
     auctionID: BigNumberish,
     bid: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -987,28 +969,24 @@ export class Auctions extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  cnp(overrides?: CallOverrides): Promise<string>;
+  completeSetup(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "cnp()"(overrides?: CallOverrides): Promise<string>;
-
-  coinToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "coinToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  coinToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
+  "completeSetup()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   deficitAuction(
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, string, number, number] & {
       count: BigNumber;
       bid: BigNumber;
       bidder: string;
-      endTime: BigNumber;
-      maxEndTime: BigNumber;
+      endTime: number;
+      maxEndTime: number;
     }
   >;
 
@@ -1016,12 +994,12 @@ export class Auctions extends Contract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, string, number, number] & {
       count: BigNumber;
       bid: BigNumber;
       bidder: string;
-      endTime: BigNumber;
-      maxEndTime: BigNumber;
+      endTime: number;
+      maxEndTime: number;
     }
   >;
 
@@ -1063,22 +1041,22 @@ export class Auctions extends Contract {
     overrides?: CallOverrides
   ): Promise<
     [
-      ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      ([BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       })[],
       BigNumber[],
       boolean[]
     ] & {
-      _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      _auctions: ([BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       })[];
       _auctionIDs: BigNumber[];
       _isComplete: boolean[];
@@ -1091,22 +1069,22 @@ export class Auctions extends Contract {
     overrides?: CallOverrides
   ): Promise<
     [
-      ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      ([BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       })[],
       BigNumber[],
       boolean[]
     ] & {
-      _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      _auctions: ([BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       })[];
       _auctionIDs: BigNumber[];
       _isComplete: boolean[];
@@ -1269,6 +1247,16 @@ export class Auctions extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setTwapDuration(
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setTwapDuration(uint32)"(
+    duration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   settleDeficitAuction(
     auctionID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1323,12 +1311,12 @@ export class Auctions extends Contract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, string, number, number] & {
       count: BigNumber;
       bid: BigNumber;
       bidder: string;
-      endTime: BigNumber;
-      maxEndTime: BigNumber;
+      endTime: number;
+      maxEndTime: number;
     }
   >;
 
@@ -1336,12 +1324,12 @@ export class Auctions extends Contract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+    [BigNumber, BigNumber, string, number, number] & {
       count: BigNumber;
       bid: BigNumber;
       bidder: string;
-      endTime: BigNumber;
-      maxEndTime: BigNumber;
+      endTime: number;
+      maxEndTime: number;
     }
   >;
 
@@ -1369,6 +1357,14 @@ export class Auctions extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  tcp(overrides?: CallOverrides): Promise<string>;
+
+  "tcp()"(overrides?: CallOverrides): Promise<string>;
+
+  twapDuration(overrides?: CallOverrides): Promise<number>;
+
+  "twapDuration()"(overrides?: CallOverrides): Promise<number>;
+
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   "validUpdate(bytes4)"(
@@ -1376,36 +1372,22 @@ export class Auctions extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  zhuToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "zhuToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  zhuToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "zhuToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
-    CNP_COIN_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "CNP_COIN_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    COIN_CNP_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "COIN_CNP_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approximateCNPEquivalent(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "approximateCNPEquivalent(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "bidDeficitAuction(uint64,uint256)"(
+    "bidDeficitAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: CallOverrides
@@ -1417,7 +1399,7 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "bidSurplusAuction(uint64,uint256)"(
+    "bidSurplusAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: CallOverrides
@@ -1427,28 +1409,20 @@ export class Auctions extends Contract {
 
     "checkReservesAndStartAuctions()"(overrides?: CallOverrides): Promise<void>;
 
-    cnp(overrides?: CallOverrides): Promise<string>;
+    completeSetup(overrides?: CallOverrides): Promise<void>;
 
-    "cnp()"(overrides?: CallOverrides): Promise<string>;
-
-    coinToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coinToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coinToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
     deficitAuction(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -1456,12 +1430,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -1503,22 +1477,22 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[],
         BigNumber[],
         boolean[]
       ] & {
-        _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        _auctions: ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[];
         _auctionIDs: BigNumber[];
         _isComplete: boolean[];
@@ -1531,22 +1505,22 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<
       [
-        ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[],
         BigNumber[],
         boolean[]
       ] & {
-        _auctions: ([BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+        _auctions: ([BigNumber, BigNumber, string, number, number] & {
           count: BigNumber;
           bid: BigNumber;
           bidder: string;
-          endTime: BigNumber;
-          maxEndTime: BigNumber;
+          endTime: number;
+          maxEndTime: number;
         })[];
         _auctionIDs: BigNumber[];
         _isComplete: boolean[];
@@ -1703,6 +1677,16 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     settleDeficitAuction(
       auctionID: BigNumberish,
       overrides?: CallOverrides
@@ -1753,12 +1737,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -1766,12 +1750,12 @@ export class Auctions extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, string, BigNumber, BigNumber] & {
+      [BigNumber, BigNumber, string, number, number] & {
         count: BigNumber;
         bid: BigNumber;
         bidder: string;
-        endTime: BigNumber;
-        maxEndTime: BigNumber;
+        endTime: number;
+        maxEndTime: number;
       }
     >;
 
@@ -1799,12 +1783,28 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    tcp(overrides?: CallOverrides): Promise<string>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<string>;
+
+    twapDuration(overrides?: CallOverrides): Promise<number>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<number>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    zhuToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    zhuToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -1884,35 +1884,13 @@ export class Auctions extends Contract {
   };
 
   estimateGas: {
-    CNP_COIN_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "CNP_COIN_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    COIN_CNP_VALUE_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "COIN_CNP_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    approximateCNPEquivalent(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "approximateCNPEquivalent(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "bidDeficitAuction(uint64,uint256)"(
+    "bidDeficitAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1924,7 +1902,7 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "bidSurplusAuction(uint64,uint256)"(
+    "bidSurplusAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1938,17 +1916,13 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    cnp(overrides?: CallOverrides): Promise<BigNumber>;
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "cnp()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coinToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coinToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    coinToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "coinToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     deficitAuction(
       arg0: BigNumberish,
@@ -2160,6 +2134,16 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     settleDeficitAuction(
       auctionID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2230,48 +2214,38 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tcp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    twapDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    zhuToBeBought(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuToBeBought()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    zhuToBeSold(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuToBeSold()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    CNP_COIN_VALUE_MULTIPLIER(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "CNP_COIN_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    COIN_CNP_VALUE_MULTIPLIER(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "COIN_CNP_VALUE_MULTIPLIER()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    approximateCNPEquivalent(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "approximateCNPEquivalent(uint256)"(
-      coinCount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     bidDeficitAuction(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "bidDeficitAuction(uint64,uint256)"(
+    "bidDeficitAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2283,7 +2257,7 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "bidSurplusAuction(uint64,uint256)"(
+    "bidSurplusAuction(uint64,uint128)"(
       auctionID: BigNumberish,
       bid: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2297,19 +2271,13 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    cnp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "cnp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    coinToBeBought(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "coinToBeBought()"(
-      overrides?: CallOverrides
+    completeSetup(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    coinToBeSold(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "coinToBeSold()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "completeSetup()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     deficitAuction(
       arg0: BigNumberish,
@@ -2549,6 +2517,16 @@ export class Auctions extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setTwapDuration(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setTwapDuration(uint32)"(
+      duration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     settleDeficitAuction(
       auctionID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2627,6 +2605,14 @@ export class Auctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    tcp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "tcp()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    twapDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "twapDuration()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     validUpdate(
       arg0: BytesLike,
       overrides?: CallOverrides
@@ -2636,5 +2622,13 @@ export class Auctions extends Contract {
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    zhuToBeBought(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "zhuToBeBought()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    zhuToBeSold(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "zhuToBeSold()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

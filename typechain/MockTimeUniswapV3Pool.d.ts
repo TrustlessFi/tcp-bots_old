@@ -39,12 +39,11 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     "observe(uint32[])": FunctionFragment;
     "positions(bytes32)": FunctionFragment;
     "protocolFees()": FunctionFragment;
-    "secondsInside(int24,int24)": FunctionFragment;
-    "secondsOutside(int24)": FunctionFragment;
     "setFeeGrowthGlobal0X128(uint256)": FunctionFragment;
     "setFeeGrowthGlobal1X128(uint256)": FunctionFragment;
     "setFeeProtocol(uint8,uint8)": FunctionFragment;
     "slot0()": FunctionFragment;
+    "snapshotCumulativesInside(int24,int24)": FunctionFragment;
     "swap(address,bool,int256,uint160,bytes)": FunctionFragment;
     "tickBitmap(int16)": FunctionFragment;
     "tickSpacing()": FunctionFragment;
@@ -118,14 +117,6 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "secondsInside",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "secondsOutside",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setFeeGrowthGlobal0X128",
     values: [BigNumberish]
   ): string;
@@ -138,6 +129,10 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "slot0", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "snapshotCumulativesInside",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "swap",
     values: [string, boolean, BigNumberish, BigNumberish, BytesLike]
@@ -198,14 +193,6 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "secondsInside",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "secondsOutside",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setFeeGrowthGlobal0X128",
     data: BytesLike
   ): Result;
@@ -218,6 +205,10 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "slot0", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "snapshotCumulativesInside",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tickBitmap", data: BytesLike): Result;
   decodeFunctionResult(
@@ -238,7 +229,7 @@ interface MockTimeUniswapV3PoolInterface extends ethers.utils.Interface {
     "Initialize(uint160,int24)": EventFragment;
     "Mint(address,address,int24,int24,uint128,uint256,uint256)": EventFragment;
     "SetFeeProtocol(uint8,uint8,uint8,uint8)": EventFragment;
-    "Swap(address,address,int256,int256,uint160,int24)": EventFragment;
+    "Swap(address,address,int256,int256,uint160,uint128,int24)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Burn"): EventFragment;
@@ -439,7 +430,7 @@ export class MockTimeUniswapV3Pool extends Contract {
       [number, BigNumber, BigNumber, boolean] & {
         blockTimestamp: number;
         tickCumulative: BigNumber;
-        liquidityCumulative: BigNumber;
+        secondsPerLiquidityCumulativeX128: BigNumber;
         initialized: boolean;
       }
     >;
@@ -451,7 +442,7 @@ export class MockTimeUniswapV3Pool extends Contract {
       [number, BigNumber, BigNumber, boolean] & {
         blockTimestamp: number;
         tickCumulative: BigNumber;
-        liquidityCumulative: BigNumber;
+        secondsPerLiquidityCumulativeX128: BigNumber;
         initialized: boolean;
       }
     >;
@@ -462,7 +453,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -472,7 +463,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -513,28 +504,6 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
     >;
-
-    secondsInside(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    "secondsInside(int24,int24)"(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    secondsOutside(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "secondsOutside(int24)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     setFeeGrowthGlobal0X128(
       _feeGrowthGlobal0X128: BigNumberish,
@@ -596,6 +565,30 @@ export class MockTimeUniswapV3Pool extends Contract {
       }
     >;
 
+    snapshotCumulativesInside(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
+
+    "snapshotCumulativesInside(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
+
     swap(
       recipient: string,
       zeroForOne: boolean,
@@ -632,11 +625,24 @@ export class MockTimeUniswapV3Pool extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        boolean
+      ] & {
         liquidityGross: BigNumber;
         liquidityNet: BigNumber;
         feeGrowthOutside0X128: BigNumber;
         feeGrowthOutside1X128: BigNumber;
+        tickCumulativeOutside: BigNumber;
+        secondsPerLiquidityOutsideX128: BigNumber;
+        secondsOutside: number;
+        initialized: boolean;
       }
     >;
 
@@ -644,11 +650,24 @@ export class MockTimeUniswapV3Pool extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        boolean
+      ] & {
         liquidityGross: BigNumber;
         liquidityNet: BigNumber;
         feeGrowthOutside0X128: BigNumber;
         feeGrowthOutside1X128: BigNumber;
+        tickCumulativeOutside: BigNumber;
+        secondsPerLiquidityOutsideX128: BigNumber;
+        secondsOutside: number;
+        initialized: boolean;
       }
     >;
 
@@ -806,7 +825,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     [number, BigNumber, BigNumber, boolean] & {
       blockTimestamp: number;
       tickCumulative: BigNumber;
-      liquidityCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
       initialized: boolean;
     }
   >;
@@ -818,7 +837,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     [number, BigNumber, BigNumber, boolean] & {
       blockTimestamp: number;
       tickCumulative: BigNumber;
-      liquidityCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
       initialized: boolean;
     }
   >;
@@ -829,7 +848,7 @@ export class MockTimeUniswapV3Pool extends Contract {
   ): Promise<
     [BigNumber[], BigNumber[]] & {
       tickCumulatives: BigNumber[];
-      liquidityCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
     }
   >;
 
@@ -839,7 +858,7 @@ export class MockTimeUniswapV3Pool extends Contract {
   ): Promise<
     [BigNumber[], BigNumber[]] & {
       tickCumulatives: BigNumber[];
-      liquidityCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
     }
   >;
 
@@ -876,28 +895,6 @@ export class MockTimeUniswapV3Pool extends Contract {
   "protocolFees()"(
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }>;
-
-  secondsInside(
-    tickLower: BigNumberish,
-    tickUpper: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  "secondsInside(int24,int24)"(
-    tickLower: BigNumberish,
-    tickUpper: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  secondsOutside(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "secondsOutside(int24)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   setFeeGrowthGlobal0X128(
     _feeGrowthGlobal0X128: BigNumberish,
@@ -959,6 +956,30 @@ export class MockTimeUniswapV3Pool extends Contract {
     }
   >;
 
+  snapshotCumulativesInside(
+    tickLower: BigNumberish,
+    tickUpper: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+    }
+  >;
+
+  "snapshotCumulativesInside(int24,int24)"(
+    tickLower: BigNumberish,
+    tickUpper: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+    }
+  >;
+
   swap(
     recipient: string,
     zeroForOne: boolean,
@@ -992,11 +1013,24 @@ export class MockTimeUniswapV3Pool extends Contract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      number,
+      boolean
+    ] & {
       liquidityGross: BigNumber;
       liquidityNet: BigNumber;
       feeGrowthOutside0X128: BigNumber;
       feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
     }
   >;
 
@@ -1004,11 +1038,24 @@ export class MockTimeUniswapV3Pool extends Contract {
     arg0: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      number,
+      boolean
+    ] & {
       liquidityGross: BigNumber;
       liquidityNet: BigNumber;
       feeGrowthOutside0X128: BigNumber;
       feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
     }
   >;
 
@@ -1179,7 +1226,7 @@ export class MockTimeUniswapV3Pool extends Contract {
       [number, BigNumber, BigNumber, boolean] & {
         blockTimestamp: number;
         tickCumulative: BigNumber;
-        liquidityCumulative: BigNumber;
+        secondsPerLiquidityCumulativeX128: BigNumber;
         initialized: boolean;
       }
     >;
@@ -1191,7 +1238,7 @@ export class MockTimeUniswapV3Pool extends Contract {
       [number, BigNumber, BigNumber, boolean] & {
         blockTimestamp: number;
         tickCumulative: BigNumber;
-        liquidityCumulative: BigNumber;
+        secondsPerLiquidityCumulativeX128: BigNumber;
         initialized: boolean;
       }
     >;
@@ -1202,7 +1249,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -1212,7 +1259,7 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber[], BigNumber[]] & {
         tickCumulatives: BigNumber[];
-        liquidityCumulatives: BigNumber[];
+        secondsPerLiquidityCumulativeX128s: BigNumber[];
       }
     >;
 
@@ -1253,28 +1300,6 @@ export class MockTimeUniswapV3Pool extends Contract {
     ): Promise<
       [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
     >;
-
-    secondsInside(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    "secondsInside(int24,int24)"(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    secondsOutside(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "secondsOutside(int24)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     setFeeGrowthGlobal0X128(
       _feeGrowthGlobal0X128: BigNumberish,
@@ -1336,6 +1361,30 @@ export class MockTimeUniswapV3Pool extends Contract {
       }
     >;
 
+    snapshotCumulativesInside(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
+
+    "snapshotCumulativesInside(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        tickCumulativeInside: BigNumber;
+        secondsPerLiquidityInsideX128: BigNumber;
+        secondsInside: number;
+      }
+    >;
+
     swap(
       recipient: string,
       zeroForOne: boolean,
@@ -1376,11 +1425,24 @@ export class MockTimeUniswapV3Pool extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        boolean
+      ] & {
         liquidityGross: BigNumber;
         liquidityNet: BigNumber;
         feeGrowthOutside0X128: BigNumber;
         feeGrowthOutside1X128: BigNumber;
+        tickCumulativeOutside: BigNumber;
+        secondsPerLiquidityOutsideX128: BigNumber;
+        secondsOutside: number;
+        initialized: boolean;
       }
     >;
 
@@ -1388,11 +1450,24 @@ export class MockTimeUniswapV3Pool extends Contract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        boolean
+      ] & {
         liquidityGross: BigNumber;
         liquidityNet: BigNumber;
         feeGrowthOutside0X128: BigNumber;
         feeGrowthOutside1X128: BigNumber;
+        tickCumulativeOutside: BigNumber;
+        secondsPerLiquidityOutsideX128: BigNumber;
+        secondsOutside: number;
+        initialized: boolean;
       }
     >;
 
@@ -1543,15 +1618,17 @@ export class MockTimeUniswapV3Pool extends Contract {
       amount0: null,
       amount1: null,
       sqrtPriceX96: null,
+      liquidity: null,
       tick: null
     ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber, BigNumber, number],
+      [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number],
       {
         sender: string;
         recipient: string;
         amount0: BigNumber;
         amount1: BigNumber;
         sqrtPriceX96: BigNumber;
+        liquidity: BigNumber;
         tick: number;
       }
     >;
@@ -1723,28 +1800,6 @@ export class MockTimeUniswapV3Pool extends Contract {
 
     "protocolFees()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    secondsInside(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "secondsInside(int24,int24)"(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    secondsOutside(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "secondsOutside(int24)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setFeeGrowthGlobal0X128(
       _feeGrowthGlobal0X128: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1780,6 +1835,18 @@ export class MockTimeUniswapV3Pool extends Contract {
     slot0(overrides?: CallOverrides): Promise<BigNumber>;
 
     "slot0()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    snapshotCumulativesInside(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "snapshotCumulativesInside(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     swap(
       recipient: string,
@@ -2014,28 +2081,6 @@ export class MockTimeUniswapV3Pool extends Contract {
 
     "protocolFees()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    secondsInside(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "secondsInside(int24,int24)"(
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    secondsOutside(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "secondsOutside(int24)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setFeeGrowthGlobal0X128(
       _feeGrowthGlobal0X128: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2071,6 +2116,18 @@ export class MockTimeUniswapV3Pool extends Contract {
     slot0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "slot0()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    snapshotCumulativesInside(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "snapshotCumulativesInside(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     swap(
       recipient: string,

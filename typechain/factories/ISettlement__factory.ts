@@ -67,7 +67,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "coinCount",
+        name: "zhuCount",
         type: "uint256",
       },
       {
@@ -77,7 +77,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "SettlementCollateralForCoin",
+    name: "SettlementCollateralForZhu",
     type: "event",
   },
   {
@@ -173,7 +173,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "countCNPToStake",
+        name: "countTCPToStake",
         type: "uint256",
       },
     ],

@@ -24,8 +24,13 @@ interface NFTDescriptorTestInterface extends ethers.utils.Interface {
     "constructTokenURI(tuple)": FunctionFragment;
     "feeToPercentString(uint24)": FunctionFragment;
     "fixedPointToDecimalString(uint160,uint8,uint8)": FunctionFragment;
+    "generateSVGImage(tuple)": FunctionFragment;
     "getGasCostOfConstructTokenURI(tuple)": FunctionFragment;
+    "isRare(uint256,address)": FunctionFragment;
+    "rangeLocation(int24,int24)": FunctionFragment;
+    "sliceTokenHex(address,uint256)": FunctionFragment;
     "tickToDecimalString(int24,int24,uint8,uint8,bool)": FunctionFragment;
+    "tokenToColorHex(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -36,18 +41,19 @@ interface NFTDescriptorTestInterface extends ethers.utils.Interface {
     functionFragment: "constructTokenURI",
     values: [
       {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       }
     ]
@@ -61,28 +67,66 @@ interface NFTDescriptorTestInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getGasCostOfConstructTokenURI",
+    functionFragment: "generateSVGImage",
     values: [
       {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       }
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "getGasCostOfConstructTokenURI",
+    values: [
+      {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      }
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRare",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "rangeLocation",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "sliceTokenHex",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "tickToDecimalString",
     values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenToColorHex",
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -102,11 +146,28 @@ interface NFTDescriptorTestInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "generateSVGImage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getGasCostOfConstructTokenURI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isRare", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "rangeLocation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "sliceTokenHex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "tickToDecimalString",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenToColorHex",
     data: BytesLike
   ): Result;
 
@@ -169,37 +230,39 @@ export class NFTDescriptorTest extends Contract {
 
     constructTokenURI(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    "constructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "constructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
@@ -229,41 +292,119 @@ export class NFTDescriptorTest extends Contract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getGasCostOfConstructTokenURI(
+    generateSVGImage(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "generateSVGImage((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getGasCostOfConstructTokenURI(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "getGasCostOfConstructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "getGasCostOfConstructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    isRare(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "isRare(uint256,address)"(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    rangeLocation(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string, string]>;
+
+    "rangeLocation(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string, string]>;
+
+    sliceTokenHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "sliceTokenHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -284,6 +425,18 @@ export class NFTDescriptorTest extends Contract {
       flipRatio: boolean,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    tokenToColorHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    "tokenToColorHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   addressToString(_address: string, overrides?: CallOverrides): Promise<string>;
@@ -295,37 +448,39 @@ export class NFTDescriptorTest extends Contract {
 
   constructTokenURI(
     params: {
-      token1: string;
-      token0: string;
-      token0Symbol: string;
-      token1Symbol: string;
-      token0Decimals: BigNumberish;
-      token1Decimals: BigNumberish;
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
       flipRatio: boolean;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
       tickSpacing: BigNumberish;
       fee: BigNumberish;
-      liquidity: BigNumberish;
       poolAddress: string;
     },
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "constructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+  "constructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
     params: {
-      token1: string;
-      token0: string;
-      token0Symbol: string;
-      token1Symbol: string;
-      token0Decimals: BigNumberish;
-      token1Decimals: BigNumberish;
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
       flipRatio: boolean;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
       tickSpacing: BigNumberish;
       fee: BigNumberish;
-      liquidity: BigNumberish;
       poolAddress: string;
     },
     overrides?: CallOverrides
@@ -355,41 +510,119 @@ export class NFTDescriptorTest extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getGasCostOfConstructTokenURI(
+  generateSVGImage(
     params: {
-      token1: string;
-      token0: string;
-      token0Symbol: string;
-      token1Symbol: string;
-      token0Decimals: BigNumberish;
-      token1Decimals: BigNumberish;
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
       flipRatio: boolean;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
       tickSpacing: BigNumberish;
       fee: BigNumberish;
-      liquidity: BigNumberish;
+      poolAddress: string;
+    },
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "generateSVGImage((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
+    params: {
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
+      flipRatio: boolean;
+      tickLower: BigNumberish;
+      tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
+      tickSpacing: BigNumberish;
+      fee: BigNumberish;
+      poolAddress: string;
+    },
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getGasCostOfConstructTokenURI(
+    params: {
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
+      flipRatio: boolean;
+      tickLower: BigNumberish;
+      tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
+      tickSpacing: BigNumberish;
+      fee: BigNumberish;
       poolAddress: string;
     },
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "getGasCostOfConstructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+  "getGasCostOfConstructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
     params: {
-      token1: string;
-      token0: string;
-      token0Symbol: string;
-      token1Symbol: string;
-      token0Decimals: BigNumberish;
-      token1Decimals: BigNumberish;
+      tokenId: BigNumberish;
+      quoteTokenAddress: string;
+      baseTokenAddress: string;
+      quoteTokenSymbol: string;
+      baseTokenSymbol: string;
+      quoteTokenDecimals: BigNumberish;
+      baseTokenDecimals: BigNumberish;
       flipRatio: boolean;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
+      tickCurrent: BigNumberish;
       tickSpacing: BigNumberish;
       fee: BigNumberish;
-      liquidity: BigNumberish;
       poolAddress: string;
     },
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  isRare(
+    tokenId: BigNumberish,
+    poolAddress: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "isRare(uint256,address)"(
+    tokenId: BigNumberish,
+    poolAddress: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  rangeLocation(
+    tickLower: BigNumberish,
+    tickUpper: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[string, string]>;
+
+  "rangeLocation(int24,int24)"(
+    tickLower: BigNumberish,
+    tickUpper: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[string, string]>;
+
+  sliceTokenHex(
+    token: string,
+    offset: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "sliceTokenHex(address,uint256)"(
+    token: string,
+    offset: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -411,6 +644,18 @@ export class NFTDescriptorTest extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  tokenToColorHex(
+    token: string,
+    offset: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  "tokenToColorHex(address,uint256)"(
+    token: string,
+    offset: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
     addressToString(
       _address: string,
@@ -424,37 +669,39 @@ export class NFTDescriptorTest extends Contract {
 
     constructTokenURI(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "constructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "constructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
@@ -484,41 +731,119 @@ export class NFTDescriptorTest extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getGasCostOfConstructTokenURI(
+    generateSVGImage(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "generateSVGImage((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getGasCostOfConstructTokenURI(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getGasCostOfConstructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "getGasCostOfConstructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isRare(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isRare(uint256,address)"(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    rangeLocation(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string, string]>;
+
+    "rangeLocation(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string, string]>;
+
+    sliceTokenHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "sliceTokenHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -537,6 +862,18 @@ export class NFTDescriptorTest extends Contract {
       token0Decimals: BigNumberish,
       token1Decimals: BigNumberish,
       flipRatio: boolean,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    tokenToColorHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    "tokenToColorHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
   };
@@ -556,37 +893,39 @@ export class NFTDescriptorTest extends Contract {
 
     constructTokenURI(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "constructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "constructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
@@ -616,41 +955,119 @@ export class NFTDescriptorTest extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getGasCostOfConstructTokenURI(
+    generateSVGImage(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getGasCostOfConstructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "generateSVGImage((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getGasCostOfConstructTokenURI(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getGasCostOfConstructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isRare(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isRare(uint256,address)"(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    rangeLocation(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "rangeLocation(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    sliceTokenHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "sliceTokenHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -669,6 +1086,18 @@ export class NFTDescriptorTest extends Contract {
       token0Decimals: BigNumberish,
       token1Decimals: BigNumberish,
       flipRatio: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    tokenToColorHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "tokenToColorHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -686,37 +1115,39 @@ export class NFTDescriptorTest extends Contract {
 
     constructTokenURI(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "constructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "constructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
@@ -746,41 +1177,119 @@ export class NFTDescriptorTest extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getGasCostOfConstructTokenURI(
+    generateSVGImage(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getGasCostOfConstructTokenURI((address,address,string,string,uint8,uint8,bool,int24,int24,int24,uint24,uint256,address))"(
+    "generateSVGImage((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
       params: {
-        token1: string;
-        token0: string;
-        token0Symbol: string;
-        token1Symbol: string;
-        token0Decimals: BigNumberish;
-        token1Decimals: BigNumberish;
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
         flipRatio: boolean;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
         tickSpacing: BigNumberish;
         fee: BigNumberish;
-        liquidity: BigNumberish;
         poolAddress: string;
       },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getGasCostOfConstructTokenURI(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getGasCostOfConstructTokenURI((uint256,address,address,string,string,uint8,uint8,bool,int24,int24,int24,int24,uint24,address))"(
+      params: {
+        tokenId: BigNumberish;
+        quoteTokenAddress: string;
+        baseTokenAddress: string;
+        quoteTokenSymbol: string;
+        baseTokenSymbol: string;
+        quoteTokenDecimals: BigNumberish;
+        baseTokenDecimals: BigNumberish;
+        flipRatio: boolean;
+        tickLower: BigNumberish;
+        tickUpper: BigNumberish;
+        tickCurrent: BigNumberish;
+        tickSpacing: BigNumberish;
+        fee: BigNumberish;
+        poolAddress: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isRare(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isRare(uint256,address)"(
+      tokenId: BigNumberish,
+      poolAddress: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    rangeLocation(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "rangeLocation(int24,int24)"(
+      tickLower: BigNumberish,
+      tickUpper: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    sliceTokenHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "sliceTokenHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -799,6 +1308,18 @@ export class NFTDescriptorTest extends Contract {
       token0Decimals: BigNumberish,
       token1Decimals: BigNumberish,
       flipRatio: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    tokenToColorHex(
+      token: string,
+      offset: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "tokenToColorHex(address,uint256)"(
+      token: string,
+      offset: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

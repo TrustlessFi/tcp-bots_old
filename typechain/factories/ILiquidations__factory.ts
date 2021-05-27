@@ -29,13 +29,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "positionDebt",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "positionCollateral",
+        name: "amountCovered",
         type: "uint256",
       },
     ],
