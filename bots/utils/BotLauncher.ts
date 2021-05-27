@@ -3,6 +3,8 @@
 
 import * as dotenv from 'dotenv'
 
+import { getSeedAddresses } from "./Addresses";
+
 import { AuctionBidBot } from '../AuctionBid'
 import { StartAuctionsBot } from '../StartAuctions'
 import { SettleAuctionsBot } from '../SettleAuctions'
@@ -36,27 +38,29 @@ async function main() {
     return;
   }
 
+  let addresses = getSeedAddresses()
+
   switch (botName) {
     case 'auction_bid':
-      await (new AuctionBidBot(privateKey)).run();
+      await (new AuctionBidBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'start_auctions':
-      await (new StartAuctionsBot(privateKey)).run();
+      await (new StartAuctionsBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'settle_auctions':
-      await (new SettleAuctionsBot(privateKey)).run();
+      await (new SettleAuctionsBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'discover_liquidations':
-      await (new DiscoverLiquidationsBot(privateKey)).run();
+      await (new DiscoverLiquidationsBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'execute_liquidation':
-      await (new ExecuteLiquidationBot(privateKey)).run();
+      await (new ExecuteLiquidationBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'update_rates':
-      await (new UpdateRatesBot(privateKey)).run();
+      await (new UpdateRatesBot(privateKey)).initializeAndRun(addresses);
       return;
     case 'arb_peg_price':
-      await (new ArbPricePegBot(privateKey)).run();
+      await (new ArbPricePegBot(privateKey)).initializeAndRun(addresses);
       return;
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');

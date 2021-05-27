@@ -5,6 +5,8 @@ import hre from 'hardhat';
 const e = hre.ethers;
 import { Contract } from "ethers";
 
+import { getSeedAddresses, seedAddresses } from "./Addresses";
+
 // ================ CORE CONTRACTS =================
 import { Accounting } from "../../typechain/Accounting";
 import { Auctions } from "../../typechain/Auctions";
@@ -78,33 +80,7 @@ export type deployedCoinProtocol = {
   }
 }
 
-type addresses = {
-  tcpGovernorAlpha: string,
-  tfGovernorAlpha: string,
-  nftPositionManager: string,
-  swapRouter: string,
-}
-
-export const getSeedAddresses = (): addresses => {
-  switch (hre.network.name) {
-    case 'hardhat':
-    case 'rinkeby':
-    case 'mainnet':
-    case 'localhost':
-    default:
-      return {
-        tcpGovernorAlpha: '0x28f5D55Df47d1505DfdBfE803aE1F3391E21Ad1b',
-        tfGovernorAlpha: '0x57706dEEED2a5DadAc4f841B6f34E370B7bddE30',
-        nftPositionManager: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
-        swapRouter: '0xfE0cae103cB3aA14eF7fbf1Cee4B3EDeC7301D5B',
-      }
-  }
-}
-
-
-export const getProtocol = async(): Promise<deployedCoinProtocol> => {
-  let seedAddresses = getSeedAddresses();
-
+export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoinProtocol> => {
   const get = async(name: string, address: string): Promise<Contract> =>
     (await e.getContractFactory(name)).attach(address) as Contract;
 
@@ -114,10 +90,10 @@ export const getProtocol = async(): Promise<deployedCoinProtocol> => {
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as TCPGovernorAlpha,
-    await get('TFGovernorAlpha', seedAddresses.tfGovernorAlpha) as TFGovernorAlpha,
-    await get('NonfungiblePositionManager', seedAddresses.nftPositionManager) as NonfungiblePositionManager,
-    await get('SwapRouter', seedAddresses.swapRouter) as SwapRouter,
+    await get('TCPGovernorAlpha', addresses.tcpGovernorAlpha) as TCPGovernorAlpha,
+    await get('TFGovernorAlpha', addresses.tfGovernorAlpha) as TFGovernorAlpha,
+    await get('NonfungiblePositionManager', addresses.nftPositionManager) as NonfungiblePositionManager,
+    await get('SwapRouter', addresses.swapRouter) as SwapRouter,
   ]);
 
   let [
