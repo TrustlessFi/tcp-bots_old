@@ -2,7 +2,6 @@ import hre from 'hardhat';
 const e = hre.ethers;
 const provider = e.provider;
 import { BigNumber } from "ethers";
-import fetch from 'node-fetch';
 
 export const StoMS = (seconds: number) => seconds * 1000;
 
@@ -22,12 +21,4 @@ export const seconds = (seconds: number) => seconds;
 interface coingeckoPriceData {
   symbol: string;
   current_price: number;
-}
-
-export const getCoinGeckoPriceInUSD = async (currencyIDs: Array<string>): Promise<Array<number>> => {
-  const response = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd");
-  let priceDatas: Array<coingeckoPriceData> = (await response.json()) as Array<coingeckoPriceData>;
-  return currencyIDs.map(
-    currencyID => priceDatas.filter(priceData => priceData.symbol == currencyID)[0].current_price
-  );
 }

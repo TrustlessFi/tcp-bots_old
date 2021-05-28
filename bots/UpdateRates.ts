@@ -11,9 +11,9 @@ export class UpdateRatesBot extends ManagedBot {
   async runImpl(): Promise<number> {
     let rates = this.protocol!.rates;
 
-    let storedRateData = await rates.storedRateData();
-    let nextUpdate: number = storedRateData.nextUpdateTime.toNumber();
-    let reward: BigNumber = storedRateData.rewardCount;
+    let currentRateData = await rates.currentRateData();
+    let nextUpdate: number = currentRateData.nextUpdateTime.toNumber();
+    let reward: BigNumber = currentRateData.rewardCount;
 
     let cnpRequired: BigNumber = await this.genCnpRequired();
     let halfReward: BigNumber = reward.div(2);
@@ -30,7 +30,7 @@ export class UpdateRatesBot extends ManagedBot {
       await call.wait(1);
       this.report("Update complete. 🔥");
 
-      return hours(11);
+      return (await rates.minTimeBetweenUpdates()).toNumber();
     } else {
       let timeout = (executionTime - now) - 1;
       return timeout < minutes(20) ? timeout : timeout / 2;
