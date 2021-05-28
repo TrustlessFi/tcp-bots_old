@@ -9,18 +9,19 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   PayableOverrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IV3MigratorInterface extends ethers.utils.Interface {
+interface Iv3MigratorInterface extends ethers.utils.Interface {
   functions: {
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)": FunctionFragment;
     "migrate(tuple)": FunctionFragment;
@@ -127,48 +128,18 @@ interface IV3MigratorInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class IV3Migrator extends Contract {
+export class Iv3Migrator extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
-
-  interface: IV3MigratorInterface;
+  interface: Iv3MigratorInterface;
 
   functions: {
     createAndInitializePoolIfNecessary(
@@ -176,7 +147,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
@@ -184,7 +155,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     migrate(
@@ -203,10 +174,10 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
+    "migrate(tuple)"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
@@ -222,17 +193,17 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermit(
@@ -242,7 +213,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -252,7 +223,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitAllowed(
@@ -262,7 +233,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -272,7 +243,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitAllowedIfNecessary(
@@ -282,7 +253,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -292,7 +263,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitIfNecessary(
@@ -302,7 +273,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -312,7 +283,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
   };
 
@@ -321,7 +292,7 @@ export class IV3Migrator extends Contract {
     token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
@@ -329,7 +300,7 @@ export class IV3Migrator extends Contract {
     token1: string,
     fee: BigNumberish,
     sqrtPriceX96: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   migrate(
@@ -348,10 +319,10 @@ export class IV3Migrator extends Contract {
       deadline: BigNumberish;
       refundAsETH: boolean;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
+  "migrate(tuple)"(
     params: {
       pair: string;
       liquidityToMigrate: BigNumberish;
@@ -367,17 +338,17 @@ export class IV3Migrator extends Contract {
       deadline: BigNumberish;
       refundAsETH: boolean;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   multicall(
     data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "multicall(bytes[])"(
     data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermit(
@@ -387,7 +358,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -397,7 +368,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitAllowed(
@@ -407,7 +378,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -417,7 +388,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitAllowedIfNecessary(
@@ -427,7 +398,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -437,7 +408,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitIfNecessary(
@@ -447,7 +418,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -457,7 +428,7 @@ export class IV3Migrator extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -496,7 +467,7 @@ export class IV3Migrator extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
+    "migrate(tuple)"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
@@ -611,7 +582,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
@@ -619,7 +590,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     migrate(
@@ -638,10 +609,10 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
+    "migrate(tuple)"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
@@ -657,17 +628,17 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermit(
@@ -677,7 +648,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -687,7 +658,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitAllowed(
@@ -697,7 +668,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -707,7 +678,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitAllowedIfNecessary(
@@ -717,7 +688,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -727,7 +698,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitIfNecessary(
@@ -737,7 +708,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -747,7 +718,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
   };
 
@@ -757,7 +728,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "createAndInitializePoolIfNecessary(address,address,uint24,uint160)"(
@@ -765,7 +736,7 @@ export class IV3Migrator extends Contract {
       token1: string,
       fee: BigNumberish,
       sqrtPriceX96: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     migrate(
@@ -784,10 +755,10 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "migrate((address,uint256,uint8,address,address,uint24,int24,int24,uint256,uint256,address,uint256,bool))"(
+    "migrate(tuple)"(
       params: {
         pair: string;
         liquidityToMigrate: BigNumberish;
@@ -803,17 +774,17 @@ export class IV3Migrator extends Contract {
         deadline: BigNumberish;
         refundAsETH: boolean;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermit(
@@ -823,7 +794,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -833,7 +804,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitAllowed(
@@ -843,7 +814,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -853,7 +824,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitAllowedIfNecessary(
@@ -863,7 +834,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -873,7 +844,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitIfNecessary(
@@ -883,7 +854,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -893,7 +864,7 @@ export class IV3Migrator extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

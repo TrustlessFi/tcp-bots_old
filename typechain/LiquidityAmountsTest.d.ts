@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface LiquidityAmountsTestInterface extends ethers.utils.Interface {
   functions: {
@@ -152,41 +153,11 @@ export class LiquidityAmountsTest extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: LiquidityAmountsTestInterface;
 
@@ -196,28 +167,40 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount0: BigNumber }>;
+    ): Promise<{
+      amount0: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getAmount0ForLiquidity(uint160,uint160,uint128)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount0: BigNumber }>;
+    ): Promise<{
+      amount0: BigNumber;
+      0: BigNumber;
+    }>;
 
     getAmount1ForLiquidity(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount1: BigNumber }>;
+    ): Promise<{
+      amount1: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getAmount1ForLiquidity(uint160,uint160,uint128)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount1: BigNumber }>;
+    ): Promise<{
+      amount1: BigNumber;
+      0: BigNumber;
+    }>;
 
     getAmountsForLiquidity(
       sqrtRatioX96: BigNumberish,
@@ -225,9 +208,12 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     "getAmountsForLiquidity(uint160,uint160,uint160,uint128)"(
       sqrtRatioX96: BigNumberish,
@@ -235,37 +221,48 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     getGasCostOfGetAmount0ForLiquidity(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetAmount0ForLiquidity(uint160,uint160,uint128)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetAmount1ForLiquidity(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetAmount1ForLiquidity(uint160,uint160,uint128)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetAmountsForLiquidity(
       sqrtRatioX96: BigNumberish,
@@ -273,7 +270,9 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetAmountsForLiquidity(uint160,uint160,uint160,uint128)"(
       sqrtRatioX96: BigNumberish,
@@ -281,35 +280,45 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetLiquidityForAmount0(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetLiquidityForAmount0(uint160,uint160,uint256)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetLiquidityForAmount1(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetLiquidityForAmount1(uint160,uint160,uint256)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetLiquidityForAmounts(
       sqrtRatioX96: BigNumberish,
@@ -318,7 +327,9 @@ export class LiquidityAmountsTest extends Contract {
       amount0: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetLiquidityForAmounts(uint160,uint160,uint160,uint256,uint256)"(
       sqrtRatioX96: BigNumberish,
@@ -327,35 +338,49 @@ export class LiquidityAmountsTest extends Contract {
       amount0: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getLiquidityForAmount0(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getLiquidityForAmount0(uint160,uint160,uint256)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
 
     getLiquidityForAmount1(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getLiquidityForAmount1(uint160,uint160,uint256)"(
       sqrtRatioAX96: BigNumberish,
       sqrtRatioBX96: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
 
     getLiquidityForAmounts(
       sqrtRatioX96: BigNumberish,
@@ -364,7 +389,10 @@ export class LiquidityAmountsTest extends Contract {
       amount0: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getLiquidityForAmounts(uint160,uint160,uint160,uint256,uint256)"(
       sqrtRatioX96: BigNumberish,
@@ -373,7 +401,10 @@ export class LiquidityAmountsTest extends Contract {
       amount0: BigNumberish,
       amount1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { liquidity: BigNumber }>;
+    ): Promise<{
+      liquidity: BigNumber;
+      0: BigNumber;
+    }>;
   };
 
   getAmount0ForLiquidity(
@@ -410,9 +441,12 @@ export class LiquidityAmountsTest extends Contract {
     sqrtRatioBX96: BigNumberish,
     liquidity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-  >;
+  ): Promise<{
+    amount0: BigNumber;
+    amount1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   "getAmountsForLiquidity(uint160,uint160,uint160,uint128)"(
     sqrtRatioX96: BigNumberish,
@@ -420,9 +454,12 @@ export class LiquidityAmountsTest extends Contract {
     sqrtRatioBX96: BigNumberish,
     liquidity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-  >;
+  ): Promise<{
+    amount0: BigNumber;
+    amount1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   getGasCostOfGetAmount0ForLiquidity(
     sqrtRatioAX96: BigNumberish,
@@ -595,9 +632,12 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     "getAmountsForLiquidity(uint160,uint160,uint160,uint128)"(
       sqrtRatioX96: BigNumberish,
@@ -605,9 +645,12 @@ export class LiquidityAmountsTest extends Contract {
       sqrtRatioBX96: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     getGasCostOfGetAmount0ForLiquidity(
       sqrtRatioAX96: BigNumberish,

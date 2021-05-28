@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SqrtPriceMathEchidnaTestInterface extends ethers.utils.Interface {
   functions: {
@@ -140,41 +141,11 @@ export class SqrtPriceMathEchidnaTest extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: SqrtPriceMathEchidnaTestInterface;
 
@@ -185,7 +156,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getAmount0DeltaEquivalency(uint160,uint160,uint128,bool)"(
       sqrtP: BigNumberish,
@@ -193,63 +166,81 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getAmount0DeltaInvariants(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getAmount0DeltaInvariants(uint160,uint160,uint128)"(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getAmount0DeltaSignedInvariants(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getAmount0DeltaSignedInvariants(uint160,uint160,int128)"(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getAmount1DeltaInvariants(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getAmount1DeltaInvariants(uint160,uint160,uint128)"(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getAmount1DeltaSignedInvariants(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getAmount1DeltaSignedInvariants(uint160,uint160,int128)"(
       sqrtP: BigNumberish,
       sqrtQ: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getInRangeMintInvariants(
       sqrtLower: BigNumberish,
@@ -257,7 +248,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       sqrtUpper: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getInRangeMintInvariants(uint160,uint160,uint160,int128)"(
       sqrtLower: BigNumberish,
@@ -265,7 +258,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       sqrtUpper: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getNextSqrtPriceFromAmount0RoundingUpInvariants(
       sqrtPX96: BigNumberish,
@@ -273,7 +268,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amount: BigNumberish,
       add: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getNextSqrtPriceFromAmount0RoundingUpInvariants(uint160,uint128,uint256,bool)"(
       sqrtPX96: BigNumberish,
@@ -281,7 +278,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amount: BigNumberish,
       add: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getNextSqrtPriceFromAmount1RoundingDownInvariants(
       sqrtPX96: BigNumberish,
@@ -289,7 +288,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amount: BigNumberish,
       add: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getNextSqrtPriceFromAmount1RoundingDownInvariants(uint160,uint128,uint256,bool)"(
       sqrtPX96: BigNumberish,
@@ -297,7 +298,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amount: BigNumberish,
       add: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getNextSqrtPriceFromInputInvariants(
       sqrtP: BigNumberish,
@@ -305,7 +308,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getNextSqrtPriceFromInputInvariants(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -313,7 +318,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getNextSqrtPriceFromOutputInvariants(
       sqrtP: BigNumberish,
@@ -321,7 +328,9 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getNextSqrtPriceFromOutputInvariants(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -329,35 +338,45 @@ export class SqrtPriceMathEchidnaTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     getOutOfRangeMintInvariants(
       sqrtA: BigNumberish,
       sqrtB: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "getOutOfRangeMintInvariants(uint160,uint160,int128)"(
       sqrtA: BigNumberish,
       sqrtB: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     mulDivRoundingUpInvariants(
       x: BigNumberish,
       y: BigNumberish,
       z: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "mulDivRoundingUpInvariants(uint256,uint256,uint256)"(
       x: BigNumberish,
       y: BigNumberish,
       z: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
   };
 
   getAmount0DeltaEquivalency(

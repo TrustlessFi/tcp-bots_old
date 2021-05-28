@@ -9,16 +9,17 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   PayableOverrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SwapRouterInterface extends ethers.utils.Interface {
   functions: {
@@ -223,48 +224,22 @@ export class SwapRouter extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: SwapRouterInterface;
 
   functions: {
-    WETH9(overrides?: CallOverrides): Promise<[string]>;
+    WETH9(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "WETH9()"(overrides?: CallOverrides): Promise<[string]>;
+    "WETH9()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     exactInput(
       params: {
@@ -274,10 +249,10 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "exactInput((bytes,address,uint256,uint256,uint256))"(
+    "exactInput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -285,7 +260,7 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     exactInputSingle(
@@ -299,10 +274,10 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactInputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -313,7 +288,7 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     exactOutput(
@@ -324,10 +299,10 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "exactOutput((bytes,address,uint256,uint256,uint256))"(
+    "exactOutput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -335,7 +310,7 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     exactOutputSingle(
@@ -349,10 +324,10 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactOutputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -363,30 +338,30 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    factory(overrides?: CallOverrides): Promise<[string]>;
+    factory(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "factory()"(overrides?: CallOverrides): Promise<[string]>;
+    "factory()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    refundETH(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    refundETH(overrides?: PayableOverrides): Promise<ContractTransaction>;
 
-    "refundETH()"(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "refundETH()"(overrides?: PayableOverrides): Promise<ContractTransaction>;
 
     selfPermit(
       token: string,
@@ -395,7 +370,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -405,7 +380,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitAllowed(
@@ -415,7 +390,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -425,7 +400,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitAllowedIfNecessary(
@@ -435,7 +410,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -445,7 +420,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     selfPermitIfNecessary(
@@ -455,7 +430,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -465,21 +440,21 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "sweepToken(address,uint256,address)"(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     sweepTokenWithFee(
@@ -488,7 +463,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "sweepTokenWithFee(address,uint256,address,uint256,address)"(
@@ -497,33 +472,33 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "uniswapV3SwapCallback(int256,int256,bytes)"(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     unwrapWETH9(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "unwrapWETH9(uint256,address)"(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     unwrapWETH9WithFee(
@@ -531,7 +506,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     "unwrapWETH9WithFee(uint256,address,uint256,address)"(
@@ -539,7 +514,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
   };
 
@@ -555,10 +530,10 @@ export class SwapRouter extends Contract {
       amountIn: BigNumberish;
       amountOutMinimum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "exactInput((bytes,address,uint256,uint256,uint256))"(
+  "exactInput(tuple)"(
     params: {
       path: BytesLike;
       recipient: string;
@@ -566,7 +541,7 @@ export class SwapRouter extends Contract {
       amountIn: BigNumberish;
       amountOutMinimum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   exactInputSingle(
@@ -580,10 +555,10 @@ export class SwapRouter extends Contract {
       amountOutMinimum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+  "exactInputSingle(tuple)"(
     params: {
       tokenIn: string;
       tokenOut: string;
@@ -594,7 +569,7 @@ export class SwapRouter extends Contract {
       amountOutMinimum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   exactOutput(
@@ -605,10 +580,10 @@ export class SwapRouter extends Contract {
       amountOut: BigNumberish;
       amountInMaximum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "exactOutput((bytes,address,uint256,uint256,uint256))"(
+  "exactOutput(tuple)"(
     params: {
       path: BytesLike;
       recipient: string;
@@ -616,7 +591,7 @@ export class SwapRouter extends Contract {
       amountOut: BigNumberish;
       amountInMaximum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   exactOutputSingle(
@@ -630,10 +605,10 @@ export class SwapRouter extends Contract {
       amountInMaximum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+  "exactOutputSingle(tuple)"(
     params: {
       tokenIn: string;
       tokenOut: string;
@@ -644,7 +619,7 @@ export class SwapRouter extends Contract {
       amountInMaximum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   factory(overrides?: CallOverrides): Promise<string>;
@@ -653,21 +628,17 @@ export class SwapRouter extends Contract {
 
   multicall(
     data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "multicall(bytes[])"(
     data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  refundETH(
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  refundETH(overrides?: PayableOverrides): Promise<ContractTransaction>;
 
-  "refundETH()"(
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "refundETH()"(overrides?: PayableOverrides): Promise<ContractTransaction>;
 
   selfPermit(
     token: string,
@@ -676,7 +647,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -686,7 +657,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitAllowed(
@@ -696,7 +667,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -706,7 +677,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitAllowedIfNecessary(
@@ -716,7 +687,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -726,7 +697,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   selfPermitIfNecessary(
@@ -736,7 +707,7 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -746,21 +717,21 @@ export class SwapRouter extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   sweepToken(
     token: string,
     amountMinimum: BigNumberish,
     recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "sweepToken(address,uint256,address)"(
     token: string,
     amountMinimum: BigNumberish,
     recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   sweepTokenWithFee(
@@ -769,7 +740,7 @@ export class SwapRouter extends Contract {
     recipient: string,
     feeBips: BigNumberish,
     feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "sweepTokenWithFee(address,uint256,address,uint256,address)"(
@@ -778,33 +749,33 @@ export class SwapRouter extends Contract {
     recipient: string,
     feeBips: BigNumberish,
     feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   uniswapV3SwapCallback(
     amount0Delta: BigNumberish,
     amount1Delta: BigNumberish,
     _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "uniswapV3SwapCallback(int256,int256,bytes)"(
     amount0Delta: BigNumberish,
     amount1Delta: BigNumberish,
     _data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   unwrapWETH9(
     amountMinimum: BigNumberish,
     recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "unwrapWETH9(uint256,address)"(
     amountMinimum: BigNumberish,
     recipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   unwrapWETH9WithFee(
@@ -812,7 +783,7 @@ export class SwapRouter extends Contract {
     recipient: string,
     feeBips: BigNumberish,
     feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   "unwrapWETH9WithFee(uint256,address,uint256,address)"(
@@ -820,7 +791,7 @@ export class SwapRouter extends Contract {
     recipient: string,
     feeBips: BigNumberish,
     feeRecipient: string,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -839,7 +810,7 @@ export class SwapRouter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "exactInput((bytes,address,uint256,uint256,uint256))"(
+    "exactInput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -864,7 +835,7 @@ export class SwapRouter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactInputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -889,7 +860,7 @@ export class SwapRouter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "exactOutput((bytes,address,uint256,uint256,uint256))"(
+    "exactOutput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -914,7 +885,7 @@ export class SwapRouter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactOutputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -1113,10 +1084,10 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "exactInput((bytes,address,uint256,uint256,uint256))"(
+    "exactInput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -1124,7 +1095,7 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     exactInputSingle(
@@ -1138,10 +1109,10 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactInputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -1152,7 +1123,7 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     exactOutput(
@@ -1163,10 +1134,10 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "exactOutput((bytes,address,uint256,uint256,uint256))"(
+    "exactOutput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -1174,7 +1145,7 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     exactOutputSingle(
@@ -1188,10 +1159,10 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactOutputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -1202,7 +1173,7 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     factory(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1211,21 +1182,17 @@ export class SwapRouter extends Contract {
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    refundETH(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    refundETH(overrides?: PayableOverrides): Promise<BigNumber>;
 
-    "refundETH()"(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "refundETH()"(overrides?: PayableOverrides): Promise<BigNumber>;
 
     selfPermit(
       token: string,
@@ -1234,7 +1201,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1244,7 +1211,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitAllowed(
@@ -1254,7 +1221,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1264,7 +1231,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitAllowedIfNecessary(
@@ -1274,7 +1241,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1284,7 +1251,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     selfPermitIfNecessary(
@@ -1294,7 +1261,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1304,21 +1271,21 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "sweepToken(address,uint256,address)"(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     sweepTokenWithFee(
@@ -1327,7 +1294,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "sweepTokenWithFee(address,uint256,address,uint256,address)"(
@@ -1336,33 +1303,33 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "uniswapV3SwapCallback(int256,int256,bytes)"(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     unwrapWETH9(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "unwrapWETH9(uint256,address)"(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     unwrapWETH9WithFee(
@@ -1370,7 +1337,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     "unwrapWETH9WithFee(uint256,address,uint256,address)"(
@@ -1378,7 +1345,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
   };
 
@@ -1395,10 +1362,10 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "exactInput((bytes,address,uint256,uint256,uint256))"(
+    "exactInput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -1406,7 +1373,7 @@ export class SwapRouter extends Contract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     exactInputSingle(
@@ -1420,10 +1387,10 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "exactInputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactInputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -1434,7 +1401,7 @@ export class SwapRouter extends Contract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     exactOutput(
@@ -1445,10 +1412,10 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "exactOutput((bytes,address,uint256,uint256,uint256))"(
+    "exactOutput(tuple)"(
       params: {
         path: BytesLike;
         recipient: string;
@@ -1456,7 +1423,7 @@ export class SwapRouter extends Contract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     exactOutputSingle(
@@ -1470,10 +1437,10 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "exactOutputSingle((address,address,uint24,address,uint256,uint256,uint256,uint160))"(
+    "exactOutputSingle(tuple)"(
       params: {
         tokenIn: string;
         tokenOut: string;
@@ -1484,7 +1451,7 @@ export class SwapRouter extends Contract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1493,21 +1460,17 @@ export class SwapRouter extends Contract {
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "multicall(bytes[])"(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    refundETH(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    refundETH(overrides?: PayableOverrides): Promise<PopulatedTransaction>;
 
-    "refundETH()"(
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "refundETH()"(overrides?: PayableOverrides): Promise<PopulatedTransaction>;
 
     selfPermit(
       token: string,
@@ -1516,7 +1479,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermit(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1526,7 +1489,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitAllowed(
@@ -1536,7 +1499,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitAllowed(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1546,7 +1509,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitAllowedIfNecessary(
@@ -1556,7 +1519,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitAllowedIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1566,7 +1529,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     selfPermitIfNecessary(
@@ -1576,7 +1539,7 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "selfPermitIfNecessary(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1586,21 +1549,21 @@ export class SwapRouter extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     sweepToken(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "sweepToken(address,uint256,address)"(
       token: string,
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     sweepTokenWithFee(
@@ -1609,7 +1572,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "sweepTokenWithFee(address,uint256,address,uint256,address)"(
@@ -1618,33 +1581,33 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "uniswapV3SwapCallback(int256,int256,bytes)"(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     unwrapWETH9(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "unwrapWETH9(uint256,address)"(
       amountMinimum: BigNumberish,
       recipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     unwrapWETH9WithFee(
@@ -1652,7 +1615,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     "unwrapWETH9WithFee(uint256,address,uint256,address)"(
@@ -1660,7 +1623,7 @@ export class SwapRouter extends Contract {
       recipient: string,
       feeBips: BigNumberish,
       feeRecipient: string,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IUniswapV3PoolImmutablesInterface extends ethers.utils.Interface {
   functions: {
@@ -62,68 +63,62 @@ export class IUniswapV3PoolImmutables extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IUniswapV3PoolImmutablesInterface;
 
   functions: {
-    factory(overrides?: CallOverrides): Promise<[string]>;
+    factory(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "factory()"(overrides?: CallOverrides): Promise<[string]>;
+    "factory()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    fee(overrides?: CallOverrides): Promise<[number]>;
+    fee(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "fee()"(overrides?: CallOverrides): Promise<[number]>;
+    "fee()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    maxLiquidityPerTick(overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxLiquidityPerTick(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "maxLiquidityPerTick()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "maxLiquidityPerTick()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    tickSpacing(overrides?: CallOverrides): Promise<[number]>;
+    tickSpacing(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "tickSpacing()"(overrides?: CallOverrides): Promise<[number]>;
+    "tickSpacing()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    token0(overrides?: CallOverrides): Promise<[string]>;
+    token0(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "token0()"(overrides?: CallOverrides): Promise<[string]>;
+    "token0()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    token1(overrides?: CallOverrides): Promise<[string]>;
+    token1(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "token1()"(overrides?: CallOverrides): Promise<[string]>;
+    "token1()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
   };
 
   factory(overrides?: CallOverrides): Promise<string>;

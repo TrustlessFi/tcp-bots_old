@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IMarketInterface extends ethers.utils.Interface {
   functions: {
@@ -115,132 +116,90 @@ export class IMarket extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IMarketInterface;
 
   functions: {
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "accrueInterest()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    collateralizationRequirement(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { ratio: BigNumber }>;
+    collateralizationRequirement(overrides?: CallOverrides): Promise<{
+      ratio: BigNumber;
+      0: BigNumber;
+    }>;
 
-    "collateralizationRequirement()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { ratio: BigNumber }>;
+    "collateralizationRequirement()"(overrides?: CallOverrides): Promise<{
+      ratio: BigNumber;
+      0: BigNumber;
+    }>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    lastPeriodGlobalInterestAccrued(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    lastPeriodGlobalInterestAccrued(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
-    "lastPeriodGlobalInterestAccrued()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    "lastPeriodGlobalInterestAccrued()"(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
 
-  accrueInterest(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "accrueInterest()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   addReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "addReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
@@ -249,13 +208,9 @@ export class IMarket extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   lastPeriodGlobalInterestAccrued(
     overrides?: CallOverrides
@@ -267,30 +222,26 @@ export class IMarket extends Contract {
 
   removeReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "removeReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   systemGetUpdatedPosition(
     positionID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "systemGetUpdatedPosition(uint64)"(
     positionID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -337,60 +288,54 @@ export class IMarket extends Contract {
     systemGetUpdatedPosition(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean,
-        BigNumber
-      ] & {
-        startCumulativeDebt: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-        startDebtExchangeRate: BigNumber;
-        startTCPRewards: BigNumber;
-        lastTimeUpdated: BigNumber;
-        lastBorrowTime: BigNumber;
-        tick: number;
-        tickSet: boolean;
-        tickIndex: BigNumber;
-      }
-    >;
+    ): Promise<{
+      startCumulativeDebt: BigNumber;
+      collateral: BigNumber;
+      debt: BigNumber;
+      startDebtExchangeRate: BigNumber;
+      startTCPRewards: BigNumber;
+      lastTimeUpdated: BigNumber;
+      lastBorrowTime: BigNumber;
+      tick: number;
+      tickSet: boolean;
+      tickIndex: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: BigNumber;
+      7: number;
+      8: boolean;
+      9: BigNumber;
+    }>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean,
-        BigNumber
-      ] & {
-        startCumulativeDebt: BigNumber;
-        collateral: BigNumber;
-        debt: BigNumber;
-        startDebtExchangeRate: BigNumber;
-        startTCPRewards: BigNumber;
-        lastTimeUpdated: BigNumber;
-        lastBorrowTime: BigNumber;
-        tick: number;
-        tickSet: boolean;
-        tickIndex: BigNumber;
-      }
-    >;
+    ): Promise<{
+      startCumulativeDebt: BigNumber;
+      collateral: BigNumber;
+      debt: BigNumber;
+      startDebtExchangeRate: BigNumber;
+      startTCPRewards: BigNumber;
+      lastTimeUpdated: BigNumber;
+      lastBorrowTime: BigNumber;
+      tick: number;
+      tickSet: boolean;
+      tickIndex: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: BigNumber;
+      7: number;
+      8: boolean;
+      9: BigNumber;
+    }>;
   };
 
   filters: {
@@ -401,93 +346,43 @@ export class IMarket extends Contract {
       rewardCount: null,
       cumulativeDebt: null,
       debtExchangeRate: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        period: BigNumber;
-        periods: BigNumber;
-        newDebt: BigNumber;
-        rewardCount: BigNumber;
-        cumulativeDebt: BigNumber;
-        debtExchangeRate: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     NewPositionCreated(
       creator: string | null,
       positionID: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { creator: string; positionID: BigNumber }
-    >;
+    ): EventFilter;
 
-    ParameterUpdated(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdatedAddress(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
+    ParameterUpdatedAddress(paramName: string | null, value: null): EventFilter;
 
     PositionAdjusted(
       positionID: BigNumberish | null,
       debtChange: null,
       collateralChange: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        positionID: BigNumber;
-        debtChange: BigNumber;
-        collateralChange: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     PositionUpdated(
       positionID: BigNumberish | null,
       period: BigNumberish | null,
       debtAfter: null,
       tcpRewards: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        positionID: BigNumber;
-        period: BigNumber;
-        debtAfter: BigNumber;
-        tcpRewards: BigNumber;
-      }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    accrueInterest(overrides?: Overrides): Promise<BigNumber>;
 
-    "accrueInterest()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
@@ -496,13 +391,9 @@ export class IMarket extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
@@ -514,50 +405,42 @@ export class IMarket extends Contract {
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    accrueInterest(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    accrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "accrueInterest()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     collateralizationRequirement(
@@ -568,13 +451,9 @@ export class IMarket extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
@@ -586,30 +465,26 @@ export class IMarket extends Contract {
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     systemGetUpdatedPosition(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "systemGetUpdatedPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

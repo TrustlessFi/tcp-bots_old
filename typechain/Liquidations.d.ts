@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface LiquidationsInterface extends ethers.utils.Interface {
   functions: {
@@ -234,226 +235,233 @@ export class Liquidations extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: LiquidationsInterface;
 
   functions: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    currentPeriod(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    currentPeriod(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
-    "currentPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
-    deployer(overrides?: CallOverrides): Promise<[string]>;
+    deployer(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+    "deployer()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     discoverUndercollateralizedPositions(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "discoverUndercollateralizedPositions(uint64[])"(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    discoveryIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
+    discoveryIncentive(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "discoveryIncentive()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "discoveryIncentive()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     ensureLiquidationIncentive(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "ensureLiquidationIncentive()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+    firstPeriod(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "firstPeriod()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    governor(overrides?: CallOverrides): Promise<[string]>;
+    governor(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "governor()"(overrides?: CallOverrides): Promise<[string]>;
+    "governor()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     liquidate(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "liquidate(uint256)"(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    liquidationIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
+    liquidationIncentive(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "liquidationIncentive()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "liquidationIncentive()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    maxRewardsRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
+    maxRewardsRatio(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "maxRewardsRatio()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "maxRewardsRatio()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    minLiquidationIncentive(overrides?: CallOverrides): Promise<[BigNumber]>;
+    minLiquidationIncentive(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "minLiquidationIncentive()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "minLiquidationIncentive()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+    periodLength(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "periodLength()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    rewardsLimit(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-    >;
+    rewardsLimit(overrides?: CallOverrides): Promise<{
+      remaining: BigNumber;
+      period: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "rewardsLimit()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-    >;
+    "rewardsLimit()"(overrides?: CallOverrides): Promise<{
+      remaining: BigNumber;
+      period: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setDiscoveryIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMaxRewardsRatio(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMaxRewardsRatio(uint256)"(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMinLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMinLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+    stopped(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+    "stopped()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    twapDuration(overrides?: CallOverrides): Promise<[number]>;
+    twapDuration(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "twapDuration()"(overrides?: CallOverrides): Promise<[number]>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+    validUpdate(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
   };
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -465,12 +473,12 @@ export class Liquidations extends Contract {
 
   discoverUndercollateralizedPositions(
     positionIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "discoverUndercollateralizedPositions(uint64[])"(
     positionIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   discoveryIncentive(overrides?: CallOverrides): Promise<BigNumber>;
@@ -478,11 +486,11 @@ export class Liquidations extends Contract {
   "discoveryIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   ensureLiquidationIncentive(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "ensureLiquidationIncentive()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -493,24 +501,21 @@ export class Liquidations extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(
-    _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   liquidate(
     baseTokensToRepay: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "liquidate(uint256)"(
     baseTokensToRepay: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   liquidationIncentive(overrides?: CallOverrides): Promise<BigNumber>;
@@ -529,75 +534,73 @@ export class Liquidations extends Contract {
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  rewardsLimit(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-  >;
+  rewardsLimit(overrides?: CallOverrides): Promise<{
+    remaining: BigNumber;
+    period: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
-  "rewardsLimit()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-  >;
+  "rewardsLimit()"(overrides?: CallOverrides): Promise<{
+    remaining: BigNumber;
+    period: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   setDiscoveryIncentive(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setDiscoveryIncentive(uint256)"(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setLiquidationIncentive(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setLiquidationIncentive(uint256)"(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMaxRewardsRatio(
     ratio: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMaxRewardsRatio(uint256)"(
     ratio: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMinLiquidationIncentive(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMinLiquidationIncentive(uint256)"(
     incentive: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setTwapDuration(
     duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setTwapDuration(uint32)"(
     duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
@@ -686,17 +689,19 @@ export class Liquidations extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    rewardsLimit(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-    >;
+    rewardsLimit(overrides?: CallOverrides): Promise<{
+      remaining: BigNumber;
+      period: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "rewardsLimit()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { remaining: BigNumber; period: BigNumber }
-    >;
+    "rewardsLimit()"(overrides?: CallOverrides): Promise<{
+      remaining: BigNumber;
+      period: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
@@ -769,65 +774,30 @@ export class Liquidations extends Contract {
   };
 
   filters: {
-    CoveredUnbackedDebt(
-      price: null,
-      amountCovered: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { price: BigNumber; amountCovered: BigNumber }
-    >;
+    CoveredUnbackedDebt(price: null, amountCovered: null): EventFilter;
 
-    Initialized(
-      governor: string | null
-    ): TypedEventFilter<[string], { governor: string }>;
+    Initialized(governor: string | null): EventFilter;
 
-    Liquidated(
-      baseTokensToRepay: null,
-      collateralToReceive: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { baseTokensToRepay: BigNumber; collateralToReceive: BigNumber }
-    >;
+    Liquidated(baseTokensToRepay: null, collateralToReceive: null): EventFilter;
 
-    ParameterUpdated(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated32(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<[string, number], { paramName: string; value: number }>;
+    ParameterUpdated32(paramName: string | null, value: null): EventFilter;
 
-    Stopped(): TypedEventFilter<[], {}>;
+    Stopped(): EventFilter;
 
     UndercollatPositionDiscovered(
       positionID: BigNumberish | null,
       debtCount: null,
       collateralCount: null,
       price: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        positionID: BigNumber;
-        debtCount: BigNumber;
-        collateralCount: BigNumber;
-        price: BigNumber;
-      }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -839,25 +809,21 @@ export class Liquidations extends Contract {
 
     discoverUndercollateralizedPositions(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "discoverUndercollateralizedPositions(uint64[])"(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     discoveryIncentive(overrides?: CallOverrides): Promise<BigNumber>;
 
     "discoveryIncentive()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ensureLiquidationIncentive(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    ensureLiquidationIncentive(overrides?: Overrides): Promise<BigNumber>;
 
-    "ensureLiquidationIncentive()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "ensureLiquidationIncentive()"(overrides?: Overrides): Promise<BigNumber>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -867,24 +833,21 @@ export class Liquidations extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(
-      _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     liquidate(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "liquidate(uint256)"(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     liquidationIncentive(overrides?: CallOverrides): Promise<BigNumber>;
@@ -909,61 +872,57 @@ export class Liquidations extends Contract {
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setDiscoveryIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMaxRewardsRatio(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMaxRewardsRatio(uint256)"(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMinLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMinLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -982,13 +941,9 @@ export class Liquidations extends Contract {
   };
 
   populateTransaction: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1000,12 +955,12 @@ export class Liquidations extends Contract {
 
     discoverUndercollateralizedPositions(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "discoverUndercollateralizedPositions(uint64[])"(
       positionIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     discoveryIncentive(
@@ -1017,11 +972,11 @@ export class Liquidations extends Contract {
     ): Promise<PopulatedTransaction>;
 
     ensureLiquidationIncentive(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "ensureLiquidationIncentive()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1034,22 +989,22 @@ export class Liquidations extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     liquidate(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "liquidate(uint256)"(
       baseTokensToRepay: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     liquidationIncentive(
@@ -1084,61 +1039,57 @@ export class Liquidations extends Contract {
 
     setDiscoveryIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setDiscoveryIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMaxRewardsRatio(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMaxRewardsRatio(uint256)"(
       ratio: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMinLiquidationIncentive(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMinLiquidationIncentive(uint256)"(
       incentive: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

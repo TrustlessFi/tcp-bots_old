@@ -9,16 +9,17 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   PayableOverrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface RewardsTestableInterface extends ethers.utils.Interface {
   functions: {
@@ -577,66 +578,36 @@ export class RewardsTestable extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: RewardsTestableInterface;
 
   functions: {
-    accrueRewards(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "accrueRewards()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     calculateUpdatedLiquidityPosition(
       _pt: {
@@ -653,57 +624,52 @@ export class RewardsTestable extends Contract {
       rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
       timeNow: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        },
-        BigNumber
-      ] & {
-        pt: [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        };
-        rewards: BigNumber;
-      }
-    >;
+    ): Promise<{
+      pt: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      rewards: BigNumber;
+      0: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      1: BigNumber;
+    }>;
 
-    "calculateUpdatedLiquidityPosition((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),(uint256,uint256),uint64)"(
+    "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)"(
       _pt: {
         owner: string;
         poolID: BigNumberish;
@@ -718,77 +684,76 @@ export class RewardsTestable extends Contract {
       rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
       timeNow: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        },
-        BigNumber
-      ] & {
-        pt: [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        };
-        rewards: BigNumber;
-      }
-    >;
+    ): Promise<{
+      pt: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      rewards: BigNumber;
+      0: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      1: BigNumber;
+    }>;
 
     claimRewards(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "claimRewards(uint256)"(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    collateralPool(overrides?: CallOverrides): Promise<[number]>;
+    collateralPool(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "collateralPool()"(overrides?: CallOverrides): Promise<[number]>;
+    "collateralPool()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    collateralPoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    collateralPoolRewardsPortion(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "collateralPoolRewardsPortion()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "collateralPoolRewardsPortion()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     collectPositionFees(
       params: {
@@ -797,26 +762,22 @@ export class RewardsTestable extends Contract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "collectPositionFees((uint256,address,uint128,uint128))"(
+    "collectPositionFees(tuple)"(
       params: {
         tokenId: BigNumberish;
         recipient: string;
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     createLiquidityPosition(
       params: {
@@ -833,10 +794,10 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "createLiquidityPosition((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256),(uint8,bytes32,bytes32))"(
+    "createLiquidityPosition(tuple,tuple)"(
       params: {
         token0: string;
         token1: string;
@@ -851,23 +812,32 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    current(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+    current(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "current(uint16)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
 
-    currentPeriod(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    currentPeriod(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
-    "currentPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { period: BigNumber }>;
+    "currentPeriod()"(overrides?: CallOverrides): Promise<{
+      period: BigNumber;
+      0: BigNumber;
+    }>;
 
     decreaseLiquidityPosition(
       params: {
@@ -877,10 +847,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "decreaseLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "decreaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -888,16 +858,24 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    deployer(overrides?: CallOverrides): Promise<[string]>;
+    deployer(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+    "deployer()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+    firstPeriod(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "firstPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "firstPeriod()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     getRealZhuCount(
       position: {
@@ -915,9 +893,11 @@ export class RewardsTestable extends Contract {
       tick: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
-    "getRealZhuCount((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),address,int24,uint128)"(
+    "getRealZhuCount(tuple,address,int24,uint128)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -933,11 +913,17 @@ export class RewardsTestable extends Contract {
       tick: BigNumberish,
       liquidity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
-    governor(overrides?: CallOverrides): Promise<[string]>;
+    governor(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "governor()"(overrides?: CallOverrides): Promise<[string]>;
+    "governor()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     increaseLiquidityPosition(
       params: {
@@ -948,10 +934,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "increaseLiquidityPosition((uint256,uint256,uint256,uint256,uint256,uint256))"(
+    "increaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         amount0Desired: BigNumberish;
@@ -960,17 +946,17 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     isLiquidityInRange(
@@ -987,9 +973,11 @@ export class RewardsTestable extends Contract {
       },
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
 
-    "isLiquidityInRange((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),int24)"(
+    "isLiquidityInRange(tuple,int24)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -1003,114 +991,155 @@ export class RewardsTestable extends Contract {
       },
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
 
-    lastPeriodGlobalRewardsAccrued(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    lastPeriodGlobalRewardsAccrued(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "lastPeriodGlobalRewardsAccrued()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "lastPeriodGlobalRewardsAccrued()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     liquidateOutofRangePositions(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "liquidateOutofRangePositions(address,uint256[])"(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    liquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>;
+    liquidationPenalty(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "liquidationPenalty()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "liquidationPenalty()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    maxLiquidityDecreasePerPeriod(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    maxLiquidityDecreasePerPeriod(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "maxLiquidityDecreasePerPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "maxLiquidityDecreasePerPeriod()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     minLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-    >;
+    ): Promise<{
+      period: BigNumber;
+      minLiquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     "minLiquidityByPeriod(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-    >;
+    ): Promise<{
+      period: BigNumber;
+      minLiquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    minLiquidityProvideDuration(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    minLiquidityProvideDuration(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "minLiquidityProvideDuration()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "minLiquidityProvideDuration()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    minZhuCountPerPosition(overrides?: CallOverrides): Promise<[BigNumber]>;
+    minZhuCountPerPosition(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "minZhuCountPerPosition()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "minZhuCountPerPosition()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+    periodLength(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "periodLength()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "periodLength()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     poolForPoolID(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<{
+      0: string;
+    }>;
 
     "poolForPoolID(uint16)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<{
+      0: string;
+    }>;
 
-    poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<[number]>;
+    poolIDForPool(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: number;
+    }>;
 
     "poolIDForPool(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
-    protocolPool(overrides?: CallOverrides): Promise<[number]>;
+    protocolPool(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "protocolPool()"(overrides?: CallOverrides): Promise<[number]>;
+    "protocolPool()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
+    protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "protocolPoolRewardsPortion()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "protocolPoolRewardsPortion()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    referencePoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    referencePoolRewardsPortion(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "referencePoolRewardsPortion()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "referencePoolRewardsPortion()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     referencePools(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
     "referencePools(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
     removeLiquidityPosition(
       params: {
@@ -1120,10 +1149,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "removeLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -1131,7 +1160,7 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     removeLiquidityPositionAfterShutdown(
@@ -1142,10 +1171,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "removeLiquidityPositionAfterShutdown((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPositionAfterShutdown(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -1153,143 +1182,158 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     requireAuthorized(
       authorized: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "requireAuthorized(bool)"(
       authorized: boolean,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     requirePositionLargeEnough(
       __zhuCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     "requirePositionLargeEnough(uint256)"(
       __zhuCount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[void]>;
+    ): Promise<{
+      0: void;
+    }>;
 
     setLiquidationPenalty(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setLiquidationPenalty(uint256)"(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMaxLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMaxLiquidityDecreasePerPeriod(uint256)"(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMinLiquidityProvideDuration(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMinLiquidityProvideDuration(uint64)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMinZhuCountPerPosition(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMinZhuCountPerPosition(uint128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setRewardsPortions(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setRewardsPortions(uint256,uint256,uint256)"(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+    stopped(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+    "stopped()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    twapDuration(overrides?: CallOverrides): Promise<[number]>;
+    twapDuration(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "twapDuration()"(overrides?: CallOverrides): Promise<[number]>;
+    "twapDuration()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+    validUpdate(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
   };
 
-  accrueRewards(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "accrueRewards()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   addReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "addReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1311,57 +1355,52 @@ export class RewardsTestable extends Contract {
     rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
     timeNow: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      [
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        BigNumber
-      ] & {
-        owner: string;
-        poolID: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: BigNumber;
-        lastBlockPositionIncreased: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      },
-      BigNumber
-    ] & {
-      pt: [
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        BigNumber
-      ] & {
-        owner: string;
-        poolID: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: BigNumber;
-        lastBlockPositionIncreased: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      };
-      rewards: BigNumber;
-    }
-  >;
+  ): Promise<{
+    pt: {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
+      tickLower: number;
+      tickUpper: number;
+      liquidity: BigNumber;
+      0: string;
+      1: number;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: number;
+      8: BigNumber;
+    };
+    rewards: BigNumber;
+    0: {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
+      tickLower: number;
+      tickUpper: number;
+      liquidity: BigNumber;
+      0: string;
+      1: number;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: number;
+      8: BigNumber;
+    };
+    1: BigNumber;
+  }>;
 
-  "calculateUpdatedLiquidityPosition((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),(uint256,uint256),uint64)"(
+  "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)"(
     _pt: {
       owner: string;
       poolID: BigNumberish;
@@ -1376,64 +1415,59 @@ export class RewardsTestable extends Contract {
     rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
     timeNow: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      [
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        BigNumber
-      ] & {
-        owner: string;
-        poolID: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: BigNumber;
-        lastBlockPositionIncreased: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      },
-      BigNumber
-    ] & {
-      pt: [
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        BigNumber
-      ] & {
-        owner: string;
-        poolID: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: BigNumber;
-        lastBlockPositionIncreased: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      };
-      rewards: BigNumber;
-    }
-  >;
+  ): Promise<{
+    pt: {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
+      tickLower: number;
+      tickUpper: number;
+      liquidity: BigNumber;
+      0: string;
+      1: number;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: number;
+      8: BigNumber;
+    };
+    rewards: BigNumber;
+    0: {
+      owner: string;
+      poolID: number;
+      cumulativeLiquidity: BigNumber;
+      totalRewards: BigNumber;
+      lastTimeRewarded: BigNumber;
+      lastBlockPositionIncreased: BigNumber;
+      tickLower: number;
+      tickUpper: number;
+      liquidity: BigNumber;
+      0: string;
+      1: number;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: number;
+      8: BigNumber;
+    };
+    1: BigNumber;
+  }>;
 
   claimRewards(
     nftTokenID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "claimRewards(uint256)"(
     nftTokenID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   collateralPool(overrides?: CallOverrides): Promise<number>;
@@ -1453,26 +1487,22 @@ export class RewardsTestable extends Contract {
       amount0Max: BigNumberish;
       amount1Max: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "collectPositionFees((uint256,address,uint128,uint128))"(
+  "collectPositionFees(tuple)"(
     params: {
       tokenId: BigNumberish;
       recipient: string;
       amount0Max: BigNumberish;
       amount1Max: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   createLiquidityPosition(
     params: {
@@ -1489,10 +1519,10 @@ export class RewardsTestable extends Contract {
       deadline: BigNumberish;
     },
     ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "createLiquidityPosition((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256),(uint8,bytes32,bytes32))"(
+  "createLiquidityPosition(tuple,tuple)"(
     params: {
       token0: string;
       token1: string;
@@ -1507,7 +1537,7 @@ export class RewardsTestable extends Contract {
       deadline: BigNumberish;
     },
     ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
   current(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
@@ -1529,10 +1559,10 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "decreaseLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+  "decreaseLiquidityPosition(tuple)"(
     params: {
       tokenId: BigNumberish;
       liquidity: BigNumberish;
@@ -1540,7 +1570,7 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
@@ -1569,7 +1599,7 @@ export class RewardsTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "getRealZhuCount((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),address,int24,uint128)"(
+  "getRealZhuCount(tuple,address,int24,uint128)"(
     position: {
       owner: string;
       poolID: BigNumberish;
@@ -1600,10 +1630,10 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "increaseLiquidityPosition((uint256,uint256,uint256,uint256,uint256,uint256))"(
+  "increaseLiquidityPosition(tuple)"(
     params: {
       tokenId: BigNumberish;
       amount0Desired: BigNumberish;
@@ -1612,17 +1642,14 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  init(
-    _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   isLiquidityInRange(
@@ -1641,7 +1668,7 @@ export class RewardsTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "isLiquidityInRange((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),int24)"(
+  "isLiquidityInRange(tuple,int24)"(
     position: {
       owner: string;
       poolID: BigNumberish;
@@ -1666,13 +1693,13 @@ export class RewardsTestable extends Contract {
   liquidateOutofRangePositions(
     pool: string,
     nftTokenIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "liquidateOutofRangePositions(address,uint256[])"(
     pool: string,
     nftTokenIDs: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1688,16 +1715,22 @@ export class RewardsTestable extends Contract {
   minLiquidityByPeriod(
     arg0: string,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-  >;
+  ): Promise<{
+    period: BigNumber;
+    minLiquidity: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   "minLiquidityByPeriod(address)"(
     arg0: string,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-  >;
+  ): Promise<{
+    period: BigNumber;
+    minLiquidity: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   minLiquidityProvideDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1759,10 +1792,10 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "removeLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+  "removeLiquidityPosition(tuple)"(
     params: {
       tokenId: BigNumberish;
       liquidity: BigNumberish;
@@ -1770,7 +1803,7 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   removeLiquidityPositionAfterShutdown(
@@ -1781,10 +1814,10 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "removeLiquidityPositionAfterShutdown((uint256,uint128,uint256,uint256,uint256))"(
+  "removeLiquidityPositionAfterShutdown(tuple)"(
     params: {
       tokenId: BigNumberish;
       liquidity: BigNumberish;
@@ -1792,17 +1825,17 @@ export class RewardsTestable extends Contract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   removeReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "removeReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   requireAuthorized(
@@ -1827,75 +1860,71 @@ export class RewardsTestable extends Contract {
 
   setLiquidationPenalty(
     penalty: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setLiquidationPenalty(uint256)"(
     penalty: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMaxLiquidityDecreasePerPeriod(
     decreasePortion: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMaxLiquidityDecreasePerPeriod(uint256)"(
     decreasePortion: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMinLiquidityProvideDuration(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMinLiquidityProvideDuration(uint64)"(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMinZhuCountPerPosition(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMinZhuCountPerPosition(uint128)"(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setRewardsPortions(
     _protocol: BigNumberish,
     _collateral: BigNumberish,
     _reference: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setRewardsPortions(uint256,uint256,uint256)"(
     _protocol: BigNumberish,
     _collateral: BigNumberish,
     _reference: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setTwapDuration(
     duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setTwapDuration(uint32)"(
     duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1943,57 +1972,52 @@ export class RewardsTestable extends Contract {
       rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
       timeNow: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        },
-        BigNumber
-      ] & {
-        pt: [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        };
-        rewards: BigNumber;
-      }
-    >;
+    ): Promise<{
+      pt: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      rewards: BigNumber;
+      0: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      1: BigNumber;
+    }>;
 
-    "calculateUpdatedLiquidityPosition((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),(uint256,uint256),uint64)"(
+    "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)"(
       _pt: {
         owner: string;
         poolID: BigNumberish;
@@ -2008,55 +2032,50 @@ export class RewardsTestable extends Contract {
       rs: { totalRewards: BigNumberish; cumulativeLiquidity: BigNumberish },
       timeNow: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        },
-        BigNumber
-      ] & {
-        pt: [
-          string,
-          number,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          BigNumber,
-          number,
-          number,
-          BigNumber
-        ] & {
-          owner: string;
-          poolID: number;
-          cumulativeLiquidity: BigNumber;
-          totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
-          lastBlockPositionIncreased: BigNumber;
-          tickLower: number;
-          tickUpper: number;
-          liquidity: BigNumber;
-        };
-        rewards: BigNumber;
-      }
-    >;
+    ): Promise<{
+      pt: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      rewards: BigNumber;
+      0: {
+        owner: string;
+        poolID: number;
+        cumulativeLiquidity: BigNumber;
+        totalRewards: BigNumber;
+        lastTimeRewarded: BigNumber;
+        lastBlockPositionIncreased: BigNumber;
+        tickLower: number;
+        tickUpper: number;
+        liquidity: BigNumber;
+        0: string;
+        1: number;
+        2: BigNumber;
+        3: BigNumber;
+        4: BigNumber;
+        5: BigNumber;
+        6: number;
+        7: number;
+        8: BigNumber;
+      };
+      1: BigNumber;
+    }>;
 
     claimRewards(
       nftTokenID: BigNumberish,
@@ -2088,7 +2107,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "collectPositionFees((uint256,address,uint128,uint128))"(
+    "collectPositionFees(tuple)"(
       params: {
         tokenId: BigNumberish;
         recipient: string;
@@ -2118,11 +2137,14 @@ export class RewardsTestable extends Contract {
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { nftTokenID: BigNumber; liquidity: BigNumber }
-    >;
+    ): Promise<{
+      nftTokenID: BigNumber;
+      liquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "createLiquidityPosition((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256),(uint8,bytes32,bytes32))"(
+    "createLiquidityPosition(tuple,tuple)"(
       params: {
         token0: string;
         token1: string;
@@ -2138,9 +2160,12 @@ export class RewardsTestable extends Contract {
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { nftTokenID: BigNumber; liquidity: BigNumber }
-    >;
+    ): Promise<{
+      nftTokenID: BigNumber;
+      liquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     current(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -2162,11 +2187,14 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "decreaseLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "decreaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -2175,9 +2203,12 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
@@ -2205,7 +2236,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getRealZhuCount((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),address,int24,uint128)"(
+    "getRealZhuCount(tuple,address,int24,uint128)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -2239,7 +2270,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "increaseLiquidityPosition((uint256,uint256,uint256,uint256,uint256,uint256))"(
+    "increaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         amount0Desired: BigNumberish;
@@ -2274,7 +2305,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "isLiquidityInRange((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),int24)"(
+    "isLiquidityInRange(tuple,int24)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -2325,16 +2356,22 @@ export class RewardsTestable extends Contract {
     minLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-    >;
+    ): Promise<{
+      period: BigNumber;
+      minLiquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     "minLiquidityByPeriod(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
-    >;
+    ): Promise<{
+      period: BigNumber;
+      minLiquidity: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     minLiquidityProvideDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2402,11 +2439,14 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "removeLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -2415,9 +2455,12 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     removeLiquidityPositionAfterShutdown(
       params: {
@@ -2428,11 +2471,14 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "removeLiquidityPositionAfterShutdown((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPositionAfterShutdown(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -2441,9 +2487,12 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<{
+      amount0: BigNumber;
+      amount1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
@@ -2560,29 +2609,16 @@ export class RewardsTestable extends Contract {
     ClaimedInflationRewards(
       owner: string | null,
       nftTokenID: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; nftTokenID: BigNumber }
-    >;
+    ): EventFilter;
 
     CollectedFees(
       owner: string | null,
       nftTokenID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        owner: string;
-        nftTokenID: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
-    Initialized(
-      governor: string | null
-    ): TypedEventFilter<[string], { governor: string }>;
+    Initialized(governor: string | null): EventFilter;
 
     LiquidityPositionCreated(
       owner: string | null,
@@ -2591,140 +2627,68 @@ export class RewardsTestable extends Contract {
       tickLower: null,
       tickUpper: null,
       liquidity: null
-    ): TypedEventFilter<
-      [string, number, BigNumber, number, number, BigNumber],
-      {
-        owner: string;
-        poolID: number;
-        nftID: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     LiquidityPositionDecreased(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionIncreased(
       nftID: BigNumberish | null,
       liquidity: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { nftID: BigNumber; liquidity: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionLiquidated(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionRemoved(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
-    ParameterUpdated(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated128(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated128(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated32(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated32(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdatedAddress(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
+    ParameterUpdatedAddress(paramName: string | null, value: null): EventFilter;
 
-    RewardsAccrued(
-      count: null,
-      periods: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { count: BigNumber; periods: BigNumber }
-    >;
+    RewardsAccrued(count: null, periods: null): EventFilter;
 
     RewardsDistributed(
       account: string | null,
       period: BigNumberish | null,
       tcpRewards: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { account: string; period: BigNumber; tcpRewards: BigNumber }
-    >;
+    ): EventFilter;
 
     RewardsPortionsUpdated(
       protocolPortion: null,
       collateralPortion: null,
       referencePortion: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        protocolPortion: BigNumber;
-        collateralPortion: BigNumber;
-        referencePortion: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
-    Stopped(): TypedEventFilter<[], {}>;
+    Stopped(): EventFilter;
   };
 
   estimateGas: {
-    accrueRewards(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    accrueRewards(overrides?: Overrides): Promise<BigNumber>;
 
-    "accrueRewards()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "accrueRewards()"(overrides?: Overrides): Promise<BigNumber>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2748,7 +2712,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "calculateUpdatedLiquidityPosition((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),(uint256,uint256),uint64)"(
+    "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)"(
       _pt: {
         owner: string;
         poolID: BigNumberish;
@@ -2767,12 +2731,12 @@ export class RewardsTestable extends Contract {
 
     claimRewards(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "claimRewards(uint256)"(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2792,26 +2756,22 @@ export class RewardsTestable extends Contract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "collectPositionFees((uint256,address,uint128,uint128))"(
+    "collectPositionFees(tuple)"(
       params: {
         tokenId: BigNumberish;
         recipient: string;
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     createLiquidityPosition(
       params: {
@@ -2828,10 +2788,10 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "createLiquidityPosition((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256),(uint8,bytes32,bytes32))"(
+    "createLiquidityPosition(tuple,tuple)"(
       params: {
         token0: string;
         token1: string;
@@ -2846,7 +2806,7 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
     current(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
@@ -2868,10 +2828,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "decreaseLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "decreaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -2879,7 +2839,7 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2908,7 +2868,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getRealZhuCount((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),address,int24,uint128)"(
+    "getRealZhuCount(tuple,address,int24,uint128)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -2939,10 +2899,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "increaseLiquidityPosition((uint256,uint256,uint256,uint256,uint256,uint256))"(
+    "increaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         amount0Desired: BigNumberish;
@@ -2951,17 +2911,14 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    init(
-      _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     isLiquidityInRange(
@@ -2980,7 +2937,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "isLiquidityInRange((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),int24)"(
+    "isLiquidityInRange(tuple,int24)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -3007,13 +2964,13 @@ export class RewardsTestable extends Contract {
     liquidateOutofRangePositions(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "liquidateOutofRangePositions(address,uint256[])"(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
@@ -3103,10 +3060,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "removeLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -3114,7 +3071,7 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     removeLiquidityPositionAfterShutdown(
@@ -3125,10 +3082,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "removeLiquidityPositionAfterShutdown((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPositionAfterShutdown(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -3136,17 +3093,17 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     requireAuthorized(
@@ -3171,75 +3128,71 @@ export class RewardsTestable extends Contract {
 
     setLiquidationPenalty(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setLiquidationPenalty(uint256)"(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMaxLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMaxLiquidityDecreasePerPeriod(uint256)"(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMinLiquidityProvideDuration(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMinLiquidityProvideDuration(uint64)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMinZhuCountPerPosition(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMinZhuCountPerPosition(uint128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setRewardsPortions(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setRewardsPortions(uint256,uint256,uint256)"(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -3258,22 +3211,18 @@ export class RewardsTestable extends Contract {
   };
 
   populateTransaction: {
-    accrueRewards(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    accrueRewards(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "accrueRewards()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "accrueRewards()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     borrowRewardsPortion(
@@ -3301,7 +3250,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "calculateUpdatedLiquidityPosition((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),(uint256,uint256),uint64)"(
+    "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)"(
       _pt: {
         owner: string;
         poolID: BigNumberish;
@@ -3320,12 +3269,12 @@ export class RewardsTestable extends Contract {
 
     claimRewards(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "claimRewards(uint256)"(
       nftTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3349,26 +3298,22 @@ export class RewardsTestable extends Contract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "collectPositionFees((uint256,address,uint128,uint128))"(
+    "collectPositionFees(tuple)"(
       params: {
         tokenId: BigNumberish;
         recipient: string;
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     createLiquidityPosition(
       params: {
@@ -3385,10 +3330,10 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "createLiquidityPosition((address,address,uint24,int24,int24,uint256,uint256,uint256,uint256,address,uint256),(uint8,bytes32,bytes32))"(
+    "createLiquidityPosition(tuple,tuple)"(
       params: {
         token0: string;
         token1: string;
@@ -3403,7 +3348,7 @@ export class RewardsTestable extends Contract {
         deadline: BigNumberish;
       },
       ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     current(
@@ -3428,10 +3373,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "decreaseLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "decreaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -3439,7 +3384,7 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3468,7 +3413,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getRealZhuCount((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),address,int24,uint128)"(
+    "getRealZhuCount(tuple,address,int24,uint128)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -3499,10 +3444,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "increaseLiquidityPosition((uint256,uint256,uint256,uint256,uint256,uint256))"(
+    "increaseLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         amount0Desired: BigNumberish;
@@ -3511,17 +3456,17 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     isLiquidityInRange(
@@ -3540,7 +3485,7 @@ export class RewardsTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "isLiquidityInRange((address,uint16,uint256,uint256,uint64,uint256,int24,int24,uint128),int24)"(
+    "isLiquidityInRange(tuple,int24)"(
       position: {
         owner: string;
         poolID: BigNumberish;
@@ -3567,13 +3512,13 @@ export class RewardsTestable extends Contract {
     liquidateOutofRangePositions(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "liquidateOutofRangePositions(address,uint256[])"(
       pool: string,
       nftTokenIDs: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     liquidationPenalty(
@@ -3680,10 +3625,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "removeLiquidityPosition((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPosition(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -3691,7 +3636,7 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     removeLiquidityPositionAfterShutdown(
@@ -3702,10 +3647,10 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "removeLiquidityPositionAfterShutdown((uint256,uint128,uint256,uint256,uint256))"(
+    "removeLiquidityPositionAfterShutdown(tuple)"(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -3713,17 +3658,17 @@ export class RewardsTestable extends Contract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     requireAuthorized(
@@ -3748,75 +3693,71 @@ export class RewardsTestable extends Contract {
 
     setLiquidationPenalty(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setLiquidationPenalty(uint256)"(
       penalty: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMaxLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMaxLiquidityDecreasePerPeriod(uint256)"(
       decreasePortion: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMinLiquidityProvideDuration(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMinLiquidityProvideDuration(uint64)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMinZhuCountPerPosition(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMinZhuCountPerPosition(uint128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setRewardsPortions(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setRewardsPortions(uint256,uint256,uint256)"(
       _protocol: BigNumberish,
       _collateral: BigNumberish,
       _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setTwapDuration(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setTwapDuration(uint32)"(
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface MockGovernorInterface extends ethers.utils.Interface {
   functions: {
@@ -66,78 +67,60 @@ export class MockGovernor extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: MockGovernorInterface;
 
   functions: {
-    currentPhase(overrides?: CallOverrides): Promise<[number]>;
+    currentPhase(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "currentPhase()"(overrides?: CallOverrides): Promise<[number]>;
+    "currentPhase()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    distributedTCP(overrides?: CallOverrides): Promise<[BigNumber]>;
+    distributedTCP(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "distributedTCP()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "distributedTCP()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     execute(
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "execute(address,string,bytes)"(
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     validateAction(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "validateAction(address,string)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
   };
 
   currentPhase(overrides?: CallOverrides): Promise<number>;
@@ -152,14 +135,14 @@ export class MockGovernor extends Contract {
     arg0: string,
     arg1: string,
     arg2: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "execute(address,string,bytes)"(
     arg0: string,
     arg1: string,
     arg2: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   validateAction(
@@ -188,14 +171,24 @@ export class MockGovernor extends Contract {
       arg1: string,
       arg2: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
+    ): Promise<{
+      success: boolean;
+      returnData: string;
+      0: boolean;
+      1: string;
+    }>;
 
     "execute(address,string,bytes)"(
       arg0: string,
       arg1: string,
       arg2: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
+    ): Promise<{
+      success: boolean;
+      returnData: string;
+      0: boolean;
+      1: string;
+    }>;
 
     validateAction(
       arg0: string,
@@ -225,14 +218,14 @@ export class MockGovernor extends Contract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "execute(address,string,bytes)"(
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     validateAction(
@@ -263,14 +256,14 @@ export class MockGovernor extends Contract {
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "execute(address,string,bytes)"(
       arg0: string,
       arg1: string,
       arg2: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     validateAction(

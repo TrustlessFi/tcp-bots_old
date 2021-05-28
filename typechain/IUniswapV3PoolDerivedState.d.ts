@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IUniswapV3PoolDerivedStateInterface extends ethers.utils.Interface {
   functions: {
@@ -47,41 +48,11 @@ export class IUniswapV3PoolDerivedState extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IUniswapV3PoolDerivedStateInterface;
 
@@ -89,136 +60,142 @@ export class IUniswapV3PoolDerivedState extends Contract {
     observe(
       secondsAgos: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & {
-        tickCumulatives: BigNumber[];
-        secondsPerLiquidityCumulativeX128s: BigNumber[];
-      }
-    >;
+    ): Promise<{
+      tickCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
+      0: BigNumber[];
+      1: BigNumber[];
+    }>;
 
     "observe(uint32[])"(
       secondsAgos: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & {
-        tickCumulatives: BigNumber[];
-        secondsPerLiquidityCumulativeX128s: BigNumber[];
-      }
-    >;
+    ): Promise<{
+      tickCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
+      0: BigNumber[];
+      1: BigNumber[];
+    }>;
 
     snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number] & {
-        tickCumulativeInside: BigNumber;
-        secondsPerLiquidityInsideX128: BigNumber;
-        secondsInside: number;
-      }
-    >;
+    ): Promise<{
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+      0: BigNumber;
+      1: BigNumber;
+      2: number;
+    }>;
 
     "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number] & {
-        tickCumulativeInside: BigNumber;
-        secondsPerLiquidityInsideX128: BigNumber;
-        secondsInside: number;
-      }
-    >;
+    ): Promise<{
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+      0: BigNumber;
+      1: BigNumber;
+      2: number;
+    }>;
   };
 
   observe(
     secondsAgos: BigNumberish[],
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber[], BigNumber[]] & {
-      tickCumulatives: BigNumber[];
-      secondsPerLiquidityCumulativeX128s: BigNumber[];
-    }
-  >;
+  ): Promise<{
+    tickCumulatives: BigNumber[];
+    secondsPerLiquidityCumulativeX128s: BigNumber[];
+    0: BigNumber[];
+    1: BigNumber[];
+  }>;
 
   "observe(uint32[])"(
     secondsAgos: BigNumberish[],
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber[], BigNumber[]] & {
-      tickCumulatives: BigNumber[];
-      secondsPerLiquidityCumulativeX128s: BigNumber[];
-    }
-  >;
+  ): Promise<{
+    tickCumulatives: BigNumber[];
+    secondsPerLiquidityCumulativeX128s: BigNumber[];
+    0: BigNumber[];
+    1: BigNumber[];
+  }>;
 
   snapshotCumulativesInside(
     tickLower: BigNumberish,
     tickUpper: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, number] & {
-      tickCumulativeInside: BigNumber;
-      secondsPerLiquidityInsideX128: BigNumber;
-      secondsInside: number;
-    }
-  >;
+  ): Promise<{
+    tickCumulativeInside: BigNumber;
+    secondsPerLiquidityInsideX128: BigNumber;
+    secondsInside: number;
+    0: BigNumber;
+    1: BigNumber;
+    2: number;
+  }>;
 
   "snapshotCumulativesInside(int24,int24)"(
     tickLower: BigNumberish,
     tickUpper: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, number] & {
-      tickCumulativeInside: BigNumber;
-      secondsPerLiquidityInsideX128: BigNumber;
-      secondsInside: number;
-    }
-  >;
+  ): Promise<{
+    tickCumulativeInside: BigNumber;
+    secondsPerLiquidityInsideX128: BigNumber;
+    secondsInside: number;
+    0: BigNumber;
+    1: BigNumber;
+    2: number;
+  }>;
 
   callStatic: {
     observe(
       secondsAgos: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & {
-        tickCumulatives: BigNumber[];
-        secondsPerLiquidityCumulativeX128s: BigNumber[];
-      }
-    >;
+    ): Promise<{
+      tickCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
+      0: BigNumber[];
+      1: BigNumber[];
+    }>;
 
     "observe(uint32[])"(
       secondsAgos: BigNumberish[],
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber[], BigNumber[]] & {
-        tickCumulatives: BigNumber[];
-        secondsPerLiquidityCumulativeX128s: BigNumber[];
-      }
-    >;
+    ): Promise<{
+      tickCumulatives: BigNumber[];
+      secondsPerLiquidityCumulativeX128s: BigNumber[];
+      0: BigNumber[];
+      1: BigNumber[];
+    }>;
 
     snapshotCumulativesInside(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number] & {
-        tickCumulativeInside: BigNumber;
-        secondsPerLiquidityInsideX128: BigNumber;
-        secondsInside: number;
-      }
-    >;
+    ): Promise<{
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+      0: BigNumber;
+      1: BigNumber;
+      2: number;
+    }>;
 
     "snapshotCumulativesInside(int24,int24)"(
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number] & {
-        tickCumulativeInside: BigNumber;
-        secondsPerLiquidityInsideX128: BigNumber;
-        secondsInside: number;
-      }
-    >;
+    ): Promise<{
+      tickCumulativeInside: BigNumber;
+      secondsPerLiquidityInsideX128: BigNumber;
+      secondsInside: number;
+      0: BigNumber;
+      1: BigNumber;
+      2: number;
+    }>;
   };
 
   filters: {};

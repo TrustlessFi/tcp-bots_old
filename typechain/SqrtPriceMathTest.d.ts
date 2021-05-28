@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SqrtPriceMathTestInterface extends ethers.utils.Interface {
   functions: {
@@ -104,41 +105,11 @@ export class SqrtPriceMathTest extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: SqrtPriceMathTestInterface;
 
@@ -149,7 +120,10 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount0: BigNumber }>;
+    ): Promise<{
+      amount0: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getAmount0Delta(uint160,uint160,uint128,bool)"(
       sqrtLower: BigNumberish,
@@ -157,7 +131,10 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount0: BigNumber }>;
+    ): Promise<{
+      amount0: BigNumber;
+      0: BigNumber;
+    }>;
 
     getAmount1Delta(
       sqrtLower: BigNumberish,
@@ -165,7 +142,10 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount1: BigNumber }>;
+    ): Promise<{
+      amount1: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getAmount1Delta(uint160,uint160,uint128,bool)"(
       sqrtLower: BigNumberish,
@@ -173,7 +153,10 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount1: BigNumber }>;
+    ): Promise<{
+      amount1: BigNumber;
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetAmount0Delta(
       sqrtLower: BigNumberish,
@@ -181,7 +164,9 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetAmount0Delta(uint160,uint160,uint128,bool)"(
       sqrtLower: BigNumberish,
@@ -189,7 +174,9 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetAmount1Delta(
       sqrtLower: BigNumberish,
@@ -197,7 +184,9 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetAmount1Delta(uint160,uint160,uint128,bool)"(
       sqrtLower: BigNumberish,
@@ -205,7 +194,9 @@ export class SqrtPriceMathTest extends Contract {
       liquidity: BigNumberish,
       roundUp: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetNextSqrtPriceFromInput(
       sqrtP: BigNumberish,
@@ -213,7 +204,9 @@ export class SqrtPriceMathTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetNextSqrtPriceFromInput(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -221,7 +214,9 @@ export class SqrtPriceMathTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getGasCostOfGetNextSqrtPriceFromOutput(
       sqrtP: BigNumberish,
@@ -229,7 +224,9 @@ export class SqrtPriceMathTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getGasCostOfGetNextSqrtPriceFromOutput(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -237,7 +234,9 @@ export class SqrtPriceMathTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getNextSqrtPriceFromInput(
       sqrtP: BigNumberish,
@@ -245,7 +244,10 @@ export class SqrtPriceMathTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { sqrtQ: BigNumber }>;
+    ): Promise<{
+      sqrtQ: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getNextSqrtPriceFromInput(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -253,7 +255,10 @@ export class SqrtPriceMathTest extends Contract {
       amountIn: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { sqrtQ: BigNumber }>;
+    ): Promise<{
+      sqrtQ: BigNumber;
+      0: BigNumber;
+    }>;
 
     getNextSqrtPriceFromOutput(
       sqrtP: BigNumberish,
@@ -261,7 +266,10 @@ export class SqrtPriceMathTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { sqrtQ: BigNumber }>;
+    ): Promise<{
+      sqrtQ: BigNumber;
+      0: BigNumber;
+    }>;
 
     "getNextSqrtPriceFromOutput(uint160,uint128,uint256,bool)"(
       sqrtP: BigNumberish,
@@ -269,7 +277,10 @@ export class SqrtPriceMathTest extends Contract {
       amountOut: BigNumberish,
       zeroForOne: boolean,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { sqrtQ: BigNumber }>;
+    ): Promise<{
+      sqrtQ: BigNumber;
+      0: BigNumber;
+    }>;
   };
 
   getAmount0Delta(

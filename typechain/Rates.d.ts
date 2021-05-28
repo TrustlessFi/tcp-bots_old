@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface RatesInterface extends ethers.utils.Interface {
   functions: {
@@ -286,354 +287,339 @@ export class Rates extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: RatesInterface;
 
   functions: {
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    currentRateData(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    >;
+    currentRateData(overrides?: CallOverrides): Promise<{
+      rate: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
-    "currentRateData()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    >;
+    "currentRateData()"(overrides?: CallOverrides): Promise<{
+      rate: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
-    deployer(overrides?: CallOverrides): Promise<[string]>;
+    deployer(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "deployer()"(overrides?: CallOverrides): Promise<[string]>;
+    "deployer()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    getRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getRewardCount(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "getRewardCount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "getRewardCount()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    governor(overrides?: CallOverrides): Promise<[string]>;
+    governor(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "governor()"(overrides?: CallOverrides): Promise<[string]>;
+    "governor()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<[BigNumber]>;
+    interestRateAbsoluteValue(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "interestRateAbsoluteValue()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "interestRateAbsoluteValue()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    interestRateParameters(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        acceptableError: BigNumber;
-        errorInterval: BigNumber;
-        interestRateStep: BigNumber;
-        maxSteps: BigNumber;
-        minRate: BigNumber;
-        maxRate: BigNumber;
-      }
-    >;
+    interestRateParameters(overrides?: CallOverrides): Promise<{
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+      maxRate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+    }>;
 
-    "interestRateParameters()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        acceptableError: BigNumber;
-        errorInterval: BigNumber;
-        interestRateStep: BigNumber;
-        maxSteps: BigNumber;
-        minRate: BigNumber;
-        maxRate: BigNumber;
-      }
-    >;
+    "interestRateParameters()"(overrides?: CallOverrides): Promise<{
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+      maxRate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+    }>;
 
-    minTimeBetweenUpdates(overrides?: CallOverrides): Promise<[BigNumber]>;
+    minTimeBetweenUpdates(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "minTimeBetweenUpdates()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "minTimeBetweenUpdates()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    positiveInterestRate(overrides?: CallOverrides): Promise<[boolean]>;
+    positiveInterestRate(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    "positiveInterestRate()"(overrides?: CallOverrides): Promise<[boolean]>;
+    "positiveInterestRate()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    predictInterestRate(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+    predictInterestRate(overrides?: CallOverrides): Promise<{
+      price: BigNumber;
+      rate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "predictInterestRate()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+    "predictInterestRate()"(overrides?: CallOverrides): Promise<{
+      price: BigNumber;
+      rate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     referencePools(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<{
+      0: string;
+    }>;
 
     "referencePools(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<{
+      0: string;
+    }>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setAcceptableError(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setAcceptableError(uint128)"(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setErrorInterval(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setErrorInterval(uint128)"(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setInterestRateStep(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setInterestRateStep(uint128)"(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMaxRate(
       max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMaxRate(int128)"(
       max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMaxSteps(
       steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMaxSteps(uint64)"(
       steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMinRate(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMinRate(int128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setMinTimeBetweenUpdates(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     setValidRangeForRawPrices(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    stopped(overrides?: CallOverrides): Promise<[boolean]>;
+    stopped(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    "stopped()"(overrides?: CallOverrides): Promise<[boolean]>;
+    "stopped()"(overrides?: CallOverrides): Promise<{
+      0: boolean;
+    }>;
 
-    testContractLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    testContractLock(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "testContractLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "testContractLock()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    testContractLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    testContractLock2(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "testContractLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "testContractLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    testProtocolLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    testProtocolLock(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "testProtocolLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "testProtocolLock()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    testProtocolLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    testProtocolLock2(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "testProtocolLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "testProtocolLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    update(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    update(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "update()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "update()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    validRangeForRawPrices(overrides?: CallOverrides): Promise<[BigNumber]>;
+    validRangeForRawPrices(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "validRangeForRawPrices()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+    validUpdate(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
   };
 
   addReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "addReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  currentRateData(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      rate: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-    }
-  >;
+  currentRateData(overrides?: CallOverrides): Promise<{
+    rate: BigNumber;
+    nextUpdateTime: BigNumber;
+    rewardCount: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
-  "currentRateData()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      rate: BigNumber;
-      nextUpdateTime: BigNumber;
-      rewardCount: BigNumber;
-    }
-  >;
+  "currentRateData()"(overrides?: CallOverrides): Promise<{
+    rate: BigNumber;
+    nextUpdateTime: BigNumber;
+    rewardCount: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+  }>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
 
@@ -647,45 +633,46 @@ export class Rates extends Contract {
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
 
-  init(
-    _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  init(_governor: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "init(address)"(
     _governor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
 
   "interestRateAbsoluteValue()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  interestRateParameters(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      acceptableError: BigNumber;
-      errorInterval: BigNumber;
-      interestRateStep: BigNumber;
-      maxSteps: BigNumber;
-      minRate: BigNumber;
-      maxRate: BigNumber;
-    }
-  >;
+  interestRateParameters(overrides?: CallOverrides): Promise<{
+    acceptableError: BigNumber;
+    errorInterval: BigNumber;
+    interestRateStep: BigNumber;
+    maxSteps: BigNumber;
+    minRate: BigNumber;
+    maxRate: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+  }>;
 
-  "interestRateParameters()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      acceptableError: BigNumber;
-      errorInterval: BigNumber;
-      interestRateStep: BigNumber;
-      maxSteps: BigNumber;
-      minRate: BigNumber;
-      maxRate: BigNumber;
-    }
-  >;
+  "interestRateParameters()"(overrides?: CallOverrides): Promise<{
+    acceptableError: BigNumber;
+    errorInterval: BigNumber;
+    interestRateStep: BigNumber;
+    maxSteps: BigNumber;
+    minRate: BigNumber;
+    maxRate: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+  }>;
 
   minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -695,13 +682,19 @@ export class Rates extends Contract {
 
   "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
 
-  predictInterestRate(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+  predictInterestRate(overrides?: CallOverrides): Promise<{
+    price: BigNumber;
+    rate: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
-  "predictInterestRate()"(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+  "predictInterestRate()"(overrides?: CallOverrides): Promise<{
+    price: BigNumber;
+    rate: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
   referencePools(
     arg0: BigNumberish,
@@ -715,145 +708,121 @@ export class Rates extends Contract {
 
   removeReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "removeReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setAcceptableError(
     error: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setAcceptableError(uint128)"(
     error: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setErrorInterval(
     interval: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setErrorInterval(uint128)"(
     interval: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setInterestRateStep(
     step: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setInterestRateStep(uint128)"(
     step: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMaxRate(
     max: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMaxRate(int128)"(
     max: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMaxSteps(
     steps: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMaxSteps(uint64)"(
     steps: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMinRate(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMinRate(int128)"(
     min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setMinTimeBetweenUpdates(
     time: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setMinTimeBetweenUpdates(uint64)"(
     time: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   setValidRangeForRawPrices(
     range: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "setValidRangeForRawPrices(uint128)"(
     range: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   stopped(overrides?: CallOverrides): Promise<boolean>;
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-  testContractLock(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  testContractLock(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "testContractLock()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "testContractLock()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  testContractLock2(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  testContractLock2(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "testContractLock2()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "testContractLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  testProtocolLock(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  testProtocolLock(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "testProtocolLock()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "testProtocolLock()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  testProtocolLock2(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  testProtocolLock2(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "testProtocolLock2()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "testProtocolLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  update(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  update(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "update()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "update()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -878,25 +847,23 @@ export class Rates extends Contract {
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
 
-    currentRateData(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    >;
+    currentRateData(overrides?: CallOverrides): Promise<{
+      rate: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
-    "currentRateData()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        rate: BigNumber;
-        nextUpdateTime: BigNumber;
-        rewardCount: BigNumber;
-      }
-    >;
+    "currentRateData()"(overrides?: CallOverrides): Promise<{
+      rate: BigNumber;
+      nextUpdateTime: BigNumber;
+      rewardCount: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+    }>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
@@ -923,31 +890,35 @@ export class Rates extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    interestRateParameters(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        acceptableError: BigNumber;
-        errorInterval: BigNumber;
-        interestRateStep: BigNumber;
-        maxSteps: BigNumber;
-        minRate: BigNumber;
-        maxRate: BigNumber;
-      }
-    >;
+    interestRateParameters(overrides?: CallOverrides): Promise<{
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+      maxRate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+    }>;
 
-    "interestRateParameters()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        acceptableError: BigNumber;
-        errorInterval: BigNumber;
-        interestRateStep: BigNumber;
-        maxSteps: BigNumber;
-        minRate: BigNumber;
-        maxRate: BigNumber;
-      }
-    >;
+    "interestRateParameters()"(overrides?: CallOverrides): Promise<{
+      acceptableError: BigNumber;
+      errorInterval: BigNumber;
+      interestRateStep: BigNumber;
+      maxSteps: BigNumber;
+      minRate: BigNumber;
+      maxRate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+    }>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -957,13 +928,19 @@ export class Rates extends Contract {
 
     "positiveInterestRate()"(overrides?: CallOverrides): Promise<boolean>;
 
-    predictInterestRate(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+    predictInterestRate(overrides?: CallOverrides): Promise<{
+      price: BigNumber;
+      rate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "predictInterestRate()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { price: BigNumber; rate: BigNumber }>;
+    "predictInterestRate()"(overrides?: CallOverrides): Promise<{
+      price: BigNumber;
+      rate: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
     referencePools(
       arg0: BigNumberish,
@@ -1094,75 +1071,40 @@ export class Rates extends Contract {
   };
 
   filters: {
-    Initialized(
-      governor: string | null
-    ): TypedEventFilter<[string], { governor: string }>;
+    Initialized(governor: string | null): EventFilter;
 
-    ParameterUpdated128(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated128(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
     ParameterUpdatedAddress(
       paramName: string | null,
       addr: string | null
-    ): TypedEventFilter<[string, string], { paramName: string; addr: string }>;
+    ): EventFilter;
 
-    ParameterUpdatedInt128(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdatedInt128(paramName: string | null, value: null): EventFilter;
 
     RateUpdated(
       interestRate: null,
       price: null,
       rewardCount: null,
       nextUpdateTime: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        interestRate: BigNumber;
-        price: BigNumber;
-        rewardCount: BigNumber;
-        nextUpdateTime: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
-    Stopped(): TypedEventFilter<[], {}>;
+    Stopped(): EventFilter;
   };
 
   estimateGas: {
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     currentRateData(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1180,14 +1122,11 @@ export class Rates extends Contract {
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    init(
-      _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    init(_governor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1224,145 +1163,112 @@ export class Rates extends Contract {
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setAcceptableError(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setAcceptableError(uint128)"(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setErrorInterval(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setErrorInterval(uint128)"(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setInterestRateStep(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setInterestRateStep(uint128)"(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMaxRate(
-      max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setMaxRate(max: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "setMaxRate(int128)"(
       max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMaxSteps(
-      steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setMaxSteps(steps: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "setMaxSteps(uint64)"(
       steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMinRate(
-      min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setMinRate(min: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "setMinRate(int128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setMinTimeBetweenUpdates(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     setValidRangeForRawPrices(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
 
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    testContractLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    testContractLock(overrides?: Overrides): Promise<BigNumber>;
 
-    "testContractLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "testContractLock()"(overrides?: Overrides): Promise<BigNumber>;
 
-    testContractLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    testContractLock2(overrides?: Overrides): Promise<BigNumber>;
 
-    "testContractLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "testContractLock2()"(overrides?: Overrides): Promise<BigNumber>;
 
-    testProtocolLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    testProtocolLock(overrides?: Overrides): Promise<BigNumber>;
 
-    "testProtocolLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "testProtocolLock()"(overrides?: Overrides): Promise<BigNumber>;
 
-    testProtocolLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    testProtocolLock2(overrides?: Overrides): Promise<BigNumber>;
 
-    "testProtocolLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "testProtocolLock2()"(overrides?: Overrides): Promise<BigNumber>;
 
-    update(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    update(overrides?: Overrides): Promise<BigNumber>;
 
-    "update()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "update()"(overrides?: Overrides): Promise<BigNumber>;
 
     validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1379,21 +1285,17 @@ export class Rates extends Contract {
   populateTransaction: {
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     currentRateData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1417,12 +1319,12 @@ export class Rates extends Contract {
 
     init(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "init(address)"(
       _governor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     interestRateAbsoluteValue(
@@ -1477,145 +1379,121 @@ export class Rates extends Contract {
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setAcceptableError(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setAcceptableError(uint128)"(
       error: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setErrorInterval(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setErrorInterval(uint128)"(
       interval: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setInterestRateStep(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setInterestRateStep(uint128)"(
       step: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMaxRate(
       max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMaxRate(int128)"(
       max: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMaxSteps(
       steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMaxSteps(uint64)"(
       steps: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMinRate(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMinRate(int128)"(
       min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setMinTimeBetweenUpdates(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setMinTimeBetweenUpdates(uint64)"(
       time: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     setValidRangeForRawPrices(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setValidRangeForRawPrices(uint128)"(
       range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    testContractLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    testContractLock(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "testContractLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "testContractLock()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    testContractLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    testContractLock2(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "testContractLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "testContractLock2()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    testProtocolLock(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    testProtocolLock(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "testProtocolLock()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "testProtocolLock()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    testProtocolLock2(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    testProtocolLock2(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "testProtocolLock2()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "testProtocolLock2()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    update(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    update(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "update()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "update()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     validRangeForRawPrices(
       overrides?: CallOverrides

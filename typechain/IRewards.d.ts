@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
@@ -106,125 +107,83 @@ export class IRewards extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IRewardsInterface;
 
   functions: {
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   addReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "addReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
   "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   removeReferencePool(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "removeReferencePool(address)"(
     pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
@@ -258,25 +217,14 @@ export class IRewards extends Contract {
     ClaimedInflationRewards(
       owner: string | null,
       nftTokenID: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; nftTokenID: BigNumber }
-    >;
+    ): EventFilter;
 
     CollectedFees(
       owner: string | null,
       nftTokenID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        owner: string;
-        nftTokenID: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     LiquidityPositionCreated(
       owner: string | null,
@@ -285,172 +233,96 @@ export class IRewards extends Contract {
       tickLower: null,
       tickUpper: null,
       liquidity: null
-    ): TypedEventFilter<
-      [string, number, BigNumber, number, number, BigNumber],
-      {
-        owner: string;
-        poolID: number;
-        nftID: BigNumber;
-        tickLower: number;
-        tickUpper: number;
-        liquidity: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     LiquidityPositionDecreased(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionIncreased(
       nftID: BigNumberish | null,
       liquidity: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { nftID: BigNumber; liquidity: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionLiquidated(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
     LiquidityPositionRemoved(
       nftID: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): EventFilter;
 
-    ParameterUpdated(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated128(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated128(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated32(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated32(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdatedAddress(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
+    ParameterUpdatedAddress(paramName: string | null, value: null): EventFilter;
 
-    RewardsAccrued(
-      count: null,
-      periods: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { count: BigNumber; periods: BigNumber }
-    >;
+    RewardsAccrued(count: null, periods: null): EventFilter;
 
     RewardsDistributed(
       account: string | null,
       period: BigNumberish | null,
       tcpRewards: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { account: string; period: BigNumber; tcpRewards: BigNumber }
-    >;
+    ): EventFilter;
 
     RewardsPortionsUpdated(
       protocolPortion: null,
       collateralPortion: null,
       referencePortion: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        protocolPortion: BigNumber;
-        collateralPortion: BigNumber;
-        referencePortion: BigNumber;
-      }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     "borrowRewardsPortion()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     borrowRewardsPortion(
@@ -461,30 +333,22 @@ export class IRewards extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     removeReferencePool(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "removeReferencePool(address)"(
       pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }

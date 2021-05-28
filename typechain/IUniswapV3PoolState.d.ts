@@ -9,14 +9,15 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IUniswapV3PoolStateInterface extends ethers.utils.Interface {
   functions: {
@@ -89,206 +90,204 @@ export class IUniswapV3PoolState extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IUniswapV3PoolStateInterface;
 
   functions: {
-    feeGrowthGlobal0X128(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeGrowthGlobal0X128(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "feeGrowthGlobal0X128()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "feeGrowthGlobal0X128()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    feeGrowthGlobal1X128(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeGrowthGlobal1X128(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "feeGrowthGlobal1X128()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "feeGrowthGlobal1X128()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    liquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
+    liquidity(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "liquidity()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "liquidity()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     observations(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [number, BigNumber, BigNumber, boolean] & {
-        blockTimestamp: number;
-        tickCumulative: BigNumber;
-        secondsPerLiquidityCumulativeX128: BigNumber;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      blockTimestamp: number;
+      tickCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
+      initialized: boolean;
+      0: number;
+      1: BigNumber;
+      2: BigNumber;
+      3: boolean;
+    }>;
 
     "observations(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [number, BigNumber, BigNumber, boolean] & {
-        blockTimestamp: number;
-        tickCumulative: BigNumber;
-        secondsPerLiquidityCumulativeX128: BigNumber;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      blockTimestamp: number;
+      tickCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
+      initialized: boolean;
+      0: number;
+      1: BigNumber;
+      2: BigNumber;
+      3: boolean;
+    }>;
 
     positions(
       key: BytesLike,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        _liquidity: BigNumber;
-        feeGrowthInside0LastX128: BigNumber;
-        feeGrowthInside1LastX128: BigNumber;
-        tokensOwed0: BigNumber;
-        tokensOwed1: BigNumber;
-      }
-    >;
+    ): Promise<{
+      _liquidity: BigNumber;
+      feeGrowthInside0LastX128: BigNumber;
+      feeGrowthInside1LastX128: BigNumber;
+      tokensOwed0: BigNumber;
+      tokensOwed1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
 
     "positions(bytes32)"(
       key: BytesLike,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        _liquidity: BigNumber;
-        feeGrowthInside0LastX128: BigNumber;
-        feeGrowthInside1LastX128: BigNumber;
-        tokensOwed0: BigNumber;
-        tokensOwed1: BigNumber;
-      }
-    >;
+    ): Promise<{
+      _liquidity: BigNumber;
+      feeGrowthInside0LastX128: BigNumber;
+      feeGrowthInside1LastX128: BigNumber;
+      tokensOwed0: BigNumber;
+      tokensOwed1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
 
-    protocolFees(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
-    >;
+    protocolFees(overrides?: CallOverrides): Promise<{
+      token0: BigNumber;
+      token1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "protocolFees()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
-    >;
+    "protocolFees()"(overrides?: CallOverrides): Promise<{
+      token0: BigNumber;
+      token1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    slot0(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, boolean] & {
-        sqrtPriceX96: BigNumber;
-        tick: number;
-        observationIndex: number;
-        observationCardinality: number;
-        observationCardinalityNext: number;
-        feeProtocol: number;
-        unlocked: boolean;
-      }
-    >;
+    slot0(overrides?: CallOverrides): Promise<{
+      sqrtPriceX96: BigNumber;
+      tick: number;
+      observationIndex: number;
+      observationCardinality: number;
+      observationCardinalityNext: number;
+      feeProtocol: number;
+      unlocked: boolean;
+      0: BigNumber;
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: boolean;
+    }>;
 
-    "slot0()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, boolean] & {
-        sqrtPriceX96: BigNumber;
-        tick: number;
-        observationIndex: number;
-        observationCardinality: number;
-        observationCardinalityNext: number;
-        feeProtocol: number;
-        unlocked: boolean;
-      }
-    >;
+    "slot0()"(overrides?: CallOverrides): Promise<{
+      sqrtPriceX96: BigNumber;
+      tick: number;
+      observationIndex: number;
+      observationCardinality: number;
+      observationCardinalityNext: number;
+      feeProtocol: number;
+      unlocked: boolean;
+      0: BigNumber;
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: boolean;
+    }>;
 
     tickBitmap(
       wordPosition: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "tickBitmap(int16)"(
       wordPosition: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     ticks(
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean
-      ] & {
-        liquidityGross: BigNumber;
-        liquidityNet: BigNumber;
-        feeGrowthOutside0X128: BigNumber;
-        feeGrowthOutside1X128: BigNumber;
-        tickCumulativeOutside: BigNumber;
-        secondsPerLiquidityOutsideX128: BigNumber;
-        secondsOutside: number;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      liquidityGross: BigNumber;
+      liquidityNet: BigNumber;
+      feeGrowthOutside0X128: BigNumber;
+      feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: boolean;
+    }>;
 
     "ticks(int24)"(
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean
-      ] & {
-        liquidityGross: BigNumber;
-        liquidityNet: BigNumber;
-        feeGrowthOutside0X128: BigNumber;
-        feeGrowthOutside1X128: BigNumber;
-        tickCumulativeOutside: BigNumber;
-        secondsPerLiquidityOutsideX128: BigNumber;
-        secondsOutside: number;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      liquidityGross: BigNumber;
+      liquidityNet: BigNumber;
+      feeGrowthOutside0X128: BigNumber;
+      feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: boolean;
+    }>;
   };
 
   feeGrowthGlobal0X128(overrides?: CallOverrides): Promise<BigNumber>;
@@ -306,88 +305,110 @@ export class IUniswapV3PoolState extends Contract {
   observations(
     index: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [number, BigNumber, BigNumber, boolean] & {
-      blockTimestamp: number;
-      tickCumulative: BigNumber;
-      secondsPerLiquidityCumulativeX128: BigNumber;
-      initialized: boolean;
-    }
-  >;
+  ): Promise<{
+    blockTimestamp: number;
+    tickCumulative: BigNumber;
+    secondsPerLiquidityCumulativeX128: BigNumber;
+    initialized: boolean;
+    0: number;
+    1: BigNumber;
+    2: BigNumber;
+    3: boolean;
+  }>;
 
   "observations(uint256)"(
     index: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [number, BigNumber, BigNumber, boolean] & {
-      blockTimestamp: number;
-      tickCumulative: BigNumber;
-      secondsPerLiquidityCumulativeX128: BigNumber;
-      initialized: boolean;
-    }
-  >;
+  ): Promise<{
+    blockTimestamp: number;
+    tickCumulative: BigNumber;
+    secondsPerLiquidityCumulativeX128: BigNumber;
+    initialized: boolean;
+    0: number;
+    1: BigNumber;
+    2: BigNumber;
+    3: boolean;
+  }>;
 
   positions(
     key: BytesLike,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      _liquidity: BigNumber;
-      feeGrowthInside0LastX128: BigNumber;
-      feeGrowthInside1LastX128: BigNumber;
-      tokensOwed0: BigNumber;
-      tokensOwed1: BigNumber;
-    }
-  >;
+  ): Promise<{
+    _liquidity: BigNumber;
+    feeGrowthInside0LastX128: BigNumber;
+    feeGrowthInside1LastX128: BigNumber;
+    tokensOwed0: BigNumber;
+    tokensOwed1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
 
   "positions(bytes32)"(
     key: BytesLike,
     overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      _liquidity: BigNumber;
-      feeGrowthInside0LastX128: BigNumber;
-      feeGrowthInside1LastX128: BigNumber;
-      tokensOwed0: BigNumber;
-      tokensOwed1: BigNumber;
-    }
-  >;
+  ): Promise<{
+    _liquidity: BigNumber;
+    feeGrowthInside0LastX128: BigNumber;
+    feeGrowthInside1LastX128: BigNumber;
+    tokensOwed0: BigNumber;
+    tokensOwed1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+  }>;
 
-  protocolFees(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }>;
+  protocolFees(overrides?: CallOverrides): Promise<{
+    token0: BigNumber;
+    token1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
-  "protocolFees()"(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }>;
+  "protocolFees()"(overrides?: CallOverrides): Promise<{
+    token0: BigNumber;
+    token1: BigNumber;
+    0: BigNumber;
+    1: BigNumber;
+  }>;
 
-  slot0(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, number, number, number, number, boolean] & {
-      sqrtPriceX96: BigNumber;
-      tick: number;
-      observationIndex: number;
-      observationCardinality: number;
-      observationCardinalityNext: number;
-      feeProtocol: number;
-      unlocked: boolean;
-    }
-  >;
+  slot0(overrides?: CallOverrides): Promise<{
+    sqrtPriceX96: BigNumber;
+    tick: number;
+    observationIndex: number;
+    observationCardinality: number;
+    observationCardinalityNext: number;
+    feeProtocol: number;
+    unlocked: boolean;
+    0: BigNumber;
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    6: boolean;
+  }>;
 
-  "slot0()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, number, number, number, number, boolean] & {
-      sqrtPriceX96: BigNumber;
-      tick: number;
-      observationIndex: number;
-      observationCardinality: number;
-      observationCardinalityNext: number;
-      feeProtocol: number;
-      unlocked: boolean;
-    }
-  >;
+  "slot0()"(overrides?: CallOverrides): Promise<{
+    sqrtPriceX96: BigNumber;
+    tick: number;
+    observationIndex: number;
+    observationCardinality: number;
+    observationCardinalityNext: number;
+    feeProtocol: number;
+    unlocked: boolean;
+    0: BigNumber;
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    6: boolean;
+  }>;
 
   tickBitmap(
     wordPosition: BigNumberish,
@@ -402,52 +423,46 @@ export class IUniswapV3PoolState extends Contract {
   ticks(
     tick: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      number,
-      boolean
-    ] & {
-      liquidityGross: BigNumber;
-      liquidityNet: BigNumber;
-      feeGrowthOutside0X128: BigNumber;
-      feeGrowthOutside1X128: BigNumber;
-      tickCumulativeOutside: BigNumber;
-      secondsPerLiquidityOutsideX128: BigNumber;
-      secondsOutside: number;
-      initialized: boolean;
-    }
-  >;
+  ): Promise<{
+    liquidityGross: BigNumber;
+    liquidityNet: BigNumber;
+    feeGrowthOutside0X128: BigNumber;
+    feeGrowthOutside1X128: BigNumber;
+    tickCumulativeOutside: BigNumber;
+    secondsPerLiquidityOutsideX128: BigNumber;
+    secondsOutside: number;
+    initialized: boolean;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+    6: number;
+    7: boolean;
+  }>;
 
   "ticks(int24)"(
     tick: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      number,
-      boolean
-    ] & {
-      liquidityGross: BigNumber;
-      liquidityNet: BigNumber;
-      feeGrowthOutside0X128: BigNumber;
-      feeGrowthOutside1X128: BigNumber;
-      tickCumulativeOutside: BigNumber;
-      secondsPerLiquidityOutsideX128: BigNumber;
-      secondsOutside: number;
-      initialized: boolean;
-    }
-  >;
+  ): Promise<{
+    liquidityGross: BigNumber;
+    liquidityNet: BigNumber;
+    feeGrowthOutside0X128: BigNumber;
+    feeGrowthOutside1X128: BigNumber;
+    tickCumulativeOutside: BigNumber;
+    secondsPerLiquidityOutsideX128: BigNumber;
+    secondsOutside: number;
+    initialized: boolean;
+    0: BigNumber;
+    1: BigNumber;
+    2: BigNumber;
+    3: BigNumber;
+    4: BigNumber;
+    5: BigNumber;
+    6: number;
+    7: boolean;
+  }>;
 
   callStatic: {
     feeGrowthGlobal0X128(overrides?: CallOverrides): Promise<BigNumber>;
@@ -465,92 +480,110 @@ export class IUniswapV3PoolState extends Contract {
     observations(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [number, BigNumber, BigNumber, boolean] & {
-        blockTimestamp: number;
-        tickCumulative: BigNumber;
-        secondsPerLiquidityCumulativeX128: BigNumber;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      blockTimestamp: number;
+      tickCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
+      initialized: boolean;
+      0: number;
+      1: BigNumber;
+      2: BigNumber;
+      3: boolean;
+    }>;
 
     "observations(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [number, BigNumber, BigNumber, boolean] & {
-        blockTimestamp: number;
-        tickCumulative: BigNumber;
-        secondsPerLiquidityCumulativeX128: BigNumber;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      blockTimestamp: number;
+      tickCumulative: BigNumber;
+      secondsPerLiquidityCumulativeX128: BigNumber;
+      initialized: boolean;
+      0: number;
+      1: BigNumber;
+      2: BigNumber;
+      3: boolean;
+    }>;
 
     positions(
       key: BytesLike,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        _liquidity: BigNumber;
-        feeGrowthInside0LastX128: BigNumber;
-        feeGrowthInside1LastX128: BigNumber;
-        tokensOwed0: BigNumber;
-        tokensOwed1: BigNumber;
-      }
-    >;
+    ): Promise<{
+      _liquidity: BigNumber;
+      feeGrowthInside0LastX128: BigNumber;
+      feeGrowthInside1LastX128: BigNumber;
+      tokensOwed0: BigNumber;
+      tokensOwed1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
 
     "positions(bytes32)"(
       key: BytesLike,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        _liquidity: BigNumber;
-        feeGrowthInside0LastX128: BigNumber;
-        feeGrowthInside1LastX128: BigNumber;
-        tokensOwed0: BigNumber;
-        tokensOwed1: BigNumber;
-      }
-    >;
+    ): Promise<{
+      _liquidity: BigNumber;
+      feeGrowthInside0LastX128: BigNumber;
+      feeGrowthInside1LastX128: BigNumber;
+      tokensOwed0: BigNumber;
+      tokensOwed1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+    }>;
 
-    protocolFees(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
-    >;
+    protocolFees(overrides?: CallOverrides): Promise<{
+      token0: BigNumber;
+      token1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    "protocolFees()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { token0: BigNumber; token1: BigNumber }
-    >;
+    "protocolFees()"(overrides?: CallOverrides): Promise<{
+      token0: BigNumber;
+      token1: BigNumber;
+      0: BigNumber;
+      1: BigNumber;
+    }>;
 
-    slot0(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, boolean] & {
-        sqrtPriceX96: BigNumber;
-        tick: number;
-        observationIndex: number;
-        observationCardinality: number;
-        observationCardinalityNext: number;
-        feeProtocol: number;
-        unlocked: boolean;
-      }
-    >;
+    slot0(overrides?: CallOverrides): Promise<{
+      sqrtPriceX96: BigNumber;
+      tick: number;
+      observationIndex: number;
+      observationCardinality: number;
+      observationCardinalityNext: number;
+      feeProtocol: number;
+      unlocked: boolean;
+      0: BigNumber;
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: boolean;
+    }>;
 
-    "slot0()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, boolean] & {
-        sqrtPriceX96: BigNumber;
-        tick: number;
-        observationIndex: number;
-        observationCardinality: number;
-        observationCardinalityNext: number;
-        feeProtocol: number;
-        unlocked: boolean;
-      }
-    >;
+    "slot0()"(overrides?: CallOverrides): Promise<{
+      sqrtPriceX96: BigNumber;
+      tick: number;
+      observationIndex: number;
+      observationCardinality: number;
+      observationCardinalityNext: number;
+      feeProtocol: number;
+      unlocked: boolean;
+      0: BigNumber;
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: boolean;
+    }>;
 
     tickBitmap(
       wordPosition: BigNumberish,
@@ -565,52 +598,46 @@ export class IUniswapV3PoolState extends Contract {
     ticks(
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean
-      ] & {
-        liquidityGross: BigNumber;
-        liquidityNet: BigNumber;
-        feeGrowthOutside0X128: BigNumber;
-        feeGrowthOutside1X128: BigNumber;
-        tickCumulativeOutside: BigNumber;
-        secondsPerLiquidityOutsideX128: BigNumber;
-        secondsOutside: number;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      liquidityGross: BigNumber;
+      liquidityNet: BigNumber;
+      feeGrowthOutside0X128: BigNumber;
+      feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: boolean;
+    }>;
 
     "ticks(int24)"(
       tick: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        boolean
-      ] & {
-        liquidityGross: BigNumber;
-        liquidityNet: BigNumber;
-        feeGrowthOutside0X128: BigNumber;
-        feeGrowthOutside1X128: BigNumber;
-        tickCumulativeOutside: BigNumber;
-        secondsPerLiquidityOutsideX128: BigNumber;
-        secondsOutside: number;
-        initialized: boolean;
-      }
-    >;
+    ): Promise<{
+      liquidityGross: BigNumber;
+      liquidityNet: BigNumber;
+      feeGrowthOutside0X128: BigNumber;
+      feeGrowthOutside1X128: BigNumber;
+      tickCumulativeOutside: BigNumber;
+      secondsPerLiquidityOutsideX128: BigNumber;
+      secondsOutside: number;
+      initialized: boolean;
+      0: BigNumber;
+      1: BigNumber;
+      2: BigNumber;
+      3: BigNumber;
+      4: BigNumber;
+      5: BigNumber;
+      6: number;
+      7: boolean;
+    }>;
   };
 
   filters: {};

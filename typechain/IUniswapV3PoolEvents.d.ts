@@ -9,13 +9,11 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
-  ContractTransaction,
 } from "ethers";
+import { Contract, ContractTransaction } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IUniswapV3PoolEventsInterface extends ethers.utils.Interface {
   functions: {};
@@ -50,41 +48,11 @@ export class IUniswapV3PoolEvents extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IUniswapV3PoolEventsInterface;
 
@@ -100,17 +68,7 @@ export class IUniswapV3PoolEvents extends Contract {
       amount: null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, number, number, BigNumber, BigNumber, BigNumber],
-      {
-        owner: string;
-        tickLower: number;
-        tickUpper: number;
-        amount: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     Collect(
       owner: string | null,
@@ -119,32 +77,14 @@ export class IUniswapV3PoolEvents extends Contract {
       tickUpper: BigNumberish | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, string, number, number, BigNumber, BigNumber],
-      {
-        owner: string;
-        recipient: string;
-        tickLower: number;
-        tickUpper: number;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     CollectProtocol(
       sender: string | null,
       recipient: string | null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber],
-      {
-        sender: string;
-        recipient: string;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     Flash(
       sender: string | null,
@@ -153,36 +93,14 @@ export class IUniswapV3PoolEvents extends Contract {
       amount1: null,
       paid0: null,
       paid1: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber, BigNumber, BigNumber],
-      {
-        sender: string;
-        recipient: string;
-        amount0: BigNumber;
-        amount1: BigNumber;
-        paid0: BigNumber;
-        paid1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     IncreaseObservationCardinalityNext(
       observationCardinalityNextOld: null,
       observationCardinalityNextNew: null
-    ): TypedEventFilter<
-      [number, number],
-      {
-        observationCardinalityNextOld: number;
-        observationCardinalityNextNew: number;
-      }
-    >;
+    ): EventFilter;
 
-    Initialize(
-      sqrtPriceX96: null,
-      tick: null
-    ): TypedEventFilter<
-      [BigNumber, number],
-      { sqrtPriceX96: BigNumber; tick: number }
-    >;
+    Initialize(sqrtPriceX96: null, tick: null): EventFilter;
 
     Mint(
       sender: null,
@@ -192,33 +110,14 @@ export class IUniswapV3PoolEvents extends Contract {
       amount: null,
       amount0: null,
       amount1: null
-    ): TypedEventFilter<
-      [string, string, number, number, BigNumber, BigNumber, BigNumber],
-      {
-        sender: string;
-        owner: string;
-        tickLower: number;
-        tickUpper: number;
-        amount: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
+    ): EventFilter;
 
     SetFeeProtocol(
       feeProtocol0Old: null,
       feeProtocol1Old: null,
       feeProtocol0New: null,
       feeProtocol1New: null
-    ): TypedEventFilter<
-      [number, number, number, number],
-      {
-        feeProtocol0Old: number;
-        feeProtocol1Old: number;
-        feeProtocol0New: number;
-        feeProtocol1New: number;
-      }
-    >;
+    ): EventFilter;
 
     Swap(
       sender: string | null,
@@ -228,18 +127,7 @@ export class IUniswapV3PoolEvents extends Contract {
       sqrtPriceX96: null,
       liquidity: null,
       tick: null
-    ): TypedEventFilter<
-      [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number],
-      {
-        sender: string;
-        recipient: string;
-        amount0: BigNumber;
-        amount1: BigNumber;
-        sqrtPriceX96: BigNumber;
-        liquidity: BigNumber;
-        tick: number;
-      }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {};

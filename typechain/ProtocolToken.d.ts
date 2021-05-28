@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface ProtocolTokenInterface extends ethers.utils.Interface {
   functions: {
@@ -214,152 +215,155 @@ export class ProtocolToken extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: ProtocolTokenInterface;
 
   functions: {
-    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+    DELEGATION_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "DELEGATION_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
+    "DELEGATION_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
+    "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     addGovernor(
       newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "addGovernor(address)"(
       newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     allowance(
       account: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "allowance(address,address)"(
       account: string,
       spender: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     approve(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "approve(address,uint256)"(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    balanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "balanceOf(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     burn(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     checkpoints(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+    ): Promise<{
+      fromBlock: number;
+      votes: BigNumber;
+      0: number;
+      1: BigNumber;
+    }>;
 
     "checkpoints(address,uint32)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+    ): Promise<{
+      fromBlock: number;
+      votes: BigNumber;
+      0: number;
+      1: BigNumber;
+    }>;
 
-    decimals(overrides?: CallOverrides): Promise<[number]>;
+    decimals(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
+    "decimals()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "decreaseAllowance(address,uint256)"(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     delegate(
       delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "delegate(address)"(
       delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     delegateBySig(
@@ -369,7 +373,7 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -379,119 +383,167 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    delegates(arg0: string, overrides?: CallOverrides): Promise<[string]>;
+    delegates(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
 
     "delegates(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<{
+      0: string;
+    }>;
 
     getCurrentVotes(
       account: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getCurrentVotes(address)"(
       account: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     getPriorVotes(
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "getPriorVotes(address,uint256)"(
       account: string,
       blockNumber: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
-    governor(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
+    governor(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
 
     "governor(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<{
+      0: boolean;
+    }>;
 
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "increaseAllowance(address,uint256)"(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     mintTo(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "mintTo(address,uint256)"(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    name(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "name()"(overrides?: CallOverrides): Promise<[string]>;
+    "name()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    nonces(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    nonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "nonces(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
-    numCheckpoints(arg0: string, overrides?: CallOverrides): Promise<[number]>;
+    numCheckpoints(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: number;
+    }>;
 
     "numCheckpoints(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
-    symbol(overrides?: CallOverrides): Promise<[string]>;
+    symbol(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "symbol()"(overrides?: CallOverrides): Promise<[string]>;
+    "symbol()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    totalSupply(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     transfer(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transfer(address,uint256)"(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     transferFrom(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transferFrom(address,address,uint256)"(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
 
@@ -505,12 +557,12 @@ export class ProtocolToken extends Contract {
 
   addGovernor(
     newGovernor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "addGovernor(address)"(
     newGovernor: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   allowance(
@@ -528,13 +580,13 @@ export class ProtocolToken extends Contract {
   approve(
     spender: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "approve(address,uint256)"(
     spender: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -546,37 +598,47 @@ export class ProtocolToken extends Contract {
 
   burn(
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "burn(uint256)"(
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   burnFrom(
     account: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "burnFrom(address,uint256)"(
     account: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   checkpoints(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+  ): Promise<{
+    fromBlock: number;
+    votes: BigNumber;
+    0: number;
+    1: BigNumber;
+  }>;
 
   "checkpoints(address,uint32)"(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+  ): Promise<{
+    fromBlock: number;
+    votes: BigNumber;
+    0: number;
+    1: BigNumber;
+  }>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -585,23 +647,23 @@ export class ProtocolToken extends Contract {
   decreaseAllowance(
     spender: string,
     subtractedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "decreaseAllowance(address,uint256)"(
     spender: string,
     subtractedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   delegate(
     delegatee: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "delegate(address)"(
     delegatee: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   delegateBySig(
@@ -611,7 +673,7 @@ export class ProtocolToken extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -621,7 +683,7 @@ export class ProtocolToken extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   delegates(arg0: string, overrides?: CallOverrides): Promise<string>;
@@ -663,25 +725,25 @@ export class ProtocolToken extends Contract {
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "increaseAllowance(address,uint256)"(
     spender: string,
     addedValue: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   mintTo(
     dest: string,
     count: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "mintTo(address,uint256)"(
     dest: string,
     count: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -713,27 +775,27 @@ export class ProtocolToken extends Contract {
   transfer(
     dst: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transfer(address,uint256)"(
     dst: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   transferFrom(
     src: string,
     dst: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transferFrom(address,address,uint256)"(
     src: string,
     dst: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -806,13 +868,23 @@ export class ProtocolToken extends Contract {
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+    ): Promise<{
+      fromBlock: number;
+      votes: BigNumber;
+      0: number;
+      1: BigNumber;
+    }>;
 
     "checkpoints(address,uint32)"(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number, BigNumber] & { fromBlock: number; votes: BigNumber }>;
+    ): Promise<{
+      fromBlock: number;
+      votes: BigNumber;
+      0: number;
+      1: BigNumber;
+    }>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -975,41 +1047,23 @@ export class ProtocolToken extends Contract {
       owner: string | null,
       spender: string | null,
       amount: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { owner: string; spender: string; amount: BigNumber }
-    >;
+    ): EventFilter;
 
     DelegateChanged(
       delegator: string | null,
       fromDelegate: string | null,
       toDelegate: string | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { delegator: string; fromDelegate: string; toDelegate: string }
-    >;
+    ): EventFilter;
 
     DelegateVotesChanged(
       delegate: string | null,
       previousBalance: null,
       newBalance: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { delegate: string; previousBalance: BigNumber; newBalance: BigNumber }
-    >;
+    ): EventFilter;
 
-    GovernorAdded(
-      newGovernor: string | null
-    ): TypedEventFilter<[string], { newGovernor: string }>;
+    GovernorAdded(newGovernor: string | null): EventFilter;
 
-    Transfer(
-      from: string | null,
-      to: string | null,
-      amount: null
-    ): TypedEventFilter<
-      [string, string, BigNumber],
-      { from: string; to: string; amount: BigNumber }
-    >;
+    Transfer(from: string | null, to: string | null, amount: null): EventFilter;
   };
 
   estimateGas: {
@@ -1021,14 +1075,11 @@ export class ProtocolToken extends Contract {
 
     "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addGovernor(
-      newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    addGovernor(newGovernor: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addGovernor(address)"(
       newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     allowance(
@@ -1046,13 +1097,13 @@ export class ProtocolToken extends Contract {
     approve(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "approve(address,uint256)"(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1062,26 +1113,23 @@ export class ProtocolToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    burn(amount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     checkpoints(
@@ -1103,23 +1151,20 @@ export class ProtocolToken extends Contract {
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "decreaseAllowance(address,uint256)"(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    delegate(
-      delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    delegate(delegatee: string, overrides?: Overrides): Promise<BigNumber>;
 
     "delegate(address)"(
       delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     delegateBySig(
@@ -1129,7 +1174,7 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1139,7 +1184,7 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     delegates(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1181,25 +1226,25 @@ export class ProtocolToken extends Contract {
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "increaseAllowance(address,uint256)"(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     mintTo(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "mintTo(address,uint256)"(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1231,27 +1276,27 @@ export class ProtocolToken extends Contract {
     transfer(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transfer(address,uint256)"(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     transferFrom(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transferFrom(address,address,uint256)"(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
@@ -1272,12 +1317,12 @@ export class ProtocolToken extends Contract {
 
     addGovernor(
       newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "addGovernor(address)"(
       newGovernor: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     allowance(
@@ -1295,13 +1340,13 @@ export class ProtocolToken extends Contract {
     approve(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "approve(address,uint256)"(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1316,24 +1361,24 @@ export class ProtocolToken extends Contract {
 
     burn(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     checkpoints(
@@ -1355,23 +1400,23 @@ export class ProtocolToken extends Contract {
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "decreaseAllowance(address,uint256)"(
       spender: string,
       subtractedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     delegate(
       delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "delegate(address)"(
       delegatee: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     delegateBySig(
@@ -1381,7 +1426,7 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "delegateBySig(address,uint256,uint256,uint8,bytes32,bytes32)"(
@@ -1391,7 +1436,7 @@ export class ProtocolToken extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     delegates(
@@ -1439,25 +1484,25 @@ export class ProtocolToken extends Contract {
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "increaseAllowance(address,uint256)"(
       spender: string,
       addedValue: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     mintTo(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "mintTo(address,uint256)"(
       dest: string,
       count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1495,27 +1540,27 @@ export class ProtocolToken extends Contract {
     transfer(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transfer(address,uint256)"(
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transferFrom(address,address,uint256)"(
       src: string,
       dst: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

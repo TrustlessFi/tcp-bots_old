@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IAuctionsInterface extends ethers.utils.Interface {
   functions: {
@@ -72,77 +73,35 @@ export class IAuctions extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: IAuctionsInterface;
 
   functions: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    latestAuctionCompletionTime(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    latestAuctionCompletionTime(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "latestAuctionCompletionTime()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "latestAuctionCompletionTime()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "completeSetup()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -150,13 +109,9 @@ export class IAuctions extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  stop(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  stop(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "stop()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
     completeSetup(overrides?: CallOverrides): Promise<void>;
@@ -179,79 +134,45 @@ export class IAuctions extends Contract {
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
-    ): TypedEventFilter<
-      [BigNumber, string, BigNumber],
-      { auctionID: BigNumber; bidder: string; bid: BigNumber }
-    >;
+    ): EventFilter;
 
     DeficitAuctionSettled(
       auctionID: BigNumberish | null,
       winner: string | null
-    ): TypedEventFilter<
-      [BigNumber, string],
-      { auctionID: BigNumber; winner: string }
-    >;
+    ): EventFilter;
 
     DeficitAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { auctionID: BigNumber; count: BigNumber; maxEndTime: BigNumber }
-    >;
+    ): EventFilter;
 
-    ParameterUpdated(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated(paramName: string | null, value: null): EventFilter;
 
-    ParameterUpdated64(
-      paramName: string | null,
-      value: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { paramName: string; value: BigNumber }
-    >;
+    ParameterUpdated64(paramName: string | null, value: null): EventFilter;
 
     SurplusAuctionBid(
       auctionID: BigNumberish | null,
       bidder: string | null,
       bid: null
-    ): TypedEventFilter<
-      [BigNumber, string, BigNumber],
-      { auctionID: BigNumber; bidder: string; bid: BigNumber }
-    >;
+    ): EventFilter;
 
     SurplusAuctionSettled(
       auctionID: BigNumberish | null,
       winner: string | null
-    ): TypedEventFilter<
-      [BigNumber, string],
-      { auctionID: BigNumber; winner: string }
-    >;
+    ): EventFilter;
 
     SurplusAuctionStarted(
       auctionID: BigNumberish | null,
       count: BigNumberish | null,
       maxEndTime: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { auctionID: BigNumber; count: BigNumber; maxEndTime: BigNumber }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
 
     latestAuctionCompletionTime(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -259,23 +180,15 @@ export class IAuctions extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    stop(overrides?: Overrides): Promise<BigNumber>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "stop()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "completeSetup()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     latestAuctionCompletionTime(
       overrides?: CallOverrides
@@ -285,12 +198,8 @@ export class IAuctions extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    stop(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    stop(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "stop()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "stop()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }

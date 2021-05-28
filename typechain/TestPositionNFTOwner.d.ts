@@ -9,17 +9,18 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface TestPositionNFTOwnerInterface extends ethers.utils.Interface {
+interface TestPositionNftOwnerInterface extends ethers.utils.Interface {
   functions: {
     "isValidSignature(bytes32,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -43,74 +44,54 @@ interface TestPositionNFTOwnerInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class TestPositionNFTOwner extends Contract {
+export class TestPositionNftOwner extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
-
-  interface: TestPositionNFTOwnerInterface;
+  interface: TestPositionNftOwnerInterface;
 
   functions: {
     isValidSignature(
       hash: BytesLike,
       signature: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[string] & { magicValue: string }>;
+    ): Promise<{
+      magicValue: string;
+      0: string;
+    }>;
 
     "isValidSignature(bytes32,bytes)"(
       hash: BytesLike,
       signature: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[string] & { magicValue: string }>;
+    ): Promise<{
+      magicValue: string;
+      0: string;
+    }>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
+    "owner()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     setOwner(
       _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "setOwner(address)"(
       _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
 
@@ -130,14 +111,11 @@ export class TestPositionNFTOwner extends Contract {
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
 
-  setOwner(
-    _owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  setOwner(_owner: string, overrides?: Overrides): Promise<ContractTransaction>;
 
   "setOwner(address)"(
     _owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -184,14 +162,11 @@ export class TestPositionNFTOwner extends Contract {
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    setOwner(
-      _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    setOwner(_owner: string, overrides?: Overrides): Promise<BigNumber>;
 
     "setOwner(address)"(
       _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
   };
 
@@ -214,12 +189,12 @@ export class TestPositionNFTOwner extends Contract {
 
     setOwner(
       _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "setOwner(address)"(
       _owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
 }

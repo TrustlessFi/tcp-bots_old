@@ -9,15 +9,16 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
+} from "ethers";
+import {
   Contract,
   ContractTransaction,
   Overrides,
   CallOverrides,
-} from "ethers";
+} from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface GovernorAlphaInterface extends ethers.utils.Interface {
   functions: {
@@ -234,95 +235,71 @@ export class GovernorAlpha extends Contract {
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
-  off<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  on<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  once<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
-  ): this;
-  removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
-  ): this;
-
-  listeners(eventName?: string): Array<Listener>;
-  off(eventName: string, listener: Listener): this;
-  on(eventName: string, listener: Listener): this;
-  once(eventName: string, listener: Listener): this;
-  removeListener(eventName: string, listener: Listener): this;
-  removeAllListeners(eventName?: string): this;
-
-  queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
-    event: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
+  on(event: EventFilter | string, listener: Listener): this;
+  once(event: EventFilter | string, listener: Listener): this;
+  addListener(eventName: EventFilter | string, listener: Listener): this;
+  removeAllListeners(eventName: EventFilter | string): this;
+  removeListener(eventName: any, listener: Listener): this;
 
   interface: GovernorAlphaInterface;
 
   functions: {
-    BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+    BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "BALLOT_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
+    "BALLOT_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<[string]>;
+    DOMAIN_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<[string]>;
+    "DOMAIN_TYPEHASH()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    PROPOSAL_THRESHOLD_PERCENTAGE(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    PROPOSAL_THRESHOLD_PERCENTAGE(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "PROPOSAL_THRESHOLD_PERCENTAGE()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "PROPOSAL_THRESHOLD_PERCENTAGE()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    QUORUM_VOTES_PERCENTAGE(overrides?: CallOverrides): Promise<[BigNumber]>;
+    QUORUM_VOTES_PERCENTAGE(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "QUORUM_VOTES_PERCENTAGE()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    "QUORUM_VOTES_PERCENTAGE()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    __abdicate(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    __abdicate(overrides?: Overrides): Promise<ContractTransaction>;
 
-    "__abdicate()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    "__abdicate()"(overrides?: Overrides): Promise<ContractTransaction>;
 
     cancel(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "cancel(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     castVote(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "castVote(uint256,bool)"(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     castVoteBySig(
@@ -331,7 +308,7 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "castVoteBySig(uint256,bool,uint8,bytes32,bytes32)"(
@@ -340,339 +317,363 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     execute(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "execute(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     getActions(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string[], string[], string[]] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-      }
-    >;
+    ): Promise<{
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      0: string[];
+      1: string[];
+      2: string[];
+    }>;
 
     "getActions(uint256)"(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string[], string[], string[]] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-      }
-    >;
+    ): Promise<{
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      0: string[];
+      1: string[];
+      2: string[];
+    }>;
 
     getAllProposals(
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[],
-        number[],
-        ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[]
-      ] & {
-        _proposals: ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[];
-        _proposalStates: number[];
-        _receipts: ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[];
-      }
-    >;
+    ): Promise<{
+      _proposals: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      _proposalStates: number[];
+      _receipts: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+      0: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      1: number[];
+      2: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+    }>;
 
     "getAllProposals(address)"(
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[],
-        number[],
-        ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[]
-      ] & {
-        _proposals: ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[];
-        _proposalStates: number[];
-        _receipts: ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[];
-      }
-    >;
+    ): Promise<{
+      _proposals: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      _proposalStates: number[];
+      _receipts: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+      0: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      1: number[];
+      2: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+    }>;
 
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        }
-      ]
-    >;
+    ): Promise<{
+      0: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      };
+    }>;
 
     "getReceipt(uint48,address)"(
       proposalId: BigNumberish,
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        [boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        }
-      ]
-    >;
+    ): Promise<{
+      0: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      };
+    }>;
 
-    guardian(overrides?: CallOverrides): Promise<[string]>;
+    guardian(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "guardian()"(overrides?: CallOverrides): Promise<[string]>;
+    "guardian()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     latestProposalIds(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "latestProposalIds(address)"(
       arg0: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+    name(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "name()"(overrides?: CallOverrides): Promise<[string]>;
+    "name()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    proposalCount(overrides?: CallOverrides): Promise<[number]>;
+    proposalCount(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "proposalCount()"(overrides?: CallOverrides): Promise<[number]>;
+    "proposalCount()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    proposalMaxOperations(overrides?: CallOverrides): Promise<[BigNumber]>;
+    proposalMaxOperations(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "proposalMaxOperations()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "proposalMaxOperations()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     proposalThreshold(
       availableVotingTokens: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     "proposalThreshold(uint256)"(
       availableVotingTokens: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     proposals(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      }
-    >;
+    ): Promise<{
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string;
+      1: string;
+      2: number;
+      3: number;
+      4: BigNumber;
+      5: number;
+      6: number;
+      7: boolean;
+      8: boolean;
+      9: BigNumber;
+      10: BigNumber;
+    }>;
 
     "proposals(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      }
-    >;
+    ): Promise<{
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string;
+      1: string;
+      2: number;
+      3: number;
+      4: BigNumber;
+      5: number;
+      6: number;
+      7: boolean;
+      8: boolean;
+      9: BigNumber;
+      10: BigNumber;
+    }>;
 
     propose(
       targets: string[],
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "propose(address[],string[],bytes[],string)"(
@@ -680,48 +681,72 @@ export class GovernorAlpha extends Contract {
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     queue(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "queue(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     state(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
     "state(uint256)"(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[number]>;
+    ): Promise<{
+      0: number;
+    }>;
 
-    timelock(overrides?: CallOverrides): Promise<[string]>;
+    timelock(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "timelock()"(overrides?: CallOverrides): Promise<[string]>;
+    "timelock()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    votingDelay(overrides?: CallOverrides): Promise<[BigNumber]>;
+    votingDelay(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "votingDelay()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "votingDelay()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    votingPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+    votingPeriod(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    "votingPeriod()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+    "votingPeriod()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
-    votingPeriodBlocks(overrides?: CallOverrides): Promise<[number]>;
+    votingPeriodBlocks(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    "votingPeriodBlocks()"(overrides?: CallOverrides): Promise<[number]>;
+    "votingPeriodBlocks()"(overrides?: CallOverrides): Promise<{
+      0: number;
+    }>;
 
-    votingToken(overrides?: CallOverrides): Promise<[string]>;
+    votingToken(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
-    "votingToken()"(overrides?: CallOverrides): Promise<[string]>;
+    "votingToken()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
   };
 
   BALLOT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
@@ -742,34 +767,30 @@ export class GovernorAlpha extends Contract {
 
   "QUORUM_VOTES_PERCENTAGE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  __abdicate(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  __abdicate(overrides?: Overrides): Promise<ContractTransaction>;
 
-  "__abdicate()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  "__abdicate()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   cancel(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "cancel(uint256)"(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   castVote(
     proposalId: BigNumberish,
     support: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "castVote(uint256,bool)"(
     proposalId: BigNumberish,
     support: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   castVoteBySig(
@@ -778,7 +799,7 @@ export class GovernorAlpha extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "castVoteBySig(uint256,bool,uint8,bytes32,bytes32)"(
@@ -787,230 +808,236 @@ export class GovernorAlpha extends Contract {
     v: BigNumberish,
     r: BytesLike,
     s: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   execute(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "execute(uint256)"(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   getActions(
     proposalId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [string[], string[], string[]] & {
-      targets: string[];
-      signatures: string[];
-      calldatas: string[];
-    }
-  >;
+  ): Promise<{
+    targets: string[];
+    signatures: string[];
+    calldatas: string[];
+    0: string[];
+    1: string[];
+    2: string[];
+  }>;
 
   "getActions(uint256)"(
     proposalId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [string[], string[], string[]] & {
-      targets: string[];
-      signatures: string[];
-      calldatas: string[];
-    }
-  >;
+  ): Promise<{
+    targets: string[];
+    signatures: string[];
+    calldatas: string[];
+    0: string[];
+    1: string[];
+    2: string[];
+  }>;
 
   getAllProposals(
     voter: string,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      ([
-        string[],
-        string[],
-        string[],
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      })[],
-      number[],
-      ([boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      })[]
-    ] & {
-      _proposals: ([
-        string[],
-        string[],
-        string[],
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      })[];
-      _proposalStates: number[];
-      _receipts: ([boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      })[];
-    }
-  >;
+  ): Promise<{
+    _proposals: {
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string[];
+      1: string[];
+      2: string[];
+      3: string;
+      4: string;
+      5: number;
+      6: number;
+      7: BigNumber;
+      8: number;
+      9: number;
+      10: boolean;
+      11: boolean;
+      12: BigNumber;
+      13: BigNumber;
+    }[];
+    _proposalStates: number[];
+    _receipts: {
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }[];
+    0: {
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string[];
+      1: string[];
+      2: string[];
+      3: string;
+      4: string;
+      5: number;
+      6: number;
+      7: BigNumber;
+      8: number;
+      9: number;
+      10: boolean;
+      11: boolean;
+      12: BigNumber;
+      13: BigNumber;
+    }[];
+    1: number[];
+    2: {
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }[];
+  }>;
 
   "getAllProposals(address)"(
     voter: string,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      ([
-        string[],
-        string[],
-        string[],
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      })[],
-      number[],
-      ([boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      })[]
-    ] & {
-      _proposals: ([
-        string[],
-        string[],
-        string[],
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      })[];
-      _proposalStates: number[];
-      _receipts: ([boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      })[];
-    }
-  >;
+  ): Promise<{
+    _proposals: {
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string[];
+      1: string[];
+      2: string[];
+      3: string;
+      4: string;
+      5: number;
+      6: number;
+      7: BigNumber;
+      8: number;
+      9: number;
+      10: boolean;
+      11: boolean;
+      12: BigNumber;
+      13: BigNumber;
+    }[];
+    _proposalStates: number[];
+    _receipts: {
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }[];
+    0: {
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string[];
+      1: string[];
+      2: string[];
+      3: string;
+      4: string;
+      5: number;
+      6: number;
+      7: BigNumber;
+      8: number;
+      9: number;
+      10: boolean;
+      11: boolean;
+      12: BigNumber;
+      13: BigNumber;
+    }[];
+    1: number[];
+    2: {
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }[];
+  }>;
 
   getReceipt(
     proposalId: BigNumberish,
     voter: string,
     overrides?: CallOverrides
-  ): Promise<
-    [boolean, boolean, BigNumber] & {
-      hasVoted: boolean;
-      support: boolean;
-      votes: BigNumber;
-    }
-  >;
+  ): Promise<{
+    hasVoted: boolean;
+    support: boolean;
+    votes: BigNumber;
+    0: boolean;
+    1: boolean;
+    2: BigNumber;
+  }>;
 
   "getReceipt(uint48,address)"(
     proposalId: BigNumberish,
     voter: string,
     overrides?: CallOverrides
-  ): Promise<
-    [boolean, boolean, BigNumber] & {
-      hasVoted: boolean;
-      support: boolean;
-      votes: BigNumber;
-    }
-  >;
+  ): Promise<{
+    hasVoted: boolean;
+    support: boolean;
+    votes: BigNumber;
+    0: boolean;
+    1: boolean;
+    2: BigNumber;
+  }>;
 
   guardian(overrides?: CallOverrides): Promise<string>;
 
@@ -1051,71 +1078,65 @@ export class GovernorAlpha extends Contract {
   proposals(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      string,
-      string,
-      number,
-      number,
-      BigNumber,
-      number,
-      number,
-      boolean,
-      boolean,
-      BigNumber,
-      BigNumber
-    ] & {
-      ipfsHash: string;
-      proposer: string;
-      eta: number;
-      id: number;
-      forVotes: BigNumber;
-      startBlock: number;
-      endBlock: number;
-      canceled: boolean;
-      executed: boolean;
-      againstVotes: BigNumber;
-      availableVotingTokens: BigNumber;
-    }
-  >;
+  ): Promise<{
+    ipfsHash: string;
+    proposer: string;
+    eta: number;
+    id: number;
+    forVotes: BigNumber;
+    startBlock: number;
+    endBlock: number;
+    canceled: boolean;
+    executed: boolean;
+    againstVotes: BigNumber;
+    availableVotingTokens: BigNumber;
+    0: string;
+    1: string;
+    2: number;
+    3: number;
+    4: BigNumber;
+    5: number;
+    6: number;
+    7: boolean;
+    8: boolean;
+    9: BigNumber;
+    10: BigNumber;
+  }>;
 
   "proposals(uint256)"(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<
-    [
-      string,
-      string,
-      number,
-      number,
-      BigNumber,
-      number,
-      number,
-      boolean,
-      boolean,
-      BigNumber,
-      BigNumber
-    ] & {
-      ipfsHash: string;
-      proposer: string;
-      eta: number;
-      id: number;
-      forVotes: BigNumber;
-      startBlock: number;
-      endBlock: number;
-      canceled: boolean;
-      executed: boolean;
-      againstVotes: BigNumber;
-      availableVotingTokens: BigNumber;
-    }
-  >;
+  ): Promise<{
+    ipfsHash: string;
+    proposer: string;
+    eta: number;
+    id: number;
+    forVotes: BigNumber;
+    startBlock: number;
+    endBlock: number;
+    canceled: boolean;
+    executed: boolean;
+    againstVotes: BigNumber;
+    availableVotingTokens: BigNumber;
+    0: string;
+    1: string;
+    2: number;
+    3: number;
+    4: BigNumber;
+    5: number;
+    6: number;
+    7: boolean;
+    8: boolean;
+    9: BigNumber;
+    10: BigNumber;
+  }>;
 
   propose(
     targets: string[],
     signatures: string[],
     calldatas: BytesLike[],
     ipfsHash: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "propose(address[],string[],bytes[],string)"(
@@ -1123,17 +1144,17 @@ export class GovernorAlpha extends Contract {
     signatures: string[],
     calldatas: BytesLike[],
     ipfsHash: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   queue(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "queue(uint256)"(
     proposalId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   state(proposalId: BigNumberish, overrides?: CallOverrides): Promise<number>;
@@ -1235,214 +1256,220 @@ export class GovernorAlpha extends Contract {
     getActions(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string[], string[], string[]] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-      }
-    >;
+    ): Promise<{
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      0: string[];
+      1: string[];
+      2: string[];
+    }>;
 
     "getActions(uint256)"(
       proposalId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [string[], string[], string[]] & {
-        targets: string[];
-        signatures: string[];
-        calldatas: string[];
-      }
-    >;
+    ): Promise<{
+      targets: string[];
+      signatures: string[];
+      calldatas: string[];
+      0: string[];
+      1: string[];
+      2: string[];
+    }>;
 
     getAllProposals(
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[],
-        number[],
-        ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[]
-      ] & {
-        _proposals: ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[];
-        _proposalStates: number[];
-        _receipts: ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[];
-      }
-    >;
+    ): Promise<{
+      _proposals: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      _proposalStates: number[];
+      _receipts: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+      0: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      1: number[];
+      2: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+    }>;
 
     "getAllProposals(address)"(
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[],
-        number[],
-        ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[]
-      ] & {
-        _proposals: ([
-          string[],
-          string[],
-          string[],
-          string,
-          string,
-          number,
-          number,
-          BigNumber,
-          number,
-          number,
-          boolean,
-          boolean,
-          BigNumber,
-          BigNumber
-        ] & {
-          targets: string[];
-          signatures: string[];
-          calldatas: string[];
-          ipfsHash: string;
-          proposer: string;
-          eta: number;
-          id: number;
-          forVotes: BigNumber;
-          startBlock: number;
-          endBlock: number;
-          canceled: boolean;
-          executed: boolean;
-          againstVotes: BigNumber;
-          availableVotingTokens: BigNumber;
-        })[];
-        _proposalStates: number[];
-        _receipts: ([boolean, boolean, BigNumber] & {
-          hasVoted: boolean;
-          support: boolean;
-          votes: BigNumber;
-        })[];
-      }
-    >;
+    ): Promise<{
+      _proposals: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      _proposalStates: number[];
+      _receipts: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+      0: {
+        targets: string[];
+        signatures: string[];
+        calldatas: string[];
+        ipfsHash: string;
+        proposer: string;
+        eta: number;
+        id: number;
+        forVotes: BigNumber;
+        startBlock: number;
+        endBlock: number;
+        canceled: boolean;
+        executed: boolean;
+        againstVotes: BigNumber;
+        availableVotingTokens: BigNumber;
+        0: string[];
+        1: string[];
+        2: string[];
+        3: string;
+        4: string;
+        5: number;
+        6: number;
+        7: BigNumber;
+        8: number;
+        9: number;
+        10: boolean;
+        11: boolean;
+        12: BigNumber;
+        13: BigNumber;
+      }[];
+      1: number[];
+      2: {
+        hasVoted: boolean;
+        support: boolean;
+        votes: BigNumber;
+        0: boolean;
+        1: boolean;
+        2: BigNumber;
+      }[];
+    }>;
 
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      }
-    >;
+    ): Promise<{
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }>;
 
     "getReceipt(uint48,address)"(
       proposalId: BigNumberish,
       voter: string,
       overrides?: CallOverrides
-    ): Promise<
-      [boolean, boolean, BigNumber] & {
-        hasVoted: boolean;
-        support: boolean;
-        votes: BigNumber;
-      }
-    >;
+    ): Promise<{
+      hasVoted: boolean;
+      support: boolean;
+      votes: BigNumber;
+      0: boolean;
+      1: boolean;
+      2: BigNumber;
+    }>;
 
     guardian(overrides?: CallOverrides): Promise<string>;
 
@@ -1483,64 +1510,58 @@ export class GovernorAlpha extends Contract {
     proposals(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      }
-    >;
+    ): Promise<{
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string;
+      1: string;
+      2: number;
+      3: number;
+      4: BigNumber;
+      5: number;
+      6: number;
+      7: boolean;
+      8: boolean;
+      9: BigNumber;
+      10: BigNumber;
+    }>;
 
     "proposals(uint256)"(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        number,
-        number,
-        BigNumber,
-        number,
-        number,
-        boolean,
-        boolean,
-        BigNumber,
-        BigNumber
-      ] & {
-        ipfsHash: string;
-        proposer: string;
-        eta: number;
-        id: number;
-        forVotes: BigNumber;
-        startBlock: number;
-        endBlock: number;
-        canceled: boolean;
-        executed: boolean;
-        againstVotes: BigNumber;
-        availableVotingTokens: BigNumber;
-      }
-    >;
+    ): Promise<{
+      ipfsHash: string;
+      proposer: string;
+      eta: number;
+      id: number;
+      forVotes: BigNumber;
+      startBlock: number;
+      endBlock: number;
+      canceled: boolean;
+      executed: boolean;
+      againstVotes: BigNumber;
+      availableVotingTokens: BigNumber;
+      0: string;
+      1: string;
+      2: number;
+      3: number;
+      4: BigNumber;
+      5: number;
+      6: number;
+      7: boolean;
+      8: boolean;
+      9: BigNumber;
+      10: BigNumber;
+    }>;
 
     propose(
       targets: string[],
@@ -1594,44 +1615,23 @@ export class GovernorAlpha extends Contract {
   };
 
   filters: {
-    ProposalCanceled(
-      id: BigNumberish | null
-    ): TypedEventFilter<[BigNumber], { id: BigNumber }>;
+    ProposalCanceled(id: BigNumberish | null): EventFilter;
 
     ProposalCreated(
       id: BigNumberish | null,
       proposer: string | null
-    ): TypedEventFilter<
-      [BigNumber, string],
-      { id: BigNumber; proposer: string }
-    >;
+    ): EventFilter;
 
-    ProposalExecuted(
-      id: BigNumberish | null
-    ): TypedEventFilter<[BigNumber], { id: BigNumber }>;
+    ProposalExecuted(id: BigNumberish | null): EventFilter;
 
-    ProposalQueued(
-      id: BigNumberish | null,
-      eta: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { id: BigNumber; eta: BigNumber }
-    >;
+    ProposalQueued(id: BigNumberish | null, eta: null): EventFilter;
 
     VoteCast(
       voter: string | null,
       proposalId: BigNumberish | null,
       support: boolean | null,
       votes: null
-    ): TypedEventFilter<
-      [string, BigNumber, boolean, BigNumber],
-      {
-        voter: string;
-        proposalId: BigNumber;
-        support: boolean;
-        votes: BigNumber;
-      }
-    >;
+    ): EventFilter;
   };
 
   estimateGas: {
@@ -1655,34 +1655,27 @@ export class GovernorAlpha extends Contract {
 
     "QUORUM_VOTES_PERCENTAGE()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    __abdicate(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    __abdicate(overrides?: Overrides): Promise<BigNumber>;
 
-    "__abdicate()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    "__abdicate()"(overrides?: Overrides): Promise<BigNumber>;
 
-    cancel(
-      proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    cancel(proposalId: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "cancel(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     castVote(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "castVote(uint256,bool)"(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     castVoteBySig(
@@ -1691,7 +1684,7 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "castVoteBySig(uint256,bool,uint8,bytes32,bytes32)"(
@@ -1700,17 +1693,17 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     execute(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "execute(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     getActions(
@@ -1796,7 +1789,7 @@ export class GovernorAlpha extends Contract {
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     "propose(address[],string[],bytes[],string)"(
@@ -1804,17 +1797,14 @@ export class GovernorAlpha extends Contract {
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    queue(
-      proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    queue(proposalId: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "queue(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
     state(
@@ -1877,34 +1867,30 @@ export class GovernorAlpha extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    __abdicate(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    __abdicate(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    "__abdicate()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
+    "__abdicate()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     cancel(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "cancel(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     castVote(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "castVote(uint256,bool)"(
       proposalId: BigNumberish,
       support: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     castVoteBySig(
@@ -1913,7 +1899,7 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "castVoteBySig(uint256,bool,uint8,bytes32,bytes32)"(
@@ -1922,17 +1908,17 @@ export class GovernorAlpha extends Contract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     execute(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "execute(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     getActions(
@@ -2022,7 +2008,7 @@ export class GovernorAlpha extends Contract {
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "propose(address[],string[],bytes[],string)"(
@@ -2030,17 +2016,17 @@ export class GovernorAlpha extends Contract {
       signatures: string[],
       calldatas: BytesLike[],
       ipfsHash: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     queue(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "queue(uint256)"(
       proposalId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     state(
