@@ -14,16 +14,17 @@ export type seedAddresses = {
 
 export const getSeedAddresses = (): seedAddresses => {
   switch (hre.network.name) {
-    case 'hardhat':
     case 'rinkeby':
     case 'mainnet':
+    case 'hardhat':
     case 'localhost':
-    default:
       return {
         tcpGovernorAlpha: '0x28f5D55Df47d1505DfdBfE803aE1F3391E21Ad1b',
         tfGovernorAlpha: '0x57706dEEED2a5DadAc4f841B6f34E370B7bddE30',
         nftPositionManager: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
         swapRouter: '0xfE0cae103cB3aA14eF7fbf1Cee4B3EDeC7301D5B',
       }
+    default:
+      throw 'unknown network name: ' + hre.network.name
   }
 }

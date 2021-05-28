@@ -5,17 +5,17 @@ import hre from 'hardhat';
 const e = hre.ethers;
 import { Contract } from "ethers";
 
-import { getSeedAddresses, seedAddresses } from "./Addresses";
+import { seedAddresses } from "./Addresses";
 
 // ================ CORE CONTRACTS =================
 import { Accounting } from "../../typechain/Accounting";
 import { Auctions } from "../../typechain/Auctions";
 import { ProtocolToken } from "../../typechain/ProtocolToken";
 import { Zhu } from "../../typechain/Zhu";
-import { ZhuPositionNFT } from "../../typechain/ZhuPositionNFT";
+import { ZhuPositionNft } from "../../typechain/ZhuPositionNFT";
 import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
 import { Governor } from "../../typechain/Governor";
-import { TCPGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
+import { TcpGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
 import { LendZhu } from "../../typechain/LendZhu";
 import { Liquidations } from "../../typechain/Liquidations";
 import { Market } from "../../typechain/Market";
@@ -27,13 +27,13 @@ import { Settlement } from "../../typechain/Settlement";
 import { Timelock } from "../../typechain/Timelock";
 
 // ================ OTHER CONTRACTS =================
-import { WETH9 } from "../../typechain/WETH9";
-import { ERC20 } from "../../typechain/ERC20";
+import { Weth9 } from "../../typechain/WETH9";
+import { Erc20 } from "../../typechain/ERC20";
 
 // ================ META =================
-import { TFGovernorAlpha } from "../../typechain/TFGovernorAlpha";
-import { TFDao } from "../../typechain/TFDao";
-import { TFPositionNFT } from "../../typechain/TFPositionNFT";
+import { TfGovernorAlpha } from "../../typechain/TFGovernorAlpha";
+import { TfDao } from "../../typechain/TFDao";
+import { TfPositionNft } from "../../typechain/TFPositionNFT";
 
 // ================ UNISWAP =================
 import { SwapRouter } from "../../typechain/SwapRouter";
@@ -46,10 +46,10 @@ export type deployedCoinProtocol = {
   auctions: Auctions;
   tcp: ProtocolToken;
   zhu: Zhu;
-  zhuNFT: ZhuPositionNFT;
+  zhuNFT: ZhuPositionNft;
   enforcedDecentralization: EnforcedDecentralization;
   governor: Governor;
-  tcpGovernorAlpha: TCPGovernorAlpha;
+  tcpGovernorAlpha: TcpGovernorAlpha;
   lendzhu: LendZhu;
   liquidations: Liquidations;
   market: Market;
@@ -61,19 +61,19 @@ export type deployedCoinProtocol = {
   timelock: Timelock;
   meta: {
     tf: ProtocolToken;
-    tfDao: TFDao;
-    tfPositionNFT: TFPositionNFT;
-    tfGovernorAlpha: TFGovernorAlpha;
+    tfDao: TfDao;
+    tfPositionNFT: TfPositionNft;
+    tfGovernorAlpha: TfGovernorAlpha;
     tfTimelock: Timelock;
   },
-  tokens: { [key in string]: ERC20 },
+  tokens: { [key in string]: Erc20 },
   pools: {
     tcpeth: UniswapV3Pool,
     zhueth: UniswapV3Pool,
     reference: UniswapV3Pool[],
   },
   uniswap: {
-    weth: WETH9,
+    weth: Weth9,
     router: SwapRouter,
     factory: UniswapV3Factory,
     nftPositionManager: NonfungiblePositionManager,
@@ -90,8 +90,8 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TCPGovernorAlpha', addresses.tcpGovernorAlpha) as TCPGovernorAlpha,
-    await get('TFGovernorAlpha', addresses.tfGovernorAlpha) as TFGovernorAlpha,
+    await get('TCPGovernorAlpha', addresses.tcpGovernorAlpha) as TcpGovernorAlpha,
+    await get('TFGovernorAlpha', addresses.tfGovernorAlpha) as TfGovernorAlpha,
     await get('NonfungiblePositionManager', addresses.nftPositionManager) as NonfungiblePositionManager,
     await get('SwapRouter', addresses.swapRouter) as SwapRouter,
   ]);
@@ -102,9 +102,9 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     weth,
     factory,
   ] = await Promise.all([
-    await get('TFDao', await tfGovernorAlpha.tfDao()) as TFDao,
+    await get('TFDao', await tfGovernorAlpha.tfDao()) as TfDao,
     await get('Governor', await tcpGovernorAlpha.governor()) as Governor,
-    await get('WETH9', await nftPositionManager.WETH9()) as WETH9,
+    await get('WETH9', await nftPositionManager.WETH9()) as Weth9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as UniswapV3Factory,
   ]);
 
@@ -114,7 +114,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     tfTimelock,
   ] = await Promise.all([
     await get('ProtocolToken', await tfDao.tfToken()) as ProtocolToken,
-    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as TFPositionNFT,
+    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as TfPositionNft,
     await get('Timelock', await tfDao.timelock()) as Timelock,
   ]);
 
@@ -139,7 +139,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     await get('Auctions', await governor.auctions()) as Auctions,
     await get('ProtocolToken', await governor.tcp()) as ProtocolToken,
     await get('Zhu', await governor.zhu()) as Zhu,
-    await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as ZhuPositionNFT,
+    await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as ZhuPositionNft,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as EnforcedDecentralization,
     await get('LendZhu', await governor.lendZhu()) as LendZhu,
     await get('Liquidations', await governor.liquidations()) as Liquidations,
@@ -172,11 +172,11 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
   let collateralPool = wrapPool(collateralPoolAddress);
   let referencePools = referencePoolAddresses.map((address) => wrapPool(address));
 
-  let referenceTokens: { [key in string]: ERC20 } = {}
+  let referenceTokens: { [key in string]: Erc20 } = {}
   await Promise.all(referencePools.map(async (pool) => {
     let [ token0, token1 ] = await Promise.all([ await pool.token0(), await pool.token1() ]);
     let otherTokenAddress = token0 == tcp.address || token0 == zhu.address ? token1 : token0
-    let token = ERC20Factory.attach(otherTokenAddress) as ERC20
+    let token = ERC20Factory.attach(otherTokenAddress) as Erc20
     referenceTokens[await token.name()] = token
   }))
 
@@ -185,7 +185,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     auctions: auctions as Auctions,
     tcp: tcp as ProtocolToken,
     zhu: zhu as Zhu,
-    zhuNFT: zhuNFT as ZhuPositionNFT,
+    zhuNFT: zhuNFT as ZhuPositionNft,
     enforcedDecentralization: enforcedDecentralization as EnforcedDecentralization,
     governor: governor,
     tcpGovernorAlpha: tcpGovernorAlpha,
