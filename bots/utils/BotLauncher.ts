@@ -23,7 +23,7 @@ async function main() {
 
   if (typeof botName != 'string' || botName.length == 0) {
     console.log('bot name not provided. Provide it as an environment variable called BOT.')
-    console.log('example: `docker run --rm --env-file env.list -e BOT=discover_liquidations coin-protocol-bots`')
+    console.log('example: `docker run --rm --env-file env.list -e BOT=discover_liquidations tcp-bots`')
     return;
   }
 
@@ -32,10 +32,10 @@ async function main() {
   if (typeof privateKey != 'string' || privateKey.length == 0) {
     console.log('private key not provided. Create a env.list and provide it to the container:');
     console.log('1. Create an env.list with one line: "PRIVATE_KEY=<private key without quote>"');
-    console.log('2. Call the docker container with docker `docker run --rm --env-file env.list -e BOT=discover_liquidations coin-protocol-bots`');
+    console.log('2. Call the docker container with docker `docker run --rm --env-file env.list -e BOT=discover_liquidations tcp-bots`');
     console.log('Note: you can find the bot names by opening bots/utils/BotLauncher.ts');
     console.log('If the botname is correct, then you may need to rebuild the container fist: ');
-    console.log('docker build --tag coin-protocol-bots .');
+    console.log('docker build --tag tcp-bots .');
     return;
   }
 
@@ -68,7 +68,7 @@ async function main() {
       return;
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');
-      console.log('To rebuild: `docker build --tag coin-protocol-bots .`');
+      console.log('To rebuild: `docker build --tag tcp-bots .`');
   }
 }
 

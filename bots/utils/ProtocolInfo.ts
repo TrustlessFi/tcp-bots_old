@@ -16,6 +16,7 @@ import { ZhuPositionNft } from "../../typechain/ZhuPositionNFT";
 import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
 import { Governor } from "../../typechain/Governor";
 import { TcpGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
+import { Lend } from "../../typechain/Lend";
 import { LendZhu } from "../../typechain/LendZhu";
 import { Liquidations } from "../../typechain/Liquidations";
 import { Market } from "../../typechain/Market";
@@ -41,46 +42,47 @@ import { UniswapV3Factory } from "../../typechain/UniswapV3Factory";
 import { NonfungiblePositionManager } from "../../typechain/NonfungiblePositionManager";
 import { UniswapV3Pool } from "../../typechain/UniswapV3Pool";
 
-export type deployedCoinProtocol = {
-  accounting: Accounting;
-  auctions: Auctions;
-  tcp: ProtocolToken;
-  zhu: Zhu;
-  zhuNFT: ZhuPositionNft;
-  enforcedDecentralization: EnforcedDecentralization;
-  governor: Governor;
-  tcpGovernorAlpha: TcpGovernorAlpha;
-  lendzhu: LendZhu;
-  liquidations: Liquidations;
-  market: Market;
-  rates: Rates;
-  prices: Prices;
-  protocolLock: ProtocolLock;
-  rewards: Rewards;
-  settlement: Settlement;
-  timelock: Timelock;
+export type deployedTCP = {
+  accounting: Accounting
+  auctions: Auctions
+  tcp: ProtocolToken
+  zhu: Zhu
+  zhuNFT: ZhuPositionNft
+  enforcedDecentralization: EnforcedDecentralization
+  governor: Governor
+  tcpGovernorAlpha: TcpGovernorAlpha
+  lend: Lend
+  lendzhu: LendZhu
+  liquidations: Liquidations
+  market: Market
+  rates: Rates
+  prices: Prices
+  protocolLock: ProtocolLock
+  rewards: Rewards
+  settlement: Settlement
+  timelock: Timelock
   meta: {
-    tf: ProtocolToken;
-    tfDao: TfDao;
-    tfPositionNFT: TfPositionNft;
-    tfGovernorAlpha: TfGovernorAlpha;
-    tfTimelock: Timelock;
+    tf: ProtocolToken
+    tfDao: TfDao
+    tfPositionNFT: TfPositionNft
+    tfGovernorAlpha: TfGovernorAlpha
+    tfTimelock: Timelock
   },
-  tokens: { [key in string]: Erc20 },
   pools: {
-    tcpeth: UniswapV3Pool,
-    zhueth: UniswapV3Pool,
-    reference: UniswapV3Pool[],
+    tcpeth: UniswapV3Pool
+    zhueth: UniswapV3Pool
+    reference: UniswapV3Pool[]
   },
-  uniswap: {
-    weth: Weth9,
-    router: SwapRouter,
-    factory: UniswapV3Factory,
-    nftPositionManager: NonfungiblePositionManager,
+  external: {
+    tokens: { [key in string]: Erc20 }
+    weth: Weth9
+    router: SwapRouter
+    factory: UniswapV3Factory
+    nftPositionManager: NonfungiblePositionManager
   }
 }
 
-export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoinProtocol> => {
+export const getDeployedProtocol = async(addresses: seedAddresses): Promise<deployedTCP> => {
   const get = async(name: string, address: string): Promise<Contract> =>
     (await e.getContractFactory(name)).attach(address) as Contract;
 
@@ -125,6 +127,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     zhu,
     zhuNFT,
     enforcedDecentralization,
+    lend,
     lendzhu,
     liquidations,
     market,
@@ -141,6 +144,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     await get('Zhu', await governor.zhu()) as Zhu,
     await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as ZhuPositionNft,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as EnforcedDecentralization,
+    await get('Lend', await governor.lend()) as Lend,
     await get('LendZhu', await governor.lendZhu()) as LendZhu,
     await get('Liquidations', await governor.liquidations()) as Liquidations,
     await get('Market', await governor.market()) as Market,
@@ -189,6 +193,7 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
     enforcedDecentralization: enforcedDecentralization as EnforcedDecentralization,
     governor: governor,
     tcpGovernorAlpha: tcpGovernorAlpha,
+    lend: lend as Lend,
     lendzhu: lendzhu as LendZhu,
     liquidations: liquidations as Liquidations,
     market: market as Market,
@@ -205,13 +210,13 @@ export const getProtocol = async(addresses: seedAddresses): Promise<deployedCoin
       tfGovernorAlpha: tfGovernorAlpha,
       tfTimelock: tfTimelock,
     },
-    tokens: referenceTokens,
     pools: {
       tcpeth: protocolPool,
       zhueth: collateralPool,
       reference: referencePools,
     },
-    uniswap: {
+    external: {
+      tokens: referenceTokens,
       weth: weth,
       router: swapRouter,
       factory: factory,

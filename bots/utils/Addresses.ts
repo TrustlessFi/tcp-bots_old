@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import hre from 'hardhat';
-const e = hre.ethers;
-import { Contract } from "ethers";
 
 export type seedAddresses = {
   tcpGovernorAlpha: string,
@@ -14,9 +12,12 @@ export type seedAddresses = {
 
 export const getSeedAddresses = (): seedAddresses => {
   switch (hre.network.name) {
-    case 'rinkeby':
     case 'mainnet':
+    
+    case 'rinkeby':
+
     case 'hardhat':
+    case 'dockerBot':
     case 'localhost':
       return {
         tcpGovernorAlpha: '0x28f5D55Df47d1505DfdBfE803aE1F3391E21Ad1b',

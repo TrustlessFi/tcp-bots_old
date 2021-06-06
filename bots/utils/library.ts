@@ -21,8 +21,3 @@ export const days = (days: number)       => days * hours(24);
 export const hours = (hours: number)     => hours * minutes(60);
 export const minutes = (minutes: number) => minutes * seconds(60);
 export const seconds = (seconds: number) => seconds;
-
-interface coingeckoPriceData {
-  symbol: string;
-  current_price: number;
-}

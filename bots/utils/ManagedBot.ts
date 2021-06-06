@@ -10,7 +10,7 @@ import { Wallet, BigNumber } from "ethers";
 import { seedAddresses } from "./Addresses";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
-import { getProtocol, deployedCoinProtocol } from "./ProtocolInfo";
+import { getDeployedProtocol, deployedTCP } from "./ProtocolInfo";
 
 export type runReturn = {
   sleepSeconds: number,
@@ -25,7 +25,7 @@ export const defaultRunReturn: runReturn = {
 export class ManagedBot {
 
   // ============= CLASS DEFINITION ==================
-  protocol: deployedCoinProtocol | null = null;
+  protocol: deployedTCP | null = null;
   name: string = "Name not set.";
   shouldLog: boolean = true;
   timer: NodeJS.Timer | null = null;
@@ -47,7 +47,7 @@ export class ManagedBot {
   }
 
   async attachProtocol(addresses: seedAddresses): Promise<void> {
-    if (this.protocol == null) this.protocol = await getProtocol(addresses);
+    if (this.protocol == null) this.protocol = await getDeployedProtocol(addresses);
   }
 
   async run() {
