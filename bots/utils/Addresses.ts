@@ -11,10 +11,18 @@ export type seedAddresses = {
   multisig: string,
 }
 
+export const isRunTestsEnvironment = (networkName: string): boolean => {
+  switch (networkName) {
+    case 'hardhat':
+      return true
+    default:
+      return false
+  }
+}
+
 export const getSeedAddresses = (): seedAddresses => {
   switch (hre.network.name) {
     case 'mainnet':
-
     case 'rinkeby':
 
     case 'hardhat':

@@ -113,13 +113,13 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
 
       let governor = this.protocol!.governor
       let PoolFactory = await e.getContractFactory('UniswapV3Pool')
-      this.protocolPool = PoolFactory.attach(await governor.protocolPool()) as UniswapV3Pool
-      this.collateralPool = PoolFactory.attach(await governor.collateralPool()) as UniswapV3Pool
+      this.protocolPool = PoolFactory.attach(await governor.protocolPool()) as unknown as UniswapV3Pool
+      this.collateralPool = PoolFactory.attach(await governor.collateralPool()) as unknown as UniswapV3Pool
 
       let refPoolAddressess = await governor.getReferencePools()
       let refPools: UniswapV3Pool[] = []
       for (let i = 0; i < refPoolAddressess.length; i++) {
-        refPools.push(PoolFactory.attach(refPoolAddressess[i]) as UniswapV3Pool)
+        refPools.push(PoolFactory.attach(refPoolAddressess[i]) as unknown as UniswapV3Pool)
       }
       this.referencePools = refPools
     }
