@@ -79,12 +79,12 @@ export type deployedTCP = {
     router: SwapRouter
     factory: UniswapV3Factory
     nftPositionManager: NonfungiblePositionManager
-  }
+  },
+  multisig: string,
 }
 
 export const getDeployedProtocol = async(addresses: seedAddresses): Promise<deployedTCP> => {
-  const get = async(name: string, address: string): Promise<Contract> =>
-    (await e.getContractFactory(name)).attach(address) as Contract;
+  const get = async(name: string, address: string) => (await e.getContractFactory(name)).attach(address)
 
   let [
     tcpGovernorAlpha,
@@ -92,10 +92,10 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TCPGovernorAlpha', addresses.tcpGovernorAlpha) as TcpGovernorAlpha,
-    await get('TFGovernorAlpha', addresses.tfGovernorAlpha) as TfGovernorAlpha,
-    await get('NonfungiblePositionManager', addresses.nftPositionManager) as NonfungiblePositionManager,
-    await get('SwapRouter', addresses.swapRouter) as SwapRouter,
+    await get('TCPGovernorAlpha', addresses.tcpGovernorAlpha) as unknown as TcpGovernorAlpha,
+    await get('TFGovernorAlpha', addresses.tfGovernorAlpha) as unknown as TfGovernorAlpha,
+    await get('NonfungiblePositionManager', addresses.nftPositionManager) as unknown as NonfungiblePositionManager,
+    await get('SwapRouter', addresses.swapRouter) as unknown as SwapRouter,
   ]);
 
   let [
@@ -104,10 +104,10 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     weth,
     factory,
   ] = await Promise.all([
-    await get('TFDao', await tfGovernorAlpha.tfDao()) as TfDao,
-    await get('Governor', await tcpGovernorAlpha.governor()) as Governor,
-    await get('WETH9', await nftPositionManager.WETH9()) as Weth9,
-    await get('UniswapV3Factory', await nftPositionManager.factory()) as UniswapV3Factory,
+    await get('TFDao', await tfGovernorAlpha.tfDao()) as unknown as TfDao,
+    await get('Governor', await tcpGovernorAlpha.governor()) as unknown as Governor,
+    await get('WETH9', await nftPositionManager.WETH9()) as unknown as Weth9,
+    await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
   ]);
 
   let [
@@ -115,9 +115,9 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     tfPositionNFT,
     tfTimelock,
   ] = await Promise.all([
-    await get('ProtocolToken', await tfDao.tfToken()) as ProtocolToken,
-    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as TfPositionNft,
-    await get('Timelock', await tfDao.timelock()) as Timelock,
+    await get('ProtocolToken', await tfDao.tfToken()) as unknown as ProtocolToken,
+    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TfPositionNft,
+    await get('Timelock', await tfDao.timelock()) as unknown as Timelock,
   ]);
 
   let [
@@ -138,22 +138,22 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     settlement,
     timelock,
   ] = await Promise.all([
-    await get('Accounting', await governor.accounting()) as Accounting,
-    await get('Auctions', await governor.auctions()) as Auctions,
-    await get('ProtocolToken', await governor.tcp()) as ProtocolToken,
-    await get('Zhu', await governor.zhu()) as Zhu,
-    await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as ZhuPositionNft,
-    await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as EnforcedDecentralization,
-    await get('Lend', await governor.lend()) as Lend,
-    await get('LendZhu', await governor.lendZhu()) as LendZhu,
-    await get('Liquidations', await governor.liquidations()) as Liquidations,
-    await get('Market', await governor.market()) as Market,
-    await get('Prices', await governor.prices()) as Prices,
-    await get('ProtocolLock', await governor.protocolLock()) as ProtocolLock,
-    await get('Rates', await governor.rates()) as Rates,
-    await get('Rewards', await governor.rewards()) as Rewards,
-    await get('Settlement', await governor.settlement()) as Settlement,
-    await get('Timelock', await governor.timelock()) as Timelock,
+    await get('Accounting', await governor.accounting()) as unknown as Accounting,
+    await get('Auctions', await governor.auctions()) as unknown as Auctions,
+    await get('ProtocolToken', await governor.tcp()) as unknown as ProtocolToken,
+    await get('Zhu', await governor.zhu()) as unknown as Zhu,
+    await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as unknown as ZhuPositionNft,
+    await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as unknown as EnforcedDecentralization,
+    await get('Lend', await governor.lend()) as unknown as Lend,
+    await get('LendZhu', await governor.lendZhu()) as unknown as LendZhu,
+    await get('Liquidations', await governor.liquidations()) as unknown as Liquidations,
+    await get('Market', await governor.market()) as unknown as Market,
+    await get('Prices', await governor.prices()) as unknown as Prices,
+    await get('ProtocolLock', await governor.protocolLock()) as unknown as ProtocolLock,
+    await get('Rates', await governor.rates()) as unknown as Rates,
+    await get('Rewards', await governor.rewards()) as unknown as Rewards,
+    await get('Settlement', await governor.settlement()) as unknown as Settlement,
+    await get('Timelock', await governor.timelock()) as unknown as Timelock,
   ]);
 
   let [
@@ -170,7 +170,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     await e.getContractFactory('ERC20'),
   ]);
 
-  const wrapPool = (address: string): UniswapV3Pool => UniswapV3PoolFactory.attach(address) as UniswapV3Pool
+  const wrapPool = (address: string): UniswapV3Pool => UniswapV3PoolFactory.attach(address) as unknown as UniswapV3Pool
 
   let protocolPool = wrapPool(protocolPoolAddress);
   let collateralPool = wrapPool(collateralPoolAddress);
@@ -180,7 +180,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
   await Promise.all(referencePools.map(async (pool) => {
     let [ token0, token1 ] = await Promise.all([ await pool.token0(), await pool.token1() ]);
     let otherTokenAddress = token0 == tcp.address || token0 == zhu.address ? token1 : token0
-    let token = ERC20Factory.attach(otherTokenAddress) as Erc20
+    let token = ERC20Factory.attach(otherTokenAddress) as unknown as Erc20
     referenceTokens[await token.name()] = token
   }))
 
@@ -221,6 +221,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
       router: swapRouter,
       factory: factory,
       nftPositionManager: nftPositionManager,
-    }
+    },
+    multisig: addresses.multisig,
   }
 }
