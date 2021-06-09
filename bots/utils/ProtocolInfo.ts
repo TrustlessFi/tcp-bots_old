@@ -10,7 +10,6 @@ import { seedAddresses } from "./Addresses";
 // ================ CORE CONTRACTS =================
 import { Accounting } from "../../typechain/Accounting";
 import { Auctions } from "../../typechain/Auctions";
-import { ProtocolToken } from "../../typechain/ProtocolToken";
 import { Zhu } from "../../typechain/Zhu";
 import { ZhuPositionNft } from "../../typechain/ZhuPositionNFT";
 import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
@@ -25,7 +24,10 @@ import { ProtocolLock } from "../../typechain/ProtocolLock";
 import { Rates } from "../../typechain/Rates";
 import { Rewards } from "../../typechain/Rewards";
 import { Settlement } from "../../typechain/Settlement";
-import { Timelock } from "../../typechain/Timelock";
+import { TcpTimelock } from "../../typechain/TcpTimelock";
+import { TfTimelock } from "../../typechain/TfTimelock";
+import { Tf } from "../../typechain/Tf";
+import { Tcp } from "../../typechain/Tcp";
 
 // ================ OTHER CONTRACTS =================
 import { Weth9 } from "../../typechain/WETH9";
@@ -45,7 +47,7 @@ import { UniswapV3Pool } from "../../typechain/UniswapV3Pool";
 export type deployedTCP = {
   accounting: Accounting
   auctions: Auctions
-  tcp: ProtocolToken
+  tcp: Tcp
   zhu: Zhu
   zhuNFT: ZhuPositionNft
   enforcedDecentralization: EnforcedDecentralization
@@ -60,13 +62,13 @@ export type deployedTCP = {
   protocolLock: ProtocolLock
   rewards: Rewards
   settlement: Settlement
-  timelock: Timelock
+  timelock: TcpTimelock
   meta: {
-    tf: ProtocolToken
+    tf: Tf
     tfDao: TfDao
     tfPositionNFT: TfPositionNft
     tfGovernorAlpha: TfGovernorAlpha
-    tfTimelock: Timelock
+    tfTimelock: TfTimelock
   },
   pools: {
     tcpeth: UniswapV3Pool
@@ -115,9 +117,9 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     tfPositionNFT,
     tfTimelock,
   ] = await Promise.all([
-    await get('ProtocolToken', await tfDao.tfToken()) as unknown as ProtocolToken,
+    await get('Tf', await tfDao.tfToken()) as unknown as Tf,
     await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TfPositionNft,
-    await get('Timelock', await tfDao.timelock()) as unknown as Timelock,
+    await get('TfTimelock', await tfDao.timelock()) as unknown as TfTimelock,
   ]);
 
   let [
@@ -140,7 +142,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
   ] = await Promise.all([
     await get('Accounting', await governor.accounting()) as unknown as Accounting,
     await get('Auctions', await governor.auctions()) as unknown as Auctions,
-    await get('ProtocolToken', await governor.tcp()) as unknown as ProtocolToken,
+    await get('Tcp', await governor.tcp()) as unknown as Tcp,
     await get('Zhu', await governor.zhu()) as unknown as Zhu,
     await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as unknown as ZhuPositionNft,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as unknown as EnforcedDecentralization,
@@ -153,7 +155,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     await get('Rates', await governor.rates()) as unknown as Rates,
     await get('Rewards', await governor.rewards()) as unknown as Rewards,
     await get('Settlement', await governor.settlement()) as unknown as Settlement,
-    await get('Timelock', await governor.timelock()) as unknown as Timelock,
+    await get('TcpTimelock', await governor.timelock()) as unknown as TcpTimelock,
   ]);
 
   let [
@@ -187,7 +189,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
   return {
     accounting: accounting as Accounting,
     auctions: auctions as Auctions,
-    tcp: tcp as ProtocolToken,
+    tcp: tcp as Tcp,
     zhu: zhu as Zhu,
     zhuNFT: zhuNFT as ZhuPositionNft,
     enforcedDecentralization: enforcedDecentralization as EnforcedDecentralization,
@@ -202,7 +204,7 @@ export const getDeployedProtocol = async(addresses: seedAddresses): Promise<depl
     protocolLock: protocolLock as ProtocolLock,
     rewards: rewards as Rewards,
     settlement: settlement as Settlement,
-    timelock: timelock as Timelock,
+    timelock: timelock as TcpTimelock,
     meta: {
       tf: tfToken,
       tfDao: tfDao,
