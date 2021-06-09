@@ -30,6 +30,7 @@ interface LendInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "lend(uint256)": FunctionFragment;
+    "lendZhu()": FunctionFragment;
     "maxRatioOfTotalDebtAllowedPerBlock()": FunctionFragment;
     "mintZhu(address,uint256)": FunctionFragment;
     "oneToOneMintedZhuByBlock()": FunctionFragment;
@@ -64,6 +65,7 @@ interface LendInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(functionFragment: "lend", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "lendZhu", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "maxRatioOfTotalDebtAllowedPerBlock",
     values?: undefined
@@ -124,6 +126,7 @@ interface LendInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lend", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lendZhu", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxRatioOfTotalDebtAllowedPerBlock",
     data: BytesLike
@@ -269,6 +272,14 @@ export class Lend extends Contract {
       zhuCount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    lendZhu(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "lendZhu()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     maxRatioOfTotalDebtAllowedPerBlock(overrides?: CallOverrides): Promise<{
       0: BigNumber;
@@ -457,6 +468,10 @@ export class Lend extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  lendZhu(overrides?: CallOverrides): Promise<string>;
+
+  "lendZhu()"(overrides?: CallOverrides): Promise<string>;
+
   maxRatioOfTotalDebtAllowedPerBlock(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -615,6 +630,10 @@ export class Lend extends Contract {
       zhuCount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    lendZhu(overrides?: CallOverrides): Promise<string>;
+
+    "lendZhu()"(overrides?: CallOverrides): Promise<string>;
 
     maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
@@ -812,6 +831,10 @@ export class Lend extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    lendZhu(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "lendZhu()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -973,6 +996,10 @@ export class Lend extends Contract {
       zhuCount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    lendZhu(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "lendZhu()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     maxRatioOfTotalDebtAllowedPerBlock(
       overrides?: CallOverrides

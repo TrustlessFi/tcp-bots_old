@@ -29,12 +29,12 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "phaseInfo(uint8)": FunctionFragment;
+    "requireValidAction(address,string)": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
     "stopped()": FunctionFragment;
     "tcp()": FunctionFragment;
     "transferEmergencyShutdownTokens(address,uint256)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
-    "validateAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -57,6 +57,10 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "requireValidAction",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPhaseOneStartTime",
     values: [BigNumberish]
   ): string;
@@ -69,10 +73,6 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "validateAction",
-    values: [string, string]
   ): string;
 
   decodeFunctionResult(
@@ -92,6 +92,10 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "phaseInfo", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "requireValidAction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPhaseOneStartTime",
     data: BytesLike
   ): Result;
@@ -103,10 +107,6 @@ interface EnforcedDecentralizationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "validateAction",
     data: BytesLike
   ): Result;
 
@@ -215,6 +215,22 @@ export class EnforcedDecentralization extends Contract {
       1: number;
     }>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -262,22 +278,6 @@ export class EnforcedDecentralization extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<{
       0: boolean;
@@ -343,6 +343,18 @@ export class EnforcedDecentralization extends Contract {
     1: number;
   }>;
 
+  requireValidAction(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireValidAction(address,string)"(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   setPhaseOneStartTime(
     phaseOneStartTime: BigNumberish,
     overrides?: Overrides
@@ -377,18 +389,6 @@ export class EnforcedDecentralization extends Contract {
 
   "validUpdate(bytes4)"(
     arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  validateAction(
-    target: string,
-    signature: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "validateAction(address,string)"(
-    target: string,
-    signature: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -452,6 +452,18 @@ export class EnforcedDecentralization extends Contract {
       1: number;
     }>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: CallOverrides
@@ -486,18 +498,6 @@ export class EnforcedDecentralization extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -570,6 +570,18 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -604,18 +616,6 @@ export class EnforcedDecentralization extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -673,6 +673,18 @@ export class EnforcedDecentralization extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -710,18 +722,6 @@ export class EnforcedDecentralization extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

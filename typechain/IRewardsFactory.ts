@@ -369,6 +369,13 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "accrueRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "contract IUniswapV3Pool",

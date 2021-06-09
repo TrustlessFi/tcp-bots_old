@@ -34,18 +34,18 @@ interface TfDaoInterface extends ethers.utils.Interface {
     "firstPeriod()": FunctionFragment;
     "getRewards(uint64)": FunctionFragment;
     "idToToken(uint16)": FunctionFragment;
+    "incentiveContract()": FunctionFragment;
+    "incentiveContractMint(address,uint256)": FunctionFragment;
+    "incentivesStartPeriod()": FunctionFragment;
     "init(address,address,address)": FunctionFragment;
     "lastPeriodGlobalInflationUpdated()": FunctionFragment;
-    "liquidityIncentiveContract()": FunctionFragment;
-    "liquidityIncentivesStartPeriod()": FunctionFragment;
     "lockTokens(address,uint256,uint8,address)": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
-    "mintLiquidityIncentive(address,uint256)": FunctionFragment;
     "multisig()": FunctionFragment;
     "periodLength()": FunctionFragment;
     "positions(uint64)": FunctionFragment;
     "rewardsStatus(uint16)": FunctionFragment;
-    "setLiquidityIncentiveContract(address)": FunctionFragment;
+    "setIncentiveContract(address)": FunctionFragment;
     "start()": FunctionFragment;
     "startPeriod()": FunctionFragment;
     "tfGovernorAlpha()": FunctionFragment;
@@ -53,7 +53,7 @@ interface TfDaoInterface extends ethers.utils.Interface {
     "tfToken()": FunctionFragment;
     "timelock()": FunctionFragment;
     "tokenToID(address)": FunctionFragment;
-    "totalLiquidityIncentivesMinted()": FunctionFragment;
+    "totalIncentivesMinted()": FunctionFragment;
     "unlockTokens(uint64)": FunctionFragment;
     "virtualCount(uint16)": FunctionFragment;
     "voteInUnderlyingProtocol(address,uint256)": FunctionFragment;
@@ -102,6 +102,18 @@ interface TfDaoInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "incentiveContract",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "incentiveContractMint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "incentivesStartPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "init",
     values: [string, string, string]
   ): string;
@@ -110,23 +122,11 @@ interface TfDaoInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "liquidityIncentiveContract",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidityIncentivesStartPeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "lockTokens",
     values: [string, BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "mintIncentive",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintLiquidityIncentive",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "multisig", values?: undefined): string;
@@ -143,7 +143,7 @@ interface TfDaoInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLiquidityIncentiveContract",
+    functionFragment: "setIncentiveContract",
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "start", values?: undefined): string;
@@ -163,7 +163,7 @@ interface TfDaoInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(functionFragment: "tokenToID", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "totalLiquidityIncentivesMinted",
+    functionFragment: "totalIncentivesMinted",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -212,26 +212,26 @@ interface TfDaoInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "idToToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "incentiveContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "incentiveContractMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "incentivesStartPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastPeriodGlobalInflationUpdated",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidityIncentiveContract",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "liquidityIncentivesStartPeriod",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "lockTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mintIncentive",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintLiquidityIncentive",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "multisig", data: BytesLike): Result;
@@ -245,7 +245,7 @@ interface TfDaoInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setLiquidityIncentiveContract",
+    functionFragment: "setIncentiveContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "start", data: BytesLike): Result;
@@ -265,7 +265,7 @@ interface TfDaoInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenToID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "totalLiquidityIncentivesMinted",
+    functionFragment: "totalIncentivesMinted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -440,6 +440,34 @@ export class TfDao extends Contract {
       0: string;
     }>;
 
+    incentiveContract(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "incentiveContract()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "incentiveContractMint(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    incentivesStartPeriod(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "incentivesStartPeriod()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
     init(
       _tfPositionNFT: string,
       _tfToken: string,
@@ -459,22 +487,6 @@ export class TfDao extends Contract {
     }>;
 
     "lastPeriodGlobalInflationUpdated()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    liquidityIncentiveContract(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    "liquidityIncentiveContract()"(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    liquidityIncentivesStartPeriod(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "liquidityIncentivesStartPeriod()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
@@ -501,18 +513,6 @@ export class TfDao extends Contract {
     ): Promise<ContractTransaction>;
 
     "mintIncentive(address,uint256)"(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    mintLiquidityIncentive(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "mintLiquidityIncentive(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -594,12 +594,12 @@ export class TfDao extends Contract {
       1: BigNumber;
     }>;
 
-    setLiquidityIncentiveContract(
+    setIncentiveContract(
       _contract: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "setLiquidityIncentiveContract(address)"(
+    "setIncentiveContract(address)"(
       _contract: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -662,11 +662,11 @@ export class TfDao extends Contract {
       0: number;
     }>;
 
-    totalLiquidityIncentivesMinted(overrides?: CallOverrides): Promise<{
+    totalIncentivesMinted(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
-    "totalLiquidityIncentivesMinted()"(overrides?: CallOverrides): Promise<{
+    "totalIncentivesMinted()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
@@ -795,6 +795,26 @@ export class TfDao extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  incentiveContract(overrides?: CallOverrides): Promise<string>;
+
+  "incentiveContract()"(overrides?: CallOverrides): Promise<string>;
+
+  incentiveContractMint(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "incentiveContractMint(address,uint256)"(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  incentivesStartPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "incentivesStartPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
   init(
     _tfPositionNFT: string,
     _tfToken: string,
@@ -814,16 +834,6 @@ export class TfDao extends Contract {
   ): Promise<BigNumber>;
 
   "lastPeriodGlobalInflationUpdated()"(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  liquidityIncentiveContract(overrides?: CallOverrides): Promise<string>;
-
-  "liquidityIncentiveContract()"(overrides?: CallOverrides): Promise<string>;
-
-  liquidityIncentivesStartPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "liquidityIncentivesStartPeriod()"(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -850,18 +860,6 @@ export class TfDao extends Contract {
   ): Promise<ContractTransaction>;
 
   "mintIncentive(address,uint256)"(
-    dest: string,
-    count: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  mintLiquidityIncentive(
-    dest: string,
-    count: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "mintLiquidityIncentive(address,uint256)"(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides
@@ -935,12 +933,12 @@ export class TfDao extends Contract {
     1: BigNumber;
   }>;
 
-  setLiquidityIncentiveContract(
+  setIncentiveContract(
     _contract: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "setLiquidityIncentiveContract(address)"(
+  "setIncentiveContract(address)"(
     _contract: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -976,11 +974,9 @@ export class TfDao extends Contract {
     overrides?: CallOverrides
   ): Promise<number>;
 
-  totalLiquidityIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
+  totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "totalLiquidityIncentivesMinted()"(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  "totalIncentivesMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   unlockTokens(
     positionNFTTokenID: BigNumberish,
@@ -1111,6 +1107,26 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    incentiveContract(overrides?: CallOverrides): Promise<string>;
+
+    "incentiveContract()"(overrides?: CallOverrides): Promise<string>;
+
+    incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "incentiveContractMint(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    incentivesStartPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "incentivesStartPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     init(
       _tfPositionNFT: string,
       _tfToken: string,
@@ -1130,18 +1146,6 @@ export class TfDao extends Contract {
     ): Promise<BigNumber>;
 
     "lastPeriodGlobalInflationUpdated()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidityIncentiveContract(overrides?: CallOverrides): Promise<string>;
-
-    "liquidityIncentiveContract()"(overrides?: CallOverrides): Promise<string>;
-
-    liquidityIncentivesStartPeriod(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "liquidityIncentivesStartPeriod()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1168,18 +1172,6 @@ export class TfDao extends Contract {
     ): Promise<void>;
 
     "mintIncentive(address,uint256)"(
-      dest: string,
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    mintLiquidityIncentive(
-      dest: string,
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "mintLiquidityIncentive(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -1253,12 +1245,12 @@ export class TfDao extends Contract {
       1: BigNumber;
     }>;
 
-    setLiquidityIncentiveContract(
+    setIncentiveContract(
       _contract: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setLiquidityIncentiveContract(address)"(
+    "setIncentiveContract(address)"(
       _contract: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1294,13 +1286,9 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    totalLiquidityIncentivesMinted(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalLiquidityIncentivesMinted()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "totalIncentivesMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     unlockTokens(
       positionNFTTokenID: BigNumberish,
@@ -1464,6 +1452,26 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    incentiveContract(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "incentiveContract()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "incentiveContractMint(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    incentivesStartPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "incentivesStartPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     init(
       _tfPositionNFT: string,
       _tfToken: string,
@@ -1483,20 +1491,6 @@ export class TfDao extends Contract {
     ): Promise<BigNumber>;
 
     "lastPeriodGlobalInflationUpdated()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidityIncentiveContract(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "liquidityIncentiveContract()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liquidityIncentivesStartPeriod(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "liquidityIncentivesStartPeriod()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1523,18 +1517,6 @@ export class TfDao extends Contract {
     ): Promise<BigNumber>;
 
     "mintIncentive(address,uint256)"(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    mintLiquidityIncentive(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "mintLiquidityIncentive(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1568,12 +1550,12 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    setLiquidityIncentiveContract(
+    setIncentiveContract(
       _contract: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "setLiquidityIncentiveContract(address)"(
+    "setIncentiveContract(address)"(
       _contract: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1609,13 +1591,9 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalLiquidityIncentivesMinted(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "totalLiquidityIncentivesMinted()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "totalIncentivesMinted()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     unlockTokens(
       positionNFTTokenID: BigNumberish,
@@ -1745,6 +1723,32 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    incentiveContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "incentiveContract()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "incentiveContractMint(address,uint256)"(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    incentivesStartPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "incentivesStartPeriod()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     init(
       _tfPositionNFT: string,
       _tfToken: string,
@@ -1764,22 +1768,6 @@ export class TfDao extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "lastPeriodGlobalInflationUpdated()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidityIncentiveContract(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "liquidityIncentiveContract()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liquidityIncentivesStartPeriod(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "liquidityIncentivesStartPeriod()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1806,18 +1794,6 @@ export class TfDao extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "mintIncentive(address,uint256)"(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    mintLiquidityIncentive(
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "mintLiquidityIncentive(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -1851,12 +1827,12 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    setLiquidityIncentiveContract(
+    setIncentiveContract(
       _contract: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "setLiquidityIncentiveContract(address)"(
+    "setIncentiveContract(address)"(
       _contract: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -1897,11 +1873,11 @@ export class TfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    totalLiquidityIncentivesMinted(
+    totalIncentivesMinted(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "totalLiquidityIncentivesMinted()"(
+    "totalIncentivesMinted()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -186,19 +186,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "contract IUniswapV3Pool",
-          "name": "pool",
-          "type": "address"
-        }
-      ],
-      "name": "addReferencePool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "collateralizationRequirement",
       "outputs": [
@@ -229,19 +216,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IUniswapV3Pool",
-          "name": "pool",
-          "type": "address"
-        }
-      ],
-      "name": "removeReferencePool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

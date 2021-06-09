@@ -43,6 +43,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     "executeEmergencyShutdown()": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
+    "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)": FunctionFragment;
     "getReferencePools()": FunctionFragment;
     "getSignaturePayloadForUserAddress(address)": FunctionFragment;
     "increaseLiquidationAccountRewards(uint256)": FunctionFragment;
@@ -57,6 +58,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     "market()": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
+    "poolRemovalTime(address)": FunctionFragment;
     "pricePoolsInitialized()": FunctionFragment;
     "prices()": FunctionFragment;
     "protocolDeployer()": FunctionFragment;
@@ -66,11 +68,11 @@ interface GovernorInterface extends ethers.utils.Interface {
     "referencePool(uint256)": FunctionFragment;
     "removeReferencePoolFromProtocol(address)": FunctionFragment;
     "requireDecreaseDebtAccess(address)": FunctionFragment;
-    "requireGenesisAuthenticated(address,tuple)": FunctionFragment;
     "requireLentZhuCountAccess(address)": FunctionFragment;
     "requirePositionWriteAccess(address)": FunctionFragment;
     "requireStoredCollateralAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
+    "requireValidAction(address,string)": FunctionFragment;
     "requireZhuMintingAccess(address)": FunctionFragment;
     "requireZhuReservesBurnAccess(address)": FunctionFragment;
     "rewards()": FunctionFragment;
@@ -92,7 +94,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     "upgradeRewards(address)": FunctionFragment;
     "upgradeSettlement(address)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
-    "validateAction(address,string)": FunctionFragment;
     "zhu()": FunctionFragment;
     "zhuPositionNFT()": FunctionFragment;
   };
@@ -176,6 +177,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getIsGenesisPhaseAndRequireAuthIfSo",
+    values: [string, { v: BigNumberish; r: BytesLike; s: BytesLike }]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getReferencePools",
     values?: undefined
   ): string;
@@ -234,6 +239,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "poolRemovalTime",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "pricePoolsInitialized",
     values?: undefined
   ): string;
@@ -264,10 +273,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "requireGenesisAuthenticated",
-    values: [string, { v: BigNumberish; r: BytesLike; s: BytesLike }]
-  ): string;
-  encodeFunctionData(
     functionFragment: "requireLentZhuCountAccess",
     values: [string]
   ): string;
@@ -282,6 +287,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "requireUpdatePositionAccess",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireValidAction",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "requireZhuMintingAccess",
@@ -351,10 +360,6 @@ interface GovernorInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "validateAction",
-    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "zhu", values?: undefined): string;
   encodeFunctionData(
@@ -435,6 +440,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getIsGenesisPhaseAndRequireAuthIfSo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getReferencePools",
     data: BytesLike
   ): Result;
@@ -473,6 +482,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "poolRemovalTime",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "pricePoolsInitialized",
     data: BytesLike
   ): Result;
@@ -503,10 +516,6 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requireGenesisAuthenticated",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "requireLentZhuCountAccess",
     data: BytesLike
   ): Result;
@@ -520,6 +529,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requireUpdatePositionAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireValidAction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -589,10 +602,6 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "validateAction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "zhu", data: BytesLike): Result;
@@ -818,6 +827,24 @@ export class Governor extends Contract {
       0: BigNumber;
     }>;
 
+    getIsGenesisPhaseAndRequireAuthIfSo(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<{
+      isGenesis: boolean;
+      0: boolean;
+    }>;
+
+    "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<{
+      isGenesis: boolean;
+      0: boolean;
+    }>;
+
     getReferencePools(overrides?: CallOverrides): Promise<{
       0: string[];
     }>;
@@ -970,6 +997,20 @@ export class Governor extends Contract {
       0: BigNumber;
     }>;
 
+    poolRemovalTime(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "poolRemovalTime(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     pricePoolsInitialized(overrides?: CallOverrides): Promise<{
       0: boolean;
     }>;
@@ -1056,24 +1097,6 @@ export class Governor extends Contract {
       0: void;
     }>;
 
-    requireGenesisAuthenticated(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<{
-      isGenesis: boolean;
-      0: boolean;
-    }>;
-
-    "requireGenesisAuthenticated(address,tuple)"(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<{
-      isGenesis: boolean;
-      0: boolean;
-    }>;
-
     requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
@@ -1125,6 +1148,22 @@ export class Governor extends Contract {
 
     "requireUpdatePositionAccess(address)"(
       caller: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
       overrides?: CallOverrides
     ): Promise<{
       0: void;
@@ -1336,22 +1375,6 @@ export class Governor extends Contract {
       0: boolean;
     }>;
 
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
     zhu(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
@@ -1489,6 +1512,18 @@ export class Governor extends Contract {
 
   "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getIsGenesisPhaseAndRequireAuthIfSo(
+    caller: string,
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)"(
+    caller: string,
+    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
   "getReferencePools()"(overrides?: CallOverrides): Promise<string[]>;
@@ -1605,6 +1640,13 @@ export class Governor extends Contract {
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  poolRemovalTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "poolRemovalTime(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   pricePoolsInitialized(overrides?: CallOverrides): Promise<boolean>;
 
   "pricePoolsInitialized()"(overrides?: CallOverrides): Promise<boolean>;
@@ -1656,18 +1698,6 @@ export class Governor extends Contract {
     overrides?: CallOverrides
   ): Promise<void>;
 
-  requireGenesisAuthenticated(
-    caller: string,
-    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "requireGenesisAuthenticated(address,tuple)"(
-    caller: string,
-    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   requireLentZhuCountAccess(
     caller: string,
     overrides?: CallOverrides
@@ -1705,6 +1735,18 @@ export class Governor extends Contract {
 
   "requireUpdatePositionAccess(address)"(
     caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireValidAction(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireValidAction(address,string)"(
+    target: string,
+    signature: string,
     overrides?: CallOverrides
   ): Promise<void>;
 
@@ -1871,18 +1913,6 @@ export class Governor extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  validateAction(
-    target: string,
-    signature: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "validateAction(address,string)"(
-    target: string,
-    signature: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   zhu(overrides?: CallOverrides): Promise<string>;
 
   "zhu()"(overrides?: CallOverrides): Promise<string>;
@@ -2022,6 +2052,18 @@ export class Governor extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getIsGenesisPhaseAndRequireAuthIfSo(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
     "getReferencePools()"(overrides?: CallOverrides): Promise<string[]>;
@@ -2140,6 +2182,16 @@ export class Governor extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    poolRemovalTime(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "poolRemovalTime(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pricePoolsInitialized(overrides?: CallOverrides): Promise<boolean>;
 
     "pricePoolsInitialized()"(overrides?: CallOverrides): Promise<boolean>;
@@ -2194,18 +2246,6 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    requireGenesisAuthenticated(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "requireGenesisAuthenticated(address,tuple)"(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
@@ -2243,6 +2283,18 @@ export class Governor extends Contract {
 
     "requireUpdatePositionAccess(address)"(
       caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2389,18 +2441,6 @@ export class Governor extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -2555,6 +2595,18 @@ export class Governor extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getIsGenesisPhaseAndRequireAuthIfSo(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReferencePools(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getReferencePools()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2673,6 +2725,16 @@ export class Governor extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    poolRemovalTime(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "poolRemovalTime(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pricePoolsInitialized(overrides?: CallOverrides): Promise<BigNumber>;
 
     "pricePoolsInitialized()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2727,18 +2789,6 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    requireGenesisAuthenticated(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "requireGenesisAuthenticated(address,tuple)"(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
@@ -2776,6 +2826,18 @@ export class Governor extends Contract {
 
     "requireUpdatePositionAccess(address)"(
       caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2922,18 +2984,6 @@ export class Governor extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3095,6 +3145,18 @@ export class Governor extends Contract {
 
     "firstPeriod()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getIsGenesisPhaseAndRequireAuthIfSo(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getIsGenesisPhaseAndRequireAuthIfSo(address,tuple)"(
+      caller: string,
+      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getReferencePools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getReferencePools()"(
@@ -3217,6 +3279,16 @@ export class Governor extends Contract {
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    poolRemovalTime(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "poolRemovalTime(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pricePoolsInitialized(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3277,18 +3349,6 @@ export class Governor extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    requireGenesisAuthenticated(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "requireGenesisAuthenticated(address,tuple)"(
-      caller: string,
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     requireLentZhuCountAccess(
       caller: string,
       overrides?: CallOverrides
@@ -3326,6 +3386,18 @@ export class Governor extends Contract {
 
     "requireUpdatePositionAccess(address)"(
       caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3496,18 +3568,6 @@ export class Governor extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

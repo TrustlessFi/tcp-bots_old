@@ -25,7 +25,7 @@ interface MockGovernorInterface extends ethers.utils.Interface {
     "currentPhase()": FunctionFragment;
     "distributedTCP()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
-    "validateAction(address,string)": FunctionFragment;
+    "requireValidAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -41,7 +41,7 @@ interface MockGovernorInterface extends ethers.utils.Interface {
     values: [string, string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "validateAction",
+    functionFragment: "requireValidAction",
     values: [string, string]
   ): string;
 
@@ -55,7 +55,7 @@ interface MockGovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "validateAction",
+    functionFragment: "requireValidAction",
     data: BytesLike
   ): Result;
 
@@ -106,20 +106,20 @@ export class MockGovernor extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    validateAction(
+    requireValidAction(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: boolean;
+      0: void;
     }>;
 
-    "validateAction(address,string)"(
+    "requireValidAction(address,string)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: boolean;
+      0: void;
     }>;
   };
 
@@ -145,17 +145,17 @@ export class MockGovernor extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  validateAction(
+  requireValidAction(
     arg0: string,
     arg1: string,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<void>;
 
-  "validateAction(address,string)"(
+  "requireValidAction(address,string)"(
     arg0: string,
     arg1: string,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<void>;
 
   callStatic: {
     currentPhase(overrides?: CallOverrides): Promise<number>;
@@ -190,17 +190,17 @@ export class MockGovernor extends Contract {
       1: string;
     }>;
 
-    validateAction(
+    requireValidAction(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    "validateAction(address,string)"(
+    "requireValidAction(address,string)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {};
@@ -228,13 +228,13 @@ export class MockGovernor extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    validateAction(
+    requireValidAction(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "validateAction(address,string)"(
+    "requireValidAction(address,string)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
@@ -266,13 +266,13 @@ export class MockGovernor extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    validateAction(
+    requireValidAction(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "validateAction(address,string)"(
+    "requireValidAction(address,string)"(
       arg0: string,
       arg1: string,
       overrides?: CallOverrides

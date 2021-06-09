@@ -22,6 +22,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface LiquidationsInterface extends ethers.utils.Interface {
   functions: {
+    "collateralPool()": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "deployer()": FunctionFragment;
@@ -48,6 +49,10 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     "validUpdate(bytes4)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "collateralPool",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "completeSetup",
     values?: undefined
@@ -130,6 +135,10 @@ interface LiquidationsInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "collateralPool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "completeSetup",
     data: BytesLike
@@ -244,6 +253,14 @@ export class Liquidations extends Contract {
   interface: LiquidationsInterface;
 
   functions: {
+    collateralPool(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -459,6 +476,10 @@ export class Liquidations extends Contract {
     }>;
   };
 
+  collateralPool(overrides?: CallOverrides): Promise<string>;
+
+  "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
   completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -618,6 +639,10 @@ export class Liquidations extends Contract {
   ): Promise<boolean>;
 
   callStatic: {
+    collateralPool(overrides?: CallOverrides): Promise<string>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
@@ -795,6 +820,10 @@ export class Liquidations extends Contract {
   };
 
   estimateGas: {
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
@@ -941,6 +970,12 @@ export class Liquidations extends Contract {
   };
 
   populateTransaction: {
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "collateralPool()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;

@@ -23,14 +23,18 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
   functions: {
     "currentPhase()": FunctionFragment;
+    "requireValidAction(address,string)": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
     "transferEmergencyShutdownTokens(address,uint256)": FunctionFragment;
-    "validateAction(address,string)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "currentPhase",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireValidAction",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "setPhaseOneStartTime",
@@ -40,13 +44,13 @@ interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
     functionFragment: "transferEmergencyShutdownTokens",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "validateAction",
-    values: [string, string]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "currentPhase",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireValidAction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -55,10 +59,6 @@ interface IEnforcedDecentralizationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferEmergencyShutdownTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "validateAction",
     data: BytesLike
   ): Result;
 
@@ -97,6 +97,22 @@ export class IEnforcedDecentralization extends Contract {
       0: number;
     }>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: void;
+    }>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -118,27 +134,23 @@ export class IEnforcedDecentralization extends Contract {
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
   };
 
   currentPhase(overrides?: CallOverrides): Promise<number>;
 
   "currentPhase()"(overrides?: CallOverrides): Promise<number>;
+
+  requireValidAction(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  "requireValidAction(address,string)"(
+    target: string,
+    signature: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   setPhaseOneStartTime(
     phaseOneStartTime: BigNumberish,
@@ -162,22 +174,22 @@ export class IEnforcedDecentralization extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  validateAction(
-    target: string,
-    signature: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "validateAction(address,string)"(
-    target: string,
-    signature: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   callStatic: {
     currentPhase(overrides?: CallOverrides): Promise<number>;
 
     "currentPhase()"(overrides?: CallOverrides): Promise<number>;
+
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
@@ -200,18 +212,6 @@ export class IEnforcedDecentralization extends Contract {
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {
@@ -233,6 +233,18 @@ export class IEnforcedDecentralization extends Contract {
 
     "currentPhase()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -253,18 +265,6 @@ export class IEnforcedDecentralization extends Contract {
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -273,6 +273,18 @@ export class IEnforcedDecentralization extends Contract {
 
     "currentPhase()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    requireValidAction(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "requireValidAction(address,string)"(
+      target: string,
+      signature: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides
@@ -293,18 +305,6 @@ export class IEnforcedDecentralization extends Contract {
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    validateAction(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "validateAction(address,string)"(
-      target: string,
-      signature: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

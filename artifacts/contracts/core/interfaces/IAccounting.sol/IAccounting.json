@@ -185,7 +185,7 @@
         {
           "components": [
             {
-              "internalType": "address payable",
+              "internalType": "address",
               "name": "owner",
               "type": "address"
             },
@@ -598,7 +598,7 @@
         {
           "components": [
             {
-              "internalType": "address payable",
+              "internalType": "address",
               "name": "owner",
               "type": "address"
             },

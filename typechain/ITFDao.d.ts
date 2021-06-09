@@ -23,7 +23,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface ItfDaoInterface extends ethers.utils.Interface {
   functions: {
     "availableSupply()": FunctionFragment;
-    "mintLiquidityIncentive(address,uint256)": FunctionFragment;
+    "incentiveContractMint(address,uint256)": FunctionFragment;
     "voteInUnderlyingProtocol(address,uint256)": FunctionFragment;
   };
 
@@ -32,7 +32,7 @@ interface ItfDaoInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "mintLiquidityIncentive",
+    functionFragment: "incentiveContractMint",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -45,7 +45,7 @@ interface ItfDaoInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "mintLiquidityIncentive",
+    functionFragment: "incentiveContractMint",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -102,13 +102,13 @@ export class ItfDao extends Contract {
       0: BigNumber;
     }>;
 
-    mintLiquidityIncentive(
+    incentiveContractMint(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "mintLiquidityIncentive(address,uint256)"(
+    "incentiveContractMint(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -135,13 +135,13 @@ export class ItfDao extends Contract {
 
   "availableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  mintLiquidityIncentive(
+  incentiveContractMint(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "mintLiquidityIncentive(address,uint256)"(
+  "incentiveContractMint(address,uint256)"(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides
@@ -164,13 +164,13 @@ export class ItfDao extends Contract {
 
     "availableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mintLiquidityIncentive(
+    incentiveContractMint(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "mintLiquidityIncentive(address,uint256)"(
+    "incentiveContractMint(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -233,13 +233,13 @@ export class ItfDao extends Contract {
 
     "availableSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mintLiquidityIncentive(
+    incentiveContractMint(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "mintLiquidityIncentive(address,uint256)"(
+    "incentiveContractMint(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
@@ -265,13 +265,13 @@ export class ItfDao extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mintLiquidityIncentive(
+    incentiveContractMint(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "mintLiquidityIncentive(address,uint256)"(
+    "incentiveContractMint(address,uint256)"(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides

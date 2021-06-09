@@ -107,6 +107,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "signature",
+        type: "string",
+      },
+    ],
+    name: "requireValidAction",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint64",
         name: "phaseOneStartTime",
         type: "uint64",
@@ -133,30 +151,6 @@ const _abi = [
     name: "transferEmergencyShutdownTokens",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "signature",
-        type: "string",
-      },
-    ],
-    name: "validateAction",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ];

@@ -32,7 +32,6 @@ interface PricesInterface extends ethers.utils.Interface {
     "convertTickToSqrtPriceX96(int24)": FunctionFragment;
     "deployer()": FunctionFragment;
     "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
@@ -87,10 +86,6 @@ interface PricesInterface extends ethers.utils.Interface {
       BigNumberish,
       BigNumberish
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
-    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
@@ -149,10 +144,6 @@ interface PricesInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRealZhuCountForSinglePoolPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
@@ -331,24 +322,6 @@ export class Prices extends Contract {
       tick: BigNumberish,
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
       overrides?: CallOverrides
@@ -567,20 +540,6 @@ export class Prices extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getVirtualZhuCountForLiquidityAmount(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   governor(overrides?: CallOverrides): Promise<string>;
 
   "governor()"(overrides?: CallOverrides): Promise<string>;
@@ -758,20 +717,6 @@ export class Prices extends Contract {
       tick: BigNumberish,
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
       overrides?: CallOverrides
@@ -973,20 +918,6 @@ export class Prices extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1141,20 +1072,6 @@ export class Prices extends Contract {
       tick: BigNumberish,
       tickLower: BigNumberish,
       tickUpper: BigNumberish,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
       overrides?: CallOverrides

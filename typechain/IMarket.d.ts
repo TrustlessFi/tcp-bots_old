@@ -23,11 +23,9 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface IMarketInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
-    "addReferencePool(address)": FunctionFragment;
     "collateralizationRequirement()": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
-    "removeReferencePool(address)": FunctionFragment;
     "stop()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
   };
@@ -35,10 +33,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "accrueInterest",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addReferencePool",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
@@ -51,10 +45,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "lastPeriodGlobalInterestAccrued",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeReferencePool",
-    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
@@ -67,10 +57,6 @@ interface IMarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "addReferencePool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
     data: BytesLike
   ): Result;
@@ -80,10 +66,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "lastPeriodGlobalInterestAccrued",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -129,16 +111,6 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     collateralizationRequirement(overrides?: CallOverrides): Promise<{
       ratio: BigNumber;
       0: BigNumber;
@@ -163,16 +135,6 @@ export class IMarket extends Contract {
       0: BigNumber;
     }>;
 
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "removeReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -192,16 +154,6 @@ export class IMarket extends Contract {
 
   "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
 
-  addReferencePool(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "addReferencePool(address)"(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
   "collateralizationRequirement()"(
@@ -219,16 +171,6 @@ export class IMarket extends Contract {
   "lastPeriodGlobalInterestAccrued()"(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  removeReferencePool(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "removeReferencePool(address)"(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -249,13 +191,6 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
 
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "collateralizationRequirement()"(
@@ -273,13 +208,6 @@ export class IMarket extends Contract {
     "lastPeriodGlobalInterestAccrued()"(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
-
-    "removeReferencePool(address)"(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
@@ -378,13 +306,6 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
 
-    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "collateralizationRequirement()"(
@@ -401,16 +322,6 @@ export class IMarket extends Contract {
 
     "lastPeriodGlobalInterestAccrued()"(
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "removeReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
     ): Promise<BigNumber>;
 
     stop(overrides?: Overrides): Promise<BigNumber>;
@@ -433,16 +344,6 @@ export class IMarket extends Contract {
 
     "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     collateralizationRequirement(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -461,16 +362,6 @@ export class IMarket extends Contract {
 
     "lastPeriodGlobalInterestAccrued()"(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "removeReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     stop(overrides?: Overrides): Promise<PopulatedTransaction>;

@@ -302,6 +302,47 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        components: [
+          {
+            internalType: "uint8",
+            name: "v",
+            type: "uint8",
+          },
+          {
+            internalType: "bytes32",
+            name: "r",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "s",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct IGovernor.GenesisAuth",
+        name: "ga",
+        type: "tuple",
+      },
+    ],
+    name: "getIsGenesisPhaseAndRequireAuthIfSo",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isGenesis",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getReferencePools",
     outputs: [
@@ -411,6 +452,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "poolRemovalTime",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "prices",
     outputs: [
@@ -508,47 +568,6 @@ const _abi = [
         name: "caller",
         type: "address",
       },
-      {
-        components: [
-          {
-            internalType: "uint8",
-            name: "v",
-            type: "uint8",
-          },
-          {
-            internalType: "bytes32",
-            name: "r",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "s",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct IGovernor.GenesisAuth",
-        name: "ga",
-        type: "tuple",
-      },
-    ],
-    name: "requireGenesisAuthenticated",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "isGenesis",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
     ],
     name: "requireLentZhuCountAccess",
     outputs: [],
@@ -590,6 +609,24 @@ const _abi = [
       },
     ],
     name: "requireUpdatePositionAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "signature",
+        type: "string",
+      },
+    ],
+    name: "requireValidAction",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -800,30 +837,6 @@ const _abi = [
     name: "upgradeSettlement",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "signature",
-        type: "string",
-      },
-    ],
-    name: "validateAction",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {

@@ -25,6 +25,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
     "bidDeficitAuction(uint64,uint128)": FunctionFragment;
     "bidSurplusAuction(uint64,uint128)": FunctionFragment;
     "checkReservesAndStartAuctions()": FunctionFragment;
+    "collateralPool()": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "deficitAuction(uint64)": FunctionFragment;
     "deficitAuctionComplete(uint64)": FunctionFragment;
@@ -43,6 +44,7 @@ interface AuctionsInterface extends ethers.utils.Interface {
     "minAuctionDuration()": FunctionFragment;
     "minBidDelta()": FunctionFragment;
     "minLotSize()": FunctionFragment;
+    "protocolPool()": FunctionFragment;
     "reservesBufferLowerBound()": FunctionFragment;
     "reservesBufferUpperBound()": FunctionFragment;
     "setExtensionPerBid(uint64)": FunctionFragment;
@@ -82,6 +84,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "checkReservesAndStartAuctions",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "collateralPool",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -145,6 +151,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "minLotSize",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "protocolPool",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -260,6 +270,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "collateralPool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
@@ -319,6 +333,10 @@ interface AuctionsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "minLotSize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "protocolPool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "reservesBufferLowerBound",
     data: BytesLike
@@ -489,6 +507,14 @@ export class Auctions extends Contract {
     "checkReservesAndStartAuctions()"(
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    collateralPool(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
 
     completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -728,6 +754,14 @@ export class Auctions extends Contract {
 
     "minLotSize()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
+    }>;
+
+    protocolPool(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<{
+      0: string;
     }>;
 
     reservesBufferLowerBound(overrides?: CallOverrides): Promise<{
@@ -1049,6 +1083,10 @@ export class Auctions extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  collateralPool(overrides?: CallOverrides): Promise<string>;
+
+  "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
   completeSetup(overrides?: Overrides): Promise<ContractTransaction>;
 
   "completeSetup()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -1231,6 +1269,10 @@ export class Auctions extends Contract {
   minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  protocolPool(overrides?: CallOverrides): Promise<string>;
+
+  "protocolPool()"(overrides?: CallOverrides): Promise<string>;
 
   reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1500,6 +1542,10 @@ export class Auctions extends Contract {
 
     "checkReservesAndStartAuctions()"(overrides?: CallOverrides): Promise<void>;
 
+    collateralPool(overrides?: CallOverrides): Promise<string>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
     completeSetup(overrides?: CallOverrides): Promise<void>;
 
     "completeSetup()"(overrides?: CallOverrides): Promise<void>;
@@ -1682,6 +1728,10 @@ export class Auctions extends Contract {
     minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    protocolPool(overrides?: CallOverrides): Promise<string>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<string>;
 
     reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1995,6 +2045,10 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     completeSetup(overrides?: Overrides): Promise<BigNumber>;
 
     "completeSetup()"(overrides?: Overrides): Promise<BigNumber>;
@@ -2097,6 +2151,10 @@ export class Auctions extends Contract {
     minLotSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minLotSize()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     reservesBufferLowerBound(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2339,6 +2397,12 @@ export class Auctions extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "collateralPool()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     completeSetup(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "completeSetup()"(overrides?: Overrides): Promise<PopulatedTransaction>;
@@ -2464,6 +2528,10 @@ export class Auctions extends Contract {
     minLotSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "minLotSize()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    protocolPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "protocolPool()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     reservesBufferLowerBound(
       overrides?: CallOverrides

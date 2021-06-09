@@ -23,6 +23,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface PricesTestableInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
+    "calculate64To32(uint64)": FunctionFragment;
     "calculateInstantTwappedPrice(address,uint32)": FunctionFragment;
     "calculateInstantTwappedTick(address,uint32)": FunctionFragment;
     "calculateTwappedPrice(address,bool)": FunctionFragment;
@@ -35,7 +36,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "getPriceForTick(int24,bool)": FunctionFragment;
     "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
     "getTickForCumulators(int56,int56,uint32)": FunctionFragment;
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "normalizeDecimals(uint256,tuple)": FunctionFragment;
@@ -53,6 +53,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "addReferencePool",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculate64To32",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateInstantTwappedPrice",
@@ -106,10 +110,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     functionFragment: "getTickForCumulators",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "governor", values?: undefined): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
@@ -156,6 +156,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "calculate64To32",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "calculateInstantTwappedPrice",
     data: BytesLike
   ): Result;
@@ -198,10 +202,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTickForCumulators",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "governor", data: BytesLike): Result;
@@ -271,6 +271,20 @@ export class PricesTestable extends Contract {
       pool: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    calculate64To32(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: number;
+    }>;
+
+    "calculate64To32(uint64)"(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: number;
+    }>;
 
     calculateInstantTwappedPrice(
       pool: string,
@@ -446,24 +460,6 @@ export class PricesTestable extends Contract {
     ): Promise<{
       tick: number;
       0: number;
-    }>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
-    }>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: BigNumber;
     }>;
 
     governor(overrides?: CallOverrides): Promise<{
@@ -643,6 +639,16 @@ export class PricesTestable extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  calculate64To32(
+    input: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  "calculate64To32(uint64)"(
+    input: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   calculateInstantTwappedPrice(
     pool: string,
     twapDuration: BigNumberish,
@@ -766,20 +772,6 @@ export class PricesTestable extends Contract {
     timeElapsed: BigNumberish,
     overrides?: CallOverrides
   ): Promise<number>;
-
-  getVirtualZhuCountForLiquidityAmount(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   governor(overrides?: CallOverrides): Promise<string>;
 
@@ -912,6 +904,16 @@ export class PricesTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    calculate64To32(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    "calculate64To32(uint64)"(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     calculateInstantTwappedPrice(
       pool: string,
       twapDuration: BigNumberish,
@@ -1035,20 +1037,6 @@ export class PricesTestable extends Contract {
       timeElapsed: BigNumberish,
       overrides?: CallOverrides
     ): Promise<number>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     governor(overrides?: CallOverrides): Promise<string>;
 
@@ -1195,6 +1183,16 @@ export class PricesTestable extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    calculate64To32(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculate64To32(uint64)"(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calculateInstantTwappedPrice(
       pool: string,
       twapDuration: BigNumberish,
@@ -1319,20 +1317,6 @@ export class PricesTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     governor(overrides?: CallOverrides): Promise<BigNumber>;
 
     "governor()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1440,6 +1424,16 @@ export class PricesTestable extends Contract {
     "addReferencePool(address)"(
       pool: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    calculate64To32(
+      input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculate64To32(uint64)"(
+      input: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     calculateInstantTwappedPrice(
@@ -1565,20 +1559,6 @@ export class PricesTestable extends Contract {
       tickCumulative0: BigNumberish,
       tickCumulative1: BigNumberish,
       timeElapsed: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

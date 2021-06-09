@@ -199,7 +199,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "owner",
             type: "address",
           },
@@ -612,7 +612,7 @@ const _abi = [
       {
         components: [
           {
-            internalType: "address payable",
+            internalType: "address",
             name: "owner",
             type: "address",
           },

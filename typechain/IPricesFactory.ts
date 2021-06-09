@@ -198,35 +198,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "liquidity",
-        type: "uint256",
-      },
-      {
-        internalType: "uint32",
-        name: "twapDuration",
-        type: "uint32",
-      },
-    ],
-    name: "getVirtualZhuCountForLiquidityAmount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "zhuCount",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "stop",
     outputs: [],

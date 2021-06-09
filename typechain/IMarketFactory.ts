@@ -200,19 +200,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-    ],
-    name: "addReferencePool",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "collateralizationRequirement",
     outputs: [
@@ -243,19 +230,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-    ],
-    name: "removeReferencePool",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {

@@ -210,7 +210,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "mintLiquidityIncentive",
+    name: "incentiveContractMint",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

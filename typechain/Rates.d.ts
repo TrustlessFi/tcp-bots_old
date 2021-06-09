@@ -46,10 +46,6 @@ interface RatesInterface extends ethers.utils.Interface {
     "setValidRangeForRawPrices(uint128)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
-    "testContractLock()": FunctionFragment;
-    "testContractLock2()": FunctionFragment;
-    "testProtocolLock()": FunctionFragment;
-    "testProtocolLock2()": FunctionFragment;
     "update()": FunctionFragment;
     "validRangeForRawPrices()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
@@ -136,22 +132,6 @@ interface RatesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "testContractLock",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "testContractLock2",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "testProtocolLock",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "testProtocolLock2",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "update", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "validRangeForRawPrices",
@@ -237,22 +217,6 @@ interface RatesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "testContractLock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "testContractLock2",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "testProtocolLock",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "testProtocolLock2",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "update", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "validRangeForRawPrices",
@@ -546,22 +510,6 @@ export class Rates extends Contract {
       0: boolean;
     }>;
 
-    testContractLock(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "testContractLock()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    testContractLock2(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "testContractLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    testProtocolLock(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "testProtocolLock()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    testProtocolLock2(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "testProtocolLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
-
     update(overrides?: Overrides): Promise<ContractTransaction>;
 
     "update()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -804,22 +752,6 @@ export class Rates extends Contract {
 
   "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-  testContractLock(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "testContractLock()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  testContractLock2(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "testContractLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  testProtocolLock(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "testProtocolLock()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  testProtocolLock2(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "testProtocolLock2()"(overrides?: Overrides): Promise<ContractTransaction>;
-
   update(overrides?: Overrides): Promise<ContractTransaction>;
 
   "update()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -1038,22 +970,6 @@ export class Rates extends Contract {
 
     "stopped()"(overrides?: CallOverrides): Promise<boolean>;
 
-    testContractLock(overrides?: CallOverrides): Promise<void>;
-
-    "testContractLock()"(overrides?: CallOverrides): Promise<void>;
-
-    testContractLock2(overrides?: CallOverrides): Promise<void>;
-
-    "testContractLock2()"(overrides?: CallOverrides): Promise<void>;
-
-    testProtocolLock(overrides?: CallOverrides): Promise<void>;
-
-    "testProtocolLock()"(overrides?: CallOverrides): Promise<void>;
-
-    testProtocolLock2(overrides?: CallOverrides): Promise<void>;
-
-    "testProtocolLock2()"(overrides?: CallOverrides): Promise<void>;
-
     update(overrides?: CallOverrides): Promise<void>;
 
     "update()"(overrides?: CallOverrides): Promise<void>;
@@ -1249,22 +1165,6 @@ export class Rates extends Contract {
     stopped(overrides?: CallOverrides): Promise<BigNumber>;
 
     "stopped()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    testContractLock(overrides?: Overrides): Promise<BigNumber>;
-
-    "testContractLock()"(overrides?: Overrides): Promise<BigNumber>;
-
-    testContractLock2(overrides?: Overrides): Promise<BigNumber>;
-
-    "testContractLock2()"(overrides?: Overrides): Promise<BigNumber>;
-
-    testProtocolLock(overrides?: Overrides): Promise<BigNumber>;
-
-    "testProtocolLock()"(overrides?: Overrides): Promise<BigNumber>;
-
-    testProtocolLock2(overrides?: Overrides): Promise<BigNumber>;
-
-    "testProtocolLock2()"(overrides?: Overrides): Promise<BigNumber>;
 
     update(overrides?: Overrides): Promise<BigNumber>;
 
@@ -1474,22 +1374,6 @@ export class Rates extends Contract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "stopped()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    testContractLock(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "testContractLock()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    testContractLock2(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "testContractLock2()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    testProtocolLock(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "testProtocolLock()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    testProtocolLock2(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "testProtocolLock2()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     update(overrides?: Overrides): Promise<PopulatedTransaction>;
 

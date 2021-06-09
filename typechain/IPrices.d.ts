@@ -28,7 +28,6 @@ interface IPricesInterface extends ethers.utils.Interface {
     "calculateTwappedPrice(address,bool)": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "getRealZhuCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "systemObtainReferencePrice(address)": FunctionFragment;
     "zhuTcpPrice(uint32)": FunctionFragment;
@@ -65,10 +64,6 @@ interface IPricesInterface extends ethers.utils.Interface {
       BigNumberish
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "systemObtainReferencePrice",
@@ -101,10 +96,6 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRealZhuCountForSinglePoolPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getVirtualZhuCountForLiquidityAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -232,26 +223,6 @@ export class IPrices extends Contract {
       0: BigNumber;
     }>;
 
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      zhuCount: BigNumber;
-      0: BigNumber;
-    }>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      zhuCount: BigNumber;
-      0: BigNumber;
-    }>;
-
     stop(overrides?: Overrides): Promise<ContractTransaction>;
 
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -351,20 +322,6 @@ export class IPrices extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getVirtualZhuCountForLiquidityAmount(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-    pool: string,
-    liquidity: BigNumberish,
-    twapDuration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   stop(overrides?: Overrides): Promise<ContractTransaction>;
 
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -452,20 +409,6 @@ export class IPrices extends Contract {
       tickLower: BigNumberish,
       tick: BigNumberish,
       tickUpper: BigNumberish,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
       overrides?: CallOverrides
@@ -573,20 +516,6 @@ export class IPrices extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     stop(overrides?: Overrides): Promise<BigNumber>;
 
     "stop()"(overrides?: Overrides): Promise<BigNumber>;
@@ -678,20 +607,6 @@ export class IPrices extends Contract {
       tickLower: BigNumberish,
       tick: BigNumberish,
       tickUpper: BigNumberish,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getVirtualZhuCountForLiquidityAmount(
-      pool: string,
-      liquidity: BigNumberish,
-      twapDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getVirtualZhuCountForLiquidityAmount(address,uint256,uint32)"(
-      pool: string,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
       overrides?: CallOverrides

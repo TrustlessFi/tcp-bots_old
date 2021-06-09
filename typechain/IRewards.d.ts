@@ -22,6 +22,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
+    "accrueRewards()": FunctionFragment;
     "addReferencePool(address)": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
     "completeSetup()": FunctionFragment;
@@ -29,6 +30,10 @@ interface IRewardsInterface extends ethers.utils.Interface {
     "stop()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "accrueRewards",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addReferencePool",
     values: [string]
@@ -47,6 +52,10 @@ interface IRewardsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
+  decodeFunctionResult(
+    functionFragment: "accrueRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addReferencePool",
     data: BytesLike
@@ -116,6 +125,10 @@ export class IRewards extends Contract {
   interface: IRewardsInterface;
 
   functions: {
+    accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
+
     addReferencePool(
       pool: string,
       overrides?: Overrides
@@ -153,6 +166,10 @@ export class IRewards extends Contract {
     "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
+  accrueRewards(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "accrueRewards()"(overrides?: Overrides): Promise<ContractTransaction>;
+
   addReferencePool(
     pool: string,
     overrides?: Overrides
@@ -186,6 +203,10 @@ export class IRewards extends Contract {
   "stop()"(overrides?: Overrides): Promise<ContractTransaction>;
 
   callStatic: {
+    accrueRewards(overrides?: CallOverrides): Promise<void>;
+
+    "accrueRewards()"(overrides?: CallOverrides): Promise<void>;
+
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     "addReferencePool(address)"(
@@ -284,6 +305,10 @@ export class IRewards extends Contract {
   };
 
   estimateGas: {
+    accrueRewards(overrides?: Overrides): Promise<BigNumber>;
+
+    "accrueRewards()"(overrides?: Overrides): Promise<BigNumber>;
+
     addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
 
     "addReferencePool(address)"(
@@ -315,6 +340,10 @@ export class IRewards extends Contract {
   };
 
   populateTransaction: {
+    accrueRewards(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "accrueRewards()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
     addReferencePool(
       pool: string,
       overrides?: Overrides

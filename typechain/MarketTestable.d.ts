@@ -24,11 +24,11 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface MarketTestableInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
-    "addReferencePool(address)": FunctionFragment;
     "adjustGenesisPositionCollateral(uint64,uint256)": FunctionFragment;
     "adjustPosition(uint64,int256,uint256)": FunctionFragment;
     "calculateInterest(tuple,uint64,uint256,bool,uint256,uint256)": FunctionFragment;
     "claimRewards(uint64)": FunctionFragment;
+    "collateralPool()": FunctionFragment;
     "collateralizationRequirement()": FunctionFragment;
     "completeSetup()": FunctionFragment;
     "createGenesisPosition(tuple)": FunctionFragment;
@@ -40,18 +40,12 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     "init(address)": FunctionFragment;
     "interestPortionToLenders()": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
-    "minCollateralPoolLiquidity()": FunctionFragment;
     "minPositionSize()": FunctionFragment;
-    "minTotalReferencePoolLiquidity()": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "referencePools(uint256)": FunctionFragment;
     "removeGenesisPosition(uint64)": FunctionFragment;
-    "removeReferencePool(address)": FunctionFragment;
     "setCollateralizationRequirement(uint256)": FunctionFragment;
     "setInterestPortionToLenders(uint256)": FunctionFragment;
-    "setMinCollateralPoolLiquidity(uint256)": FunctionFragment;
     "setMinPositionSize(uint256)": FunctionFragment;
-    "setMinTotalReferencePoolLiquidity(uint256)": FunctionFragment;
     "setTwapDuration(uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
@@ -59,15 +53,12 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     "twapDuration()": FunctionFragment;
     "updatePositionImpl(tuple,tuple,uint64)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
+    "zhuPositionNFT()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "accrueInterest",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addReferencePool",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "adjustGenesisPositionCollateral",
@@ -96,6 +87,10 @@ interface MarketTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "claimRewards",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "collateralPool",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
@@ -133,15 +128,7 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "minCollateralPoolLiquidity",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "minPositionSize",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minTotalReferencePoolLiquidity",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -149,16 +136,8 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "referencePools",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "removeGenesisPosition",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeReferencePool",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setCollateralizationRequirement",
@@ -169,15 +148,7 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMinCollateralPoolLiquidity",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setMinPositionSize",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinTotalReferencePoolLiquidity",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -222,13 +193,13 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     functionFragment: "validUpdate",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "zhuPositionNFT",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "accrueInterest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -245,6 +216,10 @@ interface MarketTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "claimRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collateralPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -283,15 +258,7 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "minCollateralPoolLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "minPositionSize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minTotalReferencePoolLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -299,15 +266,7 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "referencePools",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "removeGenesisPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -319,15 +278,7 @@ interface MarketTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMinCollateralPoolLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setMinPositionSize",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinTotalReferencePoolLiquidity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -350,6 +301,10 @@ interface MarketTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "zhuPositionNFT",
     data: BytesLike
   ): Result;
 
@@ -393,16 +348,6 @@ export class MarketTestable extends Contract {
     accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
     "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
 
     adjustGenesisPositionCollateral(
       positionID: BigNumberish,
@@ -520,6 +465,14 @@ export class MarketTestable extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    collateralPool(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
     collateralizationRequirement(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
@@ -612,27 +565,11 @@ export class MarketTestable extends Contract {
       0: BigNumber;
     }>;
 
-    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "minCollateralPoolLiquidity()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
     minPositionSize(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    minTotalReferencePoolLiquidity(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "minTotalReferencePoolLiquidity()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
@@ -644,20 +581,6 @@ export class MarketTestable extends Contract {
       0: BigNumber;
     }>;
 
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
-
-    "referencePools(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: string;
-    }>;
-
     removeGenesisPosition(
       positionID: BigNumberish,
       overrides?: Overrides
@@ -665,16 +588,6 @@ export class MarketTestable extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "removeReferencePool(address)"(
-      pool: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -698,16 +611,6 @@ export class MarketTestable extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setMinCollateralPoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setMinCollateralPoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     setMinPositionSize(
       size: BigNumberish,
       overrides?: Overrides
@@ -715,16 +618,6 @@ export class MarketTestable extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    setMinTotalReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setMinTotalReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -921,21 +814,19 @@ export class MarketTestable extends Contract {
     ): Promise<{
       0: boolean;
     }>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
   };
 
   accrueInterest(overrides?: Overrides): Promise<ContractTransaction>;
 
   "accrueInterest()"(overrides?: Overrides): Promise<ContractTransaction>;
-
-  addReferencePool(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "addReferencePool(address)"(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
 
   adjustGenesisPositionCollateral(
     positionID: BigNumberish,
@@ -1025,6 +916,10 @@ export class MarketTestable extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  collateralPool(overrides?: CallOverrides): Promise<string>;
+
+  "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
   collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
   "collateralizationRequirement()"(
@@ -1090,33 +985,13 @@ export class MarketTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "minCollateralPoolLiquidity()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
   "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-  minTotalReferencePoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "minTotalReferencePoolLiquidity()"(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  referencePools(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  "referencePools(uint256)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   removeGenesisPosition(
     positionID: BigNumberish,
@@ -1125,16 +1000,6 @@ export class MarketTestable extends Contract {
 
   "removeGenesisPosition(uint64)"(
     positionID: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  removeReferencePool(
-    pool: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "removeReferencePool(address)"(
-    pool: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1158,16 +1023,6 @@ export class MarketTestable extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setMinCollateralPoolLiquidity(
-    min: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setMinCollateralPoolLiquidity(uint256)"(
-    min: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   setMinPositionSize(
     size: BigNumberish,
     overrides?: Overrides
@@ -1175,16 +1030,6 @@ export class MarketTestable extends Contract {
 
   "setMinPositionSize(uint256)"(
     size: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  setMinTotalReferencePoolLiquidity(
-    min: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setMinTotalReferencePoolLiquidity(uint256)"(
-    min: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1367,17 +1212,14 @@ export class MarketTestable extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  zhuPositionNFT(overrides?: CallOverrides): Promise<string>;
+
+  "zhuPositionNFT()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     accrueInterest(overrides?: CallOverrides): Promise<void>;
 
     "accrueInterest()"(overrides?: CallOverrides): Promise<void>;
-
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     adjustGenesisPositionCollateral(
       positionID: BigNumberish,
@@ -1467,6 +1309,10 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    collateralPool(overrides?: CallOverrides): Promise<string>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<string>;
+
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "collateralizationRequirement()"(
@@ -1532,37 +1378,13 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minCollateralPoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minTotalReferencePoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "minTotalReferencePoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "referencePools(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -1571,13 +1393,6 @@ export class MarketTestable extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
-
-    "removeReferencePool(address)"(
-      pool: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1601,16 +1416,6 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMinCollateralPoolLiquidity(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setMinCollateralPoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setMinPositionSize(
       size: BigNumberish,
       overrides?: CallOverrides
@@ -1618,16 +1423,6 @@ export class MarketTestable extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinTotalReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setMinTotalReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1851,6 +1646,10 @@ export class MarketTestable extends Contract {
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<string>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -1896,13 +1695,6 @@ export class MarketTestable extends Contract {
     accrueInterest(overrides?: Overrides): Promise<BigNumber>;
 
     "accrueInterest()"(overrides?: Overrides): Promise<BigNumber>;
-
-    addReferencePool(pool: string, overrides?: Overrides): Promise<BigNumber>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
 
     adjustGenesisPositionCollateral(
       positionID: BigNumberish,
@@ -1970,6 +1762,10 @@ export class MarketTestable extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "collateralPool()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
     "collateralizationRequirement()"(
@@ -2035,37 +1831,13 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minCollateralPoolLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "minCollateralPoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     minPositionSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     "minPositionSize()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    minTotalReferencePoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "minTotalReferencePoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "referencePools(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -2074,16 +1846,6 @@ export class MarketTestable extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "removeReferencePool(address)"(
-      pool: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2107,16 +1869,6 @@ export class MarketTestable extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setMinCollateralPoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setMinCollateralPoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     setMinPositionSize(
       size: BigNumberish,
       overrides?: Overrides
@@ -2124,16 +1876,6 @@ export class MarketTestable extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    setMinTotalReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setMinTotalReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -2221,22 +1963,16 @@ export class MarketTestable extends Contract {
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "zhuPositionNFT()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     accrueInterest(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "accrueInterest()"(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "addReferencePool(address)"(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
 
     adjustGenesisPositionCollateral(
       positionID: BigNumberish,
@@ -2302,6 +2038,12 @@ export class MarketTestable extends Contract {
     "claimRewards(uint64)"(
       positionID: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "collateralPool()"(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     collateralizationRequirement(
@@ -2378,41 +2120,15 @@ export class MarketTestable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minCollateralPoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "minCollateralPoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     minPositionSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "minPositionSize()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minTotalReferencePoolLiquidity(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "minTotalReferencePoolLiquidity()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "periodLength()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "referencePools(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     removeGenesisPosition(
       positionID: BigNumberish,
@@ -2421,16 +2137,6 @@ export class MarketTestable extends Contract {
 
     "removeGenesisPosition(uint64)"(
       positionID: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    removeReferencePool(
-      pool: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "removeReferencePool(address)"(
-      pool: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2454,16 +2160,6 @@ export class MarketTestable extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setMinCollateralPoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setMinCollateralPoolLiquidity(uint256)"(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     setMinPositionSize(
       size: BigNumberish,
       overrides?: Overrides
@@ -2471,16 +2167,6 @@ export class MarketTestable extends Contract {
 
     "setMinPositionSize(uint256)"(
       size: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    setMinTotalReferencePoolLiquidity(
-      min: BigNumberish,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setMinTotalReferencePoolLiquidity(uint256)"(
-      min: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -2569,6 +2255,12 @@ export class MarketTestable extends Contract {
 
     "validUpdate(bytes4)"(
       arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    zhuPositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "zhuPositionNFT()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
