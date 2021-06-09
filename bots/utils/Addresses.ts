@@ -24,6 +24,15 @@ export const getSeedAddresses = (): seedAddresses => {
   switch (hre.network.name) {
     case 'mainnet':
     case 'rinkeby':
+      return {
+        tcpGovernorAlpha: '0x974fc7052Fa0faf573b6fC1c0FacC0ED0A69c075',
+        tfGovernorAlpha: '0x294f91d5110FbeBa208F1D0F1cB09338ee21108B',
+
+        nftPositionManager: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+        swapRouter: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
+
+        multisig: '0xd3b8BAE13a2Ee0225a5835b5a4Cd61990826cFD9',
+      }
 
     case 'hardhat':
     case 'dockerBot':
