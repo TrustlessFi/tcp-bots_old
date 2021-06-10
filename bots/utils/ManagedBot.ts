@@ -7,7 +7,7 @@ const e = hre.ethers;
 import * as ethers from 'ethers'
 import { Wallet, BigNumber } from "ethers";
 
-import { seedAddresses } from "./Addresses";
+import { seedAddressesType, externalAddressesType } from "./Addresses";
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
 import { getDeployedProtocol, deployedTCP } from "./ProtocolInfo";
@@ -37,17 +37,13 @@ export class ManagedBot {
   }
 
   // ============= INITIALIZATION AND RUN ==================
-  async initialize(addresses: seedAddresses) {
-    await this.attachProtocol(addresses);
+  async initialize(externalAddresses: externalAddressesType, seedAddresses: seedAddressesType) {
+    await this.attachProtocol(externalAddresses, seedAddresses)
+    return this
   }
 
-  async initializeAndRun(addresses: seedAddresses) {
-    await this.attachProtocol(addresses);
-    await this.run()
-  }
-
-  async attachProtocol(addresses: seedAddresses): Promise<void> {
-    if (this.protocol == null) this.protocol = await getDeployedProtocol(addresses);
+  async attachProtocol(externalAddresses: externalAddressesType, seedAddresses: seedAddressesType): Promise<void> {
+    if (this.protocol == null) this.protocol = await getDeployedProtocol(externalAddresses, seedAddresses);
   }
 
   async run() {
