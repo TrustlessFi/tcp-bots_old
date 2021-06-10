@@ -3,6 +3,23 @@
 
 import hre from 'hardhat';
 
+export const getDeployerAddress = (_network = ''): string => {
+  const network = _network !== '' ? _network : hre.network.name
+
+  switch (network) {
+    case 'mainnet':
+    case 'rinkeby':
+    case 'hardhat':
+    case 'dockerBot':
+    case 'localhost':
+    case 'localDeployment':
+      return '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf'
+    default:
+      throw 'unknown network name: ' + network
+  }
+}
+
+
 export type seedAddressesType = {
   tcpGovernorAlpha: string,
   tfGovernorAlpha: string,
@@ -54,6 +71,22 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
   let multisig: string
 
   switch (network) {
+    case 'hardhat':
+    case 'dockerBot':
+    case 'localhost':
+    case 'localDeployment':
+    return {
+      usdc: '0x5930a362f5f107e2E0628Ca9D2371a4fAcF31BFA',
+      usdt: '0xE74b281b820c039c215feFF841127216925663EB',
+
+      factory: '0x5f5bCE32f8b8aE0977DE9fb8298B9074602899F5',
+      router: '0xfE0cae103cB3aA14eF7fbf1Cee4B3EDeC7301D5B',
+      positionManager: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
+
+      ethAggregator: '0xe3DBF05C313eBB2Ef5dc9805533326A30543fd17',
+      multisig: '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf',
+    }
+
     case 'mainnet':
     case 'rinkeby':
       usdc = '0x640cE1dF688d0Dcb2f3Bf9B1E69d8F64c59D439E' // correct
@@ -62,17 +95,6 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
       ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
       multisig = '0xd3b8BAE13a2Ee0225a5835b5a4Cd61990826cFD9'
       break;
-
-    case 'hardhat':
-    case 'dockerBot':
-    case 'localhost':
-    case 'localDeployment':
-      usdc = ''
-      usdt = ''
-
-      ethAggregator = ''
-      multisig = '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf'
-      break
 
     default:
       throw 'unknown network name: ' + hre.network.name

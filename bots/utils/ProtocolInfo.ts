@@ -9,6 +9,7 @@ import {
   seedAddressesType,
   getExternalAddresses,
   externalAddressesType,
+  getDeployerAddress,
 } from "./Addresses";
 
 // ================ CORE CONTRACTS =================
@@ -87,14 +88,17 @@ export type deployedTCP = {
     nftPositionManager: NonfungiblePositionManager
   },
   multisig: string,
+  deployerAddress: string,
 }
 
 export const getDeployedProtocol = async(
   externalAddresses: null | externalAddressesType = null,
   seedAddresses: null | seedAddressesType = null,
+  deployerAddress: null | string = null,
 ): Promise<deployedTCP> => {
   if (externalAddresses === null) externalAddresses = getExternalAddresses()
   if (seedAddresses === null) seedAddresses = getSeedAddresses()
+  if (deployerAddress === null) deployerAddress = getDeployerAddress()
 
   const get = async(name: string, address: string) => (await e.getContractFactory(name)).attach(address)
 
@@ -110,7 +114,6 @@ export const getDeployedProtocol = async(
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
   ]);
 
-  console.log("here 1")
   let [
     tfDao,
     governor,
@@ -122,7 +125,6 @@ export const getDeployedProtocol = async(
     await get('WETH9', await nftPositionManager.WETH9()) as unknown as Weth9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
   ]);
-  console.log("here 2")
 
   let [
     tfToken,
@@ -133,7 +135,6 @@ export const getDeployedProtocol = async(
     await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TfPositionNft,
     await get('TfTimelock', await tfDao.timelock()) as unknown as TfTimelock,
   ]);
-  console.log("here 3")
 
   let [
     accounting,
@@ -170,7 +171,6 @@ export const getDeployedProtocol = async(
     await get('Settlement', await governor.settlement()) as unknown as Settlement,
     await get('TcpTimelock', await governor.timelock()) as unknown as TcpTimelock,
   ]);
-  console.log("here 4")
 
   let [
     protocolPoolAddress,
@@ -191,7 +191,6 @@ export const getDeployedProtocol = async(
   let protocolPool = wrapPool(protocolPoolAddress);
   let collateralPool = wrapPool(collateralPoolAddress);
   let referencePools = referencePoolAddresses.map((address) => wrapPool(address));
-  console.log("here 5")
 
   let referenceTokens: { [key in string]: Erc20 } = {}
   await Promise.all(referencePools.map(async (pool) => {
@@ -201,7 +200,6 @@ export const getDeployedProtocol = async(
     referenceTokens[await token.name()] = token
   }))
 
-  console.log("end get deployed protocol")
   return {
     accounting: accounting as Accounting,
     auctions: auctions as Auctions,
@@ -241,5 +239,6 @@ export const getDeployedProtocol = async(
       nftPositionManager: nftPositionManager,
     },
     multisig: externalAddresses.multisig,
+    deployerAddress: deployerAddress,
   }
 }
