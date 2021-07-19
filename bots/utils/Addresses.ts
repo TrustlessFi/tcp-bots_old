@@ -22,7 +22,7 @@ export const getDeployerAddress = (_network = ''): string => {
 
 export type seedAddressesType = {
   tcpGovernorAlpha: string,
-  tfGovernorAlpha: string,
+  tDaoGovernorAlpha: string,
 }
 
 export const getSeedAddresses = (_network = ''): seedAddressesType => {
@@ -33,7 +33,7 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
     case 'rinkeby':
       return {
         tcpGovernorAlpha: '0x974fc7052Fa0faf573b6fC1c0FacC0ED0A69c075',
-        tfGovernorAlpha: '0x294f91d5110FbeBa208F1D0F1cB09338ee21108B',
+        tDaoGovernorAlpha: '0x294f91d5110FbeBa208F1D0F1cB09338ee21108B',
       }
     case 'hardhat':
     case 'dockerBot':
@@ -41,7 +41,7 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
     case 'localDeployment':
       return {
         tcpGovernorAlpha: '0x28f5D55Df47d1505DfdBfE803aE1F3391E21Ad1b',
-        tfGovernorAlpha: '0x57706dEEED2a5DadAc4f841B6f34E370B7bddE30',
+        tDaoGovernorAlpha: '0x57706dEEED2a5DadAc4f841B6f34E370B7bddE30',
       }
     default:
       throw 'unknown network name: ' + network

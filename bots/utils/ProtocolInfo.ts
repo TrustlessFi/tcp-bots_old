@@ -30,8 +30,8 @@ import { Rates } from "../../typechain/Rates";
 import { Rewards } from "../../typechain/Rewards";
 import { Settlement } from "../../typechain/Settlement";
 import { TcpTimelock } from "../../typechain/TcpTimelock";
-import { TfTimelock } from "../../typechain/TfTimelock";
-import { Tf } from "../../typechain/Tf";
+import { TDaoTimelock } from "../../typechain/TDaoTimelock";
+import { TDaoToken } from "../../typechain/TDaoToken";
 import { Tcp } from "../../typechain/Tcp";
 
 // ================ OTHER CONTRACTS =================
@@ -39,9 +39,9 @@ import { WETH9 } from "../../typechain/WETH9";
 import { ERC20 } from "../../typechain/ERC20";
 
 // ================ META =================
-import { TFGovernorAlpha } from "../../typechain/TFGovernorAlpha";
-import { TFDao } from "../../typechain/TFDao";
-import { TFPositionNFT } from "../../typechain/TFPositionNFT";
+import { TDaoGovernorAlpha } from "../../typechain/TDaoGovernorAlpha";
+import { TDao } from "../../typechain/TDao";
+import { TDaoPositionNFT } from "../../typechain/TDaoPositionNFT";
 
 // ================ UNISWAP =================
 import { SwapRouter } from "../../typechain/SwapRouter";
@@ -69,11 +69,11 @@ export type deployedTCP = {
   settlement: Settlement
   timelock: TcpTimelock
   meta: {
-    tf: Tf
-    tfDao: TFDao
-    tfPositionNFT: TFPositionNFT
-    tfGovernorAlpha: TFGovernorAlpha
-    tfTimelock: TfTimelock
+    tDao: TDao
+    tDaoToken: TDaoToken
+    tDaoPositionNFT: TDaoPositionNFT
+    tDaoGovernorAlpha: TDaoGovernorAlpha
+    tDaoTimelock: TDaoTimelock
   },
   pools: {
     tcpeth: UniswapV3Pool
@@ -104,36 +104,36 @@ export const getDeployedProtocol = async(
 
   let [
     tcpGovernorAlpha,
-    tfGovernorAlpha,
+    tDaoGovernorAlpha,
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
     await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TCPGovernorAlpha,
-    await get('TFGovernorAlpha', seedAddresses.tfGovernorAlpha) as unknown as TFGovernorAlpha,
+    await get('TDaoGovernorAlpha', seedAddresses.tDaoGovernorAlpha) as unknown as TDaoGovernorAlpha,
     await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
   ]);
 
   let [
-    tfDao,
+    tDao,
     governor,
     weth,
     factory,
   ] = await Promise.all([
-    await get('TFDao', await tfGovernorAlpha.tfDao()) as unknown as TFDao,
+    await get('TDao', await tDaoGovernorAlpha.tDao()) as unknown as TDao,
     await get('Governor', await tcpGovernorAlpha.governor()) as unknown as Governor,
     await get('WETH9', await nftPositionManager.WETH9()) as unknown as WETH9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
   ]);
 
   let [
-    tfToken,
-    tfPositionNFT,
-    tfTimelock,
+    tDaoToken,
+    tDaoPositionNFT,
+    tDaoTimelock,
   ] = await Promise.all([
-    await get('Tf', await tfDao.tfToken()) as unknown as Tf,
-    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TFPositionNFT,
-    await get('TfTimelock', await tfDao.timelock()) as unknown as TfTimelock,
+    await get('TDaoToken', await tDao.tDaoToken()) as unknown as TDaoToken,
+    await get('TDaoPositionNFT', await tDao.tDaoPositionNFT()) as unknown as TDaoPositionNFT,
+    await get('TDaoTimelock', await tDao.timelock()) as unknown as TDaoTimelock,
   ]);
 
   let [
@@ -220,11 +220,11 @@ export const getDeployedProtocol = async(
     settlement: settlement as Settlement,
     timelock: timelock as TcpTimelock,
     meta: {
-      tf: tfToken,
-      tfDao: tfDao,
-      tfPositionNFT: tfPositionNFT,
-      tfGovernorAlpha: tfGovernorAlpha,
-      tfTimelock: tfTimelock,
+      tDao,
+      tDaoToken,
+      tDaoPositionNFT,
+      tDaoGovernorAlpha,
+      tDaoTimelock,
     },
     pools: {
       tcpeth: protocolPool,
