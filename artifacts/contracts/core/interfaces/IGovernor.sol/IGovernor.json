@@ -342,6 +342,32 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "hue",
+      "outputs": [
+        {
+          "internalType": "contract IHue",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "huePositionNFT",
+      "outputs": [
+        {
+          "internalType": "contract IPositionNFT",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -382,10 +408,10 @@
     },
     {
       "inputs": [],
-      "name": "lendZhu",
+      "name": "lendHue",
       "outputs": [
         {
-          "internalType": "contract ILendZhu",
+          "internalType": "contract ILendHue",
           "name": "",
           "type": "address"
         }
@@ -555,7 +581,33 @@
           "type": "address"
         }
       ],
-      "name": "requireLentZhuCountAccess",
+      "name": "requireHueMintingAccess",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "requireHueReservesBurnAccess",
+      "outputs": [],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "requireLentHueCountAccess",
       "outputs": [],
       "stateMutability": "view",
       "type": "function"
@@ -613,32 +665,6 @@
         }
       ],
       "name": "requireValidAction",
-      "outputs": [],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "caller",
-          "type": "address"
-        }
-      ],
-      "name": "requireZhuMintingAccess",
-      "outputs": [],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "caller",
-          "type": "address"
-        }
-      ],
-      "name": "requireZhuReservesBurnAccess",
       "outputs": [],
       "stateMutability": "view",
       "type": "function"
@@ -823,32 +849,6 @@
       "name": "upgradeSettlement",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "zhu",
-      "outputs": [
-        {
-          "internalType": "contract IZhu",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "zhuPositionNFT",
-      "outputs": [
-        {
-          "internalType": "contract IPositionNFT",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     }
   ],

@@ -15,13 +15,13 @@ import {
 // ================ CORE CONTRACTS =================
 import { Accounting } from "../../typechain/Accounting";
 import { Auctions } from "../../typechain/Auctions";
-import { Zhu } from "../../typechain/Zhu";
-import { ZhuPositionNft } from "../../typechain/ZhuPositionNFT";
+import { Hue } from "../../typechain/Hue";
+import { HuePositionNFT } from "../../typechain/HuePositionNFT";
 import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
 import { Governor } from "../../typechain/Governor";
-import { TcpGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
+import { TCPGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
 import { Lend } from "../../typechain/Lend";
-import { LendZhu } from "../../typechain/LendZhu";
+import { LendHue } from "../../typechain/LendHue";
 import { Liquidations } from "../../typechain/Liquidations";
 import { Market } from "../../typechain/Market";
 import { Prices } from "../../typechain/Prices";
@@ -35,13 +35,13 @@ import { Tf } from "../../typechain/Tf";
 import { Tcp } from "../../typechain/Tcp";
 
 // ================ OTHER CONTRACTS =================
-import { Weth9 } from "../../typechain/WETH9";
-import { Erc20 } from "../../typechain/ERC20";
+import { WETH9 } from "../../typechain/WETH9";
+import { ERC20 } from "../../typechain/ERC20";
 
 // ================ META =================
-import { TfGovernorAlpha } from "../../typechain/TFGovernorAlpha";
-import { TfDao } from "../../typechain/TFDao";
-import { TfPositionNft } from "../../typechain/TFPositionNFT";
+import { TFGovernorAlpha } from "../../typechain/TFGovernorAlpha";
+import { TFDao } from "../../typechain/TFDao";
+import { TFPositionNFT } from "../../typechain/TFPositionNFT";
 
 // ================ UNISWAP =================
 import { SwapRouter } from "../../typechain/SwapRouter";
@@ -53,13 +53,13 @@ export type deployedTCP = {
   accounting: Accounting
   auctions: Auctions
   tcp: Tcp
-  zhu: Zhu
-  zhuNFT: ZhuPositionNft
+  hue: Hue
+  hueNFT: HuePositionNFT
   enforcedDecentralization: EnforcedDecentralization
   governor: Governor
-  tcpGovernorAlpha: TcpGovernorAlpha
+  tcpGovernorAlpha: TCPGovernorAlpha
   lend: Lend
-  lendzhu: LendZhu
+  lendhue: LendHue
   liquidations: Liquidations
   market: Market
   rates: Rates
@@ -70,19 +70,19 @@ export type deployedTCP = {
   timelock: TcpTimelock
   meta: {
     tf: Tf
-    tfDao: TfDao
-    tfPositionNFT: TfPositionNft
-    tfGovernorAlpha: TfGovernorAlpha
+    tfDao: TFDao
+    tfPositionNFT: TFPositionNFT
+    tfGovernorAlpha: TFGovernorAlpha
     tfTimelock: TfTimelock
   },
   pools: {
     tcpeth: UniswapV3Pool
-    zhueth: UniswapV3Pool
+    hueeth: UniswapV3Pool
     reference: UniswapV3Pool[]
   },
   external: {
-    tokens: { [key in string]: Erc20 }
-    weth: Weth9
+    tokens: { [key in string]: ERC20 }
+    weth: WETH9
     router: SwapRouter
     factory: UniswapV3Factory
     nftPositionManager: NonfungiblePositionManager
@@ -108,8 +108,8 @@ export const getDeployedProtocol = async(
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TcpGovernorAlpha,
-    await get('TFGovernorAlpha', seedAddresses.tfGovernorAlpha) as unknown as TfGovernorAlpha,
+    await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TCPGovernorAlpha,
+    await get('TFGovernorAlpha', seedAddresses.tfGovernorAlpha) as unknown as TFGovernorAlpha,
     await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
   ]);
@@ -120,9 +120,9 @@ export const getDeployedProtocol = async(
     weth,
     factory,
   ] = await Promise.all([
-    await get('TFDao', await tfGovernorAlpha.tfDao()) as unknown as TfDao,
+    await get('TFDao', await tfGovernorAlpha.tfDao()) as unknown as TFDao,
     await get('Governor', await tcpGovernorAlpha.governor()) as unknown as Governor,
-    await get('WETH9', await nftPositionManager.WETH9()) as unknown as Weth9,
+    await get('WETH9', await nftPositionManager.WETH9()) as unknown as WETH9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
   ]);
 
@@ -132,7 +132,7 @@ export const getDeployedProtocol = async(
     tfTimelock,
   ] = await Promise.all([
     await get('Tf', await tfDao.tfToken()) as unknown as Tf,
-    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TfPositionNft,
+    await get('TFPositionNFT', await tfDao.tfPositionNFT()) as unknown as TFPositionNFT,
     await get('TfTimelock', await tfDao.timelock()) as unknown as TfTimelock,
   ]);
 
@@ -140,11 +140,11 @@ export const getDeployedProtocol = async(
     accounting,
     auctions,
     tcp,
-    zhu,
-    zhuNFT,
+    hue,
+    hueNFT,
     enforcedDecentralization,
     lend,
-    lendzhu,
+    lendhue,
     liquidations,
     market,
     prices,
@@ -157,11 +157,11 @@ export const getDeployedProtocol = async(
     await get('Accounting', await governor.accounting()) as unknown as Accounting,
     await get('Auctions', await governor.auctions()) as unknown as Auctions,
     await get('Tcp', await governor.tcp()) as unknown as Tcp,
-    await get('Zhu', await governor.zhu()) as unknown as Zhu,
-    await get('ZhuPositionNFT', await governor.zhuPositionNFT()) as unknown as ZhuPositionNft,
+    await get('Hue', await governor.hue()) as unknown as Hue,
+    await get('HuePositionNFT', await governor.huePositionNFT()) as unknown as HuePositionNFT,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as unknown as EnforcedDecentralization,
     await get('Lend', await governor.lend()) as unknown as Lend,
-    await get('LendZhu', await governor.lendZhu()) as unknown as LendZhu,
+    await get('LendHue', await governor.lendHue()) as unknown as LendHue,
     await get('Liquidations', await governor.liquidations()) as unknown as Liquidations,
     await get('Market', await governor.market()) as unknown as Market,
     await get('Prices', await governor.prices()) as unknown as Prices,
@@ -192,11 +192,11 @@ export const getDeployedProtocol = async(
   let collateralPool = wrapPool(collateralPoolAddress);
   let referencePools = referencePoolAddresses.map((address) => wrapPool(address));
 
-  let referenceTokens: { [key in string]: Erc20 } = {}
+  let referenceTokens: { [key in string]: ERC20 } = {}
   await Promise.all(referencePools.map(async (pool) => {
     let [ token0, token1 ] = await Promise.all([ await pool.token0(), await pool.token1() ]);
-    let otherTokenAddress = token0 == tcp.address || token0 == zhu.address ? token1 : token0
-    let token = ERC20Factory.attach(otherTokenAddress) as unknown as Erc20
+    let otherTokenAddress = token0 == tcp.address || token0 == hue.address ? token1 : token0
+    let token = ERC20Factory.attach(otherTokenAddress) as unknown as ERC20
     referenceTokens[await token.name()] = token
   }))
 
@@ -204,13 +204,13 @@ export const getDeployedProtocol = async(
     accounting: accounting as Accounting,
     auctions: auctions as Auctions,
     tcp: tcp as Tcp,
-    zhu: zhu as Zhu,
-    zhuNFT: zhuNFT as ZhuPositionNft,
+    hue: hue as Hue,
+    hueNFT: hueNFT as HuePositionNFT,
     enforcedDecentralization: enforcedDecentralization as EnforcedDecentralization,
     governor: governor,
     tcpGovernorAlpha: tcpGovernorAlpha,
     lend: lend as Lend,
-    lendzhu: lendzhu as LendZhu,
+    lendhue: lendhue as LendHue,
     liquidations: liquidations as Liquidations,
     market: market as Market,
     rates: rates as Rates,
@@ -228,7 +228,7 @@ export const getDeployedProtocol = async(
     },
     pools: {
       tcpeth: protocolPool,
-      zhueth: collateralPool,
+      hueeth: collateralPool,
       reference: referencePools,
     },
     external: {
