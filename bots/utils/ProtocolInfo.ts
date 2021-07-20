@@ -67,7 +67,7 @@ export type deployedTCP = {
   protocolLock: ProtocolLock
   rewards: Rewards
   settlement: Settlement
-  timelock: TcpTimelock
+  tcpTimelock: TcpTimelock
   meta: {
     tDao: TDao
     tDaoToken: TDaoToken
@@ -152,7 +152,7 @@ export const getDeployedProtocol = async(
     rates,
     rewards,
     settlement,
-    timelock,
+    tcpTimelock,
   ] = await Promise.all([
     await get('Accounting', await governor.accounting()) as unknown as Accounting,
     await get('Auctions', await governor.auctions()) as unknown as Auctions,
@@ -218,7 +218,7 @@ export const getDeployedProtocol = async(
     protocolLock: protocolLock as ProtocolLock,
     rewards: rewards as Rewards,
     settlement: settlement as Settlement,
-    timelock: timelock as TcpTimelock,
+    tcpTimelock: tcpTimelock as TcpTimelock,
     meta: {
       tDao,
       tDaoToken,
