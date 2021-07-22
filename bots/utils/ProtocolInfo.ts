@@ -87,7 +87,7 @@ export type deployedTCP = {
     factory: UniswapV3Factory
     nftPositionManager: NonfungiblePositionManager
   },
-  multisig: string,
+  guardian: string,
   deployerAddress: string,
 }
 
@@ -238,7 +238,7 @@ export const getDeployedProtocol = async(
       factory: factory,
       nftPositionManager: nftPositionManager,
     },
-    multisig: externalAddresses.multisig,
+    guardian: externalAddresses.guardian,
     deployerAddress: deployerAddress,
   }
 }

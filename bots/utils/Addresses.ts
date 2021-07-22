@@ -51,14 +51,13 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
 export type externalAddressesType = {
   usdc: string,
   usdt: string,
-  tusd?: string,
 
   positionManager: string,
   factory: string,
   router: string,
 
   ethAggregator: string,
-  multisig: string,
+  guardian: string,
 }
 
 export const getExternalAddresses = (_network = ''): externalAddressesType => {
@@ -68,7 +67,7 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
   let usdt: string
 
   let ethAggregator: string
-  let multisig: string
+  let guardian: string
 
   switch (network) {
     case 'hardhat':
@@ -84,7 +83,8 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
       positionManager: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
 
       ethAggregator: '0xe3DBF05C313eBB2Ef5dc9805533326A30543fd17',
-      multisig: '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf',
+      guardian: '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf',
+
     }
 
     case 'mainnet':
@@ -93,7 +93,7 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
       usdt = '0xE800ecE7C7B8682C9Af830fAE95514F7c20BACFb' // correct
 
       ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
-      multisig = '0xd3b8BAE13a2Ee0225a5835b5a4Cd61990826cFD9'
+      guardian = '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf'
       break;
 
     default:
@@ -103,10 +103,10 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
   return {
     usdc,
     usdt,
-    multisig,
     ethAggregator,
     factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
     router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
     positionManager: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
+    guardian,
   }
 }
