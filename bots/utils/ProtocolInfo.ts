@@ -20,7 +20,6 @@ import { HuePositionNFT } from "../../typechain/HuePositionNFT";
 import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
 import { Governor } from "../../typechain/Governor";
 import { TCPGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
-import { Lend } from "../../typechain/Lend";
 import { LendHue } from "../../typechain/LendHue";
 import { Liquidations } from "../../typechain/Liquidations";
 import { Market } from "../../typechain/Market";
@@ -58,7 +57,6 @@ export type deployedTCP = {
   enforcedDecentralization: EnforcedDecentralization
   governor: Governor
   tcpGovernorAlpha: TCPGovernorAlpha
-  lend: Lend
   lendhue: LendHue
   liquidations: Liquidations
   market: Market
@@ -143,7 +141,6 @@ export const getDeployedProtocol = async(
     hue,
     hueNFT,
     enforcedDecentralization,
-    lend,
     lendhue,
     liquidations,
     market,
@@ -160,7 +157,6 @@ export const getDeployedProtocol = async(
     await get('Hue', await governor.hue()) as unknown as Hue,
     await get('HuePositionNFT', await governor.huePositionNFT()) as unknown as HuePositionNFT,
     await get('EnforcedDecentralization', await governor.enforcedDecentralization()) as unknown as EnforcedDecentralization,
-    await get('Lend', await governor.lend()) as unknown as Lend,
     await get('LendHue', await governor.lendHue()) as unknown as LendHue,
     await get('Liquidations', await governor.liquidations()) as unknown as Liquidations,
     await get('Market', await governor.market()) as unknown as Market,
@@ -209,7 +205,6 @@ export const getDeployedProtocol = async(
     enforcedDecentralization: enforcedDecentralization as EnforcedDecentralization,
     governor: governor,
     tcpGovernorAlpha: tcpGovernorAlpha,
-    lend: lend as Lend,
     lendhue: lendhue as LendHue,
     liquidations: liquidations as Liquidations,
     market: market as Market,
