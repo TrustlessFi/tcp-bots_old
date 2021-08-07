@@ -3,7 +3,6 @@
 
 import { ManagedBot } from "./utils/ManagedBot";
 import { hours } from "./utils/library";
-import { BigNumber } from 'ethers';
 
 
 export class ExecuteLiquidationBot extends ManagedBot {

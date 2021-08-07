@@ -70,8 +70,7 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
 
     for(let i = 0; i < TICKS_TO_EXAMINE; i++) {
 
-      // TODO cache values locally and only pull later indices that have changed,
-      // and calculate everything else locally
+      // TODO Index and cache all of the liquidity position tick values
       belowTickPositions.push.apply(
         belowTickPositions,
         await accounting.indexPoolPositionsByTickUpper(poolID, tickUpper, 0, uintMax256))
