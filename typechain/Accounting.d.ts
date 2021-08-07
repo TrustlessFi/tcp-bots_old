@@ -32,6 +32,7 @@ interface AccountingInterface extends ethers.utils.Interface {
     "deployer()": FunctionFragment;
     "disapproveUIs(uint32[])": FunctionFragment;
     "getBasicPositionInfo(uint64)": FunctionFragment;
+    "getLockedNFTIDs(uint32,uint32)": FunctionFragment;
     "getPoolPosition(uint256)": FunctionFragment;
     "getPoolPositionNftIdsByOwner(address)": FunctionFragment;
     "getPosition(uint64)": FunctionFragment;
@@ -107,6 +108,10 @@ interface AccountingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getBasicPositionInfo",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getLockedNFTIDs",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolPosition",
@@ -314,6 +319,10 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBasicPositionInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getLockedNFTIDs",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -551,6 +560,12 @@ export class Accounting extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
+
+    getLockedNFTIDs(
+      start: BigNumberish,
+      end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]] & { nftIDs: BigNumber[] }>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -980,6 +995,12 @@ export class Accounting extends BaseContract {
     }
   >;
 
+  getLockedNFTIDs(
+    start: BigNumberish,
+    end: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getPoolPosition(
     nftID: BigNumberish,
     overrides?: CallOverrides
@@ -1322,6 +1343,12 @@ export class Accounting extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
+
+    getLockedNFTIDs(
+      start: BigNumberish,
+      end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -1672,6 +1699,12 @@ export class Accounting extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getLockedNFTIDs(
+      start: BigNumberish,
+      end: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPoolPosition(
       nftID: BigNumberish,
       overrides?: CallOverrides
@@ -1918,6 +1951,12 @@ export class Accounting extends BaseContract {
 
     getBasicPositionInfo(
       positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getLockedNFTIDs(
+      start: BigNumberish,
+      end: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
