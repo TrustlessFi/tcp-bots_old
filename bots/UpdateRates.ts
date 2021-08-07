@@ -3,7 +3,7 @@
 
 import { BigNumber } from "ethers";
 import { ManagedBot } from "./utils/ManagedBot";
-import { minutes, hours } from "./utils/library";
+import { minutes } from "./utils/library";
 
 export class UpdateRatesBot extends ManagedBot {
   name = '📈 UpdateRates';
