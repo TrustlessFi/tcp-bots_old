@@ -178,16 +178,72 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "availableSupply",
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "positionID",
+        type: "uint64",
+      },
+    ],
+    name: "getPosition",
     outputs: [
       {
-        internalType: "uint256",
+        components: [
+          {
+            internalType: "uint256",
+            name: "count",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "startTotalRewards",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "startCumulativeVirtualCount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint64",
+            name: "lastPeriodUpdated",
+            type: "uint64",
+          },
+          {
+            internalType: "uint64",
+            name: "endPeriod",
+            type: "uint64",
+          },
+          {
+            internalType: "uint64",
+            name: "durationMonths",
+            type: "uint64",
+          },
+          {
+            internalType: "uint16",
+            name: "tokenID",
+            type: "uint16",
+          },
+        ],
+        internalType: "struct ITDao.TokenPosition",
         name: "",
-        type: "uint256",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "positionNFTTokenID",
+        type: "uint64",
+      },
+    ],
+    name: "getRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -204,6 +260,58 @@ const _abi = [
       },
     ],
     name: "incentiveContractMint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+      {
+        internalType: "uint8",
+        name: "lockDurationMonths",
+        type: "uint8",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+    ],
+    name: "lockTokens",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "positionNFTTokenID",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "dest",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "mintVotingRewards",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

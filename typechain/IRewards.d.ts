@@ -87,7 +87,7 @@ interface IRewardsInterface extends ethers.utils.Interface {
     "ParameterUpdated64(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
-    "RewardsDistributed(address,uint64,uint256)": EventFragment;
+    "RewardsDistributed(address,bool,uint256)": EventFragment;
     "RewardsPortionsUpdated(uint256,uint256,uint256)": EventFragment;
   };
 
@@ -342,11 +342,11 @@ export class IRewards extends BaseContract {
 
     RewardsDistributed(
       account?: string | null,
-      period?: BigNumberish | null,
+      isKickback?: boolean | null,
       tcpRewards?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { account: string; period: BigNumber; tcpRewards: BigNumber }
+      [string, boolean, BigNumber],
+      { account: string; isKickback: boolean; tcpRewards: BigNumber }
     >;
 
     RewardsPortionsUpdated(

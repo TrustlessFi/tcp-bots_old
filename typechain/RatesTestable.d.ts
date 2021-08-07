@@ -22,8 +22,8 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface RatesTestableInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
-    "calculatePrice(uint256[],uint256)": FunctionFragment;
-    "calculatePriceImpl(uint256[],uint256)": FunctionFragment;
+    "calculatePrice(uint256[])": FunctionFragment;
+    "calculatePriceImpl(uint256[])": FunctionFragment;
     "calculateRate(int256,tuple,uint256)": FunctionFragment;
     "calculateRewardCount(tuple,uint64)": FunctionFragment;
     "completeSetup()": FunctionFragment;
@@ -46,11 +46,9 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     "setMaxSteps(uint64)": FunctionFragment;
     "setMinRate(int128)": FunctionFragment;
     "setMinTimeBetweenUpdates(uint64)": FunctionFragment;
-    "setValidRangeForRawPrices(uint128)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
     "update()": FunctionFragment;
-    "validRangeForRawPrices()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
@@ -60,11 +58,11 @@ interface RatesTestableInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "calculatePrice",
-    values: [BigNumberish[], BigNumberish]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "calculatePriceImpl",
-    values: [BigNumberish[], BigNumberish]
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRate",
@@ -163,17 +161,9 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     functionFragment: "setMinTimeBetweenUpdates",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setValidRangeForRawPrices",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(functionFragment: "stopped", values?: undefined): string;
   encodeFunctionData(functionFragment: "update", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "validRangeForRawPrices",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
@@ -264,17 +254,9 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     functionFragment: "setMinTimeBetweenUpdates",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setValidRangeForRawPrices",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stopped", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "update", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "validRangeForRawPrices",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
@@ -350,13 +332,11 @@ export class RatesTestable extends BaseContract {
 
     calculatePrice(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
 
     calculatePriceImpl(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
 
@@ -477,11 +457,6 @@ export class RatesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setValidRangeForRawPrices(
-      range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -491,8 +466,6 @@ export class RatesTestable extends BaseContract {
     update(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    validRangeForRawPrices(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
   };
@@ -504,13 +477,11 @@ export class RatesTestable extends BaseContract {
 
   calculatePrice(
     prices: BigNumberish[],
-    validRangeForRawPrices: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   calculatePriceImpl(
     prices: BigNumberish[],
-    validRangeForRawPrices: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -631,11 +602,6 @@ export class RatesTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setValidRangeForRawPrices(
-    range: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   stop(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -646,8 +612,6 @@ export class RatesTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
-
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
@@ -655,13 +619,11 @@ export class RatesTestable extends BaseContract {
 
     calculatePrice(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     calculatePriceImpl(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -765,18 +727,11 @@ export class RatesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setValidRangeForRawPrices(
-      range: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     stop(overrides?: CallOverrides): Promise<void>;
 
     stopped(overrides?: CallOverrides): Promise<boolean>;
 
     update(overrides?: CallOverrides): Promise<void>;
-
-    validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
   };
@@ -841,13 +796,11 @@ export class RatesTestable extends BaseContract {
 
     calculatePrice(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     calculatePriceImpl(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -947,11 +900,6 @@ export class RatesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setValidRangeForRawPrices(
-      range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -961,8 +909,6 @@ export class RatesTestable extends BaseContract {
     update(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    validRangeForRawPrices(overrides?: CallOverrides): Promise<BigNumber>;
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -975,13 +921,11 @@ export class RatesTestable extends BaseContract {
 
     calculatePrice(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     calculatePriceImpl(
       prices: BigNumberish[],
-      validRangeForRawPrices: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1091,11 +1035,6 @@ export class RatesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setValidRangeForRawPrices(
-      range: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1104,10 +1043,6 @@ export class RatesTestable extends BaseContract {
 
     update(
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    validRangeForRawPrices(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     validUpdate(

@@ -117,19 +117,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "GENESIS_PERIODS",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "periods",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "accounting",
     outputs: [
       {
@@ -207,37 +194,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
-    name: "distributeLiquidityRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "distributedTCP",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "circulating",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "enforcedDecentralization",
     outputs: [
@@ -292,47 +248,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-      {
-        components: [
-          {
-            internalType: "uint8",
-            name: "v",
-            type: "uint8",
-          },
-          {
-            internalType: "bytes32",
-            name: "r",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "s",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct IGovernor.GenesisAuth",
-        name: "ga",
-        type: "tuple",
-      },
-    ],
-    name: "getIsGenesisPhaseAndRequireAuthIfSo",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "isGenesis",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "getReferencePools",
     outputs: [
@@ -372,19 +287,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
-    name: "increaseLiquidationAccountRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "isShutdown",
     outputs: [
@@ -392,19 +294,6 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "lend",
-    outputs: [
-      {
-        internalType: "contract ILend",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -447,6 +336,24 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "dest",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "mintIncentive",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -572,20 +479,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "requireDecreaseDebtAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireHueMintingAccess",
+    name: "requireDebtServicesAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -599,45 +493,6 @@ const _abi = [
       },
     ],
     name: "requireHueReservesBurnAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireLentHueCountAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requirePositionWriteAccess",
-    outputs: [],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "caller",
-        type: "address",
-      },
-    ],
-    name: "requireStoredCollateralAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -747,19 +602,6 @@ const _abi = [
       },
     ],
     name: "upgradeAuctions",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract ILend",
-        name: "_lend",
-        type: "address",
-      },
-    ],
-    name: "upgradeLend",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

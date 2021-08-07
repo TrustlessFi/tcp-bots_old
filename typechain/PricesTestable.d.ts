@@ -21,6 +21,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface PricesTestableInterface extends ethers.utils.Interface {
   functions: {
+    "__now()": FunctionFragment;
     "addReferencePool(address)": FunctionFragment;
     "calculate64To32(uint64)": FunctionFragment;
     "calculateInstantTwappedPrice(address,uint32)": FunctionFragment;
@@ -39,7 +40,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "hueTcpPrice(uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
     "normalizeDecimals(uint256,tuple)": FunctionFragment;
-    "obs0()": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
     "protocolPool()": FunctionFragment;
     "requireValidPool(bool)": FunctionFragment;
@@ -49,6 +49,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "validUpdate(bytes4)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "__now", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addReferencePool",
     values: [string]
@@ -129,7 +130,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
       }
     ]
   ): string;
-  encodeFunctionData(functionFragment: "obs0", values?: undefined): string;
   encodeFunctionData(functionFragment: "priceInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "protocolPool",
@@ -150,6 +150,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "__now", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addReferencePool",
     data: BytesLike
@@ -213,7 +214,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     functionFragment: "normalizeDecimals",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "obs0", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "priceInfo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "protocolPool",
@@ -291,6 +291,8 @@ export class PricesTestable extends BaseContract {
   interface: PricesTestableInterface;
 
   functions: {
+    __now(overrides?: CallOverrides): Promise<[number[]] & { times: number[] }>;
+
     addReferencePool(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -390,8 +392,6 @@ export class PricesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    obs0(overrides?: CallOverrides): Promise<[number[]] & { times: number[] }>;
-
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
@@ -426,6 +426,8 @@ export class PricesTestable extends BaseContract {
 
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
   };
+
+  __now(overrides?: CallOverrides): Promise<number[]>;
 
   addReferencePool(
     pool: string,
@@ -526,8 +528,6 @@ export class PricesTestable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  obs0(overrides?: CallOverrides): Promise<number[]>;
-
   priceInfo(
     arg0: string,
     overrides?: CallOverrides
@@ -560,6 +560,8 @@ export class PricesTestable extends BaseContract {
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
+    __now(overrides?: CallOverrides): Promise<number[]>;
+
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     calculate64To32(
@@ -651,8 +653,6 @@ export class PricesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    obs0(overrides?: CallOverrides): Promise<number[]>;
-
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
@@ -706,6 +706,8 @@ export class PricesTestable extends BaseContract {
   };
 
   estimateGas: {
+    __now(overrides?: CallOverrides): Promise<BigNumber>;
+
     addReferencePool(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -805,8 +807,6 @@ export class PricesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    obs0(overrides?: CallOverrides): Promise<BigNumber>;
-
     priceInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -831,6 +831,8 @@ export class PricesTestable extends BaseContract {
   };
 
   populateTransaction: {
+    __now(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addReferencePool(
       pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -929,8 +931,6 @@ export class PricesTestable extends BaseContract {
       },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    obs0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     priceInfo(
       arg0: string,

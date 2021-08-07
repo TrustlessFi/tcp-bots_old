@@ -319,9 +319,9 @@ const _abi = [
       },
       {
         indexed: true,
-        internalType: "uint64",
-        name: "period",
-        type: "uint64",
+        internalType: "bool",
+        name: "isKickback",
+        type: "bool",
       },
       {
         indexed: false,

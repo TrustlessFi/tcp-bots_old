@@ -75,21 +75,27 @@ interface IMarketInterface extends ethers.utils.Interface {
 
   events: {
     "InterestAccrued(uint64,uint64,uint256,uint256,uint256,uint256)": EventFragment;
-    "NewPositionCreated(address,uint64)": EventFragment;
+    "Lend(address,uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
     "PositionAdjusted(uint64,int256,int256)": EventFragment;
+    "PositionCreated(address,uint64)": EventFragment;
     "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
+    "RewardsDistributed(address,bool,uint256)": EventFragment;
+    "Unlend(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "InterestAccrued"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewPositionCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Lend"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionAdjusted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PositionUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsDistributed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unlend"): EventFragment;
 }
 
 export class IMarket extends BaseContract {
@@ -212,6 +218,9 @@ export class IMarket extends BaseContract {
         BigNumber,
         number,
         boolean,
+        BigNumber,
+        number,
+        string,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
@@ -224,6 +233,9 @@ export class IMarket extends BaseContract {
         tick: number;
         tickSet: boolean;
         tickIndex: BigNumber;
+        ui: number;
+        kickbackDestination: string;
+        kickbackPortion: BigNumber;
       }
     >;
   };
@@ -248,12 +260,13 @@ export class IMarket extends BaseContract {
       }
     >;
 
-    NewPositionCreated(
-      creator?: string | null,
-      positionID?: BigNumberish | null
+    Lend(
+      account?: string | null,
+      hueCount?: null,
+      lendTokenCount?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { creator: string; positionID: BigNumber }
+      [string, BigNumber, BigNumber],
+      { account: string; hueCount: BigNumber; lendTokenCount: BigNumber }
     >;
 
     ParameterUpdated(
@@ -290,6 +303,14 @@ export class IMarket extends BaseContract {
       }
     >;
 
+    PositionCreated(
+      creator?: string | null,
+      positionID?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { creator: string; positionID: BigNumber }
+    >;
+
     PositionUpdated(
       positionID?: BigNumberish | null,
       period?: BigNumberish | null,
@@ -303,6 +324,24 @@ export class IMarket extends BaseContract {
         debtAfter: BigNumber;
         tcpRewards: BigNumber;
       }
+    >;
+
+    RewardsDistributed(
+      account?: string | null,
+      isKickback?: boolean | null,
+      tcpRewards?: null
+    ): TypedEventFilter<
+      [string, boolean, BigNumber],
+      { account: string; isKickback: boolean; tcpRewards: BigNumber }
+    >;
+
+    Unlend(
+      account?: string | null,
+      hueCount?: null,
+      lendTokenCount?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber],
+      { account: string; hueCount: BigNumber; lendTokenCount: BigNumber }
     >;
   };
 

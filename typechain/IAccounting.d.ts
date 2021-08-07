@@ -21,14 +21,14 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IAccountingInterface extends ethers.utils.Interface {
   functions: {
-    "addPositionToIndex(uint256,uint16,int24,int24,address)": FunctionFragment;
+    "addPositionToIndex(address,uint256)": FunctionFragment;
+    "approveUIs(uint32[])": FunctionFragment;
     "debt()": FunctionFragment;
     "decreaseDebt(uint256)": FunctionFragment;
     "decreasePoolLiquidity(address,uint256)": FunctionFragment;
     "deletePoolPosition(uint256)": FunctionFragment;
+    "disapproveUIs(uint32[])": FunctionFragment;
     "getBasicPositionInfo(uint64)": FunctionFragment;
-    "getParticipatedInLiquidityGenesis(address,uint16)": FunctionFragment;
-    "getParticipatedInMarketGenesis(address)": FunctionFragment;
     "getPoolPosition(uint256)": FunctionFragment;
     "getPosition(uint64)": FunctionFragment;
     "getRewardStatus(uint16)": FunctionFragment;
@@ -42,9 +42,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
     "poolLiquidity(address)": FunctionFragment;
     "sendCollateral(address,uint256)": FunctionFragment;
     "sendLentHue(address,uint256)": FunctionFragment;
-    "sendOneToOneBackedTokens(address,address,uint256)": FunctionFragment;
-    "setParticipatedInLiquidityGenesis(address,uint16,bool)": FunctionFragment;
-    "setParticipatedInMarketGenesis(address,bool)": FunctionFragment;
     "setPoolPosition(uint256,tuple)": FunctionFragment;
     "setPosition(uint64,tuple)": FunctionFragment;
     "setRewardStatus(uint16,tuple)": FunctionFragment;
@@ -53,7 +50,11 @@ interface IAccountingInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addPositionToIndex",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish, string]
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approveUIs",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "debt", values?: undefined): string;
   encodeFunctionData(
@@ -69,16 +70,12 @@ interface IAccountingInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "disapproveUIs",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBasicPositionInfo",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getParticipatedInLiquidityGenesis",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getParticipatedInMarketGenesis",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolPosition",
@@ -130,18 +127,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "sendOneToOneBackedTokens",
-    values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setParticipatedInLiquidityGenesis",
-    values: [string, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setParticipatedInMarketGenesis",
-    values: [string, boolean]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setPoolPosition",
     values: [
       BigNumberish,
@@ -150,11 +135,14 @@ interface IAccountingInterface extends ethers.utils.Interface {
         poolID: BigNumberish;
         cumulativeLiquidity: BigNumberish;
         totalRewards: BigNumberish;
-        lastTimeRewarded: BigNumberish;
         lastBlockPositionIncreased: BigNumberish;
+        liquidity: BigNumberish;
+        lastTimeRewarded: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidity: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       }
     ]
   ): string;
@@ -173,6 +161,9 @@ interface IAccountingInterface extends ethers.utils.Interface {
         tick: BigNumberish;
         tickSet: boolean;
         tickIndex: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       }
     ]
   ): string;
@@ -199,6 +190,7 @@ interface IAccountingInterface extends ethers.utils.Interface {
     functionFragment: "addPositionToIndex",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "approveUIs", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "debt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseDebt",
@@ -213,15 +205,11 @@ interface IAccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "disapproveUIs",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getBasicPositionInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getParticipatedInLiquidityGenesis",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getParticipatedInMarketGenesis",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -274,18 +262,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "sendOneToOneBackedTokens",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setParticipatedInLiquidityGenesis",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setParticipatedInMarketGenesis",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setPoolPosition",
     data: BytesLike
   ): Result;
@@ -305,6 +281,8 @@ interface IAccountingInterface extends ethers.utils.Interface {
   events: {
     "DebtPositionIndexingDisabled()": EventFragment;
     "PoolPositionIndexingDisabled()": EventFragment;
+    "UIsApproved(uint32[])": EventFragment;
+    "UIsDisapproved(uint32[])": EventFragment;
   };
 
   getEvent(
@@ -313,6 +291,8 @@ interface IAccountingInterface extends ethers.utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "PoolPositionIndexingDisabled"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UIsApproved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UIsDisapproved"): EventFragment;
 }
 
 export class IAccounting extends BaseContract {
@@ -360,11 +340,13 @@ export class IAccounting extends BaseContract {
 
   functions: {
     addPositionToIndex(
-      nftID: BigNumberish,
-      poolID: BigNumberish,
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
       owner: string,
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    approveUIs(
+      ids: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -386,6 +368,11 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    disapproveUIs(
+      ids: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getBasicPositionInfo(
       positionID: BigNumberish,
       overrides?: CallOverrides
@@ -395,17 +382,6 @@ export class IAccounting extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
-
-    getParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    getParticipatedInMarketGenesis(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { participated: boolean }>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -419,19 +395,25 @@ export class IAccounting extends BaseContract {
           BigNumber,
           BigNumber,
           BigNumber,
+          BigNumber,
           number,
           number,
+          number,
+          string,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
           cumulativeLiquidity: BigNumber;
           totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
           lastBlockPositionIncreased: BigNumber;
+          liquidity: BigNumber;
+          lastTimeRewarded: BigNumber;
           tickLower: number;
           tickUpper: number;
-          liquidity: BigNumber;
+          ui: number;
+          kickbackDestination: string;
+          kickbackPortion: BigNumber;
         }
       ] & {
         pt: [
@@ -441,19 +423,25 @@ export class IAccounting extends BaseContract {
           BigNumber,
           BigNumber,
           BigNumber,
+          BigNumber,
           number,
           number,
+          number,
+          string,
           BigNumber
         ] & {
           owner: string;
           poolID: number;
           cumulativeLiquidity: BigNumber;
           totalRewards: BigNumber;
-          lastTimeRewarded: BigNumber;
           lastBlockPositionIncreased: BigNumber;
+          liquidity: BigNumber;
+          lastTimeRewarded: BigNumber;
           tickLower: number;
           tickUpper: number;
-          liquidity: BigNumber;
+          ui: number;
+          kickbackDestination: string;
+          kickbackPortion: BigNumber;
         };
       }
     >;
@@ -473,6 +461,9 @@ export class IAccounting extends BaseContract {
           BigNumber,
           number,
           boolean,
+          BigNumber,
+          number,
+          string,
           BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
@@ -485,6 +476,9 @@ export class IAccounting extends BaseContract {
           tick: number;
           tickSet: boolean;
           tickIndex: BigNumber;
+          ui: number;
+          kickbackDestination: string;
+          kickbackPortion: BigNumber;
         }
       ] & {
         acct: [
@@ -497,6 +491,9 @@ export class IAccounting extends BaseContract {
           BigNumber,
           number,
           boolean,
+          BigNumber,
+          number,
+          string,
           BigNumber
         ] & {
           startCumulativeDebt: BigNumber;
@@ -509,6 +506,9 @@ export class IAccounting extends BaseContract {
           tick: number;
           tickSet: boolean;
           tickIndex: BigNumber;
+          ui: number;
+          kickbackDestination: string;
+          kickbackPortion: BigNumber;
         };
       }
     >;
@@ -589,26 +589,6 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    sendOneToOneBackedTokens(
-      token: string,
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setParticipatedInMarketGenesis(
-      account: string,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setPoolPosition(
       nftID: BigNumberish,
       pt: {
@@ -616,11 +596,14 @@ export class IAccounting extends BaseContract {
         poolID: BigNumberish;
         cumulativeLiquidity: BigNumberish;
         totalRewards: BigNumberish;
-        lastTimeRewarded: BigNumberish;
         lastBlockPositionIncreased: BigNumberish;
+        liquidity: BigNumberish;
+        lastTimeRewarded: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidity: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -638,6 +621,9 @@ export class IAccounting extends BaseContract {
         tick: BigNumberish;
         tickSet: boolean;
         tickIndex: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -660,11 +646,13 @@ export class IAccounting extends BaseContract {
   };
 
   addPositionToIndex(
-    nftID: BigNumberish,
-    poolID: BigNumberish,
-    tickLower: BigNumberish,
-    tickUpper: BigNumberish,
     owner: string,
+    nftID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  approveUIs(
+    ids: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -686,6 +674,11 @@ export class IAccounting extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  disapproveUIs(
+    ids: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getBasicPositionInfo(
     positionID: BigNumberish,
     overrides?: CallOverrides
@@ -695,17 +688,6 @@ export class IAccounting extends BaseContract {
       collateralCount: BigNumber;
     }
   >;
-
-  getParticipatedInLiquidityGenesis(
-    owner: string,
-    poolID: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  getParticipatedInMarketGenesis(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   getPoolPosition(
     nftID: BigNumberish,
@@ -718,19 +700,25 @@ export class IAccounting extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
+      BigNumber,
       number,
       number,
+      number,
+      string,
       BigNumber
     ] & {
       owner: string;
       poolID: number;
       cumulativeLiquidity: BigNumber;
       totalRewards: BigNumber;
-      lastTimeRewarded: BigNumber;
       lastBlockPositionIncreased: BigNumber;
+      liquidity: BigNumber;
+      lastTimeRewarded: BigNumber;
       tickLower: number;
       tickUpper: number;
-      liquidity: BigNumber;
+      ui: number;
+      kickbackDestination: string;
+      kickbackPortion: BigNumber;
     }
   >;
 
@@ -748,6 +736,9 @@ export class IAccounting extends BaseContract {
       BigNumber,
       number,
       boolean,
+      BigNumber,
+      number,
+      string,
       BigNumber
     ] & {
       startCumulativeDebt: BigNumber;
@@ -760,6 +751,9 @@ export class IAccounting extends BaseContract {
       tick: number;
       tickSet: boolean;
       tickIndex: BigNumber;
+      ui: number;
+      kickbackDestination: string;
+      kickbackPortion: BigNumber;
     }
   >;
 
@@ -827,26 +821,6 @@ export class IAccounting extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  sendOneToOneBackedTokens(
-    token: string,
-    dest: string,
-    count: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setParticipatedInLiquidityGenesis(
-    owner: string,
-    poolID: BigNumberish,
-    participated: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setParticipatedInMarketGenesis(
-    account: string,
-    participated: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setPoolPosition(
     nftID: BigNumberish,
     pt: {
@@ -854,11 +828,14 @@ export class IAccounting extends BaseContract {
       poolID: BigNumberish;
       cumulativeLiquidity: BigNumberish;
       totalRewards: BigNumberish;
-      lastTimeRewarded: BigNumberish;
       lastBlockPositionIncreased: BigNumberish;
+      liquidity: BigNumberish;
+      lastTimeRewarded: BigNumberish;
       tickLower: BigNumberish;
       tickUpper: BigNumberish;
-      liquidity: BigNumberish;
+      ui: BigNumberish;
+      kickbackDestination: string;
+      kickbackPortion: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -876,6 +853,9 @@ export class IAccounting extends BaseContract {
       tick: BigNumberish;
       tickSet: boolean;
       tickIndex: BigNumberish;
+      ui: BigNumberish;
+      kickbackDestination: string;
+      kickbackPortion: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -898,13 +878,12 @@ export class IAccounting extends BaseContract {
 
   callStatic: {
     addPositionToIndex(
-      nftID: BigNumberish,
-      poolID: BigNumberish,
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
       owner: string,
+      nftID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    approveUIs(ids: BigNumberish[], overrides?: CallOverrides): Promise<void>;
 
     debt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -921,6 +900,11 @@ export class IAccounting extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    disapproveUIs(
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     getBasicPositionInfo(
       positionID: BigNumberish,
       overrides?: CallOverrides
@@ -930,17 +914,6 @@ export class IAccounting extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
-
-    getParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    getParticipatedInMarketGenesis(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -953,19 +926,25 @@ export class IAccounting extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         number,
         number,
+        number,
+        string,
         BigNumber
       ] & {
         owner: string;
         poolID: number;
         cumulativeLiquidity: BigNumber;
         totalRewards: BigNumber;
-        lastTimeRewarded: BigNumber;
         lastBlockPositionIncreased: BigNumber;
+        liquidity: BigNumber;
+        lastTimeRewarded: BigNumber;
         tickLower: number;
         tickUpper: number;
-        liquidity: BigNumber;
+        ui: number;
+        kickbackDestination: string;
+        kickbackPortion: BigNumber;
       }
     >;
 
@@ -983,6 +962,9 @@ export class IAccounting extends BaseContract {
         BigNumber,
         number,
         boolean,
+        BigNumber,
+        number,
+        string,
         BigNumber
       ] & {
         startCumulativeDebt: BigNumber;
@@ -995,6 +977,9 @@ export class IAccounting extends BaseContract {
         tick: number;
         tickSet: boolean;
         tickIndex: BigNumber;
+        ui: number;
+        kickbackDestination: string;
+        kickbackPortion: BigNumber;
       }
     >;
 
@@ -1059,26 +1044,6 @@ export class IAccounting extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    sendOneToOneBackedTokens(
-      token: string,
-      dest: string,
-      count: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      participated: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setParticipatedInMarketGenesis(
-      account: string,
-      participated: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setPoolPosition(
       nftID: BigNumberish,
       pt: {
@@ -1086,11 +1051,14 @@ export class IAccounting extends BaseContract {
         poolID: BigNumberish;
         cumulativeLiquidity: BigNumberish;
         totalRewards: BigNumberish;
-        lastTimeRewarded: BigNumberish;
         lastBlockPositionIncreased: BigNumberish;
+        liquidity: BigNumberish;
+        lastTimeRewarded: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidity: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1108,6 +1076,9 @@ export class IAccounting extends BaseContract {
         tick: BigNumberish;
         tickSet: boolean;
         tickIndex: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1133,15 +1104,21 @@ export class IAccounting extends BaseContract {
     DebtPositionIndexingDisabled(): TypedEventFilter<[], {}>;
 
     PoolPositionIndexingDisabled(): TypedEventFilter<[], {}>;
+
+    UIsApproved(uis?: null): TypedEventFilter<[number[]], { uis: number[] }>;
+
+    UIsDisapproved(uis?: null): TypedEventFilter<[number[]], { uis: number[] }>;
   };
 
   estimateGas: {
     addPositionToIndex(
-      nftID: BigNumberish,
-      poolID: BigNumberish,
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
       owner: string,
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    approveUIs(
+      ids: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1163,19 +1140,13 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    disapproveUIs(
+      ids: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getBasicPositionInfo(
       positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getParticipatedInMarketGenesis(
-      account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1239,26 +1210,6 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    sendOneToOneBackedTokens(
-      token: string,
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setParticipatedInMarketGenesis(
-      account: string,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setPoolPosition(
       nftID: BigNumberish,
       pt: {
@@ -1266,11 +1217,14 @@ export class IAccounting extends BaseContract {
         poolID: BigNumberish;
         cumulativeLiquidity: BigNumberish;
         totalRewards: BigNumberish;
-        lastTimeRewarded: BigNumberish;
         lastBlockPositionIncreased: BigNumberish;
+        liquidity: BigNumberish;
+        lastTimeRewarded: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidity: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1288,6 +1242,9 @@ export class IAccounting extends BaseContract {
         tick: BigNumberish;
         tickSet: boolean;
         tickIndex: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1311,11 +1268,13 @@ export class IAccounting extends BaseContract {
 
   populateTransaction: {
     addPositionToIndex(
-      nftID: BigNumberish,
-      poolID: BigNumberish,
-      tickLower: BigNumberish,
-      tickUpper: BigNumberish,
       owner: string,
+      nftID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    approveUIs(
+      ids: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1337,19 +1296,13 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    disapproveUIs(
+      ids: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getBasicPositionInfo(
       positionID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getParticipatedInMarketGenesis(
-      account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1416,26 +1369,6 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    sendOneToOneBackedTokens(
-      token: string,
-      dest: string,
-      count: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setParticipatedInLiquidityGenesis(
-      owner: string,
-      poolID: BigNumberish,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setParticipatedInMarketGenesis(
-      account: string,
-      participated: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setPoolPosition(
       nftID: BigNumberish,
       pt: {
@@ -1443,11 +1376,14 @@ export class IAccounting extends BaseContract {
         poolID: BigNumberish;
         cumulativeLiquidity: BigNumberish;
         totalRewards: BigNumberish;
-        lastTimeRewarded: BigNumberish;
         lastBlockPositionIncreased: BigNumberish;
+        liquidity: BigNumberish;
+        lastTimeRewarded: BigNumberish;
         tickLower: BigNumberish;
         tickUpper: BigNumberish;
-        liquidity: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1465,6 +1401,9 @@ export class IAccounting extends BaseContract {
         tick: BigNumberish;
         tickSet: boolean;
         tickIndex: BigNumberish;
+        ui: BigNumberish;
+        kickbackDestination: string;
+        kickbackPortion: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

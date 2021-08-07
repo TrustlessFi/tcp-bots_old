@@ -25,19 +25,19 @@ interface RewardsInterface extends ethers.utils.Interface {
     "accrueRewards()": FunctionFragment;
     "addReferencePool(address)": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
-    "claimRewards(uint256)": FunctionFragment;
+    "claimRewards(uint256,uint32)": FunctionFragment;
     "collateralPool()": FunctionFragment;
     "collateralPoolRewardsPortion()": FunctionFragment;
     "collectPositionFees(tuple)": FunctionFragment;
     "completeSetup()": FunctionFragment;
-    "createLiquidityPosition(tuple,tuple)": FunctionFragment;
+    "createLiquidityPosition(tuple,uint32)": FunctionFragment;
     "current(uint16)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
-    "decreaseLiquidityPosition(tuple)": FunctionFragment;
+    "decreaseLiquidityPosition(tuple,uint32)": FunctionFragment;
     "deployer()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
     "governor()": FunctionFragment;
-    "increaseLiquidityPosition(tuple)": FunctionFragment;
+    "increaseLiquidityPosition(tuple,uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
     "lastPeriodGlobalRewardsAccrued()": FunctionFragment;
     "liquidateOutofRangePositions(address,uint256[])": FunctionFragment;
@@ -53,8 +53,8 @@ interface RewardsInterface extends ethers.utils.Interface {
     "protocolPoolRewardsPortion()": FunctionFragment;
     "referencePoolRewardsPortion()": FunctionFragment;
     "referencePools(uint256)": FunctionFragment;
+    "removeKickback(uint256)": FunctionFragment;
     "removeLiquidityPosition(tuple)": FunctionFragment;
-    "removeLiquidityPositionAfterShutdown(tuple)": FunctionFragment;
     "removeReferencePool(address)": FunctionFragment;
     "setLiquidationPenalty(uint256)": FunctionFragment;
     "setMaxLiquidityDecreasePerPeriod(uint256)": FunctionFragment;
@@ -82,7 +82,7 @@ interface RewardsInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "claimRewards",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "collateralPool",
@@ -123,7 +123,7 @@ interface RewardsInterface extends ethers.utils.Interface {
         recipient: string;
         deadline: BigNumberish;
       },
-      { v: BigNumberish; r: BytesLike; s: BytesLike }
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(
@@ -143,7 +143,8 @@ interface RewardsInterface extends ethers.utils.Interface {
         amount0Min: BigNumberish;
         amount1Min: BigNumberish;
         deadline: BigNumberish;
-      }
+      },
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
@@ -162,7 +163,8 @@ interface RewardsInterface extends ethers.utils.Interface {
         amount0Min: BigNumberish;
         amount1Min: BigNumberish;
         deadline: BigNumberish;
-      }
+      },
+      BigNumberish
     ]
   ): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
@@ -223,19 +225,11 @@ interface RewardsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeLiquidityPosition",
-    values: [
-      {
-        tokenId: BigNumberish;
-        liquidity: BigNumberish;
-        amount0Min: BigNumberish;
-        amount1Min: BigNumberish;
-        deadline: BigNumberish;
-      }
-    ]
+    functionFragment: "removeKickback",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeLiquidityPositionAfterShutdown",
+    functionFragment: "removeLiquidityPosition",
     values: [
       {
         tokenId: BigNumberish;
@@ -398,11 +392,11 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeLiquidityPosition",
+    functionFragment: "removeKickback",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeLiquidityPositionAfterShutdown",
+    functionFragment: "removeLiquidityPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -459,7 +453,7 @@ interface RewardsInterface extends ethers.utils.Interface {
     "ParameterUpdated64(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
-    "RewardsDistributed(address,uint64,uint256)": EventFragment;
+    "RewardsDistributed(address,bool,uint256)": EventFragment;
     "RewardsPortionsUpdated(uint256,uint256,uint256)": EventFragment;
     "Stopped()": EventFragment;
   };
@@ -542,6 +536,7 @@ export class Rewards extends BaseContract {
 
     claimRewards(
       nftTokenID: BigNumberish,
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -579,7 +574,7 @@ export class Rewards extends BaseContract {
         recipient: string;
         deadline: BigNumberish;
       },
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -597,6 +592,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -615,6 +611,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -674,18 +671,12 @@ export class Rewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    removeLiquidityPosition(
-      params: {
-        tokenId: BigNumberish;
-        liquidity: BigNumberish;
-        amount0Min: BigNumberish;
-        amount1Min: BigNumberish;
-        deadline: BigNumberish;
-      },
+    removeKickback(
+      nftTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    removeLiquidityPositionAfterShutdown(
+    removeLiquidityPosition(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -757,6 +748,7 @@ export class Rewards extends BaseContract {
 
   claimRewards(
     nftTokenID: BigNumberish,
+    ui: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -792,7 +784,7 @@ export class Rewards extends BaseContract {
       recipient: string;
       deadline: BigNumberish;
     },
-    ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    ui: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -808,6 +800,7 @@ export class Rewards extends BaseContract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
+    ui: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -826,6 +819,7 @@ export class Rewards extends BaseContract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
+    ui: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -874,18 +868,12 @@ export class Rewards extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
-  removeLiquidityPosition(
-    params: {
-      tokenId: BigNumberish;
-      liquidity: BigNumberish;
-      amount0Min: BigNumberish;
-      amount1Min: BigNumberish;
-      deadline: BigNumberish;
-    },
+  removeKickback(
+    nftTokenID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  removeLiquidityPositionAfterShutdown(
+  removeLiquidityPosition(
     params: {
       tokenId: BigNumberish;
       liquidity: BigNumberish;
@@ -952,6 +940,7 @@ export class Rewards extends BaseContract {
 
     claimRewards(
       nftTokenID: BigNumberish,
+      ui: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -985,7 +974,7 @@ export class Rewards extends BaseContract {
         recipient: string;
         deadline: BigNumberish;
       },
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      ui: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { nftTokenID: BigNumber; liquidity: BigNumber }
@@ -1003,6 +992,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
@@ -1023,6 +1013,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1075,20 +1066,12 @@ export class Rewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    removeLiquidityPosition(
-      params: {
-        tokenId: BigNumberish;
-        liquidity: BigNumberish;
-        amount0Min: BigNumberish;
-        amount1Min: BigNumberish;
-        deadline: BigNumberish;
-      },
+    removeKickback(
+      nftTokenID: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
-    >;
+    ): Promise<void>;
 
-    removeLiquidityPositionAfterShutdown(
+    removeLiquidityPosition(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -1273,11 +1256,11 @@ export class Rewards extends BaseContract {
 
     RewardsDistributed(
       account?: string | null,
-      period?: BigNumberish | null,
+      isKickback?: boolean | null,
       tcpRewards?: null
     ): TypedEventFilter<
-      [string, BigNumber, BigNumber],
-      { account: string; period: BigNumber; tcpRewards: BigNumber }
+      [string, boolean, BigNumber],
+      { account: string; isKickback: boolean; tcpRewards: BigNumber }
     >;
 
     RewardsPortionsUpdated(
@@ -1310,6 +1293,7 @@ export class Rewards extends BaseContract {
 
     claimRewards(
       nftTokenID: BigNumberish,
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1345,7 +1329,7 @@ export class Rewards extends BaseContract {
         recipient: string;
         deadline: BigNumberish;
       },
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1361,6 +1345,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1379,6 +1364,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1432,18 +1418,12 @@ export class Rewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    removeLiquidityPosition(
-      params: {
-        tokenId: BigNumberish;
-        liquidity: BigNumberish;
-        amount0Min: BigNumberish;
-        amount1Min: BigNumberish;
-        deadline: BigNumberish;
-      },
+    removeKickback(
+      nftTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    removeLiquidityPositionAfterShutdown(
+    removeLiquidityPosition(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;
@@ -1518,6 +1498,7 @@ export class Rewards extends BaseContract {
 
     claimRewards(
       nftTokenID: BigNumberish,
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1555,7 +1536,7 @@ export class Rewards extends BaseContract {
         recipient: string;
         deadline: BigNumberish;
       },
-      ga: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1574,6 +1555,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1592,6 +1574,7 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
+      ui: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1658,18 +1641,12 @@ export class Rewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    removeLiquidityPosition(
-      params: {
-        tokenId: BigNumberish;
-        liquidity: BigNumberish;
-        amount0Min: BigNumberish;
-        amount1Min: BigNumberish;
-        deadline: BigNumberish;
-      },
+    removeKickback(
+      nftTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    removeLiquidityPositionAfterShutdown(
+    removeLiquidityPosition(
       params: {
         tokenId: BigNumberish;
         liquidity: BigNumberish;

@@ -21,17 +21,32 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface ITDaoInterface extends ethers.utils.Interface {
   functions: {
-    "availableSupply()": FunctionFragment;
+    "getPosition(uint64)": FunctionFragment;
+    "getRewards(uint64)": FunctionFragment;
     "incentiveContractMint(address,uint256)": FunctionFragment;
+    "lockTokens(address,uint256,uint8,address)": FunctionFragment;
+    "mintVotingRewards(address,uint256)": FunctionFragment;
     "voteInUnderlyingProtocol(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "availableSupply",
-    values?: undefined
+    functionFragment: "getPosition",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRewards",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "incentiveContractMint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockTokens",
+    values: [string, BigNumberish, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintVotingRewards",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -40,11 +55,17 @@ interface ITDaoInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "availableSupply",
+    functionFragment: "getPosition",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "incentiveContractMint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "lockTokens", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintVotingRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -123,9 +144,51 @@ export class ITDao extends BaseContract {
   interface: ITDaoInterface;
 
   functions: {
-    availableSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPosition(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          number
+        ] & {
+          count: BigNumber;
+          startTotalRewards: BigNumber;
+          startCumulativeVirtualCount: BigNumber;
+          lastPeriodUpdated: BigNumber;
+          endPeriod: BigNumber;
+          durationMonths: BigNumber;
+          tokenID: number;
+        }
+      ]
+    >;
+
+    getRewards(
+      positionNFTTokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    lockTokens(
+      token: string,
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    mintVotingRewards(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -138,9 +201,49 @@ export class ITDao extends BaseContract {
     ): Promise<[void]>;
   };
 
-  availableSupply(overrides?: CallOverrides): Promise<BigNumber>;
+  getPosition(
+    positionID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      number
+    ] & {
+      count: BigNumber;
+      startTotalRewards: BigNumber;
+      startCumulativeVirtualCount: BigNumber;
+      lastPeriodUpdated: BigNumber;
+      endPeriod: BigNumber;
+      durationMonths: BigNumber;
+      tokenID: number;
+    }
+  >;
+
+  getRewards(
+    positionNFTTokenID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   incentiveContractMint(
+    dest: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  lockTokens(
+    token: string,
+    count: BigNumberish,
+    lockDurationMonths: BigNumberish,
+    to: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  mintVotingRewards(
     dest: string,
     count: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -153,9 +256,49 @@ export class ITDao extends BaseContract {
   ): Promise<void>;
 
   callStatic: {
-    availableSupply(overrides?: CallOverrides): Promise<BigNumber>;
+    getPosition(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number
+      ] & {
+        count: BigNumber;
+        startTotalRewards: BigNumber;
+        startCumulativeVirtualCount: BigNumber;
+        lastPeriodUpdated: BigNumber;
+        endPeriod: BigNumber;
+        durationMonths: BigNumber;
+        tokenID: number;
+      }
+    >;
+
+    getRewards(
+      positionNFTTokenID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    lockTokens(
+      token: string,
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      to: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    mintVotingRewards(
       dest: string,
       count: BigNumberish,
       overrides?: CallOverrides
@@ -238,9 +381,31 @@ export class ITDao extends BaseContract {
   };
 
   estimateGas: {
-    availableSupply(overrides?: CallOverrides): Promise<BigNumber>;
+    getPosition(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRewards(
+      positionNFTTokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    lockTokens(
+      token: string,
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    mintVotingRewards(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -254,9 +419,31 @@ export class ITDao extends BaseContract {
   };
 
   populateTransaction: {
-    availableSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getPosition(
+      positionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRewards(
+      positionNFTTokenID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     incentiveContractMint(
+      dest: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    lockTokens(
+      token: string,
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      to: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintVotingRewards(
       dest: string,
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
