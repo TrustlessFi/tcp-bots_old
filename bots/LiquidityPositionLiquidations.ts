@@ -3,106 +3,136 @@
 
 import { ManagedBot } from "./utils/ManagedBot";
 import { hours } from "./utils/library";
-import { UniswapV3Pool } from '../typechain/UniswapV3Pool'
-import hre from "hardhat";
-const e = hre.ethers;
 
 import { BigNumber } from "ethers";
-import { uintMax256, zeroAddress } from "./utils/library";
+import {
+  UniswapV3Factory,
+  NonfungiblePositionManager,
+  Rewards,
+  Prices,
+  Accounting,
+} from '../typechain/'
 
-
-const feeToTickSpacing = (fee: number): number => {
-  switch(fee) {
-    case 500:
-      return 10
-    case 3000:
-      return 60
-    case 10000:
-      return 200
-    default:
-      throw 'unknow fee ' + fee
-  }
+type position = {
+  nftID: number,
+  poolID: number,
+  tickLower: number,
+  tickUpper: number,
 }
-
-const TICKS_TO_EXAMINE = 100
 
 export class LiquidityPositionLiquidationsBot extends ManagedBot {
   name = "🙋🏽‍♀️ Liquidity Position Liquidations";
   initialized = false
-  protocolPool: UniswapV3Pool | null = null
-  collateralPool: UniswapV3Pool | null = null
-  referencePools: UniswapV3Pool[] | null = null
+  protocolPool: string = ''
+  collateralPool: string = ''
+  referencePools: string[] = []
 
-  removedLocalIDs: Map<string, boolean> = new Map()
+  posNFT: NonfungiblePositionManager | null = null
+  factory: UniswapV3Factory | null = null
+  rewards: Rewards | null = null
+  prices: Prices | null = null
+  accounting: Accounting | null = null
+  twapDuration: number | null = null
+
+  positionIDs: number[] = []
+  positionIndex: Map<number, position> = new Map()
+
+  idFetchBatchSize = 10000
+  positionFetchBatchSize = 10
+  poolCache: Map<string, number> = new Map()
 
   async runImpl(): Promise<number> {
-    let rewards = this.protocol!.rewards;
-    let twapDuration = await rewards.twapDuration()
-
     await this.ensureInitialized()
+    await this.indexAllPositions()
 
-    await this.checkForOutOfRangePositionsAndLiquidate(this.protocolPool!, twapDuration)
-    await this.checkForOutOfRangePositionsAndLiquidate(this.collateralPool!, twapDuration)
+    await this.checkForOutOfRangePositionsAndLiquidate(this.protocolPool!, this.twapDuration!)
+    await this.checkForOutOfRangePositionsAndLiquidate(this.collateralPool!, this.twapDuration!)
     for(let i = 0; i < this.referencePools!.length; i++) {
-      await this.checkForOutOfRangePositionsAndLiquidate(this.referencePools![i], twapDuration)
+      await this.checkForOutOfRangePositionsAndLiquidate(this.referencePools![i], this.twapDuration!)
     }
 
     return hours(1);
   }
 
-  async checkForOutOfRangePositionsAndLiquidate(pool: UniswapV3Pool, twapDuration: number): Promise<void> {
-    let prices = this.protocol!.prices
-    let rewards = this.protocol!.rewards
-    let accounting = this.protocol!.accounting
+  poolKey(t0: string, t1: string, fee: number) {
+    const poolOrder = [t0, t1].sort()
+    return poolOrder[0] + poolOrder[1] + fee.toString()
+  }
 
-    let tick = await prices.calculateInstantTwappedTick(pool.address, twapDuration)
-    let fee = await pool.fee()
-    let tickSpacing = feeToTickSpacing(fee)
-    let poolID = await rewards.poolIDForPool(pool.address)
+  async getPoolIDCached(token0: string, token1: string, fee: number): Promise<number> {
+    const poolKey = this.poolKey(token0, token1, fee)
+    const poolID = this.poolCache.get(poolKey)
+    if (poolID !== undefined) return poolID
 
-    tick = tick - (tick % tickSpacing)
+    const fetchedPoolAddress = await this.factory!.getPool(token0, token1, fee)
+    const fetchedPoolID = await this.rewards!.poolIDForPool(fetchedPoolAddress)
 
-    let tickUpper = tick
-    let belowTickPositions: BigNumber[] = [];
+    this.poolCache.set(poolKey, fetchedPoolID)
+    return fetchedPoolID
+  }
 
-    let tickLower = tick
-    let aboveTickPositions: BigNumber[] = [];
+  async indexAllPositions() {
+    const _min = (a: number, b:number): number => a < b ? a : b
 
-    for(let i = 0; i < TICKS_TO_EXAMINE; i++) {
+    const posNFT = this.protocol!.external.nftPositionManager
+    const bal = (await posNFT.balanceOf(this.protocol!.accounting.address)).toNumber()
+    let limit = 0
 
-      // TODO Index and cache all of the liquidity position tick values
-      belowTickPositions.push.apply(
-        belowTickPositions,
-        await accounting.indexPoolPositionsByTickUpper(poolID, tickUpper, 0, uintMax256))
-      tickUpper -= tickSpacing
+    let newPositionIDs: number[] = []
 
-      aboveTickPositions.push.apply(
-        aboveTickPositions,
-        await accounting.indexPoolPositionsByTickUpper(poolID, tickLower, 0, uintMax256))
-      tickLower += tickSpacing
-
+    while(limit < bal) {
+      const lowerLimit = limit
+      limit += _min(bal - limit, this.idFetchBatchSize);
+      (await this.protocol!.accounting.getLockedNFTIDs(lowerLimit, limit)).map((pos: BigNumber) => {
+        if (!this.positionIndex.has(pos.toNumber())) newPositionIDs.push(pos.toNumber())
+      })
     }
 
-    let allLocalPositionIDs = belowTickPositions.concat(aboveTickPositions).map(pos => pos.toString())
+    limit = 0
+    const totalCount = newPositionIDs.length
+    while(limit < totalCount) {
+      const lowerLimit = limit
+      limit += _min(totalCount - limit, this.positionFetchBatchSize)
+      await Promise.all(newPositionIDs.slice(lowerLimit, limit).map(async newPositionID => {
+        const _position = await posNFT.positions(newPositionID)
+        this.positionIndex.set(newPositionID, {
+          nftID: newPositionID,
+          poolID: await(this.getPoolIDCached(_position.token0, _position.token1, _position.fee)),
+          tickLower: _position.tickLower,
+          tickUpper: _position.tickUpper,
+        })
+      }))
+    }
+  }
 
-    allLocalPositionIDs = allLocalPositionIDs.filter(
-      localPositionID => {
-        if (this.removedLocalIDs.get(localPositionID) === true) return false
-        else return true
+  async getPoolPositionsByPool(pool: string): Promise<position[]> {
+    const poolID = await this.rewards!.poolIDForPool(pool)
+    if (poolID === 0) throw 'Invalid pool'
+    const iterator = this.positionIndex.values()
+    let _positions: position[] = []
+    while(true) {
+      const pos = (iterator.next()).value as position | undefined
+      if (pos === undefined) break
+      if (pos.poolID === poolID) _positions.push(pos)
+    }
+    return _positions
+  }
+
+  async checkForOutOfRangePositionsAndLiquidate(pool: string, twapDuration: number): Promise<void> {
+    const _positions = await this.getPoolPositionsByPool(pool)
+    const tick = await this.prices!.calculateInstantTwappedTick(pool, twapDuration)
+
+    let outOfRangeNFTIDs: number[] = []
+
+    _positions.map(_position => {
+      if (tick < _position.tickLower || _position.tickUpper <= tick) {
+        outOfRangeNFTIDs.push(_position.nftID)
       }
-    )
-
-    let outOfRangeNFTIDs = []
-    for(let i = 0; i < allLocalPositionIDs.length; i++) {
-      let localPositionID = allLocalPositionIDs[i]
-      let nftID = await accounting.localNftID(localPositionID)
-      let position = await accounting.getPoolPosition(nftID)
-      if (position.owner == zeroAddress) this.removedLocalIDs.set(localPositionID, true)
-      else outOfRangeNFTIDs.push(nftID)
-    }
+    })
 
     if (outOfRangeNFTIDs.length > 0) {
-      await rewards.connect(this.wallet).liquidateOutofRangePositions(pool.address, outOfRangeNFTIDs)
+      this.report('liquidating positions ' + outOfRangeNFTIDs.join(', ') + ' from pool ' + pool)
+      await this.rewards!.connect(this.wallet).liquidateOutofRangePositions(pool, outOfRangeNFTIDs)
     }
   }
 
@@ -110,17 +140,18 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
     if (!this.initialized) {
       this.initialized = true
 
+      this.posNFT = this.protocol!.external.nftPositionManager
+      this.factory = this.protocol!.external.factory
+      this.rewards = this.protocol!.rewards
+      this.prices = this.protocol!.prices
+      this.accounting = this.protocol!.accounting
       let governor = this.protocol!.governor
-      let PoolFactory = await e.getContractFactory('UniswapV3Pool')
-      this.protocolPool = PoolFactory.attach(await governor.protocolPool()) as unknown as UniswapV3Pool
-      this.collateralPool = PoolFactory.attach(await governor.collateralPool()) as unknown as UniswapV3Pool
 
-      let refPoolAddressess = await governor.getReferencePools()
-      let refPools: UniswapV3Pool[] = []
-      for (let i = 0; i < refPoolAddressess.length; i++) {
-        refPools.push(PoolFactory.attach(refPoolAddressess[i]) as unknown as UniswapV3Pool)
-      }
-      this.referencePools = refPools
+      this.protocolPool = await governor.protocolPool()
+      this.collateralPool = await governor.collateralPool()
+      this.referencePools = await governor.getReferencePools()
     }
+
+    this.twapDuration = await this.rewards!.twapDuration()
   }
 }
