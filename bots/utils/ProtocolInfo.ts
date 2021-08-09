@@ -13,40 +13,45 @@ import {
 } from "./Addresses";
 
 // ================ CORE CONTRACTS =================
-import { Accounting } from "../../typechain/Accounting";
-import { Auctions } from "../../typechain/Auctions";
-import { Hue } from "../../typechain/Hue";
-import { HuePositionNFT } from "../../typechain/HuePositionNFT";
-import { EnforcedDecentralization } from "../../typechain/EnforcedDecentralization";
-import { Governor } from "../../typechain/Governor";
-import { TCPGovernorAlpha } from "../../typechain/TCPGovernorAlpha";
-import { LendHue } from "../../typechain/LendHue";
-import { Liquidations } from "../../typechain/Liquidations";
-import { Market } from "../../typechain/Market";
-import { Prices } from "../../typechain/Prices";
-import { ProtocolLock } from "../../typechain/ProtocolLock";
-import { Rates } from "../../typechain/Rates";
-import { Rewards } from "../../typechain/Rewards";
-import { Settlement } from "../../typechain/Settlement";
-import { TcpTimelock } from "../../typechain/TcpTimelock";
-import { TDaoTimelock } from "../../typechain/TDaoTimelock";
-import { TDaoToken } from "../../typechain/TDaoToken";
-import { Tcp } from "../../typechain/Tcp";
+import {
+  Auctions,
+  Hue,
+  HuePositionNFT,
+  EnforcedDecentralization,
+  Governor,
+  TCPGovernorAlpha,
+  LendHue,
+  Liquidations,
+  Market,
+  Prices,
+  ProtocolLock,
+  Rates,
+  Rewards,
+  Settlement,
+  TcpTimelock,
+  TDaoTimelock,
+  TDaoToken,
+  Tcp,
+  Accounting,
+} from "../../typechain/";
 
 // ================ OTHER CONTRACTS =================
-import { WETH9 } from "../../typechain/WETH9";
-import { ERC20 } from "../../typechain/ERC20";
+import { WETH9, ERC20 } from "../../typechain/";
 
 // ================ META =================
-import { TDaoGovernorAlpha } from "../../typechain/TDaoGovernorAlpha";
-import { TDao } from "../../typechain/TDao";
-import { TDaoPositionNFT } from "../../typechain/TDaoPositionNFT";
+import {
+  TDaoGovernorAlpha,
+  TDao,
+  TDaoPositionNFT
+} from "../../typechain/";
 
 // ================ UNISWAP =================
-import { SwapRouter } from "../../typechain/SwapRouter";
-import { UniswapV3Factory } from "../../typechain/UniswapV3Factory";
-import { NonfungiblePositionManager } from "../../typechain/NonfungiblePositionManager";
-import { UniswapV3Pool } from "../../typechain/UniswapV3Pool";
+import {
+  SwapRouter,
+  UniswapV3Factory,
+  NonfungiblePositionManager,
+  UniswapV3Pool,
+} from "../../typechain/";
 
 export type deployedTCP = {
   accounting: Accounting
