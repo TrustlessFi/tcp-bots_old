@@ -12,25 +12,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-    ],
-    name: "AdminUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "string",
         name: "contractName",
         type: "string",
@@ -43,19 +24,6 @@ const _abi = [
       },
     ],
     name: "ContractUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint64",
-        name: "shutdownTime",
-        type: "uint64",
-      },
-    ],
-    name: "EmergencyShutdownExecuted",
     type: "event",
   },
   {
@@ -129,37 +97,11 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-    ],
-    name: "addReferencePoolToProtocol",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "auctions",
     outputs: [
       {
         internalType: "contract IAuctions",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "collateralPool",
-    outputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
         name: "",
         type: "address",
       },
@@ -245,19 +187,6 @@ const _abi = [
     name: "executeShutdown",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getReferencePools",
-    outputs: [
-      {
-        internalType: "contract IUniswapV3Pool[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -375,43 +304,11 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-    ],
-    name: "poolRemovalTime",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "prices",
     outputs: [
       {
         internalType: "contract IPrices",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "protocolDeployer",
-    outputs: [
-      {
-        internalType: "address",
         name: "",
         type: "address",
       },
@@ -434,19 +331,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "protocolPool",
-    outputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "rates",
     outputs: [
       {
@@ -456,19 +340,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IUniswapV3Pool",
-        name: "pool",
-        type: "address",
-      },
-    ],
-    name: "removeReferencePoolFromProtocol",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {

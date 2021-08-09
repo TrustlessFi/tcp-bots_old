@@ -23,7 +23,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   functions: {
     "accrueInterest()": FunctionFragment;
     "collateralizationRequirement()": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "lastPeriodGlobalInterestAccrued()": FunctionFragment;
     "stop()": FunctionFragment;
     "systemGetUpdatedPosition(uint64)": FunctionFragment;
@@ -35,10 +34,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "collateralizationRequirement",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -57,10 +52,6 @@ interface IMarketInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -150,10 +141,6 @@ export class IMarket extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { ratio: BigNumber }>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { period: BigNumber }>;
@@ -174,10 +161,6 @@ export class IMarket extends BaseContract {
 
   collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   lastPeriodGlobalInterestAccrued(
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -195,8 +178,6 @@ export class IMarket extends BaseContract {
     accrueInterest(overrides?: CallOverrides): Promise<void>;
 
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    completeSetup(overrides?: CallOverrides): Promise<void>;
 
     lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
@@ -352,10 +333,6 @@ export class IMarket extends BaseContract {
 
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     lastPeriodGlobalInterestAccrued(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -377,10 +354,6 @@ export class IMarket extends BaseContract {
 
     collateralizationRequirement(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     lastPeriodGlobalInterestAccrued(

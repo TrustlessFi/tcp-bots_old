@@ -22,16 +22,16 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface PricesTestableInterface extends ethers.utils.Interface {
   functions: {
     "__now()": FunctionFragment;
-    "addReferencePool(address)": FunctionFragment;
     "calculate64To32(uint64)": FunctionFragment;
+    "calculateInstantCollateralPrice(uint32)": FunctionFragment;
     "calculateInstantTwappedPrice(address,uint32)": FunctionFragment;
     "calculateInstantTwappedTick(address,uint32)": FunctionFragment;
     "calculateTwappedPrice(address,bool)": FunctionFragment;
     "collateralPool()": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "convertSqrtPriceX96ToTick(uint160)": FunctionFragment;
     "convertTickToSqrtPriceX96(int24)": FunctionFragment;
     "deployer()": FunctionFragment;
+    "finalizeInitialization(address,address)": FunctionFragment;
     "getE18PriceForSqrtX96Price(uint160)": FunctionFragment;
     "getPriceForTick(int24,bool)": FunctionFragment;
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
@@ -39,6 +39,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
+    "initializePool(address,address)": FunctionFragment;
     "normalizeDecimals(uint256,tuple)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
     "protocolPool()": FunctionFragment;
@@ -51,11 +52,11 @@ interface PricesTestableInterface extends ethers.utils.Interface {
 
   encodeFunctionData(functionFragment: "__now", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "addReferencePool",
-    values: [string]
+    functionFragment: "calculate64To32",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "calculate64To32",
+    functionFragment: "calculateInstantCollateralPrice",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -75,10 +76,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "convertSqrtPriceX96ToTick",
     values: [BigNumberish]
   ): string;
@@ -87,6 +84,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "finalizeInitialization",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "getE18PriceForSqrtX96Price",
     values: [BigNumberish]
@@ -116,6 +117,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initializePool",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "normalizeDecimals",
     values: [
@@ -152,11 +157,11 @@ interface PricesTestableInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "__now", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addReferencePool",
+    functionFragment: "calculate64To32",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "calculate64To32",
+    functionFragment: "calculateInstantCollateralPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -176,10 +181,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "completeSetup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "convertSqrtPriceX96ToTick",
     data: BytesLike
   ): Result;
@@ -188,6 +189,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "finalizeInitialization",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getE18PriceForSqrtX96Price",
     data: BytesLike
@@ -210,6 +215,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePool",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "normalizeDecimals",
     data: BytesLike
@@ -236,13 +245,11 @@ interface PricesTestableInterface extends ethers.utils.Interface {
 
   events: {
     "Initialized(address)": EventFragment;
-    "ParameterUpdatedAddress(string,address)": EventFragment;
     "PriceUpdated(address,uint256,int24)": EventFragment;
     "Stopped()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PriceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
 }
@@ -293,15 +300,15 @@ export class PricesTestable extends BaseContract {
   functions: {
     __now(overrides?: CallOverrides): Promise<[number[]] & { times: number[] }>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     calculate64To32(
       input: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[number]>;
+
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     calculateInstantTwappedPrice(
       pool: string,
@@ -323,10 +330,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<[string]>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     convertSqrtPriceX96ToTick(
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
@@ -338,6 +341,12 @@ export class PricesTestable extends BaseContract {
     ): Promise<[BigNumber]>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     getE18PriceForSqrtX96Price(
       sqrtPriceX96: BigNumberish,
@@ -376,6 +385,12 @@ export class PricesTestable extends BaseContract {
 
     init(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -429,15 +444,15 @@ export class PricesTestable extends BaseContract {
 
   __now(overrides?: CallOverrides): Promise<number[]>;
 
-  addReferencePool(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   calculate64To32(
     input: BigNumberish,
     overrides?: CallOverrides
   ): Promise<number>;
+
+  calculateInstantCollateralPrice(
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   calculateInstantTwappedPrice(
     pool: string,
@@ -459,10 +474,6 @@ export class PricesTestable extends BaseContract {
 
   collateralPool(overrides?: CallOverrides): Promise<string>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   convertSqrtPriceX96ToTick(
     sqrtPriceX96: BigNumberish,
     overrides?: CallOverrides
@@ -474,6 +485,12 @@ export class PricesTestable extends BaseContract {
   ): Promise<BigNumber>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
+
+  finalizeInitialization(
+    _collateralPool: string,
+    _protocolPool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   getE18PriceForSqrtX96Price(
     sqrtPriceX96: BigNumberish,
@@ -512,6 +529,12 @@ export class PricesTestable extends BaseContract {
 
   init(
     _governor: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializePool(
+    pool: string,
+    baseToken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -562,12 +585,15 @@ export class PricesTestable extends BaseContract {
   callStatic: {
     __now(overrides?: CallOverrides): Promise<number[]>;
 
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
-
     calculate64To32(
       input: BigNumberish,
       overrides?: CallOverrides
     ): Promise<number>;
+
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     calculateInstantTwappedPrice(
       pool: string,
@@ -589,8 +615,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<string>;
 
-    completeSetup(overrides?: CallOverrides): Promise<void>;
-
     convertSqrtPriceX96ToTick(
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
@@ -602,6 +626,12 @@ export class PricesTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     getE18PriceForSqrtX96Price(
       sqrtPriceX96: BigNumberish,
@@ -639,6 +669,12 @@ export class PricesTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     init(_governor: string, overrides?: CallOverrides): Promise<void>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     normalizeDecimals(
       price: BigNumberish,
@@ -688,11 +724,6 @@ export class PricesTestable extends BaseContract {
       governor?: string | null
     ): TypedEventFilter<[string], { governor: string }>;
 
-    ParameterUpdatedAddress(
-      paramName?: string | null,
-      addr?: string | null
-    ): TypedEventFilter<[string, string], { paramName: string; addr: string }>;
-
     PriceUpdated(
       pool?: string | null,
       price?: null,
@@ -708,13 +739,13 @@ export class PricesTestable extends BaseContract {
   estimateGas: {
     __now(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     calculate64To32(
       input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -738,10 +769,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     convertSqrtPriceX96ToTick(
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
@@ -753,6 +780,12 @@ export class PricesTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     getE18PriceForSqrtX96Price(
       sqrtPriceX96: BigNumberish,
@@ -791,6 +824,12 @@ export class PricesTestable extends BaseContract {
 
     init(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -833,13 +872,13 @@ export class PricesTestable extends BaseContract {
   populateTransaction: {
     __now(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     calculate64To32(
       input: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -863,10 +902,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     convertSqrtPriceX96ToTick(
       sqrtPriceX96: BigNumberish,
       overrides?: CallOverrides
@@ -878,6 +913,12 @@ export class PricesTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     getE18PriceForSqrtX96Price(
       sqrtPriceX96: BigNumberish,
@@ -916,6 +957,12 @@ export class PricesTestable extends BaseContract {
 
     init(
       _governor: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

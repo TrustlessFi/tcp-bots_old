@@ -25,12 +25,11 @@ interface MarketInterface extends ethers.utils.Interface {
     "accrueInterest()": FunctionFragment;
     "adjustPosition(uint64,int256,uint256,uint32)": FunctionFragment;
     "claimRewards(uint64,uint32)": FunctionFragment;
-    "collateralPool()": FunctionFragment;
     "collateralizationRequirement()": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "createPosition(uint256,uint32)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "deployer()": FunctionFragment;
+    "finalizeInitialization()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
     "governor()": FunctionFragment;
     "huePositionNFT()": FunctionFragment;
@@ -68,15 +67,7 @@ interface MarketInterface extends ethers.utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "collateralPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "collateralizationRequirement",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "completeSetup",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -88,6 +79,10 @@ interface MarketInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "finalizeInitialization",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "firstPeriod",
     values?: undefined
@@ -172,15 +167,7 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "collateralPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "collateralizationRequirement",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -192,6 +179,10 @@ interface MarketInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "finalizeInitialization",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "firstPeriod",
     data: BytesLike
@@ -351,15 +342,9 @@ export class Market extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    collateralPool(overrides?: CallOverrides): Promise<[string]>;
-
     collateralizationRequirement(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     createPosition(
       initialDebt: BigNumberish,
@@ -372,6 +357,10 @@ export class Market extends BaseContract {
     ): Promise<[BigNumber] & { period: BigNumber }>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    finalizeInitialization(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -470,13 +459,7 @@ export class Market extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  collateralPool(overrides?: CallOverrides): Promise<string>;
-
   collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   createPosition(
     initialDebt: BigNumberish,
@@ -487,6 +470,10 @@ export class Market extends BaseContract {
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
+
+  finalizeInitialization(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -583,11 +570,7 @@ export class Market extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    collateralPool(overrides?: CallOverrides): Promise<string>;
-
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    completeSetup(overrides?: CallOverrides): Promise<void>;
 
     createPosition(
       initialDebt: BigNumberish,
@@ -598,6 +581,8 @@ export class Market extends BaseContract {
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
+
+    finalizeInitialization(overrides?: CallOverrides): Promise<void>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -830,13 +815,7 @@ export class Market extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
-
     collateralizationRequirement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     createPosition(
       initialDebt: BigNumberish,
@@ -847,6 +826,10 @@ export class Market extends BaseContract {
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    finalizeInitialization(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -946,14 +929,8 @@ export class Market extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     collateralizationRequirement(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createPosition(
@@ -965,6 +942,10 @@ export class Market extends BaseContract {
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    finalizeInitialization(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

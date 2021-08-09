@@ -23,13 +23,11 @@ interface GovernorInterface extends ethers.utils.Interface {
   functions: {
     "EMERGENCY_SHUTDOWN_THRESHOLD()": FunctionFragment;
     "accounting()": FunctionFragment;
-    "addReferencePoolToProtocol(address)": FunctionFragment;
     "auctions()": FunctionFragment;
-    "collateralPool()": FunctionFragment;
-    "contractsInitialized()": FunctionFragment;
     "currentDailyRewardCount()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "currentPhase()": FunctionFragment;
+    "deployer()": FunctionFragment;
     "emergencyShutdownThresholdMet()": FunctionFragment;
     "emergencyShutdownTokensLocked(address)": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
@@ -37,41 +35,33 @@ interface GovernorInterface extends ethers.utils.Interface {
     "executeEmergencyShutdown()": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
-    "getReferencePools()": FunctionFragment;
     "hue()": FunctionFragment;
     "huePositionNFT()": FunctionFragment;
-    "initContracts(address,address,address,address,address,address,address,address,address)": FunctionFragment;
-    "initPools(address,address,address[],address[],uint256[])": FunctionFragment;
+    "initialize(address,address,address,address,address,address,address,address,address)": FunctionFragment;
     "isShutdown()": FunctionFragment;
     "lendHue()": FunctionFragment;
     "liquidations()": FunctionFragment;
     "lockTokensForEmergencyShutdown(uint256)": FunctionFragment;
     "market()": FunctionFragment;
+    "mintCapsUnset()": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "poolRemovalTime(address)": FunctionFragment;
-    "pricePoolsInitialized()": FunctionFragment;
     "prices()": FunctionFragment;
-    "protocolDeployer()": FunctionFragment;
     "protocolLock()": FunctionFragment;
-    "protocolPool()": FunctionFragment;
     "rates()": FunctionFragment;
-    "referencePool(uint256)": FunctionFragment;
-    "registerTCPHoldingContracts(address[])": FunctionFragment;
-    "removeReferencePoolFromProtocol(address)": FunctionFragment;
     "requireDebtServicesAccess(address)": FunctionFragment;
     "requireHueReservesBurnAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
     "requireValidAction(address,string)": FunctionFragment;
     "rewards()": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
+    "setTokenIncentiveCaps(address[],uint256[])": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
     "tcp()": FunctionFragment;
-    "tcpHoldingContracts(uint256)": FunctionFragment;
     "timelock()": FunctionFragment;
-    "tokenIncentiveMinterMaximums(address)": FunctionFragment;
+    "tokenIncentiveMintCaps(address)": FunctionFragment;
     "unlockTokensForEmergencyShutdown()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
@@ -92,19 +82,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "accounting",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "addReferencePoolToProtocol",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "collateralPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contractsInitialized",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "currentDailyRewardCount",
     values?: undefined
@@ -117,6 +95,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "currentPhase",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "emergencyShutdownThresholdMet",
     values?: undefined
@@ -145,17 +124,13 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getReferencePools",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "hue", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "huePositionNFT",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "initContracts",
+    functionFragment: "initialize",
     values: [
       string,
       string,
@@ -167,10 +142,6 @@ interface GovernorInterface extends ethers.utils.Interface {
       string,
       string
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initPools",
-    values: [string, string, string[], string[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isShutdown",
@@ -187,6 +158,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "mintCapsUnset",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "mintIncentive",
     values: [string, BigNumberish]
   ): string;
@@ -198,40 +173,12 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "periodLength",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "poolRemovalTime",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "pricePoolsInitialized",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "protocolDeployer",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "protocolLock",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "protocolPool",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "rates", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "referencePool",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "registerTCPHoldingContracts",
-    values: [string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeReferencePoolFromProtocol",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "requireDebtServicesAccess",
     values: [string]
@@ -254,6 +201,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTokenIncentiveCaps",
+    values: [string[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "settlement",
     values?: undefined
   ): string;
@@ -262,13 +213,9 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "tcp", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "tcpHoldingContracts",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tokenIncentiveMinterMaximums",
+    functionFragment: "tokenIncentiveMintCaps",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -317,19 +264,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addReferencePoolToProtocol",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "collateralPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "contractsInitialized",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "currentDailyRewardCount",
     data: BytesLike
@@ -342,6 +277,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "currentPhase",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "emergencyShutdownThresholdMet",
     data: BytesLike
@@ -367,20 +303,12 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferencePools",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "hue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "huePositionNFT",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "initContracts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "initPools", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isShutdown", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lendHue", data: BytesLike): Result;
   decodeFunctionResult(
@@ -393,6 +321,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "mintCapsUnset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "mintIncentive",
     data: BytesLike
   ): Result;
@@ -401,40 +333,12 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "periodLength",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "poolRemovalTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pricePoolsInitialized",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolDeployer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "protocolLock",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolPool",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "rates", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "referencePool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerTCPHoldingContracts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeReferencePoolFromProtocol",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "requireDebtServicesAccess",
     data: BytesLike
@@ -456,19 +360,19 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "setPhaseOneStartTime",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokenIncentiveCaps",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "settlement", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "shutdownTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tcp", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tcpHoldingContracts",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "tokenIncentiveMinterMaximums",
+    functionFragment: "tokenIncentiveMintCaps",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -513,18 +417,14 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AdminUpdated(address,address)": EventFragment;
     "ContractUpgraded(string,address)": EventFragment;
-    "EmergencyShutdownExecuted(uint64)": EventFragment;
     "ProtocolUpgraded(address)": EventFragment;
     "ShutdownExecuted()": EventFragment;
     "ShutdownTokensLocked(address,uint256)": EventFragment;
     "ShutdownTokensUnlocked(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ContractUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EmergencyShutdownExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ShutdownExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ShutdownTokensLocked"): EventFragment;
@@ -581,16 +481,7 @@ export class Governor extends BaseContract {
 
     accounting(overrides?: CallOverrides): Promise<[string]>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<[string]>;
-
-    collateralPool(overrides?: CallOverrides): Promise<[string]>;
-
-    contractsInitialized(overrides?: CallOverrides): Promise<[boolean]>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -599,6 +490,8 @@ export class Governor extends BaseContract {
     ): Promise<[BigNumber] & { period: BigNumber }>;
 
     currentPhase(overrides?: CallOverrides): Promise<[number]>;
+
+    deployer(overrides?: CallOverrides): Promise<[string]>;
 
     emergencyShutdownThresholdMet(
       overrides?: CallOverrides
@@ -628,13 +521,11 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getReferencePools(overrides?: CallOverrides): Promise<[string[]]>;
-
     hue(overrides?: CallOverrides): Promise<[string]>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<[string]>;
 
-    initContracts(
+    initialize(
       _auctions: string,
       _tcp: string,
       _liquidations: string,
@@ -644,15 +535,6 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initPools(
-      _protocolPool: string,
-      _collateralPool: string,
-      _referencePool: string[],
-      tokenIncentiveMinters: string[],
-      tokenIncentiveMaximums: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -669,6 +551,8 @@ export class Governor extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<[string]>;
 
+    mintCapsUnset(overrides?: CallOverrides): Promise<[boolean]>;
+
     mintIncentive(
       to: string,
       count: BigNumberish,
@@ -683,37 +567,11 @@ export class Governor extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    poolRemovalTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    pricePoolsInitialized(overrides?: CallOverrides): Promise<[boolean]>;
-
     prices(overrides?: CallOverrides): Promise<[string]>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<[string]>;
 
     protocolLock(overrides?: CallOverrides): Promise<[string]>;
 
-    protocolPool(overrides?: CallOverrides): Promise<[string]>;
-
     rates(overrides?: CallOverrides): Promise<[string]>;
-
-    referencePool(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    registerTCPHoldingContracts(
-      contracts: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -743,20 +601,21 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setTokenIncentiveCaps(
+      tokenIncentiveMinters: string[],
+      caps: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     settlement(overrides?: CallOverrides): Promise<[string]>;
 
     shutdownTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     tcp(overrides?: CallOverrides): Promise<[string]>;
 
-    tcpHoldingContracts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
-    tokenIncentiveMinterMaximums(
+    tokenIncentiveMintCaps(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -812,22 +671,15 @@ export class Governor extends BaseContract {
 
   accounting(overrides?: CallOverrides): Promise<string>;
 
-  addReferencePoolToProtocol(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   auctions(overrides?: CallOverrides): Promise<string>;
-
-  collateralPool(overrides?: CallOverrides): Promise<string>;
-
-  contractsInitialized(overrides?: CallOverrides): Promise<boolean>;
 
   currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   currentPhase(overrides?: CallOverrides): Promise<number>;
+
+  deployer(overrides?: CallOverrides): Promise<string>;
 
   emergencyShutdownThresholdMet(overrides?: CallOverrides): Promise<boolean>;
 
@@ -855,13 +707,11 @@ export class Governor extends BaseContract {
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getReferencePools(overrides?: CallOverrides): Promise<string[]>;
-
   hue(overrides?: CallOverrides): Promise<string>;
 
   huePositionNFT(overrides?: CallOverrides): Promise<string>;
 
-  initContracts(
+  initialize(
     _auctions: string,
     _tcp: string,
     _liquidations: string,
@@ -871,15 +721,6 @@ export class Governor extends BaseContract {
     _protocolLock: string,
     _rewards: string,
     _settlement: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initPools(
-    _protocolPool: string,
-    _collateralPool: string,
-    _referencePool: string[],
-    tokenIncentiveMinters: string[],
-    tokenIncentiveMaximums: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -896,6 +737,8 @@ export class Governor extends BaseContract {
 
   market(overrides?: CallOverrides): Promise<string>;
 
+  mintCapsUnset(overrides?: CallOverrides): Promise<boolean>;
+
   mintIncentive(
     to: string,
     count: BigNumberish,
@@ -910,31 +753,11 @@ export class Governor extends BaseContract {
 
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  poolRemovalTime(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  pricePoolsInitialized(overrides?: CallOverrides): Promise<boolean>;
-
   prices(overrides?: CallOverrides): Promise<string>;
-
-  protocolDeployer(overrides?: CallOverrides): Promise<string>;
 
   protocolLock(overrides?: CallOverrides): Promise<string>;
 
-  protocolPool(overrides?: CallOverrides): Promise<string>;
-
   rates(overrides?: CallOverrides): Promise<string>;
-
-  referencePool(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  registerTCPHoldingContracts(
-    contracts: string[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeReferencePoolFromProtocol(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   requireDebtServicesAccess(
     caller: string,
@@ -964,20 +787,21 @@ export class Governor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setTokenIncentiveCaps(
+    tokenIncentiveMinters: string[],
+    caps: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   settlement(overrides?: CallOverrides): Promise<string>;
 
   shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   tcp(overrides?: CallOverrides): Promise<string>;
 
-  tcpHoldingContracts(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   timelock(overrides?: CallOverrides): Promise<string>;
 
-  tokenIncentiveMinterMaximums(
+  tokenIncentiveMintCaps(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -1033,22 +857,15 @@ export class Governor extends BaseContract {
 
     accounting(overrides?: CallOverrides): Promise<string>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     auctions(overrides?: CallOverrides): Promise<string>;
-
-    collateralPool(overrides?: CallOverrides): Promise<string>;
-
-    contractsInitialized(overrides?: CallOverrides): Promise<boolean>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentPhase(overrides?: CallOverrides): Promise<number>;
+
+    deployer(overrides?: CallOverrides): Promise<string>;
 
     emergencyShutdownThresholdMet(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1072,13 +889,11 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getReferencePools(overrides?: CallOverrides): Promise<string[]>;
-
     hue(overrides?: CallOverrides): Promise<string>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<string>;
 
-    initContracts(
+    initialize(
       _auctions: string,
       _tcp: string,
       _liquidations: string,
@@ -1088,15 +903,6 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initPools(
-      _protocolPool: string,
-      _collateralPool: string,
-      _referencePool: string[],
-      tokenIncentiveMinters: string[],
-      tokenIncentiveMaximums: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1113,6 +919,8 @@ export class Governor extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<string>;
 
+    mintCapsUnset(overrides?: CallOverrides): Promise<boolean>;
+
     mintIncentive(
       to: string,
       count: BigNumberish,
@@ -1127,37 +935,11 @@ export class Governor extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    poolRemovalTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pricePoolsInitialized(overrides?: CallOverrides): Promise<boolean>;
-
     prices(overrides?: CallOverrides): Promise<string>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<string>;
 
     protocolLock(overrides?: CallOverrides): Promise<string>;
 
-    protocolPool(overrides?: CallOverrides): Promise<string>;
-
     rates(overrides?: CallOverrides): Promise<string>;
-
-    referencePool(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    registerTCPHoldingContracts(
-      contracts: string[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -1187,20 +969,21 @@ export class Governor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setTokenIncentiveCaps(
+      tokenIncentiveMinters: string[],
+      caps: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     settlement(overrides?: CallOverrides): Promise<string>;
 
     shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     tcp(overrides?: CallOverrides): Promise<string>;
 
-    tcpHoldingContracts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     timelock(overrides?: CallOverrides): Promise<string>;
 
-    tokenIncentiveMinterMaximums(
+    tokenIncentiveMintCaps(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1239,11 +1022,6 @@ export class Governor extends BaseContract {
   };
 
   filters: {
-    AdminUpdated(
-      from?: string | null,
-      to?: string | null
-    ): TypedEventFilter<[string, string], { from: string; to: string }>;
-
     ContractUpgraded(
       contractName?: string | null,
       contractAddress?: string | null
@@ -1251,10 +1029,6 @@ export class Governor extends BaseContract {
       [string, string],
       { contractName: string; contractAddress: string }
     >;
-
-    EmergencyShutdownExecuted(
-      shutdownTime?: null
-    ): TypedEventFilter<[BigNumber], { shutdownTime: BigNumber }>;
 
     ProtocolUpgraded(
       newGovernor?: string | null
@@ -1284,22 +1058,15 @@ export class Governor extends BaseContract {
 
     accounting(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
-
-    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    contractsInitialized(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentPhase(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     emergencyShutdownThresholdMet(
       overrides?: CallOverrides
@@ -1329,13 +1096,11 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getReferencePools(overrides?: CallOverrides): Promise<BigNumber>;
-
     hue(overrides?: CallOverrides): Promise<BigNumber>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
 
-    initContracts(
+    initialize(
       _auctions: string,
       _tcp: string,
       _liquidations: string,
@@ -1345,15 +1110,6 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initPools(
-      _protocolPool: string,
-      _collateralPool: string,
-      _referencePool: string[],
-      tokenIncentiveMinters: string[],
-      tokenIncentiveMaximums: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1370,6 +1126,8 @@ export class Governor extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<BigNumber>;
 
+    mintCapsUnset(overrides?: CallOverrides): Promise<BigNumber>;
+
     mintIncentive(
       to: string,
       count: BigNumberish,
@@ -1384,37 +1142,11 @@ export class Governor extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    poolRemovalTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    pricePoolsInitialized(overrides?: CallOverrides): Promise<BigNumber>;
-
     prices(overrides?: CallOverrides): Promise<BigNumber>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolLock(overrides?: CallOverrides): Promise<BigNumber>;
 
-    protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
-
     rates(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePool(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    registerTCPHoldingContracts(
-      contracts: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -1444,20 +1176,21 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setTokenIncentiveCaps(
+      tokenIncentiveMinters: string[],
+      caps: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     settlement(overrides?: CallOverrides): Promise<BigNumber>;
 
     shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     tcp(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tcpHoldingContracts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tokenIncentiveMinterMaximums(
+    tokenIncentiveMintCaps(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1516,18 +1249,7 @@ export class Governor extends BaseContract {
 
     accounting(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    contractsInitialized(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     currentDailyRewardCount(
       overrides?: CallOverrides
@@ -1536,6 +1258,8 @@ export class Governor extends BaseContract {
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentPhase(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     emergencyShutdownThresholdMet(
       overrides?: CallOverrides
@@ -1567,13 +1291,11 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getReferencePools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     hue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    initContracts(
+    initialize(
       _auctions: string,
       _tcp: string,
       _liquidations: string,
@@ -1583,15 +1305,6 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initPools(
-      _protocolPool: string,
-      _collateralPool: string,
-      _referencePool: string[],
-      tokenIncentiveMinters: string[],
-      tokenIncentiveMaximums: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1608,6 +1321,8 @@ export class Governor extends BaseContract {
 
     market(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    mintCapsUnset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     mintIncentive(
       to: string,
       count: BigNumberish,
@@ -1622,39 +1337,11 @@ export class Governor extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    poolRemovalTime(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    pricePoolsInitialized(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     protocolLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    protocolPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     rates(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    referencePool(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    registerTCPHoldingContracts(
-      contracts: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -1684,20 +1371,21 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setTokenIncentiveCaps(
+      tokenIncentiveMinters: string[],
+      caps: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     settlement(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     shutdownTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tcp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    tcpHoldingContracts(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    tokenIncentiveMinterMaximums(
+    tokenIncentiveMintCaps(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

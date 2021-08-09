@@ -22,15 +22,12 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface IGovernorInterface extends ethers.utils.Interface {
   functions: {
     "accounting()": FunctionFragment;
-    "addReferencePoolToProtocol(address)": FunctionFragment;
     "auctions()": FunctionFragment;
-    "collateralPool()": FunctionFragment;
     "currentDailyRewardCount()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
     "executeShutdown()": FunctionFragment;
-    "getReferencePools()": FunctionFragment;
     "hue()": FunctionFragment;
     "huePositionNFT()": FunctionFragment;
     "isShutdown()": FunctionFragment;
@@ -39,13 +36,9 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "market()": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
-    "poolRemovalTime(address)": FunctionFragment;
     "prices()": FunctionFragment;
-    "protocolDeployer()": FunctionFragment;
     "protocolLock()": FunctionFragment;
-    "protocolPool()": FunctionFragment;
     "rates()": FunctionFragment;
-    "removeReferencePoolFromProtocol(address)": FunctionFragment;
     "requireDebtServicesAccess(address)": FunctionFragment;
     "requireHueReservesBurnAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
@@ -69,15 +62,7 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "accounting",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "addReferencePoolToProtocol",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "collateralPool",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "currentDailyRewardCount",
     values?: undefined
@@ -96,10 +81,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "executeShutdown",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getReferencePools",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "hue", values?: undefined): string;
@@ -125,28 +106,12 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "mintTCP",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "poolRemovalTime",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "protocolDeployer",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "protocolLock",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "protocolPool",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "rates", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "removeReferencePoolFromProtocol",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "requireDebtServicesAccess",
     values: [string]
@@ -208,15 +173,7 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addReferencePoolToProtocol",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "collateralPool",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "currentDailyRewardCount",
     data: BytesLike
@@ -232,10 +189,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeShutdown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReferencePools",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "hue", data: BytesLike): Result;
@@ -255,28 +208,12 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mintTCP", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "poolRemovalTime",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolDeployer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "protocolLock",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolPool",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "rates", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeReferencePoolFromProtocol",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "requireDebtServicesAccess",
     data: BytesLike
@@ -335,18 +272,14 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AdminUpdated(address,address)": EventFragment;
     "ContractUpgraded(string,address)": EventFragment;
-    "EmergencyShutdownExecuted(uint64)": EventFragment;
     "ProtocolUpgraded(address)": EventFragment;
     "ShutdownExecuted()": EventFragment;
     "ShutdownTokensLocked(address,uint256)": EventFragment;
     "ShutdownTokensUnlocked(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AdminUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ContractUpgraded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EmergencyShutdownExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolUpgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ShutdownExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ShutdownTokensLocked"): EventFragment;
@@ -399,14 +332,7 @@ export class IGovernor extends BaseContract {
   functions: {
     accounting(overrides?: CallOverrides): Promise<[string]>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<[string]>;
-
-    collateralPool(overrides?: CallOverrides): Promise<[string]>;
 
     currentDailyRewardCount(
       overrides?: CallOverrides
@@ -426,8 +352,6 @@ export class IGovernor extends BaseContract {
     executeShutdown(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    getReferencePools(overrides?: CallOverrides): Promise<[string[]]>;
 
     hue(overrides?: CallOverrides): Promise<[string]>;
 
@@ -453,25 +377,11 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    poolRemovalTime(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     prices(overrides?: CallOverrides): Promise<[string]>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<[string]>;
 
     protocolLock(overrides?: CallOverrides): Promise<[string]>;
 
-    protocolPool(overrides?: CallOverrides): Promise<[string]>;
-
     rates(overrides?: CallOverrides): Promise<[string]>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -547,14 +457,7 @@ export class IGovernor extends BaseContract {
 
   accounting(overrides?: CallOverrides): Promise<string>;
 
-  addReferencePoolToProtocol(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   auctions(overrides?: CallOverrides): Promise<string>;
-
-  collateralPool(overrides?: CallOverrides): Promise<string>;
 
   currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -572,8 +475,6 @@ export class IGovernor extends BaseContract {
   executeShutdown(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
   hue(overrides?: CallOverrides): Promise<string>;
 
@@ -599,25 +500,11 @@ export class IGovernor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  poolRemovalTime(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   prices(overrides?: CallOverrides): Promise<string>;
-
-  protocolDeployer(overrides?: CallOverrides): Promise<string>;
 
   protocolLock(overrides?: CallOverrides): Promise<string>;
 
-  protocolPool(overrides?: CallOverrides): Promise<string>;
-
   rates(overrides?: CallOverrides): Promise<string>;
-
-  removeReferencePoolFromProtocol(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   requireDebtServicesAccess(
     caller: string,
@@ -693,14 +580,7 @@ export class IGovernor extends BaseContract {
   callStatic: {
     accounting(overrides?: CallOverrides): Promise<string>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     auctions(overrides?: CallOverrides): Promise<string>;
-
-    collateralPool(overrides?: CallOverrides): Promise<string>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -716,8 +596,6 @@ export class IGovernor extends BaseContract {
     ): Promise<[boolean, string] & { success: boolean; returnData: string }>;
 
     executeShutdown(overrides?: CallOverrides): Promise<void>;
-
-    getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
     hue(overrides?: CallOverrides): Promise<string>;
 
@@ -743,25 +621,11 @@ export class IGovernor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    poolRemovalTime(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     prices(overrides?: CallOverrides): Promise<string>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<string>;
 
     protocolLock(overrides?: CallOverrides): Promise<string>;
 
-    protocolPool(overrides?: CallOverrides): Promise<string>;
-
     rates(overrides?: CallOverrides): Promise<string>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -824,11 +688,6 @@ export class IGovernor extends BaseContract {
   };
 
   filters: {
-    AdminUpdated(
-      from?: string | null,
-      to?: string | null
-    ): TypedEventFilter<[string, string], { from: string; to: string }>;
-
     ContractUpgraded(
       contractName?: string | null,
       contractAddress?: string | null
@@ -836,10 +695,6 @@ export class IGovernor extends BaseContract {
       [string, string],
       { contractName: string; contractAddress: string }
     >;
-
-    EmergencyShutdownExecuted(
-      shutdownTime?: null
-    ): TypedEventFilter<[BigNumber], { shutdownTime: BigNumber }>;
 
     ProtocolUpgraded(
       newGovernor?: string | null
@@ -867,14 +722,7 @@ export class IGovernor extends BaseContract {
   estimateGas: {
     accounting(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
-
-    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
 
     currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -892,8 +740,6 @@ export class IGovernor extends BaseContract {
     executeShutdown(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    getReferencePools(overrides?: CallOverrides): Promise<BigNumber>;
 
     hue(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -919,25 +765,11 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    poolRemovalTime(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     prices(overrides?: CallOverrides): Promise<BigNumber>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolLock(overrides?: CallOverrides): Promise<BigNumber>;
 
-    protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
-
     rates(overrides?: CallOverrides): Promise<BigNumber>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     requireDebtServicesAccess(
       caller: string,
@@ -1014,14 +846,7 @@ export class IGovernor extends BaseContract {
   populateTransaction: {
     accounting(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addReferencePoolToProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     currentDailyRewardCount(
       overrides?: CallOverrides
@@ -1043,8 +868,6 @@ export class IGovernor extends BaseContract {
     executeShutdown(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    getReferencePools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     hue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1070,25 +893,11 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    poolRemovalTime(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    protocolDeployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     protocolLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    protocolPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     rates(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    removeReferencePoolFromProtocol(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     requireDebtServicesAccess(
       caller: string,

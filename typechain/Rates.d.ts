@@ -22,9 +22,10 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface RatesInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "currentRateData()": FunctionFragment;
     "deployer()": FunctionFragment;
+    "finalizeInitialization(address[])": FunctionFragment;
+    "getReferencePools()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
@@ -53,14 +54,18 @@ interface RatesInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "currentRateData",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "finalizeInitialization",
+    values: [string[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getReferencePools",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getRewardCount",
     values?: undefined
@@ -136,14 +141,18 @@ interface RatesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "completeSetup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "currentRateData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "finalizeInitialization",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getReferencePools",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRewardCount",
     data: BytesLike
@@ -276,10 +285,6 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
@@ -291,6 +296,13 @@ export class Rates extends BaseContract {
     >;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    finalizeInitialization(
+      _referencePools: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    getReferencePools(overrides?: CallOverrides): Promise<[string[]]>;
 
     getRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -387,10 +399,6 @@ export class Rates extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   currentRateData(
     overrides?: CallOverrides
   ): Promise<
@@ -402,6 +410,13 @@ export class Rates extends BaseContract {
   >;
 
   deployer(overrides?: CallOverrides): Promise<string>;
+
+  finalizeInitialization(
+    _referencePools: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
   getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -495,8 +510,6 @@ export class Rates extends BaseContract {
   callStatic: {
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
-    completeSetup(overrides?: CallOverrides): Promise<void>;
-
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
@@ -508,6 +521,13 @@ export class Rates extends BaseContract {
     >;
 
     deployer(overrides?: CallOverrides): Promise<string>;
+
+    finalizeInitialization(
+      _referencePools: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    getReferencePools(overrides?: CallOverrides): Promise<string[]>;
 
     getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -638,13 +658,16 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     currentRateData(overrides?: CallOverrides): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    finalizeInitialization(
+      _referencePools: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getReferencePools(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -729,13 +752,16 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     currentRateData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    finalizeInitialization(
+      _referencePools: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getReferencePools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRewardCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

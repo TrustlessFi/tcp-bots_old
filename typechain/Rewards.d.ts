@@ -23,18 +23,15 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface RewardsInterface extends ethers.utils.Interface {
   functions: {
     "accrueRewards()": FunctionFragment;
-    "addReferencePool(address)": FunctionFragment;
+    "addIncentivePool(address,uint64)": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
     "claimRewards(uint256,uint32)": FunctionFragment;
-    "collateralPool()": FunctionFragment;
-    "collateralPoolRewardsPortion()": FunctionFragment;
     "collectPositionFees(tuple)": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "createLiquidityPosition(tuple,uint32)": FunctionFragment;
-    "current(uint16)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "decreaseLiquidityPosition(tuple,uint32)": FunctionFragment;
     "deployer()": FunctionFragment;
+    "finalizeInitialization(address,address)": FunctionFragment;
     "firstPeriod()": FunctionFragment;
     "governor()": FunctionFragment;
     "increaseLiquidityPosition(tuple,uint32)": FunctionFragment;
@@ -47,24 +44,19 @@ interface RewardsInterface extends ethers.utils.Interface {
     "minLiquidityByPeriod(address)": FunctionFragment;
     "minLiquidityProvideDuration()": FunctionFragment;
     "periodLength()": FunctionFragment;
-    "poolForPoolID(uint16)": FunctionFragment;
+    "poolConfigForPoolID(uint16)": FunctionFragment;
     "poolIDForPool(address)": FunctionFragment;
-    "protocolPool()": FunctionFragment;
-    "protocolPoolRewardsPortion()": FunctionFragment;
-    "referencePoolRewardsPortion()": FunctionFragment;
-    "referencePools(uint256)": FunctionFragment;
     "removeKickback(uint256)": FunctionFragment;
     "removeLiquidityPosition(tuple)": FunctionFragment;
-    "removeReferencePool(address)": FunctionFragment;
-    "setLiquidationPenalty(uint256)": FunctionFragment;
-    "setMaxLiquidityDecreasePerPeriod(uint256)": FunctionFragment;
+    "setLiquidationPenalty(uint64)": FunctionFragment;
+    "setMaxLiquidityDecreasePerPeriod(uint64)": FunctionFragment;
     "setMinHueCountPerPosition(uint128)": FunctionFragment;
     "setMinLiquidityProvideDuration(uint64)": FunctionFragment;
-    "setRewardsPortions(uint256,uint256,uint256)": FunctionFragment;
     "setTwapDuration(uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
     "twapDuration()": FunctionFragment;
+    "updatePoolIncentive(uint16,uint64)": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
   };
 
@@ -73,8 +65,8 @@ interface RewardsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "addReferencePool",
-    values: [string]
+    functionFragment: "addIncentivePool",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "borrowRewardsPortion",
@@ -83,14 +75,6 @@ interface RewardsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "claimRewards",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collateralPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collateralPoolRewardsPortion",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "collectPositionFees",
@@ -102,10 +86,6 @@ interface RewardsInterface extends ethers.utils.Interface {
         amount1Max: BigNumberish;
       }
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "createLiquidityPosition",
@@ -127,10 +107,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "current",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "currentPeriod",
     values?: undefined
   ): string;
@@ -148,6 +124,10 @@ interface RewardsInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "finalizeInitialization",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "firstPeriod",
     values?: undefined
@@ -201,28 +181,12 @@ interface RewardsInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "poolForPoolID",
+    functionFragment: "poolConfigForPoolID",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "poolIDForPool",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "protocolPool",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "protocolPoolRewardsPortion",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "referencePoolRewardsPortion",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "referencePools",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "removeKickback",
@@ -241,10 +205,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeReferencePool",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setLiquidationPenalty",
     values: [BigNumberish]
   ): string;
@@ -261,10 +221,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setRewardsPortions",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setTwapDuration",
     values: [BigNumberish]
   ): string;
@@ -273,6 +229,10 @@ interface RewardsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "twapDuration",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePoolIncentive",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
@@ -284,7 +244,7 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "addReferencePool",
+    functionFragment: "addIncentivePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -296,26 +256,13 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "collateralPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "collateralPoolRewardsPortion",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "collectPositionFees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "completeSetup",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "createLiquidityPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "current", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "currentPeriod",
     data: BytesLike
@@ -325,6 +272,10 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "finalizeInitialization",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "firstPeriod",
     data: BytesLike
@@ -368,27 +319,11 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "poolForPoolID",
+    functionFragment: "poolConfigForPoolID",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "poolIDForPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolPoolRewardsPortion",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "referencePoolRewardsPortion",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "referencePools",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -397,10 +332,6 @@ interface RewardsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeLiquidityPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeReferencePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -420,10 +351,6 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setRewardsPortions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setTwapDuration",
     data: BytesLike
   ): Result;
@@ -434,13 +361,17 @@ interface RewardsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "updatePoolIncentive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
 
   events: {
-    "ClaimedInflationRewards(address,uint256)": EventFragment;
-    "CollectedFees(address,uint256,uint256,uint256)": EventFragment;
+    "FeesCollected(address,uint256,uint256,uint256)": EventFragment;
+    "InflationRewardsClaimed(address,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
     "LiquidityPositionCreated(address,uint16,uint256,int24,int24,uint128)": EventFragment;
     "LiquidityPositionDecreased(uint256,uint256,uint256)": EventFragment;
@@ -452,14 +383,15 @@ interface RewardsInterface extends ethers.utils.Interface {
     "ParameterUpdated32(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint256)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
+    "PoolAdded(address,uint16,uint64)": EventFragment;
+    "PoolIncentiveUpdated(uint16,uint64)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
     "RewardsDistributed(address,bool,uint256)": EventFragment;
-    "RewardsPortionsUpdated(uint256,uint256,uint256)": EventFragment;
     "Stopped()": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ClaimedInflationRewards"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CollectedFees"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InflationRewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionDecreased"): EventFragment;
@@ -473,9 +405,10 @@ interface RewardsInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated32"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdated64"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PoolAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PoolIncentiveUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAccrued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsDistributed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardsPortionsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
 }
 
@@ -527,8 +460,9 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    addReferencePool(
+    addIncentivePool(
       pool: string,
+      rewardsPortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -540,12 +474,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    collateralPool(overrides?: CallOverrides): Promise<[number]>;
-
-    collateralPoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     collectPositionFees(
       params: {
         tokenId: BigNumberish;
@@ -553,10 +481,6 @@ export class Rewards extends BaseContract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -578,8 +502,6 @@ export class Rewards extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    current(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
-
     currentPeriod(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { period: BigNumber }>;
@@ -597,6 +519,12 @@ export class Rewards extends BaseContract {
     ): Promise<ContractTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<[string]>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -651,25 +579,14 @@ export class Rewards extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    poolForPoolID(
+    poolConfigForPoolID(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<
+      [string, BigNumber] & { pool: string; rewardsPortion: BigNumber }
+    >;
 
     poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<[number]>;
-
-    protocolPool(overrides?: CallOverrides): Promise<[number]>;
-
-    protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    referencePoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
 
     removeKickback(
       nftTokenID: BigNumberish,
@@ -684,11 +601,6 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    removeReferencePool(
-      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -712,13 +624,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRewardsPortions(
-      _protocol: BigNumberish,
-      _collateral: BigNumberish,
-      _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setTwapDuration(
       duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -732,6 +637,12 @@ export class Rewards extends BaseContract {
 
     twapDuration(overrides?: CallOverrides): Promise<[number]>;
 
+    updatePoolIncentive(
+      poolID: BigNumberish,
+      incentive: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
   };
 
@@ -739,8 +650,9 @@ export class Rewards extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  addReferencePool(
+  addIncentivePool(
     pool: string,
+    rewardsPortion: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -752,10 +664,6 @@ export class Rewards extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  collateralPool(overrides?: CallOverrides): Promise<number>;
-
-  collateralPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
   collectPositionFees(
     params: {
       tokenId: BigNumberish;
@@ -763,10 +671,6 @@ export class Rewards extends BaseContract {
       amount0Max: BigNumberish;
       amount1Max: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  completeSetup(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -788,8 +692,6 @@ export class Rewards extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  current(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   decreaseLiquidityPosition(
@@ -805,6 +707,12 @@ export class Rewards extends BaseContract {
   ): Promise<ContractTransaction>;
 
   deployer(overrides?: CallOverrides): Promise<string>;
+
+  finalizeInitialization(
+    _collateralPool: string,
+    _protocolPool: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -853,20 +761,12 @@ export class Rewards extends BaseContract {
 
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-  poolForPoolID(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<number>;
-
-  protocolPool(overrides?: CallOverrides): Promise<number>;
-
-  protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-  referencePoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-  referencePools(
+  poolConfigForPoolID(
     arg0: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<number>;
+  ): Promise<[string, BigNumber] & { pool: string; rewardsPortion: BigNumber }>;
+
+  poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<number>;
 
   removeKickback(
     nftTokenID: BigNumberish,
@@ -881,11 +781,6 @@ export class Rewards extends BaseContract {
       amount1Min: BigNumberish;
       deadline: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeReferencePool(
-    pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -909,13 +804,6 @@ export class Rewards extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRewardsPortions(
-    _protocol: BigNumberish,
-    _collateral: BigNumberish,
-    _reference: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setTwapDuration(
     duration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -929,12 +817,22 @@ export class Rewards extends BaseContract {
 
   twapDuration(overrides?: CallOverrides): Promise<number>;
 
+  updatePoolIncentive(
+    poolID: BigNumberish,
+    incentive: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
     accrueRewards(overrides?: CallOverrides): Promise<void>;
 
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+    addIncentivePool(
+      pool: string,
+      rewardsPortion: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -943,10 +841,6 @@ export class Rewards extends BaseContract {
       ui: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    collateralPool(overrides?: CallOverrides): Promise<number>;
-
-    collateralPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     collectPositionFees(
       params: {
@@ -957,8 +851,6 @@ export class Rewards extends BaseContract {
       },
       overrides?: CallOverrides
     ): Promise<void>;
-
-    completeSetup(overrides?: CallOverrides): Promise<void>;
 
     createLiquidityPosition(
       params: {
@@ -980,8 +872,6 @@ export class Rewards extends BaseContract {
       [BigNumber, BigNumber] & { nftTokenID: BigNumber; liquidity: BigNumber }
     >;
 
-    current(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseLiquidityPosition(
@@ -999,6 +889,12 @@ export class Rewards extends BaseContract {
     >;
 
     deployer(overrides?: CallOverrides): Promise<string>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1048,23 +944,14 @@ export class Rewards extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    poolForPoolID(
+    poolConfigForPoolID(
       arg0: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<
+      [string, BigNumber] & { pool: string; rewardsPortion: BigNumber }
+    >;
 
     poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<number>;
-
-    protocolPool(overrides?: CallOverrides): Promise<number>;
-
-    protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
 
     removeKickback(
       nftTokenID: BigNumberish,
@@ -1083,8 +970,6 @@ export class Rewards extends BaseContract {
     ): Promise<
       [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
     >;
-
-    removeReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     setLiquidationPenalty(
       penalty: BigNumberish,
@@ -1106,13 +991,6 @@ export class Rewards extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setRewardsPortions(
-      _protocol: BigNumberish,
-      _collateral: BigNumberish,
-      _reference: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setTwapDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
@@ -1124,19 +1002,17 @@ export class Rewards extends BaseContract {
 
     twapDuration(overrides?: CallOverrides): Promise<number>;
 
+    updatePoolIncentive(
+      poolID: BigNumberish,
+      incentive: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {
-    ClaimedInflationRewards(
-      owner?: string | null,
-      nftTokenID?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; nftTokenID: BigNumber }
-    >;
-
-    CollectedFees(
+    FeesCollected(
       owner?: string | null,
       nftTokenID?: BigNumberish | null,
       amount0?: null,
@@ -1149,6 +1025,14 @@ export class Rewards extends BaseContract {
         amount0: BigNumber;
         amount1: BigNumber;
       }
+    >;
+
+    InflationRewardsClaimed(
+      owner?: string | null,
+      nftTokenID?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { owner: string; nftTokenID: BigNumber }
     >;
 
     Initialized(
@@ -1246,6 +1130,23 @@ export class Rewards extends BaseContract {
       value?: null
     ): TypedEventFilter<[string, string], { paramName: string; value: string }>;
 
+    PoolAdded(
+      pool?: string | null,
+      poolID?: BigNumberish | null,
+      rewardsPortion?: null
+    ): TypedEventFilter<
+      [string, number, BigNumber],
+      { pool: string; poolID: number; rewardsPortion: BigNumber }
+    >;
+
+    PoolIncentiveUpdated(
+      poolID?: BigNumberish | null,
+      incentive?: null
+    ): TypedEventFilter<
+      [number, BigNumber],
+      { poolID: number; incentive: BigNumber }
+    >;
+
     RewardsAccrued(
       count?: null,
       periods?: null
@@ -1263,19 +1164,6 @@ export class Rewards extends BaseContract {
       { account: string; isKickback: boolean; tcpRewards: BigNumber }
     >;
 
-    RewardsPortionsUpdated(
-      protocolPortion?: null,
-      collateralPortion?: null,
-      referencePortion?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      {
-        protocolPortion: BigNumber;
-        collateralPortion: BigNumber;
-        referencePortion: BigNumber;
-      }
-    >;
-
     Stopped(): TypedEventFilter<[], {}>;
   };
 
@@ -1284,8 +1172,9 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    addReferencePool(
+    addIncentivePool(
       pool: string,
+      rewardsPortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1297,10 +1186,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    collateralPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
     collectPositionFees(
       params: {
         tokenId: BigNumberish;
@@ -1308,10 +1193,6 @@ export class Rewards extends BaseContract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1333,8 +1214,6 @@ export class Rewards extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    current(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     decreaseLiquidityPosition(
@@ -1350,6 +1229,12 @@ export class Rewards extends BaseContract {
     ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1400,23 +1285,12 @@ export class Rewards extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
-    poolForPoolID(
+    poolConfigForPoolID(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     poolIDForPool(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
-
-    protocolPoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePoolRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
-    referencePools(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     removeKickback(
       nftTokenID: BigNumberish,
@@ -1431,11 +1305,6 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    removeReferencePool(
-      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1459,13 +1328,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setRewardsPortions(
-      _protocol: BigNumberish,
-      _collateral: BigNumberish,
-      _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setTwapDuration(
       duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1479,6 +1341,12 @@ export class Rewards extends BaseContract {
 
     twapDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
+    updatePoolIncentive(
+      poolID: BigNumberish,
+      incentive: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -1487,8 +1355,9 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    addReferencePool(
+    addIncentivePool(
       pool: string,
+      rewardsPortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1502,12 +1371,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    collateralPoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     collectPositionFees(
       params: {
         tokenId: BigNumberish;
@@ -1515,10 +1378,6 @@ export class Rewards extends BaseContract {
         amount0Max: BigNumberish;
         amount1Max: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    completeSetup(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1540,11 +1399,6 @@ export class Rewards extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    current(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decreaseLiquidityPosition(
@@ -1560,6 +1414,12 @@ export class Rewards extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    finalizeInitialization(
+      _collateralPool: string,
+      _protocolPool: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1616,28 +1476,13 @@ export class Rewards extends BaseContract {
 
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    poolForPoolID(
+    poolConfigForPoolID(
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     poolIDForPool(
       arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    protocolPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    protocolPoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    referencePoolRewardsPortion(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    referencePools(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1654,11 +1499,6 @@ export class Rewards extends BaseContract {
         amount1Min: BigNumberish;
         deadline: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeReferencePool(
-      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1682,13 +1522,6 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRewardsPortions(
-      _protocol: BigNumberish,
-      _collateral: BigNumberish,
-      _reference: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setTwapDuration(
       duration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1701,6 +1534,12 @@ export class Rewards extends BaseContract {
     stopped(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     twapDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    updatePoolIncentive(
+      poolID: BigNumberish,
+      incentive: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     validUpdate(
       arg0: BytesLike,

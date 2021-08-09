@@ -21,20 +21,20 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface IPricesInterface extends ethers.utils.Interface {
   functions: {
-    "addReferencePool(address)": FunctionFragment;
+    "calculateInstantCollateralPrice(uint32)": FunctionFragment;
     "calculateInstantTwappedPrice(address,uint32)": FunctionFragment;
     "calculateInstantTwappedTick(address,uint32)": FunctionFragment;
     "calculateTwappedPrice(address,bool)": FunctionFragment;
-    "completeSetup()": FunctionFragment;
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
+    "initializePool(address,address)": FunctionFragment;
     "stop()": FunctionFragment;
     "systemObtainReferencePrice(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "addReferencePool",
-    values: [string]
+    functionFragment: "calculateInstantCollateralPrice",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateInstantTwappedPrice",
@@ -47,10 +47,6 @@ interface IPricesInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "calculateTwappedPrice",
     values: [string, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "completeSetup",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRealHueCountForSinglePoolPosition",
@@ -67,6 +63,10 @@ interface IPricesInterface extends ethers.utils.Interface {
     functionFragment: "hueTcpPrice",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "initializePool",
+    values: [string, string]
+  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "systemObtainReferencePrice",
@@ -74,7 +74,7 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "addReferencePool",
+    functionFragment: "calculateInstantCollateralPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -90,15 +90,15 @@ interface IPricesInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "completeSetup",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getRealHueCountForSinglePoolPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "hueTcpPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -108,11 +108,9 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "ParameterUpdatedAddress(string,address)": EventFragment;
     "PriceUpdated(address,uint256,int24)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ParameterUpdatedAddress"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PriceUpdated"): EventFragment;
 }
 
@@ -160,10 +158,10 @@ export class IPrices extends BaseContract {
   interface: IPricesInterface;
 
   functions: {
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { price: BigNumber }>;
 
     calculateInstantTwappedPrice(
       pool: string,
@@ -183,14 +181,10 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getRealHueCountForSinglePoolPosition(
       pool: string,
-      tickLower: BigNumberish,
       tick: BigNumberish,
+      tickLower: BigNumberish,
       tickUpper: BigNumberish,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
@@ -202,6 +196,12 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    initializePool(
+      pool: string,
+      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -212,10 +212,10 @@ export class IPrices extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  addReferencePool(
-    pool: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  calculateInstantCollateralPrice(
+    twapDuration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   calculateInstantTwappedPrice(
     pool: string,
@@ -235,14 +235,10 @@ export class IPrices extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  completeSetup(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getRealHueCountForSinglePoolPosition(
     pool: string,
-    tickLower: BigNumberish,
     tick: BigNumberish,
+    tickLower: BigNumberish,
     tickUpper: BigNumberish,
     liquidity: BigNumberish,
     twapDuration: BigNumberish,
@@ -254,6 +250,12 @@ export class IPrices extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  initializePool(
+    pool: string,
+    baseToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   stop(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -264,7 +266,10 @@ export class IPrices extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     calculateInstantTwappedPrice(
       pool: string,
@@ -284,12 +289,10 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    completeSetup(overrides?: CallOverrides): Promise<void>;
-
     getRealHueCountForSinglePoolPosition(
       pool: string,
-      tickLower: BigNumberish,
       tick: BigNumberish,
+      tickLower: BigNumberish,
       tickUpper: BigNumberish,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
@@ -301,6 +304,12 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initializePool(
+      pool: string,
+      baseToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     stop(overrides?: CallOverrides): Promise<void>;
 
     systemObtainReferencePrice(
@@ -310,11 +319,6 @@ export class IPrices extends BaseContract {
   };
 
   filters: {
-    ParameterUpdatedAddress(
-      paramName?: string | null,
-      addr?: string | null
-    ): TypedEventFilter<[string, string], { paramName: string; addr: string }>;
-
     PriceUpdated(
       pool?: string | null,
       price?: null,
@@ -326,9 +330,9 @@ export class IPrices extends BaseContract {
   };
 
   estimateGas: {
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     calculateInstantTwappedPrice(
@@ -349,14 +353,10 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getRealHueCountForSinglePoolPosition(
       pool: string,
-      tickLower: BigNumberish,
       tick: BigNumberish,
+      tickLower: BigNumberish,
       tickUpper: BigNumberish,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
@@ -366,6 +366,12 @@ export class IPrices extends BaseContract {
     hueTcpPrice(
       twapDuration: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     stop(
@@ -379,9 +385,9 @@ export class IPrices extends BaseContract {
   };
 
   populateTransaction: {
-    addReferencePool(
-      pool: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+    calculateInstantCollateralPrice(
+      twapDuration: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     calculateInstantTwappedPrice(
@@ -402,14 +408,10 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    completeSetup(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getRealHueCountForSinglePoolPosition(
       pool: string,
-      tickLower: BigNumberish,
       tick: BigNumberish,
+      tickLower: BigNumberish,
       tickUpper: BigNumberish,
       liquidity: BigNumberish,
       twapDuration: BigNumberish,
@@ -419,6 +421,12 @@ export class IPrices extends BaseContract {
     hueTcpPrice(
       twapDuration: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initializePool(
+      pool: string,
+      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     stop(
