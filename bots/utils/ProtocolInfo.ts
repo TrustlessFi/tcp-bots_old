@@ -36,7 +36,7 @@ import {
 } from "../../typechain/";
 
 // ================ OTHER CONTRACTS =================
-import { WETH9, ERC20 } from "../../typechain/";
+import { WETH9 } from "../../typechain/";
 
 // ================ META =================
 import {
@@ -79,12 +79,11 @@ export type deployedTCP = {
     tDaoTimelock: TDaoTimelock
   },
   pools: {
-    tcpeth: UniswapV3Pool
+    huetcp: UniswapV3Pool
     hueeth: UniswapV3Pool
     reference: UniswapV3Pool[]
   },
   external: {
-    tokens: { [key in string]: ERC20 }
     weth: WETH9
     router: SwapRouter
     factory: UniswapV3Factory
@@ -174,32 +173,22 @@ export const getDeployedProtocol = async(
   ]);
 
   let [
-    protocolPoolAddress,
     collateralPoolAddress,
+    protocolPoolAddress,
     referencePoolAddresses,
     UniswapV3PoolFactory,
-    ERC20Factory,
   ] = await Promise.all([
-    await governor.protocolPool(),
-    await governor.collateralPool(),
-    await governor.getReferencePools(),
+    await (prices as Prices).collateralPool(),
+    await (prices as Prices).protocolPool(),
+    await (rates as Rates).getReferencePools(),
     await e.getContractFactory('UniswapV3Pool'),
-    await e.getContractFactory('ERC20'),
   ]);
 
   const wrapPool = (address: string): UniswapV3Pool => UniswapV3PoolFactory.attach(address) as unknown as UniswapV3Pool
 
-  let protocolPool = wrapPool(protocolPoolAddress);
-  let collateralPool = wrapPool(collateralPoolAddress);
-  let referencePools = referencePoolAddresses.map((address) => wrapPool(address));
-
-  let referenceTokens: { [key in string]: ERC20 } = {}
-  await Promise.all(referencePools.map(async (pool) => {
-    let [ token0, token1 ] = await Promise.all([ await pool.token0(), await pool.token1() ]);
-    let otherTokenAddress = token0 == tcp.address || token0 == hue.address ? token1 : token0
-    let token = ERC20Factory.attach(otherTokenAddress) as unknown as ERC20
-    referenceTokens[await token.name()] = token
-  }))
+  let protocolPool = wrapPool(protocolPoolAddress)
+  let collateralPool = wrapPool(collateralPoolAddress)
+  let referencePools = referencePoolAddresses.map((address) => wrapPool(address))
 
   return {
     accounting: accounting as Accounting,
@@ -227,12 +216,11 @@ export const getDeployedProtocol = async(
       tDaoTimelock,
     },
     pools: {
-      tcpeth: protocolPool,
       hueeth: collateralPool,
+      huetcp: protocolPool,
       reference: referencePools,
     },
     external: {
-      tokens: referenceTokens,
       weth: weth,
       router: swapRouter,
       factory: factory,
