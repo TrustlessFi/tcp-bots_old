@@ -19,7 +19,6 @@ export const getDeployerAddress = (_network = ''): string => {
   }
 }
 
-
 export type seedAddressesType = {
   tcpGovernorAlpha: string,
   tDaoGovernorAlpha: string,
@@ -51,6 +50,10 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
 export type externalAddressesType = {
   usdc: string,
   usdt: string,
+  tusd?: string,
+
+  ethUsdcPool: string,
+  ethUsdtPool: string,
 
   positionManager: string,
   factory: string,
@@ -66,6 +69,9 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
   let usdc: string
   let usdt: string
 
+  let ethUsdcPool: string
+  let ethUsdtPool: string
+
   let ethAggregator: string
   let guardian: string
 
@@ -77,6 +83,9 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
     return {
       usdc: '0x5930a362f5f107e2E0628Ca9D2371a4fAcF31BFA',
       usdt: '0xE74b281b820c039c215feFF841127216925663EB',
+
+      ethUsdcPool: 'ADD_ADDRESS',
+      ethUsdtPool: 'ADD_ADDRESS',
 
       factory: '0x5f5bCE32f8b8aE0977DE9fb8298B9074602899F5',
       router: '0xfE0cae103cB3aA14eF7fbf1Cee4B3EDeC7301D5B',
@@ -92,6 +101,9 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
       usdc = '0x640cE1dF688d0Dcb2f3Bf9B1E69d8F64c59D439E' // correct
       usdt = '0xE800ecE7C7B8682C9Af830fAE95514F7c20BACFb' // correct
 
+      ethUsdcPool =  'ADD_ADDRESS',
+      ethUsdtPool = 'ADD_ADDRESS',
+
       ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
       guardian = '0xaC5e1ccc84169A5Aa4c386EAE98c7CA863FEE6Bf'
       break;
@@ -103,6 +115,8 @@ export const getExternalAddresses = (_network = ''): externalAddressesType => {
   return {
     usdc,
     usdt,
+    ethUsdcPool,
+    ethUsdtPool,
     ethAggregator,
     factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
     router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
