@@ -22,20 +22,21 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface RatesTestableInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
-    "calculatePrice(uint256[])": FunctionFragment;
-    "calculatePriceImpl(uint256[])": FunctionFragment;
+    "calculatePrice(uint256[],uint256)": FunctionFragment;
     "calculateRate(int256,tuple,uint256)": FunctionFragment;
     "calculateRewardCount(tuple,uint64)": FunctionFragment;
+    "collateralPool()": FunctionFragment;
     "contains(address[],address)": FunctionFragment;
     "currentRateData()": FunctionFragment;
     "deployer()": FunctionFragment;
-    "finalizeInitialization(address[])": FunctionFragment;
+    "finalizeInitialization(address,address[])": FunctionFragment;
     "getReferencePools()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
     "governor()": FunctionFragment;
     "init(address)": FunctionFragment;
     "interestRateAbsoluteValue()": FunctionFragment;
     "interestRateParameters()": FunctionFragment;
+    "median(uint256[])": FunctionFragment;
     "minTimeBetweenUpdates()": FunctionFragment;
     "positiveInterestRate()": FunctionFragment;
     "predictInterestRate()": FunctionFragment;
@@ -61,11 +62,7 @@ interface RatesTestableInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "calculatePrice",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculatePriceImpl",
-    values: [BigNumberish[]]
+    values: [BigNumberish[], BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateRate",
@@ -94,6 +91,10 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "collateralPool",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "contains",
     values: [string[], string]
   ): string;
@@ -104,7 +105,7 @@ interface RatesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "finalizeInitialization",
-    values: [string[]]
+    values: [string, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getReferencePools",
@@ -123,6 +124,10 @@ interface RatesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "interestRateParameters",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "median",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "minTimeBetweenUpdates",
@@ -193,15 +198,15 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "calculatePriceImpl",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "calculateRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "calculateRewardCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collateralPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "contains", data: BytesLike): Result;
@@ -232,6 +237,7 @@ interface RatesTestableInterface extends ethers.utils.Interface {
     functionFragment: "interestRateParameters",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "median", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minTimeBetweenUpdates",
     data: BytesLike
@@ -355,14 +361,10 @@ export class RatesTestable extends BaseContract {
     ): Promise<ContractTransaction>;
 
     calculatePrice(
-      prices: BigNumberish[],
+      referencePrices: BigNumberish[],
+      collateralPrice: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
-
-    calculatePriceImpl(
-      prices: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { price: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
     calculateRate(
       rate: BigNumberish,
@@ -388,6 +390,8 @@ export class RatesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    collateralPool(overrides?: CallOverrides): Promise<[string]>;
+
     contains(
       pools: string[],
       pool: string,
@@ -407,6 +411,7 @@ export class RatesTestable extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -436,6 +441,11 @@ export class RatesTestable extends BaseContract {
         maxRate: BigNumber;
       }
     >;
+
+    median(
+      values: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -515,12 +525,8 @@ export class RatesTestable extends BaseContract {
   ): Promise<ContractTransaction>;
 
   calculatePrice(
-    prices: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  calculatePriceImpl(
-    prices: BigNumberish[],
+    referencePrices: BigNumberish[],
+    collateralPrice: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -548,6 +554,8 @@ export class RatesTestable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  collateralPool(overrides?: CallOverrides): Promise<string>;
+
   contains(
     pools: string[],
     pool: string,
@@ -567,6 +575,7 @@ export class RatesTestable extends BaseContract {
   deployer(overrides?: CallOverrides): Promise<string>;
 
   finalizeInitialization(
+    _collateralPool: string,
     _referencePools: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -596,6 +605,8 @@ export class RatesTestable extends BaseContract {
       maxRate: BigNumber;
     }
   >;
+
+  median(values: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
 
   minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -672,12 +683,8 @@ export class RatesTestable extends BaseContract {
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     calculatePrice(
-      prices: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculatePriceImpl(
-      prices: BigNumberish[],
+      referencePrices: BigNumberish[],
+      collateralPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -705,6 +712,8 @@ export class RatesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    collateralPool(overrides?: CallOverrides): Promise<string>;
+
     contains(
       pools: string[],
       pool: string,
@@ -724,6 +733,7 @@ export class RatesTestable extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<string>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -750,6 +760,11 @@ export class RatesTestable extends BaseContract {
         maxRate: BigNumber;
       }
     >;
+
+    median(
+      values: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -866,12 +881,8 @@ export class RatesTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     calculatePrice(
-      prices: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculatePriceImpl(
-      prices: BigNumberish[],
+      referencePrices: BigNumberish[],
+      collateralPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -899,6 +910,8 @@ export class RatesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
+
     contains(
       pools: string[],
       pool: string,
@@ -910,6 +923,7 @@ export class RatesTestable extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -928,6 +942,11 @@ export class RatesTestable extends BaseContract {
     interestRateAbsoluteValue(overrides?: CallOverrides): Promise<BigNumber>;
 
     interestRateParameters(overrides?: CallOverrides): Promise<BigNumber>;
+
+    median(
+      values: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     minTimeBetweenUpdates(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1006,12 +1025,8 @@ export class RatesTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     calculatePrice(
-      prices: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    calculatePriceImpl(
-      prices: BigNumberish[],
+      referencePrices: BigNumberish[],
+      collateralPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1039,6 +1054,8 @@ export class RatesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     contains(
       pools: string[],
       pool: string,
@@ -1050,6 +1067,7 @@ export class RatesTestable extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1070,6 +1088,11 @@ export class RatesTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     interestRateParameters(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    median(
+      values: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

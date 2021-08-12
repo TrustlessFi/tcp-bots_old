@@ -205,6 +205,25 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "contract IUniswapV3Pool",
+        name: "pool",
+        type: "address",
+      },
+    ],
+    name: "isPoolInitialized",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "stop",
     outputs: [],

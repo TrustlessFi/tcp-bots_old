@@ -40,6 +40,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "hueTcpPrice(uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
     "initializePool(address,address)": FunctionFragment;
+    "isPoolInitialized(address)": FunctionFragment;
     "normalizeDecimals(uint256,tuple)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
     "protocolPool()": FunctionFragment;
@@ -120,6 +121,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "initializePool",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isPoolInitialized",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "normalizeDecimals",
@@ -217,6 +222,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPoolInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -394,6 +403,11 @@ export class PricesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     normalizeDecimals(
       price: BigNumberish,
       pi: {
@@ -538,6 +552,8 @@ export class PricesTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  isPoolInitialized(pool: string, overrides?: CallOverrides): Promise<boolean>;
+
   normalizeDecimals(
     price: BigNumberish,
     pi: {
@@ -675,6 +691,11 @@ export class PricesTestable extends BaseContract {
       baseToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     normalizeDecimals(
       price: BigNumberish,
@@ -833,6 +854,11 @@ export class PricesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     normalizeDecimals(
       price: BigNumberish,
       pi: {
@@ -964,6 +990,11 @@ export class PricesTestable extends BaseContract {
       pool: string,
       baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     normalizeDecimals(

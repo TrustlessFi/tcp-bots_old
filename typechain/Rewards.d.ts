@@ -27,6 +27,7 @@ interface RewardsInterface extends ethers.utils.Interface {
     "borrowRewardsPortion()": FunctionFragment;
     "claimRewards(uint256,uint32)": FunctionFragment;
     "collectPositionFees(tuple)": FunctionFragment;
+    "countPools()": FunctionFragment;
     "createLiquidityPosition(tuple,uint32)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "decreaseLiquidityPosition(tuple,uint32)": FunctionFragment;
@@ -86,6 +87,10 @@ interface RewardsInterface extends ethers.utils.Interface {
         amount1Max: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "countPools",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "createLiquidityPosition",
@@ -259,6 +264,7 @@ interface RewardsInterface extends ethers.utils.Interface {
     functionFragment: "collectPositionFees",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "countPools", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createLiquidityPosition",
     data: BytesLike
@@ -484,6 +490,8 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    countPools(overrides?: CallOverrides): Promise<[number]>;
+
     createLiquidityPosition(
       params: {
         token0: string;
@@ -674,6 +682,8 @@ export class Rewards extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  countPools(overrides?: CallOverrides): Promise<number>;
+
   createLiquidityPosition(
     params: {
       token0: string;
@@ -851,6 +861,8 @@ export class Rewards extends BaseContract {
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    countPools(overrides?: CallOverrides): Promise<number>;
 
     createLiquidityPosition(
       params: {
@@ -1196,6 +1208,8 @@ export class Rewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    countPools(overrides?: CallOverrides): Promise<BigNumber>;
+
     createLiquidityPosition(
       params: {
         token0: string;
@@ -1380,6 +1394,8 @@ export class Rewards extends BaseContract {
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    countPools(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     createLiquidityPosition(
       params: {

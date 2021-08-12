@@ -22,9 +22,10 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface RatesInterface extends ethers.utils.Interface {
   functions: {
     "addReferencePool(address)": FunctionFragment;
+    "collateralPool()": FunctionFragment;
     "currentRateData()": FunctionFragment;
     "deployer()": FunctionFragment;
-    "finalizeInitialization(address[])": FunctionFragment;
+    "finalizeInitialization(address,address[])": FunctionFragment;
     "getReferencePools()": FunctionFragment;
     "getRewardCount()": FunctionFragment;
     "governor()": FunctionFragment;
@@ -54,13 +55,17 @@ interface RatesInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "collateralPool",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "currentRateData",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "finalizeInitialization",
-    values: [string[]]
+    values: [string, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getReferencePools",
@@ -138,6 +143,10 @@ interface RatesInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "addReferencePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collateralPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -285,6 +294,8 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    collateralPool(overrides?: CallOverrides): Promise<[string]>;
+
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
@@ -298,6 +309,7 @@ export class Rates extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -399,6 +411,8 @@ export class Rates extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  collateralPool(overrides?: CallOverrides): Promise<string>;
+
   currentRateData(
     overrides?: CallOverrides
   ): Promise<
@@ -412,6 +426,7 @@ export class Rates extends BaseContract {
   deployer(overrides?: CallOverrides): Promise<string>;
 
   finalizeInitialization(
+    _collateralPool: string,
     _referencePools: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -510,6 +525,8 @@ export class Rates extends BaseContract {
   callStatic: {
     addReferencePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
+    collateralPool(overrides?: CallOverrides): Promise<string>;
+
     currentRateData(
       overrides?: CallOverrides
     ): Promise<
@@ -523,6 +540,7 @@ export class Rates extends BaseContract {
     deployer(overrides?: CallOverrides): Promise<string>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -658,11 +676,14 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
+
     currentRateData(overrides?: CallOverrides): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -752,11 +773,14 @@ export class Rates extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     currentRateData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     finalizeInitialization(
+      _collateralPool: string,
       _referencePools: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

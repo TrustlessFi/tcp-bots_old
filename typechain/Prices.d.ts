@@ -35,6 +35,7 @@ interface PricesInterface extends ethers.utils.Interface {
     "hueTcpPrice(uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
     "initializePool(address,address)": FunctionFragment;
+    "isPoolInitialized(address)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
     "protocolPool()": FunctionFragment;
     "stop()": FunctionFragment;
@@ -97,6 +98,10 @@ interface PricesInterface extends ethers.utils.Interface {
     functionFragment: "initializePool",
     values: [string, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isPoolInitialized",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "priceInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "protocolPool",
@@ -158,6 +163,10 @@ interface PricesInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPoolInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "priceInfo", data: BytesLike): Result;
@@ -302,6 +311,11 @@ export class Prices extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     priceInfo(
       arg0: string,
       overrides?: CallOverrides
@@ -403,6 +417,8 @@ export class Prices extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  isPoolInitialized(pool: string, overrides?: CallOverrides): Promise<boolean>;
+
   priceInfo(
     arg0: string,
     overrides?: CallOverrides
@@ -500,6 +516,11 @@ export class Prices extends BaseContract {
       baseToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     priceInfo(
       arg0: string,
@@ -618,6 +639,11 @@ export class Prices extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     priceInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -706,6 +732,11 @@ export class Prices extends BaseContract {
       pool: string,
       baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     priceInfo(

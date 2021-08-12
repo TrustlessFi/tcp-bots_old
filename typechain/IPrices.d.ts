@@ -28,6 +28,7 @@ interface IPricesInterface extends ethers.utils.Interface {
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
     "initializePool(address,address)": FunctionFragment;
+    "isPoolInitialized(address)": FunctionFragment;
     "stop()": FunctionFragment;
     "systemObtainReferencePrice(address)": FunctionFragment;
   };
@@ -67,6 +68,10 @@ interface IPricesInterface extends ethers.utils.Interface {
     functionFragment: "initializePool",
     values: [string, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isPoolInitialized",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "systemObtainReferencePrice",
@@ -99,6 +104,10 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "initializePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPoolInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -202,6 +211,11 @@ export class IPrices extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -256,6 +270,8 @@ export class IPrices extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  isPoolInitialized(pool: string, overrides?: CallOverrides): Promise<boolean>;
+
   stop(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -309,6 +325,11 @@ export class IPrices extends BaseContract {
       baseToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     stop(overrides?: CallOverrides): Promise<void>;
 
@@ -374,6 +395,11 @@ export class IPrices extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -427,6 +453,11 @@ export class IPrices extends BaseContract {
       pool: string,
       baseToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isPoolInitialized(
+      pool: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     stop(
