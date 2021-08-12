@@ -23,9 +23,9 @@ type position = {
 export class LiquidityPositionLiquidationsBot extends ManagedBot {
   name = "🙋🏽‍♀️ Liquidity Position Liquidations";
   initialized = false
-  protocolPool: string = ''
-  collateralPool: string = ''
-  referencePools: string[] = []
+
+  countPools = 0
+  pools: string[] = []
 
   posNFT: NonfungiblePositionManager | null = null
   factory: UniswapV3Factory | null = null
@@ -45,10 +45,8 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
     await this.ensureInitialized()
     await this.indexAllPositions()
 
-    await this.checkForOutOfRangePositionsAndLiquidate(this.protocolPool!, this.twapDuration!)
-    await this.checkForOutOfRangePositionsAndLiquidate(this.collateralPool!, this.twapDuration!)
-    for(let i = 0; i < this.referencePools!.length; i++) {
-      await this.checkForOutOfRangePositionsAndLiquidate(this.referencePools![i], this.twapDuration!)
+    for(let i = 0; i < this.pools!.length; i++) {
+      await this.checkForOutOfRangePositionsAndLiquidate(this.pools![i], this.twapDuration!)
     }
 
     return hours(1);
@@ -145,11 +143,15 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
       this.rewards = this.protocol!.rewards
       this.prices = this.protocol!.prices
       this.accounting = this.protocol!.accounting
-      let governor = this.protocol!.governor
 
-      this.protocolPool = await governor.protocolPool()
-      this.collateralPool = await governor.collateralPool()
-      this.referencePools = await governor.getReferencePools()
+      const countPools = await this.rewards.countPools()
+      if (countPools != this.countPools) {
+        for(let poolID = this.countPools + 1; poolID <= countPools; poolID++) {
+          this.pools.push((await this.rewards.poolConfigForPoolID(poolID)).pool)
+        }
+        this.countPools = countPools
+      }
+
     }
 
     this.twapDuration = await this.rewards!.twapDuration()
