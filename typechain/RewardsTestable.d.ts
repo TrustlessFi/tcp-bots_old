@@ -24,7 +24,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   functions: {
     "accrueRewards()": FunctionFragment;
     "addIncentivePool(address,uint64)": FunctionFragment;
-    "borrowRewardsPortion()": FunctionFragment;
     "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)": FunctionFragment;
     "claimRewards(uint256,uint32)": FunctionFragment;
     "collectPositionFees(tuple)": FunctionFragment;
@@ -71,10 +70,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "addIncentivePool",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "borrowRewardsPortion",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "calculateUpdatedLiquidityPosition",
@@ -298,10 +293,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "addIncentivePool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowRewardsPortion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -531,8 +522,6 @@ export class RewardsTestable extends BaseContract {
       rewardsPortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     calculateUpdatedLiquidityPosition(
       _pt: {
@@ -828,8 +817,6 @@ export class RewardsTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
   calculateUpdatedLiquidityPosition(
     _pt: {
       owner: string;
@@ -1111,8 +1098,6 @@ export class RewardsTestable extends BaseContract {
       rewardsPortion: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     calculateUpdatedLiquidityPosition(
       _pt: {
@@ -1562,8 +1547,6 @@ export class RewardsTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
     calculateUpdatedLiquidityPosition(
       _pt: {
         owner: string;
@@ -1789,10 +1772,6 @@ export class RewardsTestable extends BaseContract {
       pool: string,
       rewardsPortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    borrowRewardsPortion(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     calculateUpdatedLiquidityPosition(

@@ -129,6 +129,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ITokenIncentiveMinter__factory>;
     getContractFactory(
+      name: "ProtocolDataAggregator",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProtocolDataAggregator__factory>;
+    getContractFactory(
+      name: "RewardsContract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RewardsContract__factory>;
+    getContractFactory(
       name: "TCPHoldingContract",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TCPHoldingContract__factory>;
@@ -472,6 +480,10 @@ declare module "hardhat/types/runtime" {
       name: "TDaoTestable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TDaoTestable__factory>;
+    getContractFactory(
+      name: "TickConversion",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TickConversion__factory>;
     getContractFactory(
       name: "TimeTestable",
       signerOrOptions?: ethers.Signer | FactoryOptions

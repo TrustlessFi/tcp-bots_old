@@ -111,11 +111,24 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "currentDailyRewardCount",
+    name: "currentDailyDebtRewardCount",
     outputs: [
       {
         internalType: "uint256",
-        name: "count",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "currentDailyLiquidityRewardCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
         type: "uint256",
       },
     ],

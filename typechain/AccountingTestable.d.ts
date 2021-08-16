@@ -33,7 +33,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
     "deployer()": FunctionFragment;
     "disapproveUIs(uint32[])": FunctionFragment;
     "getBasicPositionInfo(uint64)": FunctionFragment;
-    "getLockedNFTIDs(uint32,uint32)": FunctionFragment;
     "getPoolPosition(uint256)": FunctionFragment;
     "getPoolPositionNftIdsByOwner(address)": FunctionFragment;
     "getPosition(uint64)": FunctionFragment;
@@ -54,7 +53,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
     "poolLiquidity(address)": FunctionFragment;
     "poolPosition(uint256)": FunctionFragment;
     "poolPositionIndexingEnabled()": FunctionFragment;
-    "positionsCollateralization(uint64[])": FunctionFragment;
     "positionsForTick(int24)": FunctionFragment;
     "registerUI(uint64,uint24,string)": FunctionFragment;
     "sendCollateral(address,uint256)": FunctionFragment;
@@ -113,10 +111,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getBasicPositionInfo",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLockedNFTIDs",
-    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolPosition",
@@ -188,10 +182,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "poolPositionIndexingEnabled",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "positionsCollateralization",
-    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "positionsForTick",
@@ -331,10 +321,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getLockedNFTIDs",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getPoolPosition",
     data: BytesLike
   ): Result;
@@ -397,10 +383,6 @@ interface AccountingTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "poolPositionIndexingEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "positionsCollateralization",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -575,12 +557,6 @@ export class AccountingTestable extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
-
-    getLockedNFTIDs(
-      start: BigNumberish,
-      end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { nftIDs: BigNumber[] }>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -840,11 +816,6 @@ export class AccountingTestable extends BaseContract {
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
-    positionsCollateralization(
-      positionIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { collateralizations: BigNumber[] }>;
-
     positionsForTick(
       tick: BigNumberish,
       overrides?: CallOverrides
@@ -1015,12 +986,6 @@ export class AccountingTestable extends BaseContract {
       collateralCount: BigNumber;
     }
   >;
-
-  getLockedNFTIDs(
-    start: BigNumberish,
-    end: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
 
   getPoolPosition(
     nftID: BigNumberish,
@@ -1201,11 +1166,6 @@ export class AccountingTestable extends BaseContract {
 
   poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-  positionsCollateralization(
-    positionIDs: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
   positionsForTick(
     tick: BigNumberish,
     overrides?: CallOverrides
@@ -1370,12 +1330,6 @@ export class AccountingTestable extends BaseContract {
         collateralCount: BigNumber;
       }
     >;
-
-    getLockedNFTIDs(
-      start: BigNumberish,
-      end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
 
     getPoolPosition(
       nftID: BigNumberish,
@@ -1549,11 +1503,6 @@ export class AccountingTestable extends BaseContract {
     >;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-    positionsCollateralization(
-      positionIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
 
     positionsForTick(
       tick: BigNumberish,
@@ -1732,12 +1681,6 @@ export class AccountingTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getLockedNFTIDs(
-      start: BigNumberish,
-      end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getPoolPosition(
       nftID: BigNumberish,
       overrides?: CallOverrides
@@ -1826,11 +1769,6 @@ export class AccountingTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    positionsCollateralization(
-      positionIDs: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     positionsForTick(
       tick: BigNumberish,
@@ -1993,12 +1931,6 @@ export class AccountingTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getLockedNFTIDs(
-      start: BigNumberish,
-      end: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getPoolPosition(
       nftID: BigNumberish,
       overrides?: CallOverrides
@@ -2092,11 +2024,6 @@ export class AccountingTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     poolPositionIndexingEnabled(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    positionsCollateralization(
-      positionIDs: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

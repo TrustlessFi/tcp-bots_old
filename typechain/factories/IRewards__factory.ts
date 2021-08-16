@@ -386,19 +386,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "borrowRewardsPortion",
-    outputs: [
-      {
-        internalType: "uint64",
-        name: "",
-        type: "uint64",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "stop",
     outputs: [],
     stateMutability: "nonpayable",

@@ -23,7 +23,8 @@ interface IGovernorInterface extends ethers.utils.Interface {
   functions: {
     "accounting()": FunctionFragment;
     "auctions()": FunctionFragment;
-    "currentDailyRewardCount()": FunctionFragment;
+    "currentDailyDebtRewardCount()": FunctionFragment;
+    "currentDailyLiquidityRewardCount()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
@@ -64,7 +65,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "currentDailyRewardCount",
+    functionFragment: "currentDailyDebtRewardCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentDailyLiquidityRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -175,7 +180,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyRewardCount",
+    functionFragment: "currentDailyDebtRewardCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentDailyLiquidityRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -334,9 +343,13 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
-    currentDailyRewardCount(
+    currentDailyDebtRewardCount(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { count: BigNumber }>;
+    ): Promise<[BigNumber]>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     currentPhase(overrides?: CallOverrides): Promise<[number]>;
 
@@ -459,7 +472,11 @@ export class IGovernor extends BaseContract {
 
   auctions(overrides?: CallOverrides): Promise<string>;
 
-  currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+  currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  currentDailyLiquidityRewardCount(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   currentPhase(overrides?: CallOverrides): Promise<number>;
 
@@ -582,7 +599,11 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<string>;
 
-    currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     currentPhase(overrides?: CallOverrides): Promise<number>;
 
@@ -724,7 +745,11 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     currentPhase(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -848,7 +873,11 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    currentDailyRewardCount(
+    currentDailyDebtRewardCount(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentDailyLiquidityRewardCount(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

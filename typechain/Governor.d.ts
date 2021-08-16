@@ -24,7 +24,9 @@ interface GovernorInterface extends ethers.utils.Interface {
     "EMERGENCY_SHUTDOWN_THRESHOLD()": FunctionFragment;
     "accounting()": FunctionFragment;
     "auctions()": FunctionFragment;
-    "currentDailyRewardCount()": FunctionFragment;
+    "borrowRewardsPortion()": FunctionFragment;
+    "currentDailyDebtRewardCount()": FunctionFragment;
+    "currentDailyLiquidityRewardCount()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "deployer()": FunctionFragment;
@@ -55,6 +57,7 @@ interface GovernorInterface extends ethers.utils.Interface {
     "requireUpdatePositionAccess(address)": FunctionFragment;
     "requireValidAction(address,string)": FunctionFragment;
     "rewards()": FunctionFragment;
+    "setBorrowRewardsPortion(uint64)": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
     "setTokenIncentiveCaps(address[],uint256[])": FunctionFragment;
     "settlement()": FunctionFragment;
@@ -84,7 +87,15 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "currentDailyRewardCount",
+    functionFragment: "borrowRewardsPortion",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentDailyDebtRewardCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "currentDailyLiquidityRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -197,6 +208,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "rewards", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "setBorrowRewardsPortion",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPhaseOneStartTime",
     values: [BigNumberish]
   ): string;
@@ -266,7 +281,15 @@ interface GovernorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyRewardCount",
+    functionFragment: "borrowRewardsPortion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentDailyDebtRewardCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "currentDailyLiquidityRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -356,6 +379,10 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setBorrowRewardsPortion",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setPhaseOneStartTime",
     data: BytesLike
@@ -483,7 +510,15 @@ export class Governor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
-    currentDailyRewardCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    currentDailyDebtRewardCount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     currentPeriod(
       overrides?: CallOverrides
@@ -596,6 +631,11 @@ export class Governor extends BaseContract {
 
     rewards(overrides?: CallOverrides): Promise<[string]>;
 
+    setBorrowRewardsPortion(
+      portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -673,7 +713,13 @@ export class Governor extends BaseContract {
 
   auctions(overrides?: CallOverrides): Promise<string>;
 
-  currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+  borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
+
+  currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  currentDailyLiquidityRewardCount(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -782,6 +828,11 @@ export class Governor extends BaseContract {
 
   rewards(overrides?: CallOverrides): Promise<string>;
 
+  setBorrowRewardsPortion(
+    portion: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setPhaseOneStartTime(
     phaseOneStartTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -859,7 +910,13 @@ export class Governor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<string>;
 
-    currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -964,6 +1021,11 @@ export class Governor extends BaseContract {
 
     rewards(overrides?: CallOverrides): Promise<string>;
 
+    setBorrowRewardsPortion(
+      portion: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: CallOverrides
@@ -1060,7 +1122,13 @@ export class Governor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentDailyRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    currentDailyLiquidityRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1171,6 +1239,11 @@ export class Governor extends BaseContract {
 
     rewards(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setBorrowRewardsPortion(
+      portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1251,7 +1324,15 @@ export class Governor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    currentDailyRewardCount(
+    borrowRewardsPortion(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentDailyDebtRewardCount(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    currentDailyLiquidityRewardCount(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1365,6 +1446,11 @@ export class Governor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     rewards(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setBorrowRewardsPortion(
+      portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setPhaseOneStartTime(
       phaseOneStartTime: BigNumberish,

@@ -22,7 +22,6 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface IRewardsInterface extends ethers.utils.Interface {
   functions: {
     "accrueRewards()": FunctionFragment;
-    "borrowRewardsPortion()": FunctionFragment;
     "stop()": FunctionFragment;
   };
 
@@ -30,18 +29,10 @@ interface IRewardsInterface extends ethers.utils.Interface {
     functionFragment: "accrueRewards",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "borrowRewardsPortion",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "stop", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "accrueRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "borrowRewardsPortion",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
@@ -133,8 +124,6 @@ export class IRewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -144,16 +133,12 @@ export class IRewards extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
   stop(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     accrueRewards(overrides?: CallOverrides): Promise<void>;
-
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
     stop(overrides?: CallOverrides): Promise<void>;
   };
@@ -313,8 +298,6 @@ export class IRewards extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
-
     stop(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -323,10 +306,6 @@ export class IRewards extends BaseContract {
   populateTransaction: {
     accrueRewards(
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    borrowRewardsPortion(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     stop(

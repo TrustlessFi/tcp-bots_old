@@ -28,8 +28,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "calculateInstantTwappedTick(address,uint32)": FunctionFragment;
     "calculateTwappedPrice(address,bool)": FunctionFragment;
     "collateralPool()": FunctionFragment;
-    "convertSqrtPriceX96ToTick(uint160)": FunctionFragment;
-    "convertTickToSqrtPriceX96(int24)": FunctionFragment;
     "deployer()": FunctionFragment;
     "finalizeInitialization(address,address)": FunctionFragment;
     "getE18PriceForSqrtX96Price(uint160)": FunctionFragment;
@@ -75,14 +73,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "collateralPool",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertSqrtPriceX96ToTick",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "convertTickToSqrtPriceX96",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
@@ -183,14 +173,6 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "collateralPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertSqrtPriceX96ToTick",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "convertTickToSqrtPriceX96",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deployer", data: BytesLike): Result;
@@ -339,16 +321,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<[string]>;
 
-    convertSqrtPriceX96ToTick(
-      sqrtPriceX96: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    convertTickToSqrtPriceX96(
-      tick: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     deployer(overrides?: CallOverrides): Promise<[string]>;
 
     finalizeInitialization(
@@ -488,16 +460,6 @@ export class PricesTestable extends BaseContract {
 
   collateralPool(overrides?: CallOverrides): Promise<string>;
 
-  convertSqrtPriceX96ToTick(
-    sqrtPriceX96: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  convertTickToSqrtPriceX96(
-    tick: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   deployer(overrides?: CallOverrides): Promise<string>;
 
   finalizeInitialization(
@@ -630,16 +592,6 @@ export class PricesTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     collateralPool(overrides?: CallOverrides): Promise<string>;
-
-    convertSqrtPriceX96ToTick(
-      sqrtPriceX96: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    convertTickToSqrtPriceX96(
-      tick: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     deployer(overrides?: CallOverrides): Promise<string>;
 
@@ -790,16 +742,6 @@ export class PricesTestable extends BaseContract {
 
     collateralPool(overrides?: CallOverrides): Promise<BigNumber>;
 
-    convertSqrtPriceX96ToTick(
-      sqrtPriceX96: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    convertTickToSqrtPriceX96(
-      tick: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     deployer(overrides?: CallOverrides): Promise<BigNumber>;
 
     finalizeInitialization(
@@ -927,16 +869,6 @@ export class PricesTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     collateralPool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    convertSqrtPriceX96ToTick(
-      sqrtPriceX96: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    convertTickToSqrtPriceX96(
-      tick: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     deployer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
