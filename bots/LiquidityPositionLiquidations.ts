@@ -81,7 +81,7 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
     while(limit < bal) {
       const lowerLimit = limit
       limit += _min(bal - limit, this.idFetchBatchSize);
-      (await this.protocol!.accounting.getLockedNFTIDs(lowerLimit, limit)).map((pos: BigNumber) => {
+      (await this.protocol!.protocolDataAggregator.getLockedNFTIDs(lowerLimit, limit)).map((pos: BigNumber) => {
         if (!this.positionIndex.has(pos.toNumber())) newPositionIDs.push(pos.toNumber())
       })
     }

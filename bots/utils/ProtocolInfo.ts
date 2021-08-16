@@ -33,6 +33,7 @@ import {
   TDaoToken,
   Tcp,
   Accounting,
+  ProtocolDataAggregator,
 } from "../../typechain/";
 
 // ================ OTHER CONTRACTS =================
@@ -71,6 +72,7 @@ export type deployedTCP = {
   rewards: Rewards
   settlement: Settlement
   tcpTimelock: TcpTimelock
+  protocolDataAggregator: ProtocolDataAggregator
   meta: {
     tDao: TDao
     tDaoToken: TDaoToken
@@ -107,11 +109,13 @@ export const getDeployedProtocol = async(
   let [
     tcpGovernorAlpha,
     tDaoGovernorAlpha,
+    protocolDataAggregator,
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
     await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TCPGovernorAlpha,
     await get('TDaoGovernorAlpha', seedAddresses.tDaoGovernorAlpha) as unknown as TDaoGovernorAlpha,
+    await get('ProtocolDataAggregator', seedAddresses.protocolDataAggregator) as unknown as ProtocolDataAggregator,
     await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
   ]);
@@ -208,6 +212,7 @@ export const getDeployedProtocol = async(
     rewards: rewards as Rewards,
     settlement: settlement as Settlement,
     tcpTimelock: tcpTimelock as TcpTimelock,
+    protocolDataAggregator: protocolDataAggregator as ProtocolDataAggregator,
     meta: {
       tDao,
       tDaoToken,

@@ -28,7 +28,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
-      await this.protocol!.prices.calculateInstantTwappedPrice(this.protocol!.pools.hueeth.address, this.twapDuration),
+      await this.protocol!.prices.calculateInstantCollateralPrice(this.twapDuration),
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 
@@ -89,7 +89,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     let positions: Array<BigNumber> = [];
     results.map(result => positions.push.apply(positions, result))
 
-    let collateralizations: Array<BigNumber> = await accounting.positionsCollateralization(positions);
+    let collateralizations: Array<BigNumber> = await this.protocol!.protocolDataAggregator.positionsCollateralization(positions);
 
     // Check the positions that are undercollateralized given the price.
     let minCollateralization: BigNumber = this.ONE.mul(this.collateralizationRequirement).div(price)
