@@ -28,7 +28,7 @@ export class ManagedBot {
   protocol: deployedTCP | null = null;
   name: string = "Name not set.";
   shouldLog: boolean = true;
-  timer: number | null = null;
+  timer: NodeJS.Timeout | null = null;
   wallet: Wallet;
   ONE: BigNumber = BigNumber.from(BigInt(1e18));
 
