@@ -448,30 +448,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "nftID",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "addressToCheck",
-        type: "address",
-      },
-    ],
-    name: "isPositionOwner",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "lentHue",
     outputs: [

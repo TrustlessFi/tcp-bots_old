@@ -63,31 +63,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "address",
-        name: "governorAlpha",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "proposalID",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "decision",
-        type: "bool",
-      },
-    ],
-    name: "MetaGovernanceDecisionExecuted",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "uint64",
         name: "positionNFTTokenID",
         type: "uint64",
@@ -181,85 +156,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint64",
-        name: "positionID",
-        type: "uint64",
-      },
-    ],
-    name: "getPosition",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "count",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "startTotalRewards",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "startCumulativeVirtualCount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint64",
-            name: "lastPeriodUpdated",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "endPeriod",
-            type: "uint64",
-          },
-          {
-            internalType: "uint64",
-            name: "durationMonths",
-            type: "uint64",
-          },
-          {
-            internalType: "uint16",
-            name: "tokenID",
-            type: "uint16",
-          },
-        ],
-        internalType: "struct ITDao.TokenPosition",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint64",
         name: "positionNFTTokenID",
         type: "uint64",
       },
     ],
     name: "getRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "dest",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "count",
-        type: "uint256",
-      },
-    ],
-    name: "incentiveContractMint",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -319,19 +220,29 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract GovernorAlpha",
-        name: "",
+        internalType: "address",
+        name: "governorAlpha",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "",
+        name: "proposalID",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "voter",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "votePortion",
         type: "uint256",
       },
     ],
-    name: "voteInUnderlyingProtocol",
+    name: "sendUnderlyingVotingRewards",
     outputs: [],
-    stateMutability: "pure",
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

@@ -23,8 +23,8 @@ interface IGovernorInterface extends ethers.utils.Interface {
   functions: {
     "accounting()": FunctionFragment;
     "auctions()": FunctionFragment;
-    "currentDailyDebtRewardCount()": FunctionFragment;
-    "currentDailyLiquidityRewardCount()": FunctionFragment;
+    "calculateCurrentDailyDebtRewardCount()": FunctionFragment;
+    "calculateCurrentDailyLiquidityRewardCount()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "enforcedDecentralization()": FunctionFragment;
     "execute(address,string,bytes)": FunctionFragment;
@@ -37,18 +37,19 @@ interface IGovernorInterface extends ethers.utils.Interface {
     "market()": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
+    "mintVotingRewards(address,uint256)": FunctionFragment;
     "prices()": FunctionFragment;
     "protocolLock()": FunctionFragment;
     "rates()": FunctionFragment;
     "requireDebtServicesAccess(address)": FunctionFragment;
     "requireHueReservesBurnAccess(address)": FunctionFragment;
+    "requireInitializePoolAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
     "requireValidAction(address,string)": FunctionFragment;
     "rewards()": FunctionFragment;
     "settlement()": FunctionFragment;
     "shutdownTime()": FunctionFragment;
     "tcp()": FunctionFragment;
-    "timelock()": FunctionFragment;
     "upgradeAuctions(address)": FunctionFragment;
     "upgradeLiquidations(address)": FunctionFragment;
     "upgradeMarket(address)": FunctionFragment;
@@ -65,11 +66,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "auctions", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "currentDailyDebtRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -111,6 +112,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
     functionFragment: "mintTCP",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "mintVotingRewards",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "protocolLock",
@@ -123,6 +128,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requireHueReservesBurnAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireInitializePoolAccess",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -143,7 +152,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "tcp", values?: undefined): string;
-  encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "upgradeAuctions",
     values: [string]
@@ -180,11 +188,11 @@ interface IGovernorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "accounting", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "auctions", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyDebtRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -217,6 +225,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mintTCP", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintVotingRewards",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "protocolLock",
@@ -229,6 +241,10 @@ interface IGovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requireHueReservesBurnAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireInitializePoolAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -246,7 +262,6 @@ interface IGovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tcp", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeAuctions",
     data: BytesLike
@@ -343,13 +358,13 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<[string]>;
 
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     currentPhase(overrides?: CallOverrides): Promise<[number]>;
 
@@ -390,6 +405,12 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     prices(overrides?: CallOverrides): Promise<[string]>;
 
     protocolLock(overrides?: CallOverrides): Promise<[string]>;
@@ -402,6 +423,11 @@ export class IGovernor extends BaseContract {
     ): Promise<[void]>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -424,8 +450,6 @@ export class IGovernor extends BaseContract {
     shutdownTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     tcp(overrides?: CallOverrides): Promise<[string]>;
-
-    timelock(overrides?: CallOverrides): Promise<[string]>;
 
     upgradeAuctions(
       _auctions: string,
@@ -472,11 +496,13 @@ export class IGovernor extends BaseContract {
 
   auctions(overrides?: CallOverrides): Promise<string>;
 
-  currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+  calculateCurrentDailyDebtRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  currentDailyLiquidityRewardCount(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  calculateCurrentDailyLiquidityRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   currentPhase(overrides?: CallOverrides): Promise<number>;
 
@@ -517,6 +543,12 @@ export class IGovernor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  mintVotingRewards(
+    to: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   prices(overrides?: CallOverrides): Promise<string>;
 
   protocolLock(overrides?: CallOverrides): Promise<string>;
@@ -529,6 +561,11 @@ export class IGovernor extends BaseContract {
   ): Promise<void>;
 
   requireHueReservesBurnAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireInitializePoolAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -551,8 +588,6 @@ export class IGovernor extends BaseContract {
   shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   tcp(overrides?: CallOverrides): Promise<string>;
-
-  timelock(overrides?: CallOverrides): Promise<string>;
 
   upgradeAuctions(
     _auctions: string,
@@ -599,9 +634,11 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<string>;
 
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    currentDailyLiquidityRewardCount(
+    calculateCurrentDailyLiquidityRewardCount(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -642,6 +679,12 @@ export class IGovernor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     prices(overrides?: CallOverrides): Promise<string>;
 
     protocolLock(overrides?: CallOverrides): Promise<string>;
@@ -654,6 +697,11 @@ export class IGovernor extends BaseContract {
     ): Promise<void>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -676,8 +724,6 @@ export class IGovernor extends BaseContract {
     shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     tcp(overrides?: CallOverrides): Promise<string>;
-
-    timelock(overrides?: CallOverrides): Promise<string>;
 
     upgradeAuctions(
       _auctions: string,
@@ -745,10 +791,12 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     currentPhase(overrides?: CallOverrides): Promise<BigNumber>;
@@ -790,6 +838,12 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     prices(overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolLock(overrides?: CallOverrides): Promise<BigNumber>;
@@ -802,6 +856,11 @@ export class IGovernor extends BaseContract {
     ): Promise<BigNumber>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -824,8 +883,6 @@ export class IGovernor extends BaseContract {
     shutdownTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     tcp(overrides?: CallOverrides): Promise<BigNumber>;
-
-    timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
     upgradeAuctions(
       _auctions: string,
@@ -873,12 +930,12 @@ export class IGovernor extends BaseContract {
 
     auctions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     currentPhase(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -922,6 +979,12 @@ export class IGovernor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     protocolLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -934,6 +997,11 @@ export class IGovernor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -956,8 +1024,6 @@ export class IGovernor extends BaseContract {
     shutdownTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tcp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     upgradeAuctions(
       _auctions: string,

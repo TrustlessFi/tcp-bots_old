@@ -36,7 +36,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
     "increaseDebt(uint256)": FunctionFragment;
     "increaseLentHue(uint256)": FunctionFragment;
     "increasePoolLiquidity(address,uint256)": FunctionFragment;
-    "isPositionOwner(uint256,address)": FunctionFragment;
     "lentHue()": FunctionFragment;
     "onRewardsUpgrade(address)": FunctionFragment;
     "poolLiquidity(address)": FunctionFragment;
@@ -104,10 +103,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "increasePoolLiquidity",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isPositionOwner",
-    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "lentHue", values?: undefined): string;
   encodeFunctionData(
@@ -238,10 +233,6 @@ interface IAccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "increasePoolLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isPositionOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "lentHue", data: BytesLike): Result;
@@ -559,12 +550,6 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     lentHue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     onRewardsUpgrade(
@@ -794,12 +779,6 @@ export class IAccounting extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isPositionOwner(
-    nftID: BigNumberish,
-    addressToCheck: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
   onRewardsUpgrade(
@@ -1017,12 +996,6 @@ export class IAccounting extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
     onRewardsUpgrade(
@@ -1183,12 +1156,6 @@ export class IAccounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
     onRewardsUpgrade(
@@ -1337,12 +1304,6 @@ export class IAccounting extends BaseContract {
       pool: string,
       liquidity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     lentHue(overrides?: CallOverrides): Promise<PopulatedTransaction>;

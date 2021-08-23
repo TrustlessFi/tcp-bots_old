@@ -28,12 +28,16 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     "cancel(uint256)": FunctionFragment;
     "castVote(uint256,bool)": FunctionFragment;
     "castVoteBySig(uint256,bool,uint8,bytes32,bytes32)": FunctionFragment;
+    "claimUnderlyingVotingRewards(uint256)": FunctionFragment;
     "claimVotingRewards(uint256)": FunctionFragment;
     "execute(uint256)": FunctionFragment;
     "getActions(uint256)": FunctionFragment;
     "getAllProposals(address)": FunctionFragment;
+    "getMetaProposalParameters(uint256)": FunctionFragment;
     "getReceipt(uint256,address)": FunctionFragment;
     "guardian()": FunctionFragment;
+    "hasClaimedUnderlyingRewards(uint256,address)": FunctionFragment;
+    "implementsVotingRewardsWithToken()": FunctionFragment;
     "latestProposalIds(address)": FunctionFragment;
     "name()": FunctionFragment;
     "proposalCount()": FunctionFragment;
@@ -46,6 +50,7 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     "state(uint256)": FunctionFragment;
     "tDao()": FunctionFragment;
     "timelock()": FunctionFragment;
+    "voteInUnderlyingProtocol(address,uint256)": FunctionFragment;
     "votingDelay()": FunctionFragment;
     "votingPeriod()": FunctionFragment;
     "votingPeriodBlocks()": FunctionFragment;
@@ -81,6 +86,10 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     values: [BigNumberish, boolean, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "claimUnderlyingVotingRewards",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "claimVotingRewards",
     values: [BigNumberish]
   ): string;
@@ -97,10 +106,22 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "getMetaProposalParameters",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getReceipt",
     values: [BigNumberish, string]
   ): string;
   encodeFunctionData(functionFragment: "guardian", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "hasClaimedUnderlyingRewards",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementsVotingRewardsWithToken",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "latestProposalIds",
     values: [string]
@@ -134,6 +155,10 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "state", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "tDao", values?: undefined): string;
   encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "voteInUnderlyingProtocol",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "votingDelay",
     values?: undefined
@@ -171,6 +196,10 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "claimUnderlyingVotingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "claimVotingRewards",
     data: BytesLike
   ): Result;
@@ -180,8 +209,20 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     functionFragment: "getAllProposals",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMetaProposalParameters",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getReceipt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "guardian", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasClaimedUnderlyingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsVotingRewardsWithToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "latestProposalIds",
     data: BytesLike
@@ -210,6 +251,10 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "tDao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "voteInUnderlyingProtocol",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "votingDelay",
     data: BytesLike
   ): Result;
@@ -231,6 +276,7 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
     "ProposalCreated(uint256,address)": EventFragment;
     "ProposalExecuted(uint256)": EventFragment;
     "ProposalQueued(uint256,uint256)": EventFragment;
+    "UnderlyingVotingRewardsDistributed(address,uint256)": EventFragment;
     "VoteCast(address,uint256,bool,uint256)": EventFragment;
     "VotingRewardsDistributed(address,uint256)": EventFragment;
   };
@@ -239,6 +285,9 @@ interface TDaoGovernorAlphaInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ProposalCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProposalExecuted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProposalQueued"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "UnderlyingVotingRewardsDistributed"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VoteCast"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VotingRewardsDistributed"): EventFragment;
 }
@@ -317,8 +366,13 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    claimUnderlyingVotingRewards(
+      proposalID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     claimVotingRewards(
-      proposalId: BigNumberish,
+      proposalID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -423,6 +477,17 @@ export class TDaoGovernorAlpha extends BaseContract {
       }
     >;
 
+    getMetaProposalParameters(
+      proposalID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, boolean] & {
+        governorAlpha: string;
+        underlyingProposalID: BigNumber;
+        moreForThanAgainst: boolean;
+      }
+    >;
+
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
@@ -439,6 +504,16 @@ export class TDaoGovernorAlpha extends BaseContract {
     >;
 
     guardian(overrides?: CallOverrides): Promise<[string]>;
+
+    hasClaimedUnderlyingRewards(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    implementsVotingRewardsWithToken(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     latestProposalIds(
       arg0: string,
@@ -508,6 +583,12 @@ export class TDaoGovernorAlpha extends BaseContract {
 
     timelock(overrides?: CallOverrides): Promise<[string]>;
 
+    voteInUnderlyingProtocol(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     votingDelay(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     votingPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -547,8 +628,13 @@ export class TDaoGovernorAlpha extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  claimUnderlyingVotingRewards(
+    proposalID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   claimVotingRewards(
-    proposalId: BigNumberish,
+    proposalID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -653,6 +739,17 @@ export class TDaoGovernorAlpha extends BaseContract {
     }
   >;
 
+  getMetaProposalParameters(
+    proposalID: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, boolean] & {
+      governorAlpha: string;
+      underlyingProposalID: BigNumber;
+      moreForThanAgainst: boolean;
+    }
+  >;
+
   getReceipt(
     proposalId: BigNumberish,
     voter: string,
@@ -667,6 +764,14 @@ export class TDaoGovernorAlpha extends BaseContract {
   >;
 
   guardian(overrides?: CallOverrides): Promise<string>;
+
+  hasClaimedUnderlyingRewards(
+    arg0: BigNumberish,
+    arg1: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  implementsVotingRewardsWithToken(overrides?: CallOverrides): Promise<string>;
 
   latestProposalIds(
     arg0: string,
@@ -733,6 +838,12 @@ export class TDaoGovernorAlpha extends BaseContract {
 
   timelock(overrides?: CallOverrides): Promise<string>;
 
+  voteInUnderlyingProtocol(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   votingDelay(overrides?: CallOverrides): Promise<BigNumber>;
 
   votingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -767,8 +878,13 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    claimUnderlyingVotingRewards(
+      proposalID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     claimVotingRewards(
-      proposalId: BigNumberish,
+      proposalID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -870,6 +986,17 @@ export class TDaoGovernorAlpha extends BaseContract {
       }
     >;
 
+    getMetaProposalParameters(
+      proposalID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, boolean] & {
+        governorAlpha: string;
+        underlyingProposalID: BigNumber;
+        moreForThanAgainst: boolean;
+      }
+    >;
+
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
@@ -884,6 +1011,16 @@ export class TDaoGovernorAlpha extends BaseContract {
     >;
 
     guardian(overrides?: CallOverrides): Promise<string>;
+
+    hasClaimedUnderlyingRewards(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    implementsVotingRewardsWithToken(
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     latestProposalIds(
       arg0: string,
@@ -947,6 +1084,12 @@ export class TDaoGovernorAlpha extends BaseContract {
 
     timelock(overrides?: CallOverrides): Promise<string>;
 
+    voteInUnderlyingProtocol(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     votingDelay(overrides?: CallOverrides): Promise<BigNumber>;
 
     votingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -979,6 +1122,14 @@ export class TDaoGovernorAlpha extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, BigNumber],
       { id: BigNumber; eta: BigNumber }
+    >;
+
+    UnderlyingVotingRewardsDistributed(
+      caller?: string | null,
+      proposalID?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { caller: string; proposalID: BigNumber }
     >;
 
     VoteCast(
@@ -1036,8 +1187,13 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    claimUnderlyingVotingRewards(
+      proposalID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     claimVotingRewards(
-      proposalId: BigNumberish,
+      proposalID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1056,6 +1212,11 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getMetaProposalParameters(
+      proposalID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
@@ -1063,6 +1224,16 @@ export class TDaoGovernorAlpha extends BaseContract {
     ): Promise<BigNumber>;
 
     guardian(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hasClaimedUnderlyingRewards(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    implementsVotingRewardsWithToken(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     latestProposalIds(
       arg0: string,
@@ -1106,6 +1277,12 @@ export class TDaoGovernorAlpha extends BaseContract {
 
     timelock(overrides?: CallOverrides): Promise<BigNumber>;
 
+    voteInUnderlyingProtocol(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     votingDelay(overrides?: CallOverrides): Promise<BigNumber>;
 
     votingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1148,8 +1325,13 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    claimUnderlyingVotingRewards(
+      proposalID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     claimVotingRewards(
-      proposalId: BigNumberish,
+      proposalID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1168,6 +1350,11 @@ export class TDaoGovernorAlpha extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getMetaProposalParameters(
+      proposalID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getReceipt(
       proposalId: BigNumberish,
       voter: string,
@@ -1175,6 +1362,16 @@ export class TDaoGovernorAlpha extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     guardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hasClaimedUnderlyingRewards(
+      arg0: BigNumberish,
+      arg1: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    implementsVotingRewardsWithToken(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     latestProposalIds(
       arg0: string,
@@ -1219,6 +1416,12 @@ export class TDaoGovernorAlpha extends BaseContract {
     tDao(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     timelock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    voteInUnderlyingProtocol(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     votingDelay(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

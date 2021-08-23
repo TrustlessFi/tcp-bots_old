@@ -38,12 +38,10 @@ interface IRewardsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "stop", data: BytesLike): Result;
 
   events: {
-    "FeesCollected(address,uint256,uint256,uint256)": EventFragment;
-    "InflationRewardsClaimed(address,uint256)": EventFragment;
     "LiquidityPositionCreated(address,uint16,uint256,int24,int24,uint128)": EventFragment;
     "LiquidityPositionDecreased(uint256,uint256,uint256)": EventFragment;
     "LiquidityPositionIncreased(uint256,uint128)": EventFragment;
-    "LiquidityPositionLiquidated(uint256,uint256,uint256)": EventFragment;
+    "LiquidityPositionLiquidated(uint256,address)": EventFragment;
     "LiquidityPositionRemoved(uint256,uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated128(string,uint256)": EventFragment;
@@ -53,11 +51,10 @@ interface IRewardsInterface extends ethers.utils.Interface {
     "PoolAdded(address,uint16,uint64)": EventFragment;
     "PoolIncentiveUpdated(uint16,uint64)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
+    "RewardsClaimed(address,uint256,uint256,uint256)": EventFragment;
     "RewardsDistributed(address,bool,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "InflationRewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionDecreased"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionIncreased"): EventFragment;
@@ -73,6 +70,7 @@ interface IRewardsInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PoolAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PoolIncentiveUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAccrued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsDistributed"): EventFragment;
 }
 
@@ -144,29 +142,6 @@ export class IRewards extends BaseContract {
   };
 
   filters: {
-    FeesCollected(
-      owner?: string | null,
-      nftTokenID?: BigNumberish | null,
-      amount0?: null,
-      amount1?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        owner: string;
-        nftTokenID: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
-
-    InflationRewardsClaimed(
-      owner?: string | null,
-      nftTokenID?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; nftTokenID: BigNumber }
-    >;
-
     LiquidityPositionCreated(
       owner?: string | null,
       poolID?: BigNumberish | null,
@@ -205,11 +180,10 @@ export class IRewards extends BaseContract {
 
     LiquidityPositionLiquidated(
       nftID?: BigNumberish | null,
-      amount0?: null,
-      amount1?: null
+      liquidator?: string | null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
+      [BigNumber, string],
+      { nftID: BigNumber; liquidator: string }
     >;
 
     LiquidityPositionRemoved(
@@ -281,6 +255,21 @@ export class IRewards extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, BigNumber],
       { count: BigNumber; periods: BigNumber }
+    >;
+
+    RewardsClaimed(
+      caller?: string | null,
+      nftTokenID?: BigNumberish | null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber, BigNumber],
+      {
+        caller: string;
+        nftTokenID: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
     >;
 
     RewardsDistributed(

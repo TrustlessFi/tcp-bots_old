@@ -44,13 +44,12 @@ interface AccountingInterface extends ethers.utils.Interface {
     "increaseLentHue(uint256)": FunctionFragment;
     "increasePoolLiquidity(address,uint256)": FunctionFragment;
     "init(address)": FunctionFragment;
-    "isPositionOwner(uint256,address)": FunctionFragment;
     "lentHue()": FunctionFragment;
+    "lowestTick()": FunctionFragment;
     "nextUserInterfaceID()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "onRewardsUpgrade(address)": FunctionFragment;
     "poolLiquidity(address)": FunctionFragment;
-    "poolPosition(uint256)": FunctionFragment;
     "poolPositionIndexingEnabled()": FunctionFragment;
     "positionsForTick(int24)": FunctionFragment;
     "registerUI(uint64,uint24,string)": FunctionFragment;
@@ -149,11 +148,11 @@ interface AccountingInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "isPositionOwner",
-    values: [BigNumberish, string]
-  ): string;
   encodeFunctionData(functionFragment: "lentHue", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "lowestTick",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "nextUserInterfaceID",
     values?: undefined
@@ -169,10 +168,6 @@ interface AccountingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "poolLiquidity",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "poolPosition",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "poolPositionIndexingEnabled",
@@ -347,11 +342,8 @@ interface AccountingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isPositionOwner",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "lentHue", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "lowestTick", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nextUserInterfaceID",
     data: BytesLike
@@ -366,10 +358,6 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "poolLiquidity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "poolPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -756,13 +744,9 @@ export class Accounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     lentHue(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    lowestTick(overrides?: CallOverrides): Promise<[number]>;
 
     nextUserInterfaceID(overrides?: CallOverrides): Promise<[number]>;
 
@@ -783,21 +767,6 @@ export class Accounting extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    poolPosition(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, number, number, BigNumber, BigNumber, number, number] & {
-        owner: string;
-        poolID: number;
-        ui: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: number;
-        lastBlockPositionIncreased: number;
-      }
-    >;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -1103,13 +1072,9 @@ export class Accounting extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isPositionOwner(
-    nftID: BigNumberish,
-    addressToCheck: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   lentHue(overrides?: CallOverrides): Promise<BigNumber>;
+
+  lowestTick(overrides?: CallOverrides): Promise<number>;
 
   nextUserInterfaceID(overrides?: CallOverrides): Promise<number>;
 
@@ -1127,21 +1092,6 @@ export class Accounting extends BaseContract {
   ): Promise<ContractTransaction>;
 
   poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  poolPosition(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, number, number, BigNumber, BigNumber, number, number] & {
-      owner: string;
-      poolID: number;
-      ui: number;
-      cumulativeLiquidity: BigNumber;
-      totalRewards: BigNumber;
-      lastTimeRewarded: number;
-      lastBlockPositionIncreased: number;
-    }
-  >;
 
   poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1435,13 +1385,9 @@ export class Accounting extends BaseContract {
 
     init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lowestTick(overrides?: CallOverrides): Promise<number>;
 
     nextUserInterfaceID(overrides?: CallOverrides): Promise<number>;
 
@@ -1459,21 +1405,6 @@ export class Accounting extends BaseContract {
     ): Promise<void>;
 
     poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolPosition(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, number, number, BigNumber, BigNumber, number, number] & {
-        owner: string;
-        poolID: number;
-        ui: number;
-        cumulativeLiquidity: BigNumber;
-        totalRewards: BigNumber;
-        lastTimeRewarded: number;
-        lastBlockPositionIncreased: number;
-      }
-    >;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1705,13 +1636,9 @@ export class Accounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lowestTick(overrides?: CallOverrides): Promise<BigNumber>;
 
     nextUserInterfaceID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1729,11 +1656,6 @@ export class Accounting extends BaseContract {
     ): Promise<BigNumber>;
 
     poolLiquidity(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    poolPosition(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     poolPositionIndexingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1949,13 +1871,9 @@ export class Accounting extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    isPositionOwner(
-      nftID: BigNumberish,
-      addressToCheck: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     lentHue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lowestTick(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextUserInterfaceID(
       overrides?: CallOverrides
@@ -1976,11 +1894,6 @@ export class Accounting extends BaseContract {
 
     poolLiquidity(
       arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    poolPosition(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

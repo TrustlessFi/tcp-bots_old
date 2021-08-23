@@ -111,7 +111,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "currentDailyDebtRewardCount",
+    name: "calculateCurrentDailyDebtRewardCount",
     outputs: [
       {
         internalType: "uint256",
@@ -119,12 +119,12 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
-    name: "currentDailyLiquidityRewardCount",
+    name: "calculateCurrentDailyLiquidityRewardCount",
     outputs: [
       {
         internalType: "uint256",
@@ -132,7 +132,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -317,6 +317,24 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    name: "mintVotingRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "prices",
     outputs: [
@@ -377,6 +395,19 @@ const _abi = [
       },
     ],
     name: "requireHueReservesBurnAccess",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+    ],
+    name: "requireInitializePoolAccess",
     outputs: [],
     stateMutability: "view",
     type: "function",
@@ -457,19 +488,6 @@ const _abi = [
     outputs: [
       {
         internalType: "contract ITCP",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "timelock",
-    outputs: [
-      {
-        internalType: "address",
         name: "",
         type: "address",
       },

@@ -29,7 +29,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "calculateTwappedPrice(address,bool)": FunctionFragment;
     "collateralPool()": FunctionFragment;
     "deployer()": FunctionFragment;
-    "finalizeInitialization(address,address)": FunctionFragment;
+    "finalizeInitialization(address,address,address)": FunctionFragment;
     "getE18PriceForSqrtX96Price(uint160)": FunctionFragment;
     "getPriceForTick(int24,bool)": FunctionFragment;
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
@@ -37,7 +37,8 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "governor()": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
     "init(address)": FunctionFragment;
-    "initializePool(address,address)": FunctionFragment;
+    "initializePool(address)": FunctionFragment;
+    "initializeWethPool(address)": FunctionFragment;
     "isPoolInitialized(address)": FunctionFragment;
     "normalizeDecimals(uint256,tuple)": FunctionFragment;
     "priceInfo(address)": FunctionFragment;
@@ -46,7 +47,9 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
     "systemObtainReferencePrice(address)": FunctionFragment;
+    "tcp()": FunctionFragment;
     "validUpdate(bytes4)": FunctionFragment;
+    "weth()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "__now", values?: undefined): string;
@@ -77,7 +80,7 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "deployer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "finalizeInitialization",
-    values: [string, string]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getE18PriceForSqrtX96Price",
@@ -110,7 +113,11 @@ interface PricesTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(
     functionFragment: "initializePool",
-    values: [string, string]
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializeWethPool",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "isPoolInitialized",
@@ -145,10 +152,12 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     functionFragment: "systemObtainReferencePrice",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "tcp", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "validUpdate",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "weth", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "__now", data: BytesLike): Result;
   decodeFunctionResult(
@@ -207,6 +216,10 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "initializeWethPool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isPoolInitialized",
     data: BytesLike
   ): Result;
@@ -229,10 +242,12 @@ interface PricesTestableInterface extends ethers.utils.Interface {
     functionFragment: "systemObtainReferencePrice",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tcp", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "validUpdate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
 
   events: {
     "Initialized(address)": EventFragment;
@@ -326,6 +341,7 @@ export class PricesTestable extends BaseContract {
     finalizeInitialization(
       _collateralPool: string,
       _protocolPool: string,
+      _weth: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -371,7 +387,11 @@ export class PricesTestable extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -425,7 +445,11 @@ export class PricesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    tcp(overrides?: CallOverrides): Promise<[string]>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
+
+    weth(overrides?: CallOverrides): Promise<[string]>;
   };
 
   __now(overrides?: CallOverrides): Promise<number[]>;
@@ -465,6 +489,7 @@ export class PricesTestable extends BaseContract {
   finalizeInitialization(
     _collateralPool: string,
     _protocolPool: string,
+    _weth: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -510,7 +535,11 @@ export class PricesTestable extends BaseContract {
 
   initializePool(
     pool: string,
-    baseToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializeWethPool(
+    pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -558,7 +587,11 @@ export class PricesTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  tcp(overrides?: CallOverrides): Promise<string>;
+
   validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+  weth(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     __now(overrides?: CallOverrides): Promise<number[]>;
@@ -598,6 +631,7 @@ export class PricesTestable extends BaseContract {
     finalizeInitialization(
       _collateralPool: string,
       _protocolPool: string,
+      _weth: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -638,11 +672,9 @@ export class PricesTestable extends BaseContract {
 
     init(_governor: string, overrides?: CallOverrides): Promise<void>;
 
-    initializePool(
-      pool: string,
-      baseToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initializePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    initializeWethPool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     isPoolInitialized(
       pool: string,
@@ -689,7 +721,11 @@ export class PricesTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    tcp(overrides?: CallOverrides): Promise<string>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
+    weth(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -747,6 +783,7 @@ export class PricesTestable extends BaseContract {
     finalizeInitialization(
       _collateralPool: string,
       _protocolPool: string,
+      _weth: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -792,7 +829,11 @@ export class PricesTestable extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -834,7 +875,11 @@ export class PricesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    tcp(overrides?: CallOverrides): Promise<BigNumber>;
+
     validUpdate(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+
+    weth(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -875,6 +920,7 @@ export class PricesTestable extends BaseContract {
     finalizeInitialization(
       _collateralPool: string,
       _protocolPool: string,
+      _weth: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -920,7 +966,11 @@ export class PricesTestable extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -965,9 +1015,13 @@ export class PricesTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    tcp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     validUpdate(
       arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -25,11 +25,8 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     "accounting()": FunctionFragment;
     "auctions()": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
-    "calculateCurrentDailyRewardCount()": FunctionFragment;
-    "calculateCurrentDailyRewardCountImpl(uint64)": FunctionFragment;
-    "calculateRewardsForBootstrapPeriod(uint64)": FunctionFragment;
-    "currentDailyDebtRewardCount()": FunctionFragment;
-    "currentDailyLiquidityRewardCount()": FunctionFragment;
+    "calculateCurrentDailyDebtRewardCount()": FunctionFragment;
+    "calculateCurrentDailyLiquidityRewardCount()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "deployer()": FunctionFragment;
@@ -40,9 +37,11 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     "executeEmergencyShutdown()": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
+    "firstRewardsPeriod()": FunctionFragment;
+    "governorAlpha()": FunctionFragment;
     "hue()": FunctionFragment;
     "huePositionNFT()": FunctionFragment;
-    "initialize(address,address,address,address,address,address,address,address,address)": FunctionFragment;
+    "initialize(address,address,address,address,address,address,address,address,address,address)": FunctionFragment;
     "isShutdown()": FunctionFragment;
     "lendHue()": FunctionFragment;
     "liquidations()": FunctionFragment;
@@ -51,16 +50,20 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     "mintCapsUnset()": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
+    "mintVotingRewards(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
+    "periodRewards()": FunctionFragment;
     "prices()": FunctionFragment;
     "protocolLock()": FunctionFragment;
     "rates()": FunctionFragment;
     "requireDebtServicesAccess(address)": FunctionFragment;
     "requireHueReservesBurnAccess(address)": FunctionFragment;
+    "requireInitializePoolAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
     "requireValidAction(address,string)": FunctionFragment;
     "rewards()": FunctionFragment;
     "setBorrowRewardsPortion(uint64)": FunctionFragment;
+    "setFirstRewardsPeriodToCurrentPeriod()": FunctionFragment;
     "setPhaseOneStartTime(uint64)": FunctionFragment;
     "setTokenIncentiveCaps(address[],uint256[])": FunctionFragment;
     "settlement()": FunctionFragment;
@@ -94,23 +97,11 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "calculateCurrentDailyRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "calculateCurrentDailyRewardCountImpl",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateRewardsForBootstrapPeriod",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentDailyDebtRewardCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -150,6 +141,14 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "firstRewardsPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "governorAlpha",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "hue", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "huePositionNFT",
@@ -158,6 +157,7 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
+      string,
       string,
       string,
       string,
@@ -196,7 +196,15 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "mintVotingRewards",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "periodLength",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "periodRewards",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
@@ -214,6 +222,10 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "requireInitializePoolAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "requireUpdatePositionAccess",
     values: [string]
   ): string;
@@ -225,6 +237,10 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setBorrowRewardsPortion",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFirstRewardsPeriodToCurrentPeriod",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setPhaseOneStartTime",
@@ -300,23 +316,11 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "calculateCurrentDailyRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "calculateCurrentDailyRewardCountImpl",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateRewardsForBootstrapPeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentDailyDebtRewardCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -353,6 +357,14 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "firstRewardsPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "governorAlpha",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "huePositionNFT",
@@ -380,7 +392,15 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mintTCP", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "mintVotingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "periodLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "periodRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
@@ -398,6 +418,10 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "requireInitializePoolAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "requireUpdatePositionAccess",
     data: BytesLike
   ): Result;
@@ -408,6 +432,10 @@ interface GovernorTestableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBorrowRewardsPortion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFirstRewardsPeriodToCurrentPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -539,27 +567,13 @@ export class GovernorTestable extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    calculateCurrentDailyRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    calculateCurrentDailyRewardCountImpl(
-      rewardsPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    calculateRewardsForBootstrapPeriod(
-      bootsrapPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     currentPeriod(
       overrides?: CallOverrides
@@ -597,6 +611,10 @@ export class GovernorTestable extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<[string]>;
+
     hue(overrides?: CallOverrides): Promise<[string]>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<[string]>;
@@ -611,6 +629,7 @@ export class GovernorTestable extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -641,7 +660,22 @@ export class GovernorTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    periodRewards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & {
+        periodRewards: BigNumber;
+        currentCalculatedPeriod: number;
+      }
+    >;
 
     prices(overrides?: CallOverrides): Promise<[string]>;
 
@@ -655,6 +689,11 @@ export class GovernorTestable extends BaseContract {
     ): Promise<[void]>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -674,6 +713,10 @@ export class GovernorTestable extends BaseContract {
 
     setBorrowRewardsPortion(
       portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setFirstRewardsPeriodToCurrentPeriod(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -756,25 +799,13 @@ export class GovernorTestable extends BaseContract {
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-  calculateCurrentDailyRewardCount(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  calculateCurrentDailyDebtRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  calculateCurrentDailyRewardCountImpl(
-    rewardsPeriod: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  calculateRewardsForBootstrapPeriod(
-    bootsrapPeriod: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  currentDailyLiquidityRewardCount(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  calculateCurrentDailyLiquidityRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -808,6 +839,10 @@ export class GovernorTestable extends BaseContract {
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+  firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  governorAlpha(overrides?: CallOverrides): Promise<string>;
+
   hue(overrides?: CallOverrides): Promise<string>;
 
   huePositionNFT(overrides?: CallOverrides): Promise<string>;
@@ -822,6 +857,7 @@ export class GovernorTestable extends BaseContract {
     _protocolLock: string,
     _rewards: string,
     _settlement: string,
+    _governorAlpha: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -852,7 +888,22 @@ export class GovernorTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  mintVotingRewards(
+    to: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+  periodRewards(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number] & {
+      periodRewards: BigNumber;
+      currentCalculatedPeriod: number;
+    }
+  >;
 
   prices(overrides?: CallOverrides): Promise<string>;
 
@@ -866,6 +917,11 @@ export class GovernorTestable extends BaseContract {
   ): Promise<void>;
 
   requireHueReservesBurnAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireInitializePoolAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -885,6 +941,10 @@ export class GovernorTestable extends BaseContract {
 
   setBorrowRewardsPortion(
     portion: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setFirstRewardsPeriodToCurrentPeriod(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -967,23 +1027,11 @@ export class GovernorTestable extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-    calculateCurrentDailyRewardCount(
+    calculateCurrentDailyDebtRewardCount(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    calculateCurrentDailyRewardCountImpl(
-      rewardsPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculateRewardsForBootstrapPeriod(
-      bootsrapPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    currentDailyLiquidityRewardCount(
+    calculateCurrentDailyLiquidityRewardCount(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1015,6 +1063,10 @@ export class GovernorTestable extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<string>;
+
     hue(overrides?: CallOverrides): Promise<string>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<string>;
@@ -1029,6 +1081,7 @@ export class GovernorTestable extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1059,7 +1112,22 @@ export class GovernorTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodRewards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & {
+        periodRewards: BigNumber;
+        currentCalculatedPeriod: number;
+      }
+    >;
 
     prices(overrides?: CallOverrides): Promise<string>;
 
@@ -1073,6 +1141,11 @@ export class GovernorTestable extends BaseContract {
     ): Promise<void>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1092,6 +1165,10 @@ export class GovernorTestable extends BaseContract {
 
     setBorrowRewardsPortion(
       portion: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setFirstRewardsPeriodToCurrentPeriod(
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1193,24 +1270,12 @@ export class GovernorTestable extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-    calculateCurrentDailyRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    calculateCurrentDailyRewardCountImpl(
-      rewardsPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculateRewardsForBootstrapPeriod(
-      bootsrapPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1247,6 +1312,10 @@ export class GovernorTestable extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<BigNumber>;
+
     hue(overrides?: CallOverrides): Promise<BigNumber>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1261,6 +1330,7 @@ export class GovernorTestable extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1291,7 +1361,15 @@ export class GovernorTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodRewards(overrides?: CallOverrides): Promise<BigNumber>;
 
     prices(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1305,6 +1383,11 @@ export class GovernorTestable extends BaseContract {
     ): Promise<BigNumber>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1324,6 +1407,10 @@ export class GovernorTestable extends BaseContract {
 
     setBorrowRewardsPortion(
       portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setFirstRewardsPeriodToCurrentPeriod(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1411,26 +1498,12 @@ export class GovernorTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    calculateCurrentDailyRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    calculateCurrentDailyRewardCountImpl(
-      rewardsPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    calculateRewardsForBootstrapPeriod(
-      bootsrapPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1469,6 +1542,12 @@ export class GovernorTestable extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    firstRewardsPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     hue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1483,6 +1562,7 @@ export class GovernorTestable extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1513,7 +1593,15 @@ export class GovernorTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    periodRewards(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1527,6 +1615,11 @@ export class GovernorTestable extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1546,6 +1639,10 @@ export class GovernorTestable extends BaseContract {
 
     setBorrowRewardsPortion(
       portion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFirstRewardsPeriodToCurrentPeriod(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

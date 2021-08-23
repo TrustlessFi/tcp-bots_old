@@ -139,15 +139,27 @@
         },
         {
           "indexed": false,
-          "internalType": "int256",
-          "name": "debtChange",
-          "type": "int256"
+          "internalType": "uint256",
+          "name": "debtIncrease",
+          "type": "uint256"
         },
         {
           "indexed": false,
-          "internalType": "int256",
-          "name": "collateralChange",
-          "type": "int256"
+          "internalType": "uint256",
+          "name": "debtDecrease",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "collateralIncrease",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "collateralDecrease",
+          "type": "uint256"
         }
       ],
       "name": "PositionAdjusted",

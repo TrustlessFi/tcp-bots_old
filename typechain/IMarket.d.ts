@@ -70,7 +70,7 @@ interface IMarketInterface extends ethers.utils.Interface {
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated64(string,uint64)": EventFragment;
     "ParameterUpdatedAddress(string,address)": EventFragment;
-    "PositionAdjusted(uint64,int256,int256)": EventFragment;
+    "PositionAdjusted(uint64,uint256,uint256,uint256,uint256)": EventFragment;
     "PositionCreated(address,uint64)": EventFragment;
     "PositionUpdated(uint256,uint64,uint256,uint256)": EventFragment;
     "RewardsDistributed(address,bool,uint256)": EventFragment;
@@ -273,14 +273,18 @@ export class IMarket extends BaseContract {
 
     PositionAdjusted(
       positionID?: BigNumberish | null,
-      debtChange?: null,
-      collateralChange?: null
+      debtIncrease?: null,
+      debtDecrease?: null,
+      collateralIncrease?: null,
+      collateralDecrease?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber],
       {
         positionID: BigNumber;
-        debtChange: BigNumber;
-        collateralChange: BigNumber;
+        debtIncrease: BigNumber;
+        debtDecrease: BigNumber;
+        collateralIncrease: BigNumber;
+        collateralDecrease: BigNumber;
       }
     >;
 

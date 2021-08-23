@@ -45,6 +45,7 @@ interface TDaoInterface extends ethers.utils.Interface {
     "mintVotingRewards(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
     "selfDelegate(address)": FunctionFragment;
+    "sendUnderlyingVotingRewards(address,uint256,address,uint256)": FunctionFragment;
     "setIncentiveContract(address)": FunctionFragment;
     "start()": FunctionFragment;
     "startPeriod()": FunctionFragment;
@@ -54,9 +55,10 @@ interface TDaoInterface extends ethers.utils.Interface {
     "timelock()": FunctionFragment;
     "tokenToID(address)": FunctionFragment;
     "totalIncentivesMinted()": FunctionFragment;
+    "underlyingTokenVoteRewardCount(address,uint256)": FunctionFragment;
     "unlockTokens(uint64)": FunctionFragment;
     "virtualCount(uint16)": FunctionFragment;
-    "voteInUnderlyingProtocol(address,uint256)": FunctionFragment;
+    "votingRewardsSafe()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -147,6 +149,10 @@ interface TDaoInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "sendUnderlyingVotingRewards",
+    values: [string, BigNumberish, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setIncentiveContract",
     values: [string]
   ): string;
@@ -171,6 +177,10 @@ interface TDaoInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "underlyingTokenVoteRewardCount",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "unlockTokens",
     values: [BigNumberish]
   ): string;
@@ -179,8 +189,8 @@ interface TDaoInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "voteInUnderlyingProtocol",
-    values: [string, BigNumberish]
+    functionFragment: "votingRewardsSafe",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -256,6 +266,10 @@ interface TDaoInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "sendUnderlyingVotingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setIncentiveContract",
     data: BytesLike
   ): Result;
@@ -280,6 +294,10 @@ interface TDaoInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "underlyingTokenVoteRewardCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "unlockTokens",
     data: BytesLike
   ): Result;
@@ -288,7 +306,7 @@ interface TDaoInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "voteInUnderlyingProtocol",
+    functionFragment: "votingRewardsSafe",
     data: BytesLike
   ): Result;
 
@@ -296,7 +314,6 @@ interface TDaoInterface extends ethers.utils.Interface {
     "IncentiveMinted(address,uint256)": EventFragment;
     "InflationAccrued(uint64,uint64)": EventFragment;
     "LiquidationIncentiveContractSet(address)": EventFragment;
-    "MetaGovernanceDecisionExecuted(address,uint256,bool)": EventFragment;
     "RewardsClaimed(uint64,address)": EventFragment;
     "TDaoStarted()": EventFragment;
     "TokenAdded(address)": EventFragment;
@@ -308,9 +325,6 @@ interface TDaoInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "InflationAccrued"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LiquidationIncentiveContractSet"
-  ): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "MetaGovernanceDecisionExecuted"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TDaoStarted"): EventFragment;
@@ -495,6 +509,14 @@ export class TDao extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    sendUnderlyingVotingRewards(
+      governorAlpha: string,
+      proposalID: BigNumberish,
+      voter: string,
+      votePortion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -518,6 +540,12 @@ export class TDao extends BaseContract {
 
     totalIncentivesMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    underlyingTokenVoteRewardCount(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, boolean] & { count: BigNumber; isSet: boolean }>;
+
     unlockTokens(
       positionNFTTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -528,11 +556,7 @@ export class TDao extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    voteInUnderlyingProtocol(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
+    votingRewardsSafe(overrides?: CallOverrides): Promise<[string]>;
   };
 
   accrueInflation(
@@ -661,6 +685,14 @@ export class TDao extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  sendUnderlyingVotingRewards(
+    governorAlpha: string,
+    proposalID: BigNumberish,
+    voter: string,
+    votePortion: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setIncentiveContract(
     _contract: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -684,6 +716,12 @@ export class TDao extends BaseContract {
 
   totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
+  underlyingTokenVoteRewardCount(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, boolean] & { count: BigNumber; isSet: boolean }>;
+
   unlockTokens(
     positionNFTTokenID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -694,11 +732,7 @@ export class TDao extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  voteInUnderlyingProtocol(
-    arg0: string,
-    arg1: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<void>;
+  votingRewardsSafe(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     accrueInflation(overrides?: CallOverrides): Promise<void>;
@@ -819,6 +853,14 @@ export class TDao extends BaseContract {
 
     selfDelegate(token: string, overrides?: CallOverrides): Promise<void>;
 
+    sendUnderlyingVotingRewards(
+      governorAlpha: string,
+      proposalID: BigNumberish,
+      voter: string,
+      votePortion: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: CallOverrides
@@ -840,6 +882,12 @@ export class TDao extends BaseContract {
 
     totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
+    underlyingTokenVoteRewardCount(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, boolean] & { count: BigNumber; isSet: boolean }>;
+
     unlockTokens(
       positionNFTTokenID: BigNumberish,
       overrides?: CallOverrides
@@ -850,11 +898,7 @@ export class TDao extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    voteInUnderlyingProtocol(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    votingRewardsSafe(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -877,15 +921,6 @@ export class TDao extends BaseContract {
     LiquidationIncentiveContractSet(
       _contract?: string | null
     ): TypedEventFilter<[string], { _contract: string }>;
-
-    MetaGovernanceDecisionExecuted(
-      governorAlpha?: string | null,
-      proposalID?: BigNumberish | null,
-      decision?: boolean | null
-    ): TypedEventFilter<
-      [string, BigNumber, boolean],
-      { governorAlpha: string; proposalID: BigNumber; decision: boolean }
-    >;
 
     RewardsClaimed(
       positionNFTTokenID?: BigNumberish | null,
@@ -1033,6 +1068,14 @@ export class TDao extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    sendUnderlyingVotingRewards(
+      governorAlpha: string,
+      proposalID: BigNumberish,
+      voter: string,
+      votePortion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1056,6 +1099,12 @@ export class TDao extends BaseContract {
 
     totalIncentivesMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
+    underlyingTokenVoteRewardCount(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     unlockTokens(
       positionNFTTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1066,11 +1115,7 @@ export class TDao extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    voteInUnderlyingProtocol(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    votingRewardsSafe(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1182,6 +1227,14 @@ export class TDao extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    sendUnderlyingVotingRewards(
+      governorAlpha: string,
+      proposalID: BigNumberish,
+      voter: string,
+      votePortion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1210,6 +1263,12 @@ export class TDao extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    underlyingTokenVoteRewardCount(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     unlockTokens(
       positionNFTTokenID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1220,10 +1279,6 @@ export class TDao extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    voteInUnderlyingProtocol(
-      arg0: string,
-      arg1: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    votingRewardsSafe(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

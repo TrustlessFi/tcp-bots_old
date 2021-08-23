@@ -27,7 +27,8 @@ interface IPricesInterface extends ethers.utils.Interface {
     "calculateTwappedPrice(address,bool)": FunctionFragment;
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
-    "initializePool(address,address)": FunctionFragment;
+    "initializePool(address)": FunctionFragment;
+    "initializeWethPool(address)": FunctionFragment;
     "isPoolInitialized(address)": FunctionFragment;
     "stop()": FunctionFragment;
     "systemObtainReferencePrice(address)": FunctionFragment;
@@ -66,7 +67,11 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializePool",
-    values: [string, string]
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializeWethPool",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "isPoolInitialized",
@@ -104,6 +109,10 @@ interface IPricesInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "initializePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializeWethPool",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -207,7 +216,11 @@ export class IPrices extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,7 +279,11 @@ export class IPrices extends BaseContract {
 
   initializePool(
     pool: string,
-    baseToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializeWethPool(
+    pool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -320,11 +337,9 @@ export class IPrices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    initializePool(
-      pool: string,
-      baseToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initializePool(pool: string, overrides?: CallOverrides): Promise<void>;
+
+    initializeWethPool(pool: string, overrides?: CallOverrides): Promise<void>;
 
     isPoolInitialized(
       pool: string,
@@ -391,7 +406,11 @@ export class IPrices extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -451,7 +470,11 @@ export class IPrices extends BaseContract {
 
     initializePool(
       pool: string,
-      baseToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializeWethPool(
+      pool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

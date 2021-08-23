@@ -188,14 +188,22 @@
           "internalType": "contract IUniswapV3Pool",
           "name": "pool",
           "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "baseToken",
-          "type": "address"
         }
       ],
       "name": "initializePool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IUniswapV3Pool",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
+      "name": "initializeWethPool",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

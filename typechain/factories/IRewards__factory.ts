@@ -18,56 +18,6 @@ const _abi = [
       },
       {
         indexed: true,
-        internalType: "uint256",
-        name: "nftTokenID",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
-      },
-    ],
-    name: "FeesCollected",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "nftTokenID",
-        type: "uint256",
-      },
-    ],
-    name: "InflationRewardsClaimed",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        indexed: true,
         internalType: "uint16",
         name: "poolID",
         type: "uint16",
@@ -154,16 +104,10 @@ const _abi = [
         type: "uint256",
       },
       {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount0",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount1",
-        type: "uint256",
+        indexed: true,
+        internalType: "address",
+        name: "liquidator",
+        type: "address",
       },
     ],
     name: "LiquidityPositionLiquidated",
@@ -350,6 +294,37 @@ const _abi = [
       },
     ],
     name: "RewardsAccrued",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "nftTokenID",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount0",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount1",
+        type: "uint256",
+      },
+    ],
+    name: "RewardsClaimed",
     type: "event",
   },
   {

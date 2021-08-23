@@ -25,8 +25,8 @@ interface GovernorInterface extends ethers.utils.Interface {
     "accounting()": FunctionFragment;
     "auctions()": FunctionFragment;
     "borrowRewardsPortion()": FunctionFragment;
-    "currentDailyDebtRewardCount()": FunctionFragment;
-    "currentDailyLiquidityRewardCount()": FunctionFragment;
+    "calculateCurrentDailyDebtRewardCount()": FunctionFragment;
+    "calculateCurrentDailyLiquidityRewardCount()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "currentPhase()": FunctionFragment;
     "deployer()": FunctionFragment;
@@ -37,9 +37,11 @@ interface GovernorInterface extends ethers.utils.Interface {
     "executeEmergencyShutdown()": FunctionFragment;
     "executeShutdown()": FunctionFragment;
     "firstPeriod()": FunctionFragment;
+    "firstRewardsPeriod()": FunctionFragment;
+    "governorAlpha()": FunctionFragment;
     "hue()": FunctionFragment;
     "huePositionNFT()": FunctionFragment;
-    "initialize(address,address,address,address,address,address,address,address,address)": FunctionFragment;
+    "initialize(address,address,address,address,address,address,address,address,address,address)": FunctionFragment;
     "isShutdown()": FunctionFragment;
     "lendHue()": FunctionFragment;
     "liquidations()": FunctionFragment;
@@ -48,12 +50,15 @@ interface GovernorInterface extends ethers.utils.Interface {
     "mintCapsUnset()": FunctionFragment;
     "mintIncentive(address,uint256)": FunctionFragment;
     "mintTCP(address,uint256)": FunctionFragment;
+    "mintVotingRewards(address,uint256)": FunctionFragment;
     "periodLength()": FunctionFragment;
+    "periodRewards()": FunctionFragment;
     "prices()": FunctionFragment;
     "protocolLock()": FunctionFragment;
     "rates()": FunctionFragment;
     "requireDebtServicesAccess(address)": FunctionFragment;
     "requireHueReservesBurnAccess(address)": FunctionFragment;
+    "requireInitializePoolAccess(address)": FunctionFragment;
     "requireUpdatePositionAccess(address)": FunctionFragment;
     "requireValidAction(address,string)": FunctionFragment;
     "rewards()": FunctionFragment;
@@ -91,11 +96,11 @@ interface GovernorInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "currentDailyDebtRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -135,6 +140,14 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "firstRewardsPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "governorAlpha",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "hue", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "huePositionNFT",
@@ -143,6 +156,7 @@ interface GovernorInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
+      string,
       string,
       string,
       string,
@@ -181,7 +195,15 @@ interface GovernorInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "mintVotingRewards",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "periodLength",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "periodRewards",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "prices", values?: undefined): string;
@@ -196,6 +218,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "requireHueReservesBurnAccess",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requireInitializePoolAccess",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -285,11 +311,11 @@ interface GovernorInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyDebtRewardCount",
+    functionFragment: "calculateCurrentDailyDebtRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "currentDailyLiquidityRewardCount",
+    functionFragment: "calculateCurrentDailyLiquidityRewardCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -326,6 +352,14 @@ interface GovernorInterface extends ethers.utils.Interface {
     functionFragment: "firstPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "firstRewardsPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "governorAlpha",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "hue", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "huePositionNFT",
@@ -353,7 +387,15 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mintTCP", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "mintVotingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "periodLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "periodRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "prices", data: BytesLike): Result;
@@ -368,6 +410,10 @@ interface GovernorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "requireHueReservesBurnAccess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requireInitializePoolAccess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -512,13 +558,13 @@ export class Governor extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     currentPeriod(
       overrides?: CallOverrides
@@ -556,6 +602,10 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<[string]>;
+
     hue(overrides?: CallOverrides): Promise<[string]>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<[string]>;
@@ -570,6 +620,7 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -600,7 +651,22 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    periodRewards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & {
+        periodRewards: BigNumber;
+        currentCalculatedPeriod: number;
+      }
+    >;
 
     prices(overrides?: CallOverrides): Promise<[string]>;
 
@@ -614,6 +680,11 @@ export class Governor extends BaseContract {
     ): Promise<[void]>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<[void]>;
@@ -715,11 +786,13 @@ export class Governor extends BaseContract {
 
   borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-  currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+  calculateCurrentDailyDebtRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  currentDailyLiquidityRewardCount(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  calculateCurrentDailyLiquidityRewardCount(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -753,6 +826,10 @@ export class Governor extends BaseContract {
 
   firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+  firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  governorAlpha(overrides?: CallOverrides): Promise<string>;
+
   hue(overrides?: CallOverrides): Promise<string>;
 
   huePositionNFT(overrides?: CallOverrides): Promise<string>;
@@ -767,6 +844,7 @@ export class Governor extends BaseContract {
     _protocolLock: string,
     _rewards: string,
     _settlement: string,
+    _governorAlpha: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -797,7 +875,22 @@ export class Governor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  mintVotingRewards(
+    to: string,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+  periodRewards(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number] & {
+      periodRewards: BigNumber;
+      currentCalculatedPeriod: number;
+    }
+  >;
 
   prices(overrides?: CallOverrides): Promise<string>;
 
@@ -811,6 +904,11 @@ export class Governor extends BaseContract {
   ): Promise<void>;
 
   requireHueReservesBurnAccess(
+    caller: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  requireInitializePoolAccess(
     caller: string,
     overrides?: CallOverrides
   ): Promise<void>;
@@ -912,9 +1010,11 @@ export class Governor extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    currentDailyLiquidityRewardCount(
+    calculateCurrentDailyLiquidityRewardCount(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -946,6 +1046,10 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<string>;
+
     hue(overrides?: CallOverrides): Promise<string>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<string>;
@@ -960,6 +1064,7 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -990,7 +1095,22 @@ export class Governor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodRewards(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & {
+        periodRewards: BigNumber;
+        currentCalculatedPeriod: number;
+      }
+    >;
 
     prices(overrides?: CallOverrides): Promise<string>;
 
@@ -1004,6 +1124,11 @@ export class Governor extends BaseContract {
     ): Promise<void>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1124,10 +1249,12 @@ export class Governor extends BaseContract {
 
     borrowRewardsPortion(overrides?: CallOverrides): Promise<BigNumber>;
 
-    currentDailyDebtRewardCount(overrides?: CallOverrides): Promise<BigNumber>;
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1164,6 +1291,10 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
+    firstRewardsPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<BigNumber>;
+
     hue(overrides?: CallOverrides): Promise<BigNumber>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1178,6 +1309,7 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1208,7 +1340,15 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    periodRewards(overrides?: CallOverrides): Promise<BigNumber>;
 
     prices(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1222,6 +1362,11 @@ export class Governor extends BaseContract {
     ): Promise<BigNumber>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1328,12 +1473,12 @@ export class Governor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    currentDailyDebtRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyDebtRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    currentDailyLiquidityRewardCount(
-      overrides?: CallOverrides
+    calculateCurrentDailyLiquidityRewardCount(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     currentPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1372,6 +1517,12 @@ export class Governor extends BaseContract {
 
     firstPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    firstRewardsPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    governorAlpha(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     hue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     huePositionNFT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1386,6 +1537,7 @@ export class Governor extends BaseContract {
       _protocolLock: string,
       _rewards: string,
       _settlement: string,
+      _governorAlpha: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1416,7 +1568,15 @@ export class Governor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    mintVotingRewards(
+      to: string,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     periodLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    periodRewards(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     prices(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1430,6 +1590,11 @@ export class Governor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     requireHueReservesBurnAccess(
+      caller: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    requireInitializePoolAccess(
       caller: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

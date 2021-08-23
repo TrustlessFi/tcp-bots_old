@@ -26,7 +26,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     "addIncentivePool(address,uint64)": FunctionFragment;
     "calculateUpdatedLiquidityPosition(tuple,tuple,uint64)": FunctionFragment;
     "claimRewards(uint256,uint32)": FunctionFragment;
-    "collectPositionFees(tuple)": FunctionFragment;
     "countPools()": FunctionFragment;
     "createLiquidityPosition(tuple,uint32)": FunctionFragment;
     "currentPeriod()": FunctionFragment;
@@ -41,10 +40,9 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     "lastPeriodGlobalRewardsAccrued()": FunctionFragment;
     "liquidateOutofRangePositions(address,uint256[])": FunctionFragment;
     "liquidationPenalty()": FunctionFragment;
-    "maxLiquidityDecreasePerPeriod()": FunctionFragment;
+    "maxCollateralLiquidityDecreasePerPeriod()": FunctionFragment;
+    "minCollateralLiquidityByPeriod(address)": FunctionFragment;
     "minHueCountPerPosition()": FunctionFragment;
-    "minLiquidityByPeriod(address)": FunctionFragment;
-    "minLiquidityProvideDuration()": FunctionFragment;
     "periodLength()": FunctionFragment;
     "poolConfigForPoolID(uint16)": FunctionFragment;
     "poolIDForPool(address)": FunctionFragment;
@@ -52,9 +50,8 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     "removeLiquidityPosition(tuple)": FunctionFragment;
     "requireAuthorized(bool)": FunctionFragment;
     "setLiquidationPenalty(uint64)": FunctionFragment;
-    "setMaxLiquidityDecreasePerPeriod(uint64)": FunctionFragment;
+    "setMaxCollateralLiquidityDecreasePerPeriod(uint64)": FunctionFragment;
     "setMinHueCountPerPosition(uint128)": FunctionFragment;
-    "setMinLiquidityProvideDuration(uint64)": FunctionFragment;
     "setTwapDuration(uint32)": FunctionFragment;
     "stop()": FunctionFragment;
     "stopped()": FunctionFragment;
@@ -95,17 +92,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "claimRewards",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "collectPositionFees",
-    values: [
-      {
-        tokenId: BigNumberish;
-        recipient: string;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
-      }
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "countPools",
@@ -205,19 +191,15 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "maxLiquidityDecreasePerPeriod",
+    functionFragment: "maxCollateralLiquidityDecreasePerPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "minHueCountPerPosition",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minLiquidityByPeriod",
+    functionFragment: "minCollateralLiquidityByPeriod",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "minLiquidityProvideDuration",
+    functionFragment: "minHueCountPerPosition",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -257,15 +239,11 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMaxLiquidityDecreasePerPeriod",
+    functionFragment: "setMaxCollateralLiquidityDecreasePerPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinHueCountPerPosition",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinLiquidityProvideDuration",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -301,10 +279,6 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "claimRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "collectPositionFees",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "countPools", data: BytesLike): Result;
@@ -352,19 +326,15 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "maxLiquidityDecreasePerPeriod",
+    functionFragment: "maxCollateralLiquidityDecreasePerPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "minCollateralLiquidityByPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "minHueCountPerPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minLiquidityByPeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minLiquidityProvideDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -396,15 +366,11 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMaxLiquidityDecreasePerPeriod",
+    functionFragment: "setMaxCollateralLiquidityDecreasePerPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setMinHueCountPerPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinLiquidityProvideDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -427,13 +393,11 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "FeesCollected(address,uint256,uint256,uint256)": EventFragment;
-    "InflationRewardsClaimed(address,uint256)": EventFragment;
     "Initialized(address)": EventFragment;
     "LiquidityPositionCreated(address,uint16,uint256,int24,int24,uint128)": EventFragment;
     "LiquidityPositionDecreased(uint256,uint256,uint256)": EventFragment;
     "LiquidityPositionIncreased(uint256,uint128)": EventFragment;
-    "LiquidityPositionLiquidated(uint256,uint256,uint256)": EventFragment;
+    "LiquidityPositionLiquidated(uint256,address)": EventFragment;
     "LiquidityPositionRemoved(uint256,uint256,uint256)": EventFragment;
     "ParameterUpdated(string,uint256)": EventFragment;
     "ParameterUpdated128(string,uint256)": EventFragment;
@@ -443,12 +407,11 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
     "PoolAdded(address,uint16,uint64)": EventFragment;
     "PoolIncentiveUpdated(uint16,uint64)": EventFragment;
     "RewardsAccrued(uint256,uint64)": EventFragment;
+    "RewardsClaimed(address,uint256,uint256,uint256)": EventFragment;
     "RewardsDistributed(address,bool,uint256)": EventFragment;
     "Stopped()": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "FeesCollected"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "InflationRewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityPositionDecreased"): EventFragment;
@@ -465,6 +428,7 @@ interface RewardsTestableInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PoolAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PoolIncentiveUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsAccrued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsDistributed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Stopped"): EventFragment;
 }
@@ -609,16 +573,6 @@ export class RewardsTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    collectPositionFees(
-      params: {
-        tokenId: BigNumberish;
-        recipient: string;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
-      },
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     countPools(overrides?: CallOverrides): Promise<[number]>;
 
     createLiquidityPosition(
@@ -716,22 +670,18 @@ export class RewardsTestable extends BaseContract {
 
     liquidationPenalty(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    maxLiquidityDecreasePerPeriod(
+    maxCollateralLiquidityDecreasePerPeriod(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    minHueCountPerPosition(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    minLiquidityByPeriod(
+    minCollateralLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
     >;
 
-    minLiquidityProvideDuration(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    minHueCountPerPosition(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     periodLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -770,17 +720,12 @@ export class RewardsTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMaxLiquidityDecreasePerPeriod(
+    setMaxCollateralLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setMinHueCountPerPosition(
-      min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMinLiquidityProvideDuration(
       min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -903,16 +848,6 @@ export class RewardsTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  collectPositionFees(
-    params: {
-      tokenId: BigNumberish;
-      recipient: string;
-      amount0Max: BigNumberish;
-      amount1Max: BigNumberish;
-    },
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   countPools(overrides?: CallOverrides): Promise<number>;
 
   createLiquidityPosition(
@@ -1006,18 +941,18 @@ export class RewardsTestable extends BaseContract {
 
   liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
 
-  maxLiquidityDecreasePerPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+  maxCollateralLiquidityDecreasePerPeriod(
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minLiquidityByPeriod(
+  minCollateralLiquidityByPeriod(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
   >;
 
-  minLiquidityProvideDuration(overrides?: CallOverrides): Promise<BigNumber>;
+  minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
   periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1054,17 +989,12 @@ export class RewardsTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMaxLiquidityDecreasePerPeriod(
+  setMaxCollateralLiquidityDecreasePerPeriod(
     decreasePortion: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setMinHueCountPerPosition(
-    min: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMinLiquidityProvideDuration(
     min: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1183,17 +1113,9 @@ export class RewardsTestable extends BaseContract {
       nftTokenID: BigNumberish,
       ui: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    collectPositionFees(
-      params: {
-        tokenId: BigNumberish;
-        recipient: string;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
-      },
-      overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<
+      [BigNumber, BigNumber] & { amount0: BigNumber; amount1: BigNumber }
+    >;
 
     countPools(overrides?: CallOverrides): Promise<number>;
 
@@ -1291,20 +1213,18 @@ export class RewardsTestable extends BaseContract {
 
     liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxLiquidityDecreasePerPeriod(
+    maxCollateralLiquidityDecreasePerPeriod(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minLiquidityByPeriod(
+    minCollateralLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber] & { period: BigNumber; minLiquidity: BigNumber }
     >;
 
-    minLiquidityProvideDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1345,17 +1265,12 @@ export class RewardsTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMaxLiquidityDecreasePerPeriod(
+    setMaxCollateralLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setMinHueCountPerPosition(
-      min: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinLiquidityProvideDuration(
       min: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1381,29 +1296,6 @@ export class RewardsTestable extends BaseContract {
   };
 
   filters: {
-    FeesCollected(
-      owner?: string | null,
-      nftTokenID?: BigNumberish | null,
-      amount0?: null,
-      amount1?: null
-    ): TypedEventFilter<
-      [string, BigNumber, BigNumber, BigNumber],
-      {
-        owner: string;
-        nftTokenID: BigNumber;
-        amount0: BigNumber;
-        amount1: BigNumber;
-      }
-    >;
-
-    InflationRewardsClaimed(
-      owner?: string | null,
-      nftTokenID?: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; nftTokenID: BigNumber }
-    >;
-
     Initialized(
       governor?: string | null
     ): TypedEventFilter<[string], { governor: string }>;
@@ -1446,11 +1338,10 @@ export class RewardsTestable extends BaseContract {
 
     LiquidityPositionLiquidated(
       nftID?: BigNumberish | null,
-      amount0?: null,
-      amount1?: null
+      liquidator?: string | null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber],
-      { nftID: BigNumber; amount0: BigNumber; amount1: BigNumber }
+      [BigNumber, string],
+      { nftID: BigNumber; liquidator: string }
     >;
 
     LiquidityPositionRemoved(
@@ -1524,6 +1415,21 @@ export class RewardsTestable extends BaseContract {
       { count: BigNumber; periods: BigNumber }
     >;
 
+    RewardsClaimed(
+      caller?: string | null,
+      nftTokenID?: BigNumberish | null,
+      amount0?: null,
+      amount1?: null
+    ): TypedEventFilter<
+      [string, BigNumber, BigNumber, BigNumber],
+      {
+        caller: string;
+        nftTokenID: BigNumber;
+        amount0: BigNumber;
+        amount1: BigNumber;
+      }
+    >;
+
     RewardsDistributed(
       account?: string | null,
       isKickback?: boolean | null,
@@ -1570,16 +1476,6 @@ export class RewardsTestable extends BaseContract {
     claimRewards(
       nftTokenID: BigNumberish,
       ui: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    collectPositionFees(
-      params: {
-        tokenId: BigNumberish;
-        recipient: string;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
-      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1678,18 +1574,16 @@ export class RewardsTestable extends BaseContract {
 
     liquidationPenalty(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxLiquidityDecreasePerPeriod(
+    maxCollateralLiquidityDecreasePerPeriod(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minLiquidityByPeriod(
+    minCollateralLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    minLiquidityProvideDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    minHueCountPerPosition(overrides?: CallOverrides): Promise<BigNumber>;
 
     periodLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1726,17 +1620,12 @@ export class RewardsTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMaxLiquidityDecreasePerPeriod(
+    setMaxCollateralLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setMinHueCountPerPosition(
-      min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMinLiquidityProvideDuration(
       min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1797,16 +1686,6 @@ export class RewardsTestable extends BaseContract {
     claimRewards(
       nftTokenID: BigNumberish,
       ui: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectPositionFees(
-      params: {
-        tokenId: BigNumberish;
-        recipient: string;
-        amount0Max: BigNumberish;
-        amount1Max: BigNumberish;
-      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1907,20 +1786,16 @@ export class RewardsTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    maxLiquidityDecreasePerPeriod(
+    maxCollateralLiquidityDecreasePerPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minHueCountPerPosition(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minLiquidityByPeriod(
+    minCollateralLiquidityByPeriod(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    minLiquidityProvideDuration(
+    minHueCountPerPosition(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1962,17 +1837,12 @@ export class RewardsTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMaxLiquidityDecreasePerPeriod(
+    setMaxCollateralLiquidityDecreasePerPeriod(
       decreasePortion: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setMinHueCountPerPosition(
-      min: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMinLiquidityProvideDuration(
       min: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
