@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: UNLICENSED
 
 import { ManagedBot } from "./utils/ManagedBot";
-import { minutes } from "./utils/library";
 import { BigNumber } from "ethers";
-
-const WAIT_DURATION = minutes(60)
 
 export class DiscoverLiquidationsBot extends ManagedBot {
   name = "🤑 Discover Liquidations";
@@ -30,7 +27,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       await this.genAreRewardsAvailable(),
       await this.protocol!.prices.calculateInstantCollateralPrice(this.twapDuration),
     ])
-    if (!rewardsAreAvailable) return WAIT_DURATION
+    if (!rewardsAreAvailable) return this.twapDuration / 2
 
     let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(price)
 
@@ -38,7 +35,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
       await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(undercollateralizedPositions)
     }
 
-    return WAIT_DURATION
+    return this.twapDuration / 2
   }
 
   // =================================================================
@@ -64,52 +61,48 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   async genUndercollatPositionsForPrice(price: BigNumber): Promise<Array<BigNumber>> {
     let accounting = this.protocol!.accounting;
 
-    let priceMin = price.mul(60).div(100)
-    let priceMax = price.mul(140).div(100)
+    const lowestTick = await accounting.lowestTick()
+    const minimumTick = await accounting.getTick(this.collateralizationRequirement, price);
 
-    let [
-      minTick,
-      maxTick,
-    ] = await Promise.all([
-      await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMin), this.ONE),
-      await accounting.getTick(this.ONE.mul(this.collateralizationRequirement).div(priceMax), this.ONE),
-    ])
-
-    if (maxTick < minTick) {
-      let tempTick = maxTick
-      maxTick = minTick
-      minTick = tempTick
-    }
+    if (minimumTick < lowestTick) return []
 
     let positionsForTickPromises: Array<Promise<Array<BigNumber>>> = [];
-    for (let tick = minTick; tick <= maxTick; tick += this.tickSpacing) positionsForTickPromises.push(accounting.positionsForTick(tick))
-
-    let results = await Promise.all(positionsForTickPromises);
-
-    let positions: Array<BigNumber> = [];
-    results.map(result => positions.push.apply(positions, result))
-
-    let collateralizations: Array<BigNumber> = await this.protocol!.protocolDataAggregator.positionsCollateralization(positions);
-
-    // Check the positions that are undercollateralized given the price.
-    let minCollateralization: BigNumber = this.ONE.mul(this.collateralizationRequirement).div(price)
-    let undercollatPositions: Array<BigNumber> = [];
-    for (let i = 0; i < collateralizations.length; i++) {
-      if (collateralizations[i] < minCollateralization) undercollatPositions.push(positions[i]);
+    let tick
+    for (tick = lowestTick; tick < minimumTick; tick += this.tickSpacing) {
+      positionsForTickPromises.push(accounting.positionsForTick(tick))
     }
 
-    // prioritize larger positions first
+    let undercollateralizedPositions: Array<BigNumber> = [];
+    // TODO use multicall
+    (await Promise.all(positionsForTickPromises)).map(
+      result => undercollateralizedPositions.push.apply(undercollateralizedPositions, result))
+
+    const borderlinePositions = await accounting.positionsForTick(tick + this.tickSpacing)
+
+    const borderlineCollateralizations: Array<BigNumber> =
+      await this.protocol!.protocolDataAggregator.positionsCollateralization(borderlinePositions)
+
+    // Check the positions that are undercollateralized given the price.
+    let minCollateralization: BigNumber = this.collateralizationRequirement.mul(this.ONE).div(price)
+    for (let i = 0; i < borderlineCollateralizations.length; i++) {
+      if (borderlineCollateralizations[i] < minCollateralization) {
+        undercollateralizedPositions.push(borderlinePositions[i])
+      }
+    }
+
+    // prioritize larger positions first (TODO multicall)
     let basicPositionInfo = await Promise.all(
-      undercollatPositions.map(undercollatPosition => accounting.getBasicPositionInfo(undercollatPosition))
+      undercollateralizedPositions.map(undercollateralizedPosition => accounting.getBasicPositionInfo(undercollateralizedPosition))
     )
+
     let positionData = []
     for (let i = 0; i < basicPositionInfo.length; i++) {
-      positionData.push({positionID: undercollatPositions[i], debt: basicPositionInfo[i].debtCount})
+      positionData.push({positionID: undercollateralizedPositions[i], debt: basicPositionInfo[i].debtCount})
     }
     positionData.sort((position0, position1) => position0.debt.sub(position1.debt).lt(0)
       ? (this.smallestFirst ? -1 : 1)
       : (this.smallestFirst ? 1 : -1))
 
-    return positionData.map(position => position.positionID);
+    return positionData.map(position => position.positionID)
   }
 }
