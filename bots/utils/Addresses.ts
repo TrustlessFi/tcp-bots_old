@@ -21,7 +21,6 @@ export const getDeployerAddress = (_network = ''): string => {
 
 export type seedAddressesType = {
   tcpGovernorAlpha: string,
-  tDaoGovernorAlpha: string,
   protocolDataAggregator: string,
 }
 
@@ -33,7 +32,6 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
     case 'rinkeby':
       return {
         tcpGovernorAlpha: '0x974fc7052Fa0faf573b6fC1c0FacC0ED0A69c075',
-        tDaoGovernorAlpha: '0x294f91d5110FbeBa208F1D0F1cB09338ee21108B',
         protocolDataAggregator: 'ADD_ADDRESS',
       }
     case 'hardhat':
@@ -42,7 +40,6 @@ export const getSeedAddresses = (_network = ''): seedAddressesType => {
     case 'localDeployment':
       return {
         tcpGovernorAlpha: '0x940392f0F9053e33eFDa21f31108F3A6d3c3191C',
-        tDaoGovernorAlpha: '0x176304D8f758894AC782fDBFDC296e6205Bc1f56',
         protocolDataAggregator: '0x4B41f098a2e2d2d88aeC6112583A4C119B07e5f1',
       }
     default:
