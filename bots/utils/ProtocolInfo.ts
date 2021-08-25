@@ -54,7 +54,7 @@ import {
   UniswapV3Pool,
 } from "../../typechain/";
 
-export type deployedTCP = {
+export type deployedTcp = {
   accounting: Accounting
   auctions: Auctions
   tcp: Tcp
@@ -99,7 +99,7 @@ export const getDeployedProtocol = async(
   externalAddresses: null | externalAddressesType = null,
   seedAddresses: null | seedAddressesType = null,
   deployerAddress: null | string = null,
-): Promise<deployedTCP> => {
+): Promise<deployedTcp> => {
   if (externalAddresses === null) externalAddresses = getExternalAddresses()
   if (seedAddresses === null) seedAddresses = getSeedAddresses()
   if (deployerAddress === null) deployerAddress = getDeployerAddress()
