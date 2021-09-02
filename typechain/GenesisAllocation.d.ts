@@ -26,16 +26,25 @@ interface GenesisAllocationInterface extends ethers.utils.Interface {
     "authenticator()": FunctionFragment;
     "canRemoveTokens()": FunctionFragment;
     "chainID()": FunctionFragment;
-    "claimedTokens(uint8,bytes32,bytes32)": FunctionFragment;
+    "claimAllocation(tuple,uint8,uint128)": FunctionFragment;
+    "claimedSig(address,uint8,bytes32,bytes32)": FunctionFragment;
     "dao()": FunctionFragment;
     "deadline()": FunctionFragment;
-    "extendDeadline(uint40)": FunctionFragment;
-    "getMessage(address,uint256)": FunctionFragment;
+    "extendDeadline(uint64)": FunctionFragment;
+    "getMessage(address,uint8,uint128)": FunctionFragment;
+    "getTokens(uint128)": FunctionFragment;
     "guardian()": FunctionFragment;
+    "lockPositions(address)": FunctionFragment;
+    "lockTokensIntoDao(uint128,uint8)": FunctionFragment;
+    "minAverageYearsLocked()": FunctionFragment;
+    "pendingGuardian()": FunctionFragment;
+    "recieveGuardianship()": FunctionFragment;
     "removeTokens(address,uint256)": FunctionFragment;
-    "retreiveTokens(tuple,uint256,uint256,uint8)": FunctionFragment;
+    "setDao(address)": FunctionFragment;
+    "startTime()": FunctionFragment;
     "token()": FunctionFragment;
     "tokenMinter()": FunctionFragment;
+    "transferGuardianship(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
@@ -53,8 +62,16 @@ interface GenesisAllocationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "chainID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "claimedTokens",
-    values: [BigNumberish, BytesLike, BytesLike]
+    functionFragment: "claimAllocation",
+    values: [
+      { v: BigNumberish; r: BytesLike; s: BytesLike },
+      BigNumberish,
+      BigNumberish
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimedSig",
+    values: [string, BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "dao", values?: undefined): string;
   encodeFunctionData(functionFragment: "deadline", values?: undefined): string;
@@ -64,26 +81,47 @@ interface GenesisAllocationInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMessage",
-    values: [string, BigNumberish]
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokens",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "guardian", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "lockPositions",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "lockTokensIntoDao",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "minAverageYearsLocked",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "pendingGuardian",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recieveGuardianship",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "removeTokens",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "retreiveTokens",
-    values: [
-      { v: BigNumberish; r: BytesLike; s: BytesLike },
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
+  encodeFunctionData(functionFragment: "setDao", values: [string]): string;
+  encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenMinter",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferGuardianship",
+    values: [string]
   ): string;
 
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
@@ -101,9 +139,10 @@ interface GenesisAllocationInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "chainID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "claimedTokens",
+    functionFragment: "claimAllocation",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "claimedSig", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "dao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deadline", data: BytesLike): Result;
   decodeFunctionResult(
@@ -111,30 +150,61 @@ interface GenesisAllocationInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getMessage", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getTokens", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "guardian", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "lockPositions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "lockTokensIntoDao",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "minAverageYearsLocked",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingGuardian",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "recieveGuardianship",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "removeTokens",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "retreiveTokens",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "setDao", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenMinter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferGuardianship",
+    data: BytesLike
+  ): Result;
 
   events: {
     "DeadlineSet(uint64)": EventFragment;
-    "PositionCreated(address,uint8,uint256)": EventFragment;
-    "TokensExtracted(address,uint256)": EventFragment;
+    "IncentiveDistributed(address,uint256)": EventFragment;
+    "LockPositionIncreased(address,uint128)": EventFragment;
+    "NewGuardian(address)": EventFragment;
+    "SignatureProcessed(address,uint128)": EventFragment;
+    "TokensLocked(address,uint8,uint256)": EventFragment;
+    "TokensRemoved(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DeadlineSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PositionCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokensExtracted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncentiveDistributed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LockPositionIncreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewGuardian"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SignatureProcessed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensLocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TokensRemoved"): EventFragment;
 }
 
 export class GenesisAllocation extends BaseContract {
@@ -195,12 +265,20 @@ export class GenesisAllocation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { _chainID: BigNumber }>;
 
-    claimedTokens(
-      arg0: BigNumberish,
-      arg1: BytesLike,
+    claimAllocation(
+      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      roundID: BigNumberish,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    claimedSig(
+      arg0: string,
+      arg1: BigNumberish,
       arg2: BytesLike,
+      arg3: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
     dao(overrides?: CallOverrides): Promise<[string]>;
 
@@ -213,11 +291,42 @@ export class GenesisAllocation extends BaseContract {
 
     getMessage(
       userAddress: string,
+      roundID: BigNumberish,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getTokens(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     guardian(overrides?: CallOverrides): Promise<[string]>;
+
+    lockPositions(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        totalAllocation: BigNumber;
+        tokensAllocated: BigNumber;
+        cumulativeTokensAllocatedxLockYears: BigNumber;
+      }
+    >;
+
+    lockTokensIntoDao(
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<[string]>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     removeTokens(
       dest: string,
@@ -225,17 +334,21 @@ export class GenesisAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    retreiveTokens(
-      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      totalGrantCount: BigNumberish,
-      countToAllocate: BigNumberish,
-      lockDurationMonths: BigNumberish,
+    setDao(
+      _dao: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
 
     tokenMinter(overrides?: CallOverrides): Promise<[string]>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   NAME(overrides?: CallOverrides): Promise<string>;
@@ -250,12 +363,20 @@ export class GenesisAllocation extends BaseContract {
 
   chainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  claimedTokens(
-    arg0: BigNumberish,
-    arg1: BytesLike,
+  claimAllocation(
+    auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
+    roundID: BigNumberish,
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  claimedSig(
+    arg0: string,
+    arg1: BigNumberish,
     arg2: BytesLike,
+    arg3: BytesLike,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
   dao(overrides?: CallOverrides): Promise<string>;
 
@@ -268,11 +389,42 @@ export class GenesisAllocation extends BaseContract {
 
   getMessage(
     userAddress: string,
+    roundID: BigNumberish,
     count: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getTokens(
+    count: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   guardian(overrides?: CallOverrides): Promise<string>;
+
+  lockPositions(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      totalAllocation: BigNumber;
+      tokensAllocated: BigNumber;
+      cumulativeTokensAllocatedxLockYears: BigNumber;
+    }
+  >;
+
+  lockTokensIntoDao(
+    count: BigNumberish,
+    lockDurationMonths: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+  pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+  recieveGuardianship(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   removeTokens(
     dest: string,
@@ -280,17 +432,21 @@ export class GenesisAllocation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  retreiveTokens(
-    auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
-    totalGrantCount: BigNumberish,
-    countToAllocate: BigNumberish,
-    lockDurationMonths: BigNumberish,
+  setDao(
+    _dao: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   token(overrides?: CallOverrides): Promise<string>;
 
   tokenMinter(overrides?: CallOverrides): Promise<string>;
+
+  transferGuardianship(
+    newGuardian: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     NAME(overrides?: CallOverrides): Promise<string>;
@@ -303,12 +459,20 @@ export class GenesisAllocation extends BaseContract {
 
     chainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    claimedTokens(
-      arg0: BigNumberish,
-      arg1: BytesLike,
-      arg2: BytesLike,
+    claimAllocation(
+      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      roundID: BigNumberish,
+      count: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
+
+    claimedSig(
+      arg0: string,
+      arg1: BigNumberish,
+      arg2: BytesLike,
+      arg3: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     dao(overrides?: CallOverrides): Promise<string>;
 
@@ -321,11 +485,37 @@ export class GenesisAllocation extends BaseContract {
 
     getMessage(
       userAddress: string,
+      roundID: BigNumberish,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getTokens(count: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
     guardian(overrides?: CallOverrides): Promise<string>;
+
+    lockPositions(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        totalAllocation: BigNumber;
+        tokensAllocated: BigNumber;
+        cumulativeTokensAllocatedxLockYears: BigNumber;
+      }
+    >;
+
+    lockTokensIntoDao(
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+    recieveGuardianship(overrides?: CallOverrides): Promise<void>;
 
     removeTokens(
       dest: string,
@@ -333,17 +523,18 @@ export class GenesisAllocation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    retreiveTokens(
-      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      totalGrantCount: BigNumberish,
-      countToAllocate: BigNumberish,
-      lockDurationMonths: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    setDao(_dao: string, overrides?: CallOverrides): Promise<void>;
+
+    startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<string>;
 
     tokenMinter(overrides?: CallOverrides): Promise<string>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -351,7 +542,35 @@ export class GenesisAllocation extends BaseContract {
       deadline?: null
     ): TypedEventFilter<[BigNumber], { deadline: BigNumber }>;
 
-    PositionCreated(
+    IncentiveDistributed(
+      dest?: string | null,
+      count?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { dest: string; count: BigNumber }
+    >;
+
+    LockPositionIncreased(
+      receiver?: string | null,
+      count?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { receiver: string; count: BigNumber }
+    >;
+
+    NewGuardian(
+      newGuardian?: string | null
+    ): TypedEventFilter<[string], { newGuardian: string }>;
+
+    SignatureProcessed(
+      receiver?: string | null,
+      count?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { receiver: string; count: BigNumber }
+    >;
+
+    TokensLocked(
       receiver?: string | null,
       lockDurationMonths?: BigNumberish | null,
       count?: null
@@ -360,7 +579,7 @@ export class GenesisAllocation extends BaseContract {
       { receiver: string; lockDurationMonths: number; count: BigNumber }
     >;
 
-    TokensExtracted(
+    TokensRemoved(
       receiver?: string | null,
       count?: null
     ): TypedEventFilter<
@@ -382,10 +601,18 @@ export class GenesisAllocation extends BaseContract {
 
     chainID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    claimedTokens(
-      arg0: BigNumberish,
-      arg1: BytesLike,
+    claimAllocation(
+      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      roundID: BigNumberish,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    claimedSig(
+      arg0: string,
+      arg1: BigNumberish,
       arg2: BytesLike,
+      arg3: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -400,11 +627,33 @@ export class GenesisAllocation extends BaseContract {
 
     getMessage(
       userAddress: string,
+      roundID: BigNumberish,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokens(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     guardian(overrides?: CallOverrides): Promise<BigNumber>;
+
+    lockPositions(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    lockTokensIntoDao(
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<BigNumber>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     removeTokens(
       dest: string,
@@ -412,17 +661,21 @@ export class GenesisAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    retreiveTokens(
-      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      totalGrantCount: BigNumberish,
-      countToAllocate: BigNumberish,
-      lockDurationMonths: BigNumberish,
+    setDao(
+      _dao: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenMinter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -438,10 +691,18 @@ export class GenesisAllocation extends BaseContract {
 
     chainID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    claimedTokens(
-      arg0: BigNumberish,
-      arg1: BytesLike,
+    claimAllocation(
+      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
+      roundID: BigNumberish,
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    claimedSig(
+      arg0: string,
+      arg1: BigNumberish,
       arg2: BytesLike,
+      arg3: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -456,11 +717,38 @@ export class GenesisAllocation extends BaseContract {
 
     getMessage(
       userAddress: string,
+      roundID: BigNumberish,
       count: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTokens(
+      count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     guardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    lockPositions(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    lockTokensIntoDao(
+      count: BigNumberish,
+      lockDurationMonths: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    minAverageYearsLocked(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     removeTokens(
       dest: string,
@@ -468,16 +756,20 @@ export class GenesisAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    retreiveTokens(
-      auth: { v: BigNumberish; r: BytesLike; s: BytesLike },
-      totalGrantCount: BigNumberish,
-      countToAllocate: BigNumberish,
-      lockDurationMonths: BigNumberish,
+    setDao(
+      _dao: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenMinter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

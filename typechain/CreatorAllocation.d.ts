@@ -21,25 +21,27 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface CreatorAllocationInterface extends ethers.utils.Interface {
   functions: {
-    "MIN_AVERAGE_YEARS_LOCKED()": FunctionFragment;
     "dao()": FunctionFragment;
     "getTokens(uint128)": FunctionFragment;
+    "guardian()": FunctionFragment;
     "lockPositions(address)": FunctionFragment;
     "lockTokensIntoDao(uint128,uint8)": FunctionFragment;
+    "minAverageYearsLocked()": FunctionFragment;
+    "pendingGuardian()": FunctionFragment;
+    "recieveGuardianship()": FunctionFragment;
+    "setDao(address)": FunctionFragment;
     "startTime()": FunctionFragment;
     "token()": FunctionFragment;
     "tokenMinter()": FunctionFragment;
+    "transferGuardianship(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "MIN_AVERAGE_YEARS_LOCKED",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "dao", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTokens",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "guardian", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "lockPositions",
     values: [string]
@@ -48,19 +50,33 @@ interface CreatorAllocationInterface extends ethers.utils.Interface {
     functionFragment: "lockTokensIntoDao",
     values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "minAverageYearsLocked",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "pendingGuardian",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recieveGuardianship",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "setDao", values: [string]): string;
   encodeFunctionData(functionFragment: "startTime", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenMinter",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "transferGuardianship",
+    values: [string]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "MIN_AVERAGE_YEARS_LOCKED",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "dao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTokens", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "guardian", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lockPositions",
     data: BytesLike
@@ -69,22 +85,41 @@ interface CreatorAllocationInterface extends ethers.utils.Interface {
     functionFragment: "lockTokensIntoDao",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "minAverageYearsLocked",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingGuardian",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "recieveGuardianship",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setDao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "startTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenMinter",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferGuardianship",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "LockPositionCreated(address,uint128)": EventFragment;
+    "IncentiveDistributed(address,uint256)": EventFragment;
+    "LockPositionIncreased(address,uint128)": EventFragment;
+    "NewGuardian(address)": EventFragment;
     "TokensLocked(address,uint8,uint256)": EventFragment;
-    "TokensRetrieved(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "LockPositionCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncentiveDistributed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LockPositionIncreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewGuardian"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensLocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokensRetrieved"): EventFragment;
 }
 
 export class CreatorAllocation extends BaseContract {
@@ -131,8 +166,6 @@ export class CreatorAllocation extends BaseContract {
   interface: CreatorAllocationInterface;
 
   functions: {
-    MIN_AVERAGE_YEARS_LOCKED(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     dao(overrides?: CallOverrides): Promise<[string]>;
 
     getTokens(
@@ -140,14 +173,16 @@ export class CreatorAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    guardian(overrides?: CallOverrides): Promise<[string]>;
+
     lockPositions(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        totalTokens: BigNumber;
-        tokensLocked: BigNumber;
-        cumulativeTokensLockedxLockYears: BigNumber;
+        totalAllocation: BigNumber;
+        tokensAllocated: BigNumber;
+        cumulativeTokensAllocatedxLockYears: BigNumber;
       }
     >;
 
@@ -157,14 +192,30 @@ export class CreatorAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<[string]>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setDao(
+      _dao: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     startTime(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
 
     tokenMinter(overrides?: CallOverrides): Promise<[string]>;
-  };
 
-  MIN_AVERAGE_YEARS_LOCKED(overrides?: CallOverrides): Promise<BigNumber>;
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+  };
 
   dao(overrides?: CallOverrides): Promise<string>;
 
@@ -173,14 +224,16 @@ export class CreatorAllocation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  guardian(overrides?: CallOverrides): Promise<string>;
+
   lockPositions(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
-      totalTokens: BigNumber;
-      tokensLocked: BigNumber;
-      cumulativeTokensLockedxLockYears: BigNumber;
+      totalAllocation: BigNumber;
+      tokensAllocated: BigNumber;
+      cumulativeTokensAllocatedxLockYears: BigNumber;
     }
   >;
 
@@ -190,27 +243,45 @@ export class CreatorAllocation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+  pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+  recieveGuardianship(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setDao(
+    _dao: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
   token(overrides?: CallOverrides): Promise<string>;
 
   tokenMinter(overrides?: CallOverrides): Promise<string>;
 
-  callStatic: {
-    MIN_AVERAGE_YEARS_LOCKED(overrides?: CallOverrides): Promise<BigNumber>;
+  transferGuardianship(
+    newGuardian: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
+  callStatic: {
     dao(overrides?: CallOverrides): Promise<string>;
 
     getTokens(count: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    guardian(overrides?: CallOverrides): Promise<string>;
 
     lockPositions(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        totalTokens: BigNumber;
-        tokensLocked: BigNumber;
-        cumulativeTokensLockedxLockYears: BigNumber;
+        totalAllocation: BigNumber;
+        tokensAllocated: BigNumber;
+        cumulativeTokensAllocatedxLockYears: BigNumber;
       }
     >;
 
@@ -220,21 +291,46 @@ export class CreatorAllocation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+    recieveGuardianship(overrides?: CallOverrides): Promise<void>;
+
+    setDao(_dao: string, overrides?: CallOverrides): Promise<void>;
+
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<string>;
 
     tokenMinter(overrides?: CallOverrides): Promise<string>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    LockPositionCreated(
+    IncentiveDistributed(
+      dest?: string | null,
+      count?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { dest: string; count: BigNumber }
+    >;
+
+    LockPositionIncreased(
       receiver?: string | null,
       count?: null
     ): TypedEventFilter<
       [string, BigNumber],
       { receiver: string; count: BigNumber }
     >;
+
+    NewGuardian(
+      newGuardian?: string | null
+    ): TypedEventFilter<[string], { newGuardian: string }>;
 
     TokensLocked(
       receiver?: string | null,
@@ -244,25 +340,17 @@ export class CreatorAllocation extends BaseContract {
       [string, number, BigNumber],
       { receiver: string; lockDurationMonths: number; count: BigNumber }
     >;
-
-    TokensRetrieved(
-      receiver?: string | null,
-      count?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { receiver: string; count: BigNumber }
-    >;
   };
 
   estimateGas: {
-    MIN_AVERAGE_YEARS_LOCKED(overrides?: CallOverrides): Promise<BigNumber>;
-
     dao(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTokens(
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    guardian(overrides?: CallOverrides): Promise<BigNumber>;
 
     lockPositions(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -272,24 +360,40 @@ export class CreatorAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    minAverageYearsLocked(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<BigNumber>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setDao(
+      _dao: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     startTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenMinter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    MIN_AVERAGE_YEARS_LOCKED(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     dao(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTokens(
       count: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    guardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     lockPositions(
       arg0: string,
@@ -302,10 +406,30 @@ export class CreatorAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    minAverageYearsLocked(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDao(
+      _dao: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     startTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenMinter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transferGuardianship(
+      newGuardian: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -45,7 +45,6 @@ interface AccountingInterface extends ethers.utils.Interface {
     "increasePoolLiquidity(address,uint256)": FunctionFragment;
     "init(address)": FunctionFragment;
     "lentHue()": FunctionFragment;
-    "lowestTick()": FunctionFragment;
     "nextUserInterfaceID()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "onRewardsUpgrade(address)": FunctionFragment;
@@ -149,10 +148,6 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "init", values: [string]): string;
   encodeFunctionData(functionFragment: "lentHue", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "lowestTick",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "nextUserInterfaceID",
     values?: undefined
@@ -343,7 +338,6 @@ interface AccountingInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lentHue", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "lowestTick", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nextUserInterfaceID",
     data: BytesLike
@@ -746,8 +740,6 @@ export class Accounting extends BaseContract {
 
     lentHue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    lowestTick(overrides?: CallOverrides): Promise<[number]>;
-
     nextUserInterfaceID(overrides?: CallOverrides): Promise<[number]>;
 
     onERC721Received(
@@ -1074,8 +1066,6 @@ export class Accounting extends BaseContract {
 
   lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
-  lowestTick(overrides?: CallOverrides): Promise<number>;
-
   nextUserInterfaceID(overrides?: CallOverrides): Promise<number>;
 
   onERC721Received(
@@ -1387,8 +1377,6 @@ export class Accounting extends BaseContract {
 
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lowestTick(overrides?: CallOverrides): Promise<number>;
-
     nextUserInterfaceID(overrides?: CallOverrides): Promise<number>;
 
     onERC721Received(
@@ -1638,8 +1626,6 @@ export class Accounting extends BaseContract {
 
     lentHue(overrides?: CallOverrides): Promise<BigNumber>;
 
-    lowestTick(overrides?: CallOverrides): Promise<BigNumber>;
-
     nextUserInterfaceID(overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC721Received(
@@ -1872,8 +1858,6 @@ export class Accounting extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     lentHue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    lowestTick(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nextUserInterfaceID(
       overrides?: CallOverrides

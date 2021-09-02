@@ -27,6 +27,7 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
     "blacklistedAction(bytes4)": FunctionFragment;
     "calculateMonthsToDays(uint64)": FunctionFragment;
     "calculateVirtualCount(uint256,uint64)": FunctionFragment;
+    "countUnderlyingProtocolTokens()": FunctionFragment;
     "currentPeriod()": FunctionFragment;
     "dailyProtocolTDaoIncentiveCount()": FunctionFragment;
     "deployer()": FunctionFragment;
@@ -48,6 +49,7 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
     "periodLength()": FunctionFragment;
     "selfDelegate(address)": FunctionFragment;
     "sendUnderlyingVotingRewards(address,uint256,address,uint256)": FunctionFragment;
+    "setFirstToken(address)": FunctionFragment;
     "setIncentiveContract(address)": FunctionFragment;
     "start()": FunctionFragment;
     "startPeriod()": FunctionFragment;
@@ -80,6 +82,10 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "calculateVirtualCount",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "countUnderlyingProtocolTokens",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "currentPeriod",
@@ -163,6 +169,10 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
     values: [string, BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setFirstToken",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setIncentiveContract",
     values: [string]
   ): string;
@@ -219,6 +229,10 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "calculateVirtualCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "countUnderlyingProtocolTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -285,6 +299,10 @@ interface TDaoTestableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "sendUnderlyingVotingRewards",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFirstToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -422,6 +440,8 @@ export class TDaoTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    countUnderlyingProtocolTokens(overrides?: CallOverrides): Promise<[number]>;
+
     currentPeriod(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { period: BigNumber }>;
@@ -546,6 +566,11 @@ export class TDaoTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setFirstToken(
+      firstToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -614,6 +639,8 @@ export class TDaoTestable extends BaseContract {
     durationMonths: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  countUnderlyingProtocolTokens(overrides?: CallOverrides): Promise<number>;
 
   currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -733,6 +760,11 @@ export class TDaoTestable extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setFirstToken(
+    firstToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setIncentiveContract(
     _contract: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -796,6 +828,8 @@ export class TDaoTestable extends BaseContract {
       durationMonths: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    countUnderlyingProtocolTokens(overrides?: CallOverrides): Promise<number>;
 
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -911,6 +945,8 @@ export class TDaoTestable extends BaseContract {
       votePortion: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setFirstToken(firstToken: string, overrides?: CallOverrides): Promise<void>;
 
     setIncentiveContract(
       _contract: string,
@@ -1040,6 +1076,10 @@ export class TDaoTestable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    countUnderlyingProtocolTokens(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     currentPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     dailyProtocolTDaoIncentiveCount(
@@ -1138,6 +1178,11 @@ export class TDaoTestable extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setFirstToken(
+      firstToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setIncentiveContract(
       _contract: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1205,6 +1250,10 @@ export class TDaoTestable extends BaseContract {
     calculateVirtualCount(
       count: BigNumberish,
       durationMonths: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    countUnderlyingProtocolTokens(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1305,6 +1354,11 @@ export class TDaoTestable extends BaseContract {
       proposalID: BigNumberish,
       voter: string,
       votePortion: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFirstToken(
+      firstToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

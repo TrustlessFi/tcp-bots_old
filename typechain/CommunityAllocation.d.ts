@@ -21,19 +21,20 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface CommunityAllocationInterface extends ethers.utils.Interface {
   functions: {
-    "NAME()": FunctionFragment;
     "abdicateArbitraryMinting()": FunctionFragment;
     "canMintArbitrarily()": FunctionFragment;
     "createLockPosition(uint256,uint8,address)": FunctionFragment;
     "dao()": FunctionFragment;
     "guardian()": FunctionFragment;
     "mintArbitrarily(address,uint256)": FunctionFragment;
+    "pendingGuardian()": FunctionFragment;
+    "recieveGuardianship()": FunctionFragment;
+    "setDao(address)": FunctionFragment;
     "token()": FunctionFragment;
     "tokenMinter()": FunctionFragment;
     "transferGuardianship(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "abdicateArbitraryMinting",
     values?: undefined
@@ -52,6 +53,15 @@ interface CommunityAllocationInterface extends ethers.utils.Interface {
     functionFragment: "mintArbitrarily",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "pendingGuardian",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recieveGuardianship",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "setDao", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenMinter",
@@ -62,7 +72,6 @@ interface CommunityAllocationInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "abdicateArbitraryMinting",
     data: BytesLike
@@ -81,6 +90,15 @@ interface CommunityAllocationInterface extends ethers.utils.Interface {
     functionFragment: "mintArbitrarily",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "pendingGuardian",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "recieveGuardianship",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setDao", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenMinter",
@@ -92,13 +110,15 @@ interface CommunityAllocationInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "AbdicatedArbitraryMinting()": EventFragment;
+    "ArbitraryMintingAbdicated(address)": EventFragment;
+    "IncentiveDistributed(address,uint256)": EventFragment;
     "NewGuardian(address)": EventFragment;
     "TokensLocked(address,uint8,uint256)": EventFragment;
     "TokensMintedArbitrarily(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AbdicatedArbitraryMinting"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ArbitraryMintingAbdicated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "IncentiveDistributed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewGuardian"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensLocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokensMintedArbitrarily"): EventFragment;
@@ -148,8 +168,6 @@ export class CommunityAllocation extends BaseContract {
   interface: CommunityAllocationInterface;
 
   functions: {
-    NAME(overrides?: CallOverrides): Promise<[string]>;
-
     abdicateArbitraryMinting(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -173,6 +191,17 @@ export class CommunityAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    pendingGuardian(overrides?: CallOverrides): Promise<[string]>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setDao(
+      _dao: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     token(overrides?: CallOverrides): Promise<[string]>;
 
     tokenMinter(overrides?: CallOverrides): Promise<[string]>;
@@ -182,8 +211,6 @@ export class CommunityAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  NAME(overrides?: CallOverrides): Promise<string>;
 
   abdicateArbitraryMinting(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -208,6 +235,17 @@ export class CommunityAllocation extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+  recieveGuardianship(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setDao(
+    _dao: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   token(overrides?: CallOverrides): Promise<string>;
 
   tokenMinter(overrides?: CallOverrides): Promise<string>;
@@ -218,8 +256,6 @@ export class CommunityAllocation extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    NAME(overrides?: CallOverrides): Promise<string>;
-
     abdicateArbitraryMinting(overrides?: CallOverrides): Promise<void>;
 
     canMintArbitrarily(overrides?: CallOverrides): Promise<boolean>;
@@ -241,6 +277,12 @@ export class CommunityAllocation extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    pendingGuardian(overrides?: CallOverrides): Promise<string>;
+
+    recieveGuardianship(overrides?: CallOverrides): Promise<void>;
+
+    setDao(_dao: string, overrides?: CallOverrides): Promise<void>;
+
     token(overrides?: CallOverrides): Promise<string>;
 
     tokenMinter(overrides?: CallOverrides): Promise<string>;
@@ -252,19 +294,29 @@ export class CommunityAllocation extends BaseContract {
   };
 
   filters: {
-    AbdicatedArbitraryMinting(): TypedEventFilter<[], {}>;
-
-    NewGuardian(
+    ArbitraryMintingAbdicated(
       guardian?: string | null
     ): TypedEventFilter<[string], { guardian: string }>;
 
+    IncentiveDistributed(
+      dest?: string | null,
+      count?: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { dest: string; count: BigNumber }
+    >;
+
+    NewGuardian(
+      newGuardian?: string | null
+    ): TypedEventFilter<[string], { newGuardian: string }>;
+
     TokensLocked(
-      to?: string | null,
+      receiver?: string | null,
       lockDurationMonths?: BigNumberish | null,
       count?: null
     ): TypedEventFilter<
       [string, number, BigNumber],
-      { to: string; lockDurationMonths: number; count: BigNumber }
+      { receiver: string; lockDurationMonths: number; count: BigNumber }
     >;
 
     TokensMintedArbitrarily(
@@ -274,8 +326,6 @@ export class CommunityAllocation extends BaseContract {
   };
 
   estimateGas: {
-    NAME(overrides?: CallOverrides): Promise<BigNumber>;
-
     abdicateArbitraryMinting(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -299,6 +349,17 @@ export class CommunityAllocation extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    pendingGuardian(overrides?: CallOverrides): Promise<BigNumber>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setDao(
+      _dao: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenMinter(overrides?: CallOverrides): Promise<BigNumber>;
@@ -310,8 +371,6 @@ export class CommunityAllocation extends BaseContract {
   };
 
   populateTransaction: {
-    NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     abdicateArbitraryMinting(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -334,6 +393,17 @@ export class CommunityAllocation extends BaseContract {
     mintArbitrarily(
       to: string,
       count: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    pendingGuardian(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    recieveGuardianship(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setDao(
+      _dao: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

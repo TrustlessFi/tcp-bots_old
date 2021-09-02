@@ -155,19 +155,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint64",
-        name: "positionNFTTokenID",
-        type: "uint64",
-      },
-    ],
-    name: "getRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "contract IERC20",
         name: "token",
         type: "address",

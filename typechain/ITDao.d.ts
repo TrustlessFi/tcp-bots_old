@@ -21,16 +21,11 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface ITDaoInterface extends ethers.utils.Interface {
   functions: {
-    "getRewards(uint64)": FunctionFragment;
     "lockTokens(address,uint256,uint8,address)": FunctionFragment;
     "mintVotingRewards(address,uint256)": FunctionFragment;
     "sendUnderlyingVotingRewards(address,uint256,address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "getRewards",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "lockTokens",
     values: [string, BigNumberish, BigNumberish, string]
@@ -44,7 +39,6 @@ interface ITDaoInterface extends ethers.utils.Interface {
     values: [string, BigNumberish, string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "getRewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lockTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mintVotingRewards",
@@ -122,11 +116,6 @@ export class ITDao extends BaseContract {
   interface: ITDaoInterface;
 
   functions: {
-    getRewards(
-      positionNFTTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     lockTokens(
       token: string,
       count: BigNumberish,
@@ -149,11 +138,6 @@ export class ITDao extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  getRewards(
-    positionNFTTokenID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   lockTokens(
     token: string,
@@ -178,11 +162,6 @@ export class ITDao extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    getRewards(
-      positionNFTTokenID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     lockTokens(
       token: string,
       count: BigNumberish,
@@ -267,11 +246,6 @@ export class ITDao extends BaseContract {
   };
 
   estimateGas: {
-    getRewards(
-      positionNFTTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     lockTokens(
       token: string,
       count: BigNumberish,
@@ -296,11 +270,6 @@ export class ITDao extends BaseContract {
   };
 
   populateTransaction: {
-    getRewards(
-      positionNFTTokenID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     lockTokens(
       token: string,
       count: BigNumberish,
