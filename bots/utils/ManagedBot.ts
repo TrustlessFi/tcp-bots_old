@@ -56,7 +56,7 @@ export class ManagedBot {
       let waitTime = minutes(60);
       try {
          waitTime = await this.runImpl();
-      } catch (error) {
+      } catch (error: any) {
         this.reportError(error)
       }
       this.report("Sleeping 💤 for " + formatTime(waitTime));
