@@ -9,7 +9,6 @@ import {
   seedAddressesType,
   getExternalAddresses,
   externalAddressesType,
-  getDeployerAddress,
 } from "./Addresses";
 
 // ================ CORE CONTRACTS =================
@@ -75,18 +74,14 @@ export type deployedTcp = {
     factory: UniswapV3Factory
     nftPositionManager: NonfungiblePositionManager
   },
-  guardian: string,
-  deployerAddress: string,
 }
 
 export const getDeployedProtocol = async(
   externalAddresses: null | externalAddressesType = null,
   seedAddresses: null | seedAddressesType = null,
-  deployerAddress: null | string = null,
 ): Promise<deployedTcp> => {
   if (externalAddresses === null) externalAddresses = getExternalAddresses()
   if (seedAddresses === null) seedAddresses = getSeedAddresses()
-  if (deployerAddress === null) deployerAddress = getDeployerAddress()
 
   const get = async(name: string, address: string) => (await e.getContractFactory(name)).attach(address)
 
@@ -194,7 +189,5 @@ export const getDeployedProtocol = async(
       factory: factory,
       nftPositionManager: nftPositionManager,
     },
-    guardian: externalAddresses.guardian,
-    deployerAddress: deployerAddress,
   }
 }
