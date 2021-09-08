@@ -17,12 +17,26 @@ export enum Network {
   localDeployment = 'localDeployment',
 }
 
+
 const isNetwork = (s: string): s is Network => s in Network
 
 export const getCurrentNetwork = () => {
   const networkName = hre.network.name
   if (isNetwork(networkName)) return Network[networkName]
   else throw 'Unknown network: ' + networkName
+}
+
+export const isTestNetwork = () => {
+  switch (getCurrentNetwork()) {
+    case Network.mainnet:
+    case Network.rinkeby:
+      return false
+    case Network.hardhat:
+    case Network.dockerBot:
+    case Network.localhost:
+    case Network.localDeployment:
+      return true
+  }
 }
 
 export const getSeedAddresses = (): seedAddressesType => {
