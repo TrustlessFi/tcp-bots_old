@@ -91,19 +91,7 @@ export const getExternalAddresses = (): externalAddressesType => {
     case Network.dockerBot:
     case Network.localhost:
     case Network.localDeployment:
-      return {
-        usdc: '0x153900C946e33AED5F1ee79C92E149A262E2B1E9',
-        usdt: '0x30B1050647C6b916741be1B2a7844A603931C4D9',
-
-        ethUsdcPool: '0x4b2496646840567f5c81C2b943815f15337855b8',
-        ethUsdtPool: '0x3866A5055fac77a5FEfef2067150C655Eb25364A',
-
-        factory: '0x10BFF065F1e70f782108005E9B4917C536F7FF51',
-        router: '0xe0ad47d12Dd44E601eb7Cd07F574a8643B351A96',
-        positionManager: '0xfE0cae103cB3aA14eF7fbf1Cee4B3EDeC7301D5B',
-
-        ethAggregator: '0x42Bb2c13D0Bb67B41B243bb642505C3294928545',
-      }
+      throw 'Hardcoded addresses requested for test network'
 
     case Network.mainnet:
     case Network.rinkeby:
@@ -123,6 +111,7 @@ export const getExternalAddresses = (): externalAddressesType => {
     ethUsdcPool,
     ethUsdtPool,
     ethAggregator,
+    // same on every public chain
     factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
     router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
     positionManager: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
