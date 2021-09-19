@@ -4,7 +4,7 @@
 import hre from 'hardhat';
 
 export type seedAddressesType = {
-  tcpGovernorAlpha: string,
+  governor: string,
   protocolDataAggregator: string,
 }
 
@@ -46,7 +46,7 @@ export const getSeedAddresses = (): seedAddressesType => {
     case Network.mainnet:
     case Network.rinkeby:
       return {
-        tcpGovernorAlpha: '0x974fc7052Fa0faf573b6fC1c0FacC0ED0A69c075',
+        governor: 'ADD_ADDRESS',
         protocolDataAggregator: 'ADD_ADDRESS',
       }
     case Network.hardhat:
@@ -54,8 +54,8 @@ export const getSeedAddresses = (): seedAddressesType => {
     case Network.localhost:
     case Network.localDeployment:
       return {
-        tcpGovernorAlpha: '0x940392f0F9053e33eFDa21f31108F3A6d3c3191C',
-        protocolDataAggregator: '0x4B41f098a2e2d2d88aeC6112583A4C119B07e5f1',
+        governor: '0x8A48EC415781EaFc316E9657F367B8Adf7d6393B',
+        protocolDataAggregator: '0x05240c67fC281F158Af0E81c13E61603e46F941a',
       }
   }
 }

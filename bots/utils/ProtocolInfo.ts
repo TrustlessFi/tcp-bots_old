@@ -86,23 +86,23 @@ export const getDeployedProtocol = async(
   const get = async(name: string, address: string) => (await e.getContractFactory(name)).attach(address)
 
   let [
-    tcpGovernorAlpha,
+    governor,
     protocolDataAggregator,
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TcpGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TcpGovernorAlpha,
+    await get('Governor', seedAddresses.governor) as unknown as Governor,
     await get('ProtocolDataAggregator', seedAddresses.protocolDataAggregator) as unknown as ProtocolDataAggregator,
     await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
   ]);
 
   let [
-    governor,
+    tcpGovernorAlpha,
     weth,
     factory,
   ] = await Promise.all([
-    await get('Governor', await tcpGovernorAlpha.governor()) as unknown as Governor,
+    await get('TcpGovernorAlpha', await governor.governorAlpha()) as unknown as TcpGovernorAlpha,
     await get('WETH9', await nftPositionManager.WETH9()) as unknown as WETH9,
     await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
   ]);
