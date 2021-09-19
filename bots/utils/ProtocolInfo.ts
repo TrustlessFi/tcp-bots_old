@@ -18,7 +18,7 @@ import {
   HuePositionNFT,
   EnforcedDecentralization,
   Governor,
-  TCPGovernorAlpha,
+  TcpGovernorAlpha,
   LendHue,
   Liquidations,
   Market,
@@ -52,7 +52,7 @@ export type deployedTcp = {
   hueNFT: HuePositionNFT
   enforcedDecentralization: EnforcedDecentralization
   governor: Governor
-  tcpGovernorAlpha: TCPGovernorAlpha
+  tcpGovernorAlpha: TcpGovernorAlpha
   lendhue: LendHue
   liquidations: Liquidations
   market: Market
@@ -91,7 +91,7 @@ export const getDeployedProtocol = async(
     nftPositionManager,
     swapRouter,
   ] = await Promise.all([
-    await get('TCPGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TCPGovernorAlpha,
+    await get('TcpGovernorAlpha', seedAddresses.tcpGovernorAlpha) as unknown as TcpGovernorAlpha,
     await get('ProtocolDataAggregator', seedAddresses.protocolDataAggregator) as unknown as ProtocolDataAggregator,
     await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
     await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
