@@ -30,7 +30,7 @@ interface PricesInterface extends ethers.utils.Interface {
     "getRealHueCountForSinglePoolPosition(address,int24,int24,int24,uint128,uint32)": FunctionFragment;
     "governor()": FunctionFragment;
     "hueTcpPrice(uint32)": FunctionFragment;
-    "init(address,address)": FunctionFragment;
+    "init()": FunctionFragment;
     "initializePool(address)": FunctionFragment;
     "initializeWethPool(address)": FunctionFragment;
     "isPoolInitialized(address)": FunctionFragment;
@@ -79,10 +79,7 @@ interface PricesInterface extends ethers.utils.Interface {
     functionFragment: "hueTcpPrice",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "init",
-    values: [string, string]
-  ): string;
+  encodeFunctionData(functionFragment: "init", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initializePool",
     values: [string]
@@ -268,8 +265,6 @@ export class Prices extends BaseContract {
     ): Promise<[BigNumber]>;
 
     init(
-      _collateralPool: string,
-      _protocolPool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -363,8 +358,6 @@ export class Prices extends BaseContract {
   ): Promise<BigNumber>;
 
   init(
-    _collateralPool: string,
-    _protocolPool: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -454,11 +447,7 @@ export class Prices extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    init(
-      _collateralPool: string,
-      _protocolPool: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    init(overrides?: CallOverrides): Promise<void>;
 
     initializePool(pool: string, overrides?: CallOverrides): Promise<void>;
 
@@ -556,8 +545,6 @@ export class Prices extends BaseContract {
     ): Promise<BigNumber>;
 
     init(
-      _collateralPool: string,
-      _protocolPool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -640,8 +627,6 @@ export class Prices extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     init(
-      _collateralPool: string,
-      _protocolPool: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
