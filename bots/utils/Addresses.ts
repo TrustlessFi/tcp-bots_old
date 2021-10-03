@@ -43,20 +43,18 @@ export const getSeedAddresses = (): seedAddressesType => {
   const network = getCurrentNetwork()
 
   switch (network) {
-    case Network.mainnet:
-    case Network.rinkeby:
-      return {
-        governor: 'ADD_ADDRESS',
-        protocolDataAggregator: 'ADD_ADDRESS',
-      }
     case Network.hardhat:
     case Network.dockerBot:
     case Network.localhost:
     case Network.localDeployment:
       return {
         governor: '0x8A48EC415781EaFc316E9657F367B8Adf7d6393B',
-        protocolDataAggregator: '0x05240c67fC281F158Af0E81c13E61603e46F941a',
+        protocolDataAggregator: '0x1799F8B71d6a9175129942D5eFFCb8cCF584C1a9',
       }
+
+    case Network.mainnet:
+    case Network.rinkeby:
+      throw 'Hardcoded addresses requested for rinkeby'
   }
 }
 
@@ -91,7 +89,19 @@ export const getExternalAddresses = (): externalAddressesType => {
     case Network.dockerBot:
     case Network.localhost:
     case Network.localDeployment:
-      throw 'Hardcoded addresses requested for test network'
+      return {
+        usdc: '0xE74b281b820c039c215feFF841127216925663EB',
+        usdt: '0xa720e517309af2698deb6eefFFF70ea110Fa3dF1',
+
+        ethUsdcPool:  '0x9BAE9052C4b4F06a7aAa01b1105a7ac038D63F02',
+        ethUsdtPool: '0xc6CA0036392FB0B66e82a19787FfAd0a70a6b2b8',
+
+        ethAggregator: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
+
+        factory: '0x870A7E07DaDF987f17ac08aF1a0015ebc78d2258',
+        router: '0x5f5bCE32f8b8aE0977DE9fb8298B9074602899F5',
+        positionManager: '0x981377239fdD7cDf44aBEcF5AC442aAfeCc936c7',
+      }
 
     case Network.mainnet:
     case Network.rinkeby:
