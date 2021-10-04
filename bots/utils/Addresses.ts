@@ -52,9 +52,14 @@ export const getSeedAddresses = (): seedAddressesType => {
         protocolDataAggregator: '0x1799F8B71d6a9175129942D5eFFCb8cCF584C1a9',
       }
 
-    case Network.mainnet:
     case Network.rinkeby:
-      throw 'Hardcoded addresses requested for rinkeby'
+      return {
+        governor: '0x95608b60e27a0448FcC5E9ce222a65F3aED6e67F',
+        protocolDataAggregator: '0x8Fd52eD0d46B86aed9353C8df9CA70484EfD84Fc',
+      }
+
+    case Network.mainnet:
+      throw 'Hardcoded addresses requested for mainnet'
   }
 }
 
@@ -103,16 +108,18 @@ export const getExternalAddresses = (): externalAddressesType => {
         positionManager: '0x981377239fdD7cDf44aBEcF5AC442aAfeCc936c7',
       }
 
-    case Network.mainnet:
     case Network.rinkeby:
       usdc = '0x640cE1dF688d0Dcb2f3Bf9B1E69d8F64c59D439E' // correct
       usdt = '0xE800ecE7C7B8682C9Af830fAE95514F7c20BACFb' // correct
 
-      ethUsdcPool =  'ADD_ADDRESS',
-      ethUsdtPool = 'ADD_ADDRESS',
+      ethUsdcPool = '0x1fea4310c812a3b82bb8660662fD293eCB16d489'
+      ethUsdtPool = '0x415d407F2A1f2b11199f3A04b639E636A058a9d6'
 
-      ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
-      break;
+      ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e' // correct
+      break
+
+    case Network.mainnet:
+      throw 'Mainnet addresses not set'
   }
 
   return {
