@@ -9,9 +9,11 @@ module.exports = {
   networks: {
     bot: {
       url: 'http://127.0.0.1:8545/',
+      chainId: 1338,
     },
     dockerBot: {
       url: 'http://host.docker.internal:8545/',
+      chainId: 1339,
     }
   }
 };
