@@ -11,7 +11,7 @@ import {
   Rewards,
   Prices,
   Accounting,
-} from '../typechain/'
+} from '@trustlessfi/typechain'
 
 type position = {
   nftID: number,

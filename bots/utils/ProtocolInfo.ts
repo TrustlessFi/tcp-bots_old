@@ -31,10 +31,10 @@ import {
   Tcp,
   Accounting,
   ProtocolDataAggregator,
-} from "../../typechain/";
+} from '@trustlessfi/typechain'
 
 // ================ OTHER CONTRACTS =================
-import { WETH9 } from "../../typechain/";
+import { WETH9 } from '@trustlessfi/typechain'
 
 // ================ UNISWAP =================
 import {
@@ -42,7 +42,7 @@ import {
   UniswapV3Factory,
   NonfungiblePositionManager,
   UniswapV3Pool,
-} from "../../typechain/";
+} from '@trustlessfi/typechain'
 
 export type deployedTcp = {
   accounting: Accounting
