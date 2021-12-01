@@ -71,7 +71,6 @@ export type externalAddressesType = {
   ethUsdcPool: string,
   ethUsdtPool: string,
 
-  positionManager: string,
   factory: string,
   router: string,
 
@@ -80,14 +79,6 @@ export type externalAddressesType = {
 
 export const getExternalAddresses = (): externalAddressesType => {
   const network = getCurrentNetwork()
-
-  let usdc: string
-  let usdt: string
-
-  let ethUsdcPool: string
-  let ethUsdtPool: string
-
-  let ethAggregator: string
 
   switch (network) {
     case Network.hardhat:
@@ -105,32 +96,23 @@ export const getExternalAddresses = (): externalAddressesType => {
 
         factory: '0x870A7E07DaDF987f17ac08aF1a0015ebc78d2258',
         router: '0x5f5bCE32f8b8aE0977DE9fb8298B9074602899F5',
-        positionManager: '0x981377239fdD7cDf44aBEcF5AC442aAfeCc936c7',
       }
 
     case Network.rinkeby:
-      usdc = '0x640cE1dF688d0Dcb2f3Bf9B1E69d8F64c59D439E' // correct
-      usdt = '0xE800ecE7C7B8682C9Af830fAE95514F7c20BACFb' // correct
+      return {
+        usdc: '0x640cE1dF688d0Dcb2f3Bf9B1E69d8F64c59D439E',
+        usdt: '0xE800ecE7C7B8682C9Af830fAE95514F7c20BACFb',
 
-      ethUsdcPool = '0x1fea4310c812a3b82bb8660662fD293eCB16d489'
-      ethUsdtPool = '0x415d407F2A1f2b11199f3A04b639E636A058a9d6'
+        ethUsdcPool: '0x1fea4310c812a3b82bb8660662fD293eCB16d489',
+        ethUsdtPool: '0x415d407F2A1f2b11199f3A04b639E636A058a9d6',
 
-      ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e' // correct
-      break
+        ethAggregator: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
+
+        factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
+        router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
+      }
 
     case Network.mainnet:
       throw 'Mainnet addresses not set'
-  }
-
-  return {
-    usdc,
-    usdt,
-    ethUsdcPool,
-    ethUsdtPool,
-    ethAggregator,
-    // same on every public chain
-    factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
-    router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
-    positionManager: '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
   }
 }

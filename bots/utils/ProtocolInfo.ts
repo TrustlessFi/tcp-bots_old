@@ -38,10 +38,10 @@ import { WETH9 } from '@trustlessfi/typechain'
 
 // ================ UNISWAP =================
 import {
-  SwapRouter,
-  UniswapV3Factory,
-  NonfungiblePositionManager,
-  UniswapV3Pool,
+  IUniswapV2Router02,
+  UniswapV2Factory,
+  UniswapV2Pair,
+  UniswapV2Router02,
 } from '@trustlessfi/typechain'
 
 export type deployedTcp = {
@@ -64,15 +64,13 @@ export type deployedTcp = {
   tcpTimelock: TcpTimelock
   protocolDataAggregator: ProtocolDataAggregator
   pools: {
-    huetcp: UniswapV3Pool
-    hueeth: UniswapV3Pool
-    reference: UniswapV3Pool[]
+    hueeth: UniswapV2Pair
+    reference: UniswapV2Pair[]
   },
   external: {
     weth: WETH9
-    router: SwapRouter
-    factory: UniswapV3Factory
-    nftPositionManager: NonfungiblePositionManager
+    router: IUniswapV2Router02
+    factory: UniswapV2Factory
   },
 }
 
@@ -88,13 +86,11 @@ export const getDeployedProtocol = async(
   let [
     governor,
     protocolDataAggregator,
-    nftPositionManager,
-    swapRouter,
+    router,
   ] = await Promise.all([
     await get('Governor', seedAddresses.governor) as unknown as Governor,
     await get('ProtocolDataAggregator', seedAddresses.protocolDataAggregator) as unknown as ProtocolDataAggregator,
-    await get('NonfungiblePositionManager', externalAddresses.positionManager) as unknown as NonfungiblePositionManager,
-    await get('SwapRouter', externalAddresses.router) as unknown as SwapRouter,
+    await get('UniswapV2Router02', externalAddresses.router) as unknown as UniswapV2Router02,
   ]);
 
   let [
@@ -103,8 +99,8 @@ export const getDeployedProtocol = async(
     factory,
   ] = await Promise.all([
     await get('TcpGovernorAlpha', await governor.governorAlpha()) as unknown as TcpGovernorAlpha,
-    await get('WETH9', await nftPositionManager.WETH9()) as unknown as WETH9,
-    await get('UniswapV3Factory', await nftPositionManager.factory()) as unknown as UniswapV3Factory,
+    await get('WETH', await router.WETH()) as unknown as WETH9,
+    await get('UniswapV2Factory', await router.factory()) as unknown as UniswapV2Factory,
   ]);
 
   let [
@@ -143,19 +139,16 @@ export const getDeployedProtocol = async(
 
   let [
     collateralPoolAddress,
-    protocolPoolAddress,
     referencePoolAddresses,
     UniswapV3PoolFactory,
   ] = await Promise.all([
     await (prices as Prices).collateralPool(),
-    await (prices as Prices).protocolPool(),
     await (rates as Rates).getReferencePools(),
     await e.getContractFactory('UniswapV3Pool'),
   ]);
 
-  const wrapPool = (address: string): UniswapV3Pool => UniswapV3PoolFactory.attach(address) as unknown as UniswapV3Pool
+  const wrapPool = (address: string): UniswapV2Pair => UniswapV3PoolFactory.attach(address) as unknown as UniswapV2Pair
 
-  let protocolPool = wrapPool(protocolPoolAddress)
   let collateralPool = wrapPool(collateralPoolAddress)
   let referencePools = referencePoolAddresses.map((address) => wrapPool(address))
 
@@ -180,14 +173,12 @@ export const getDeployedProtocol = async(
     protocolDataAggregator: protocolDataAggregator as ProtocolDataAggregator,
     pools: {
       hueeth: collateralPool,
-      huetcp: protocolPool,
       reference: referencePools,
     },
     external: {
       weth: weth,
-      router: swapRouter,
+      router: router,
       factory: factory,
-      nftPositionManager: nftPositionManager,
     },
   }
 }
