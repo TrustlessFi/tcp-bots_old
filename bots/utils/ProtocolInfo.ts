@@ -99,7 +99,7 @@ export const getDeployedProtocol = async(
     factory,
   ] = await Promise.all([
     await get('TcpGovernorAlpha', await governor.governorAlpha()) as unknown as TcpGovernorAlpha,
-    await get('WETH', await router.WETH()) as unknown as WETH9,
+    await get('contracts/mocks/WETH9.sol:WETH9', await router.WETH()) as unknown as WETH9,
     await get('UniswapV2Factory', await router.factory()) as unknown as UniswapV2Factory,
   ]);
 
