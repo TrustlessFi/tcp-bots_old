@@ -62,7 +62,6 @@ export type deployedTcp = {
   rewards: Rewards
   settlement: Settlement
   tcpTimelock: TcpTimelock
-  protocolDataAggregator: ProtocolDataAggregator
   pools: {
     hueeth: UniswapV2Pair
     reference: UniswapV2Pair[]
@@ -85,11 +84,9 @@ export const getDeployedProtocol = async(
 
   let [
     governor,
-    protocolDataAggregator,
     router,
   ] = await Promise.all([
     await get('Governor', seedAddresses.governor) as unknown as Governor,
-    await get('ProtocolDataAggregator', seedAddresses.protocolDataAggregator) as unknown as ProtocolDataAggregator,
     await get('UniswapV2Router02', externalAddresses.router) as unknown as UniswapV2Router02,
   ]);
 
@@ -140,14 +137,14 @@ export const getDeployedProtocol = async(
   let [
     collateralPoolAddress,
     referencePoolAddresses,
-    UniswapV3PoolFactory,
+    UniswapV2PairFactory,
   ] = await Promise.all([
     await (prices as Prices).collateralPool(),
     await (rates as Rates).getReferencePools(),
-    await e.getContractFactory('UniswapV3Pool'),
+    await e.getContractFactory('UniswapV2Pair'),
   ]);
 
-  const wrapPool = (address: string): UniswapV2Pair => UniswapV3PoolFactory.attach(address) as unknown as UniswapV2Pair
+  const wrapPool = (address: string): UniswapV2Pair => UniswapV2PairFactory.attach(address) as unknown as UniswapV2Pair
 
   let collateralPool = wrapPool(collateralPoolAddress)
   let referencePools = referencePoolAddresses.map((address) => wrapPool(address))
@@ -170,7 +167,6 @@ export const getDeployedProtocol = async(
     rewards: rewards as Rewards,
     settlement: settlement as Settlement,
     tcpTimelock: tcpTimelock as TcpTimelock,
-    protocolDataAggregator: protocolDataAggregator as ProtocolDataAggregator,
     pools: {
       hueeth: collateralPool,
       reference: referencePools,
