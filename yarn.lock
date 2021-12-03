@@ -503,6 +503,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ethersproject/providers@npm:^5.5.0":
+  version: 5.5.1
+  resolution: "@ethersproject/providers@npm:5.5.1"
+  dependencies:
+    "@ethersproject/abstract-provider": ^5.5.0
+    "@ethersproject/abstract-signer": ^5.5.0
+    "@ethersproject/address": ^5.5.0
+    "@ethersproject/basex": ^5.5.0
+    "@ethersproject/bignumber": ^5.5.0
+    "@ethersproject/bytes": ^5.5.0
+    "@ethersproject/constants": ^5.5.0
+    "@ethersproject/hash": ^5.5.0
+    "@ethersproject/logger": ^5.5.0
+    "@ethersproject/networks": ^5.5.0
+    "@ethersproject/properties": ^5.5.0
+    "@ethersproject/random": ^5.5.0
+    "@ethersproject/rlp": ^5.5.0
+    "@ethersproject/sha2": ^5.5.0
+    "@ethersproject/strings": ^5.5.0
+    "@ethersproject/transactions": ^5.5.0
+    "@ethersproject/web": ^5.5.0
+    bech32: 1.1.4
+    ws: 7.4.6
+  checksum: c2cf3fbf63cef1733416771ccd404c6b53ac47a44470a13d19f250f247ce8e8d5c75b90982d265bb0261a62260054ae9b9ced8323b4e9d9834e2798b19d62f38
+  languageName: node
+  linkType: hard
+
 "@ethersproject/random@npm:5.5.0, @ethersproject/random@npm:^5.5.0":
   version: 5.5.0
   resolution: "@ethersproject/random@npm:5.5.0"
@@ -860,10 +887,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trustlessfi/typechain@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "@trustlessfi/typechain@npm:0.4.1"
-  checksum: 87f47038445eb56c391200957c7aea2d04920e3f4fb0e5b748ba16498863279959c7104b5f228c20ed89595edd3d52c6ea76fabc4c9c73acb08aedadb2b0b423
+"@trustlessfi/typechain@npm:^0.6.4":
+  version: 0.6.4
+  resolution: "@trustlessfi/typechain@npm:0.6.4"
+  dependencies:
+    "@ethersproject/abi": ^5.5.0
+    "@ethersproject/providers": ^5.5.0
+    ethers: ^5.5.1
+  checksum: 9d7885186fe0499bd73765ce01ce386011f05bbe7ad3d0edc1664c78286044021cfec919b1c6e01cf229dd48851d9414b1f1137e578020bc894d1549c6104a3e
   languageName: node
   linkType: hard
 
@@ -1559,7 +1590,7 @@ __metadata:
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.2
     "@trustlessfi/addresses": ^0.3.8
-    "@trustlessfi/typechain": ^0.4.1
+    "@trustlessfi/typechain": ^0.6.4
     "@typechain/hardhat": ^3.0.0
     "@types/dotenv": ^8.2.0
     "@types/node": ^16.11.7
