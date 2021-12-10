@@ -75,6 +75,9 @@ export type externalAddressesType = {
   factory: string,
   router: string,
 
+  guardian: string
+  authenticator: string
+
   ethAggregator: string,
 }
 
@@ -88,6 +91,9 @@ export const getExternalAddresses = (): externalAddressesType => {
   let ethUsdtPool: string
 
   let ethAggregator: string
+
+  let guardian: string
+  let authenticator: string
 
   switch (network) {
     case Network.hardhat:
@@ -103,6 +109,9 @@ export const getExternalAddresses = (): externalAddressesType => {
 
         ethAggregator: '0x774b86547c826315Fe7A79C5185D56e82A708db8',
 
+        guardian: '',
+        authenticator: '',
+
         factory: '0x870A7E07DaDF987f17ac08aF1a0015ebc78d2258',
         router: '0x5f5bCE32f8b8aE0977DE9fb8298B9074602899F5',
         positionManager: '0x981377239fdD7cDf44aBEcF5AC442aAfeCc936c7',
@@ -114,6 +123,9 @@ export const getExternalAddresses = (): externalAddressesType => {
 
       ethUsdcPool = '0x1fea4310c812a3b82bb8660662fD293eCB16d489'
       ethUsdtPool = '0x415d407F2A1f2b11199f3A04b639E636A058a9d6'
+
+      guardian = '0x1D3f2E901af58E6B5546f6a85027fdC8b235103C',
+      authenticator = '0xE7c474D920Aa30e568e8EDD371c729Eeee513736',
 
       ethAggregator = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e' // correct
       break
@@ -128,6 +140,8 @@ export const getExternalAddresses = (): externalAddressesType => {
     ethUsdcPool,
     ethUsdtPool,
     ethAggregator,
+    guardian,
+    authenticator,
     // same on every public chain
     factory: '0x1F98431c8aD98523631AE4a59f267346ea31F984',
     router: '0xE592427A0AEce92De3Edee1F18E0157C05861564',
