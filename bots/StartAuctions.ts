@@ -5,7 +5,7 @@ export class StartAuctionsBot extends ManagedBot {
   name = "🎩 StartAuctions";
 
   async runImpl(): Promise<number> {
-    let auctions = this.protocol!.auctions;
+    let auctions = this.tcp!.auctions;
     let result = await auctions.shouldStartAuctions();
 
     if(bigint(result.surplusAmount) > 0n || bigint(result.deficitAmount) > 0n) {

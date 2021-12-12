@@ -22,20 +22,20 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   // ========================== ENTRY POINT ==========================
   // =================================================================
   async runImpl(): Promise<number> {
-    if (this.twapDuration == 0) this.twapDuration = await this.protocol!.liquidations.twapDuration()
-    if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.protocol!.market.collateralizationRequirement()
-    if (this.tickSpacing == 0) this.tickSpacing = await this.protocol!.accounting.TICK_SPACING()
+    if (this.twapDuration == 0) this.twapDuration = await this.tcp!.liquidations.twapDuration()
+    if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.tcp!.market.collateralizationRequirement()
+    if (this.tickSpacing == 0) this.tickSpacing = await this.tcp!.accounting.TICK_SPACING()
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
-      await this.protocol!.prices.calculateInstantCollateralPrice(this.twapDuration),
+      await this.tcp!.prices.calculateInstantCollateralPrice(this.twapDuration),
     ])
     if (!rewardsAreAvailable) return WAIT_DURATION
 
     let undercollateralizedPositions = await this.genUndercollatPositionsForPrice(price)
 
     if (undercollateralizedPositions.length > 0) {
-      await this.protocol!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(undercollateralizedPositions)
+      await this.tcp!.liquidations.connect(this.wallet).discoverUndercollateralizedPositions(undercollateralizedPositions)
     }
 
     return WAIT_DURATION
@@ -46,7 +46,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   // =================================================================
   // Check if there are any rewards available for the current price pull
   async genAreRewardsAvailable(): Promise<boolean> {
-    let liquidations = this.protocol!.liquidations
+    let liquidations = this.tcp!.liquidations
 
     let [
       rewardsLimitInfo,
@@ -62,7 +62,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
 
   // given a price and a collateral type, find all of the undercollateralized positions in sorted order from most debt to least.
   async genUndercollatPositionsForPrice(price: BigNumber): Promise<Array<BigNumber>> {
-    let accounting = this.protocol!.accounting;
+    let accounting = this.tcp!.accounting;
 
     let priceMin = price.mul(60).div(100)
     let priceMax = price.mul(140).div(100)
@@ -89,7 +89,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     let positions: Array<BigNumber> = [];
     results.map(result => positions.push.apply(positions, result))
 
-    let collateralizations: Array<BigNumber> = await this.protocol!.protocolDataAggregator.positionsCollateralization(positions);
+    let collateralizations: Array<BigNumber> = await this.tcp!.aux.protocolDataAggregator.positionsCollateralization(positions);
 
     // Check the positions that are undercollateralized given the price.
     let minCollateralization: BigNumber = this.ONE.mul(this.collateralizationRequirement).div(price)

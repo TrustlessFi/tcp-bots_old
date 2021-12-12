@@ -6,7 +6,7 @@ export class SettleAuctionsBot extends ManagedBot {
   name = "✅ SettleAuctions";
 
   async runImpl(): Promise<number> {
-    let auctions = this.protocol!.auctions;
+    let auctions = this.tcp!.auctions;
 
     let surplusAuctionCount = await auctions.surplusAuctionCount();
     let deficitAuctionCount = await auctions.deficitAuctionCount();

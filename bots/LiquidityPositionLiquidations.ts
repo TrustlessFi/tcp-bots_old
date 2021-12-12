@@ -72,8 +72,8 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
   async indexAllPositions() {
     const _min = (a: number, b:number): number => a < b ? a : b
 
-    const posNFT = this.protocol!.external.nftPositionManager
-    const bal = (await posNFT.balanceOf(this.protocol!.accounting.address)).toNumber()
+    const posNFT = this.tcp!.external.nftPositionManager
+    const bal = (await posNFT.balanceOf(this.tcp!.accounting.address)).toNumber()
     let limit = 0
 
     let newPositionIDs: number[] = []
@@ -81,7 +81,7 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
     while(limit < bal) {
       const lowerLimit = limit
       limit += _min(bal - limit, this.idFetchBatchSize);
-      (await this.protocol!.protocolDataAggregator.getLockedNFTIDs(lowerLimit, limit)).map((pos: BigNumber) => {
+      (await this.tcp!.aux.protocolDataAggregator.getLockedNFTIDs(lowerLimit, limit)).map((pos: BigNumber) => {
         if (!this.positionIndex.has(pos.toNumber())) newPositionIDs.push(pos.toNumber())
       })
     }
@@ -138,11 +138,11 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
     if (!this.initialized) {
       this.initialized = true
 
-      this.posNFT = this.protocol!.external.nftPositionManager
-      this.factory = this.protocol!.external.factory
-      this.rewards = this.protocol!.rewards
-      this.prices = this.protocol!.prices
-      this.accounting = this.protocol!.accounting
+      this.posNFT = this.tcp!.external.nftPositionManager
+      this.factory = this.tcp!.external.factory
+      this.rewards = this.tcp!.rewards
+      this.prices = this.tcp!.prices
+      this.accounting = this.tcp!.accounting
 
       const countPools = await this.rewards!.countPools()
       if (countPools != this.countPools) {

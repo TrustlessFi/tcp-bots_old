@@ -1,16 +1,16 @@
 // Copyright (c) 2020. All Rights Reserved
 // SPDX-License-Identifier: UNLICENSED
 
-import hre from "hardhat";
-const e = hre.ethers;
+import hre from "hardhat"
+const e = hre.ethers
 
 import * as ethers from 'ethers'
-import { Wallet, BigNumber } from "ethers";
+import { Wallet, BigNumber } from "ethers"
 
-import { seedAddressesType, externalAddressesType } from "./Addresses";
+import { getDeployedTcp, getDeployedTDao, tcpProtocol, tdaoProtocol } from '@trustlessfi/protocol'
+import { chainAddresses } from "@trustlessfi/addresses"
 
-import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library";
-import { getDeployedProtocol, deployedTcp } from "./ProtocolInfo";
+import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library"
 
 export type runReturn = {
   sleepSeconds: number,
@@ -25,86 +25,97 @@ export const defaultRunReturn: runReturn = {
 export class ManagedBot {
 
   // ============= CLASS DEFINITION ==================
-  protocol: deployedTcp | null = null;
-  name: string = "Name not set.";
-  shouldLog: boolean = true;
-  timer: NodeJS.Timeout | null = null;
-  wallet: Wallet;
-  ONE: BigNumber = BigNumber.from(BigInt(1e18));
+  tcp: tcpProtocol | null = null
+  tdao: tdaoProtocol | null = null
+  name: string = "Name not set."
+  shouldLog: boolean = true
+  timer: NodeJS.Timeout | null = null
+  wallet: Wallet
+  chainAddresses: chainAddresses | undefined
+  ONE: BigNumber = BigNumber.from(BigInt(1e18))
 
-  constructor(privateKey: string, provider: ethers.providers.JsonRpcProvider | null = null) {
-    this.wallet = new Wallet(privateKey, provider != null ? provider : e.provider);
+  constructor(config: {
+    privateKey: string,
+    provider?: ethers.providers.JsonRpcProvider,
+    chainAddresses?: chainAddresses,
+  }) {
+    const provider = config.provider ? config.provider : e.provider
+    this.wallet = new Wallet(config.privateKey, provider)
+    this.chainAddresses = config.chainAddresses
   }
 
   // ============= INITIALIZATION AND RUN ==================
-  async initialize(externalAddresses: externalAddressesType, seedAddresses: seedAddressesType) {
-    await this.attachProtocol(externalAddresses, seedAddresses)
+  async initialize() {
+    this.tcp =
+      this.chainAddresses
+        ? await getDeployedTcp(this.chainAddresses)
+        : await getDeployedTcp()
+    this.tdao =
+      this.chainAddresses
+        ? await getDeployedTDao(this.chainAddresses)
+        : await getDeployedTDao()
     return this
   }
 
-  async attachProtocol(externalAddresses: externalAddressesType, seedAddresses: seedAddressesType): Promise<void> {
-    if (this.protocol == null) this.protocol = await getDeployedProtocol(externalAddresses, seedAddresses);
-  }
-
   async run() {
-    this.report("Starting. 🏁");
+    this.report("Starting. 🏁")
 
-    if (this.protocol == null) throw 'not initialized'
+    if (this.tcp === undefined || this.tdao || undefined) throw 'not initialized'
 
     while(true) {
-      this.report("Waking up! ☕️");
-      let waitTime = minutes(60);
+      this.report("Waking up! ☕️")
+      let waitTime = minutes(60)
       try {
-         waitTime = await this.runImpl();
+         waitTime = await this.runImpl()
       } catch (error: any) {
         this.reportError(error)
       }
-      this.report("Sleeping 💤 for " + formatTime(waitTime));
+      this.report("Sleeping 💤 for " + formatTime(waitTime))
 
       await new Promise(resolve => {
         this.timer = setTimeout(resolve, StoMS(waitTime))
-        return this.timer;
-      });
+        return this.timer
+      })
     }
   }
 
   async runImpl(): Promise<number> {
-    throw new Error("runImpl not overriden.");
+    throw new Error("runImpl not overriden.")
   }
 
   // wake up a bot if it is sleeping
   async wakeup() {
     if (this.timer != null) {
-      clearTimeout(this.timer);
-      await this.run();
+      clearTimeout(this.timer)
+      await this.run()
     }
   }
 
   // ============= LOGGING FUNCTIONS ==================
   report(message: string) {
-    if (!this.shouldLog) return;
-    console.log(this.name + ": " + message);
+    if (!this.shouldLog) return
+    console.log(this.name + ": " + message)
   }
 
   reportError(error: Error) {
-    if (!this.shouldLog) return;
-    this.report(">>>> ❌ Caught Error ❌ <<<<");
-    this.report(error.name);
-    this.report(error.message);
-    if (error.stack != null) this.report(error.stack!);
+    if (!this.shouldLog) return
+    this.report(">>>> ❌ Caught Error ❌ <<<<")
+    this.report(error.name)
+    this.report(error.message)
+    if (error.stack != null) this.report(error.stack!)
   }
 
   // ============= UTILS ==================
   async getBlockTime(): Promise<number> {
-    return await getBlockTime();
+    return await getBlockTime()
   }
 
   _div(a: BigNumber, b: BigNumber): BigNumber {
-    return this._mulDiv(a, this.ONE, b);
+    return this._mulDiv(a, this.ONE, b)
   }
 
   _mul(a: BigNumber, b: BigNumber): BigNumber {
-    return this._mulDiv(a, b, this.ONE);
+    return this._mulDiv(a, b, this.ONE)
   }
 
   _mulDiv(a: BigNumber, b: BigNumber, c: BigNumber): BigNumber {

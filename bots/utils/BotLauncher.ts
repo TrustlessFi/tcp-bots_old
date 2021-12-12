@@ -3,8 +3,6 @@
 
 import * as dotenv from 'dotenv'
 
-import { getSeedAddresses, getExternalAddresses } from "./Addresses";
-
 import { AuctionBidBot } from '../AuctionBid'
 import { StartAuctionsBot } from '../StartAuctions'
 import { SettleAuctionsBot } from '../SettleAuctions'
@@ -27,7 +25,7 @@ async function main() {
     return;
   }
 
-  let privateKey = process.env.PRIVATE_KEY
+  const privateKey = process.env.PRIVATE_KEY
 
   if (typeof privateKey != 'string' || privateKey.length == 0) {
     console.log('private key not provided. Create a env.list and provide it to the container:');
@@ -39,33 +37,30 @@ async function main() {
     return;
   }
 
-  let seedAddresses = getSeedAddresses()
-  let externalAddresses = getExternalAddresses()
-
   switch (botName) {
     case 'auction_bid':
-      await (await (new AuctionBidBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new AuctionBidBot({ privateKey })).initialize()).run()
       return;
     case 'start_auctions':
-      await (await (new StartAuctionsBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new StartAuctionsBot( { privateKey } )).initialize()).run()
       return;
     case 'settle_auctions':
-      await (await (new SettleAuctionsBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new SettleAuctionsBot( { privateKey } )).initialize()).run()
       return;
     case 'discover_liquidations':
-      await (await (new DiscoverLiquidationsBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new DiscoverLiquidationsBot( { privateKey } )).initialize()).run()
       return;
     case 'execute_liquidation':
-      await (await (new ExecuteLiquidationBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new ExecuteLiquidationBot( { privateKey } )).initialize()).run()
       return;
     case 'update_rates':
-      await (await (new UpdateRatesBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new UpdateRatesBot( { privateKey } )).initialize()).run()
       return;
     case 'arb_peg_price':
-      await (await (new ArbPricePegBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new ArbPricePegBot( { privateKey } )).initialize()).run()
       return;
     case 'liquidate_liquidity_positions':
-      await (await (new LiquidityPositionLiquidationsBot(privateKey)).initialize(externalAddresses, seedAddresses)).run()
+      await (await (new LiquidityPositionLiquidationsBot( { privateKey } )).initialize()).run()
       return;
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');

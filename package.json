@@ -13,8 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@trustlessfi/addresses": "^0.3.8",
-    "@trustlessfi/typechain": "^0.6.4",
+    "@trustlessfi/addresses": "^0.4.13",
+    "@trustlessfi/protocol": "^0.0.10",
+    "@trustlessfi/typechain": "^0.6.10",
     "@typechain/hardhat": "^3.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^16.11.7",

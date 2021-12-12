@@ -9,7 +9,7 @@ export class UpdateRatesBot extends ManagedBot {
   name = '📈 UpdateRates';
 
   async runImpl(): Promise<number> {
-    let rates = this.protocol!.rates;
+    let rates = this.tcp!.rates;
 
     let currentRateData = await rates.currentRateData();
     let nextUpdate: number = currentRateData.nextUpdateTime.toNumber();
