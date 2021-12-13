@@ -1185,14 +1185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trustlessfi/protocol@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@trustlessfi/protocol@npm:0.0.12"
+"@trustlessfi/protocol@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@trustlessfi/protocol@npm:0.0.13"
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@nomiclabs/hardhat-waffle": ^2.0.1
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/typechain": ^0.6.12
+    "@trustlessfi/typechain": ^0.6.14
     "@typechain/ethers-v5": ^8.0.5
     chai: ^4.3.4
     ethereum-waffle: ^3.4.0
@@ -1200,18 +1200,18 @@ __metadata:
     hardhat: 2.7.1
     ts-node: ^10.4.0
     typescript: ^4.5.3
-  checksum: 388042b4d22565b4b3fc32cd0fe4863ade760397b4599e7bb1b92b7c56143a85b71b7b134d60eebedbe9c9ed2c8e2b08d67ce8e7ba31a8ec39edd3d2195c5758
+  checksum: 8f1239a1dafa41ee6d4f882601ca9230fb75d319f75902674ed1948320c77ef71622d80cf8cc04daabcd868fc0fd6868facfc867b6981346a0c85816e4d52e28
   languageName: node
   linkType: hard
 
-"@trustlessfi/typechain@npm:^0.6.12":
-  version: 0.6.12
-  resolution: "@trustlessfi/typechain@npm:0.6.12"
+"@trustlessfi/typechain@npm:^0.6.14":
+  version: 0.6.14
+  resolution: "@trustlessfi/typechain@npm:0.6.14"
   dependencies:
     "@ethersproject/abi": ^5.5.0
     "@ethersproject/providers": ^5.5.0
     ethers: ^5.5.1
-  checksum: e6b72ac2648efe025b5ced11c9a6dbc3ce85f1438026b15b1297175267745b62072f47a63dd9b8815d54537b787ecf4c66a24fa290812a42557e9d1b89b9f550
+  checksum: 9e8b9ddf3c4bfdd778f592c38c1553065e3494ecbeaaa6250a51524d4ad45cae138e3b9fde4043bac7e88a0e73b1867818629195a588bdcae10fd40b1bd222ff
   languageName: node
   linkType: hard
 
@@ -3309,8 +3309,8 @@ __metadata:
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/protocol": ^0.0.12
-    "@trustlessfi/typechain": ^0.6.12
+    "@trustlessfi/protocol": ^0.0.13
+    "@trustlessfi/typechain": ^0.6.14
     "@typechain/hardhat": ^3.0.0
     "@types/dotenv": ^8.2.0
     "@types/node": ^16.11.7
