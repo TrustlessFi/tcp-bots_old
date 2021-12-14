@@ -7,7 +7,7 @@ const e = hre.ethers
 import * as ethers from 'ethers'
 import { Wallet, BigNumber } from "ethers"
 
-import { getDeployedTcp, getDeployedTDao, tcpProtocol, tdaoProtocol } from '@trustlessfi/protocol'
+import { getDeployedTcp, getDeployedTDao, tcpProtocol, tdaoProtocol } from '@trustlessfi/protocols'
 import { chainAddresses } from "@trustlessfi/addresses"
 
 import { StoMS, formatTime, getBlockTime, hours, minutes } from "./library"
