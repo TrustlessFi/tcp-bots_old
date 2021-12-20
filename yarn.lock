@@ -1185,14 +1185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trustlessfi/protocols@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@trustlessfi/protocols@npm:0.1.1"
+"@trustlessfi/protocols@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@trustlessfi/protocols@npm:0.1.2"
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@nomiclabs/hardhat-waffle": ^2.0.1
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/typechain": ^0.6.15
+    "@trustlessfi/typechain": ^0.6.16
     "@typechain/ethers-v5": ^8.0.5
     chai: ^4.3.4
     ethereum-waffle: ^3.4.0
@@ -1200,18 +1200,18 @@ __metadata:
     hardhat: 2.7.1
     ts-node: ^10.4.0
     typescript: ^4.5.3
-  checksum: 372bbf5c0bc47ba4f716a5e9c53be737b2ee1d54220f2ee7bf180b3881be1b7c6e6d497a35cd903a7966a97797ec723330001d29b40fbb3d095b1da85752acd9
+  checksum: e9110c52cdf7e1e87db103a1cb740c4aa4f2cd8161c07efa05f42dc50872272ff4c683b49666e8bf7a8b566552c73067ab430b5f49aa8aa255bb87198a8706da
   languageName: node
   linkType: hard
 
-"@trustlessfi/typechain@npm:^0.6.15":
-  version: 0.6.15
-  resolution: "@trustlessfi/typechain@npm:0.6.15"
+"@trustlessfi/typechain@npm:^0.6.16":
+  version: 0.6.16
+  resolution: "@trustlessfi/typechain@npm:0.6.16"
   dependencies:
     "@ethersproject/abi": ^5.5.0
     "@ethersproject/providers": ^5.5.0
     ethers: ^5.5.1
-  checksum: 979a3444792be21896f4f6b62e4622e3328453c4cda940f50c2ef882bd851eac6536ca8b05d45b4a077e5dde012e599857c0dd666ad52359433f13059e9db8b5
+  checksum: 67bb988ac0c0031b59d657f9cf7ed0ce0fdbd154ec96a7fbec5ae7e6f567f7d6fa6ddde8bc521af2e5e1b6ae7d5e4c88a9206e161e77b06c65b910bf96acd94c
   languageName: node
   linkType: hard
 
@@ -3309,8 +3309,8 @@ __metadata:
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/protocols": ^0.1.1
-    "@trustlessfi/typechain": ^0.6.15
+    "@trustlessfi/protocols": ^0.1.2
+    "@trustlessfi/typechain": ^0.6.16
     "@typechain/hardhat": ^3.0.0
     "@types/dotenv": ^8.2.0
     "@types/node": ^16.11.14
