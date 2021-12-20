@@ -1185,14 +1185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trustlessfi/protocols@npm:0.1.9":
-  version: 0.1.9
-  resolution: "@trustlessfi/protocols@npm:0.1.9"
+"@trustlessfi/protocols@npm:^0.1.10":
+  version: 0.1.10
+  resolution: "@trustlessfi/protocols@npm:0.1.10"
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@nomiclabs/hardhat-waffle": ^2.0.1
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/typechain": ^0.6.25
+    "@trustlessfi/typechain": ^0.6.26
     "@typechain/ethers-v5": ^8.0.5
     chai: ^4.3.4
     ethereum-waffle: ^3.4.0
@@ -1200,18 +1200,18 @@ __metadata:
     hardhat: 2.7.1
     ts-node: ^10.4.0
     typescript: ^4.5.3
-  checksum: 8e7d516d9825379a5cec6e14d820aa2b8f74f20858842f5d6c91f333cc4c68a53c7b10567ff60817718f252ec749a06b390fed0271bd30319a71a0ea74663aec
+  checksum: 52719d44952ef227c0351c93a20a41f3426fe85e84a7c3d07eeec1907efe9e7659f64ea903507c28aafcbb233f0d4fc7e67415f6f292743b292fb39b22a5a98c
   languageName: node
   linkType: hard
 
-"@trustlessfi/typechain@npm:^0.6.25":
-  version: 0.6.25
-  resolution: "@trustlessfi/typechain@npm:0.6.25"
+"@trustlessfi/typechain@npm:^0.6.26":
+  version: 0.6.26
+  resolution: "@trustlessfi/typechain@npm:0.6.26"
   dependencies:
     "@ethersproject/abi": ^5.5.0
     "@ethersproject/providers": ^5.5.0
     ethers: ^5.5.1
-  checksum: 22eb3db42e166c3709a3e6cfd1962067a2cb32d0371572e61c71ff7779091132135964275c4ba0fab4d648c7756a356650b378d6769b7894fec16db3213712b5
+  checksum: 587805efde0bba848851ec1c4ec5489ddf550b96fe1d3dd52174d5d4e3875af326667d796eab973d5a9e003f27b37aa7865643f2c749b36605e71d64783cfa8b
   languageName: node
   linkType: hard
 
@@ -3309,8 +3309,8 @@ __metadata:
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/protocols": 0.1.9
-    "@trustlessfi/typechain": ^0.6.25
+    "@trustlessfi/protocols": ^0.1.10
+    "@trustlessfi/typechain": ^0.6.26
     "@typechain/hardhat": ^3.0.0
     "@types/dotenv": ^8.2.0
     "@types/node": ^16.11.14
