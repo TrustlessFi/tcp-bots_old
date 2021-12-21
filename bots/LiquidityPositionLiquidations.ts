@@ -147,7 +147,7 @@ export class LiquidityPositionLiquidationsBot extends ManagedBot {
       const countPools = await this.rewards!.countPools()
       if (countPools != this.countPools) {
         for(let poolID = this.countPools + 1; poolID <= countPools; poolID++) {
-          this.pools.push((await this.rewards!.poolConfigForPoolID(poolID)).pool)
+          this.pools.push((await this.rewards!.getPoolConfigForPoolID(poolID)).pool)
         }
         this.countPools = countPools
       }
