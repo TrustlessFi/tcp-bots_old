@@ -1185,14 +1185,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trustlessfi/protocols@npm:^0.1.11":
-  version: 0.1.11
-  resolution: "@trustlessfi/protocols@npm:0.1.11"
+"@trustlessfi/protocols@npm:^0.1.12":
+  version: 0.1.12
+  resolution: "@trustlessfi/protocols@npm:0.1.12"
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@nomiclabs/hardhat-waffle": ^2.0.1
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/typechain": ^0.6.27
+    "@trustlessfi/typechain": ^0.6.28
     "@typechain/ethers-v5": ^8.0.5
     chai: ^4.3.4
     ethereum-waffle: ^3.4.0
@@ -1200,18 +1200,18 @@ __metadata:
     hardhat: 2.7.1
     ts-node: ^10.4.0
     typescript: ^4.5.3
-  checksum: 791c41669ca303958f33fa1e26c43336a0b56b0d83f1b247699e005b3702a122a9faf957a7da9583590ca390c97a493a8dd934851cb6373ad9046a2c5c4972d6
+  checksum: dc403cefad670f6867732c50adfcc240e7c05585b5d80392d4bc1a25096cf109ea5282998c2551cffb1db085b98f82f853ebf3b03fd4cccb54ab491f426a6c96
   languageName: node
   linkType: hard
 
-"@trustlessfi/typechain@npm:^0.6.27":
-  version: 0.6.27
-  resolution: "@trustlessfi/typechain@npm:0.6.27"
+"@trustlessfi/typechain@npm:^0.6.28":
+  version: 0.6.28
+  resolution: "@trustlessfi/typechain@npm:0.6.28"
   dependencies:
     "@ethersproject/abi": ^5.5.0
     "@ethersproject/providers": ^5.5.0
     ethers: ^5.5.1
-  checksum: 71983df70b1f79e07a95292e9cf59e5cf03b156fd8ab86e7d9545181c4c530c4d8eeb64ed7fc0c2469eeea865978ed25d7cf7ea4439f9bca1dfb9fa389256f42
+  checksum: 257bec3cd11f85869a1618ff35e310aedfec91c67198a0b0c0cda0539d48e2de2ea20311d23be3cb2ffc17b01230aba68bda5fdeb9ad61e31b6e31eb47d4b570
   languageName: node
   linkType: hard
 
@@ -3309,8 +3309,8 @@ __metadata:
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
     "@trustlessfi/addresses": ^0.4.14
-    "@trustlessfi/protocols": ^0.1.11
-    "@trustlessfi/typechain": ^0.6.27
+    "@trustlessfi/protocols": ^0.1.12
+    "@trustlessfi/typechain": ^0.6.28
     "@typechain/hardhat": ^3.0.0
     "@types/dotenv": ^8.2.0
     "@types/node": ^16.11.14
