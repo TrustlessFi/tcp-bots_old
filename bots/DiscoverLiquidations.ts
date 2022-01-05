@@ -7,11 +7,12 @@ import { BigNumber } from "ethers";
 
 const WAIT_DURATION = minutes(60)
 
+const TICK_SPACING = 200
+
 export class DiscoverLiquidationsBot extends ManagedBot {
   name = "🤑 Discover Liquidations";
   twapDuration = 0
   collateralizationRequirement = BigNumber.from(0)
-  tickSpacing = 0
   smallestFirst = false
 
   async setProcessSmallestFirst(smallestFirst: boolean) {
@@ -24,7 +25,6 @@ export class DiscoverLiquidationsBot extends ManagedBot {
   async runImpl(): Promise<number> {
     if (this.twapDuration == 0) this.twapDuration = await this.tcp!.liquidations.twapDuration()
     if (this.collateralizationRequirement.isZero()) this.collateralizationRequirement = await this.tcp!.market.collateralizationRequirement()
-    if (this.tickSpacing == 0) this.tickSpacing = await this.tcp!.accounting.TICK_SPACING()
 
     let [rewardsAreAvailable, price] = await Promise.all([
       await this.genAreRewardsAvailable(),
@@ -82,7 +82,7 @@ export class DiscoverLiquidationsBot extends ManagedBot {
     }
 
     let positionsForTickPromises: Array<Promise<Array<BigNumber>>> = [];
-    for (let tick = minTick; tick <= maxTick; tick += this.tickSpacing) positionsForTickPromises.push(accounting.positionsForTick(tick))
+    for (let tick = minTick; tick <= maxTick; tick += TICK_SPACING) positionsForTickPromises.push(accounting.positionsForTick(tick))
 
     let results = await Promise.all(positionsForTickPromises);
 

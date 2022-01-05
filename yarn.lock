@@ -1185,6 +1185,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trustlessfi/addresses@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@trustlessfi/addresses@npm:0.5.1"
+  dependencies:
+    "@trustlessfi/utils": ^0.2.8
+    "@types/node": ^16.11.11
+    typescript: ^4.5.3
+  checksum: 13580078822d1a0f195a1360c7c7bca6b5a40208f1029a22862a121b2a81c0f7cf02fc9b44a0329a699bda2e35b548b329aec33da3044021e496ea08f312dda3
+  languageName: node
+  linkType: hard
+
 "@trustlessfi/protocols@npm:^0.1.17":
   version: 0.1.17
   resolution: "@trustlessfi/protocols@npm:0.1.17"
@@ -3308,7 +3319,7 @@ __metadata:
   resolution: "coin-protocol-bots@workspace:."
   dependencies:
     "@nomiclabs/hardhat-ethers": ^2.0.3
-    "@trustlessfi/addresses": ^0.4.14
+    "@trustlessfi/addresses": ^0.5.1
     "@trustlessfi/protocols": ^0.1.17
     "@trustlessfi/typechain": ^0.6.33
     "@typechain/hardhat": ^3.0.0
