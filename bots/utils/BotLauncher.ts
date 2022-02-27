@@ -10,7 +10,6 @@ import { DiscoverLiquidationsBot } from '../DiscoverLiquidations'
 import { ExecuteLiquidationBot } from '../ExecuteLiquidation'
 import { UpdateRatesBot } from '../UpdateRates'
 import { ArbPricePegBot } from '../ArbPricePeg'
-import { LiquidityPositionLiquidationsBot } from '../LiquidityPositionLiquidations'
 
 dotenv.config({ path: 'env.list'})
 
@@ -58,9 +57,6 @@ async function main() {
       return;
     case 'arb_peg_price':
       await (await (new ArbPricePegBot( { privateKey } )).initialize()).run()
-      return;
-    case 'liquidate_liquidity_positions':
-      await (await (new LiquidityPositionLiquidationsBot( { privateKey } )).initialize()).run()
       return;
     default:
       console.log(botName + ' bot not found! Add it to bots/utils/BotLauncher.ts and rebuild the docker container.');
